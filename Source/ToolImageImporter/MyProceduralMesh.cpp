@@ -20,7 +20,11 @@ AMyProceduralMesh::AMyProceduralMesh()
 void AMyProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	ClearMeshData();
+	GenerateVerts();
+	GenerateTris();
+	//Function that creates mesh section
+	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 }
 
 // Called every frame
@@ -28,15 +32,13 @@ void AMyProceduralMesh::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 }
 
-void AMyProceduralMesh::OnConstruction(const FTransform& Transform){
-	ClearMeshData();
-
-	GenerateVerts();
-	GenerateTris();
-
-	//Function that creates mesh section
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
-}
+//void AMyProceduralMesh::OnConstruction(const FTransform& Transform){
+//		ClearMeshData();
+//		GenerateVerts();
+//		GenerateTris();
+//		//Function that creates mesh section
+//		procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
+//}
 
 void AMyProceduralMesh::ClearMeshData(){
 	m_verts.Empty();

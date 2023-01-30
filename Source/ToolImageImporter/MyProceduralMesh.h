@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "ProceduralMeshComponent.h"
 #include "../../../Unreal/UE_4.26/Engine/Plugins/Runtime/ProceduralMeshComponent/Source/ProceduralMeshComponent/Public/ProceduralMeshComponent.h"
 #include "MyProceduralMesh.generated.h"
 
@@ -41,10 +40,11 @@ public:
 		bool is_generate_mesh;
 
 
-	virtual void OnConstruction(const FTransform& Transform) override;
+	//virtual void OnConstruction(const FTransform& Transform) override;
 	void GenerateVerts();
 	void GenerateTris();
 	void ClearMeshData();
+	
 
 protected:
 	// Called when the game starts or when spawned
