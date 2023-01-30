@@ -20,11 +20,7 @@ AMyProceduralMesh::AMyProceduralMesh()
 void AMyProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	ClearMeshData();
-	GenerateVerts();
-	GenerateTris();
-	//Function that creates mesh section
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
+	//CreateMesh();
 }
 
 // Called every frame
@@ -75,4 +71,13 @@ void AMyProceduralMesh::GenerateTris(){
 			m_tris.Add(x + (y * width_) + 1);				//current vertex + one right
 		}
 	}
+}
+
+void AMyProceduralMesh::CreateMesh()
+{
+	ClearMeshData();
+	GenerateVerts();
+	GenerateTris();
+	//Function that creates mesh section
+	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 }

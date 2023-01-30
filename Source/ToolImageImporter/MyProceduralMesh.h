@@ -44,7 +44,7 @@ public:
 	void GenerateVerts();
 	void GenerateTris();
 	void ClearMeshData();
-	
+	void CreateMesh();
 
 protected:
 	// Called when the game starts or when spawned
