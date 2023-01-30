@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "MyProceduralMesh.h"
-#include "MyProceduralMesh.h"
 #include "UIWidget.generated.h"
 
 /**
@@ -27,5 +26,5 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* GenerateButton;
 
-	AMyProceduralMesh* p_mesh;
+	AMyProceduralMesh p_mesh;
 };

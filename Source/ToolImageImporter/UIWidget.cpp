@@ -2,6 +2,7 @@
 
 
 #include "UIWidget.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 void UUIWidget::NativeConstruct()
 {
@@ -15,5 +16,5 @@ void UUIWidget::NativeConstruct()
 
 void UUIWidget::GeneratePlane()
 {
-	p_mesh->CreateMesh();
+	p_mesh.CreateMesh();
 }
