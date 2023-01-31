@@ -14,6 +14,8 @@ void UUIWidget::NativeConstruct()
 
 	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
+	height_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeight);
+
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -56,4 +58,12 @@ void UUIWidget::OnEnterText()
 	h_= FCString::Atof(*height_text.ToString());
 	FText width_text = width_label->GetText();
 	w_ = FCString::Atof(*width_text.ToString());
+	FText spacing_text = spacing_label->GetText();
+	s_ = FCString::Atof(*spacing_text.ToString());
+}
+
+
+void UUIWidget::OnClickHeight()
+{
+	p_mesh->ModiVerts();
 }

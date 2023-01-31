@@ -25,6 +25,8 @@ protected:
 		class UButton* generate_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* delete_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* height_button;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
@@ -33,11 +35,15 @@ protected:
 		class UEditableTextBox* height_label;
 	UPROPERTY(meta = (BindWidget))
 		class UEditableTextBox* width_label;
+	UPROPERTY(meta = (BindWidget))
+		class UEditableTextBox* spacing_label;
 
 	UFUNCTION()
 		void OnClick();
 	UFUNCTION()
 		void OnClickDelete();
+	UFUNCTION()
+		void OnClickHeight();
 	UFUNCTION()
 		void OnEnterText();
 

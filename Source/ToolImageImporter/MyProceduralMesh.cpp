@@ -75,3 +75,16 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	//Function that creates mesh section
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 }
+
+
+void AMyProceduralMesh::ModiVerts()
+{
+	for (int32 y = 0; y < height_; y++) {
+		for (int32 x = 0; x < width_; x++) {
+			m_verts[y * height_ + x].Z = rand() % 5 * spacing_;
+			//this works when adding but not here?
+		}
+	}
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+	//procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
+}

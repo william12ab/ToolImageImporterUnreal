@@ -36,6 +36,8 @@ public:
 	void ClearMeshData();
 	void CreateMesh(int &d_height_, int &d_width_, float &d_spacing_);
 
+	void ModiVerts();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
