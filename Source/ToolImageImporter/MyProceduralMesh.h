@@ -30,26 +30,19 @@ public:
 	UPROPERTY()
 		TArray<FProcMeshTangent> m_tangents;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuProceduralMesh")
-		int32 height_;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuProceduralMesh")
-		int32 width_;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuProceduralMesh")
-		float spacing_;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MuProceduralMesh")
-		bool is_generate_mesh;
-
-
 	//virtual void OnConstruction(const FTransform& Transform) override;
 	void GenerateVerts();
 	void GenerateTris();
 	void ClearMeshData();
-	void CreateMesh();
+	void CreateMesh(int &d_height_, int &d_width_, float &d_spacing_);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	int32 height_;
+	int32 width_;
+	float spacing_;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

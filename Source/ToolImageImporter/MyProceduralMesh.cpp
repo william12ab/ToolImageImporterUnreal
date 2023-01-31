@@ -13,28 +13,19 @@ AMyProceduralMesh::AMyProceduralMesh()
 	height_ = 4;
 	spacing_ = 50.0f;
 
-	is_generate_mesh= false;
+
 }
 
 // Called when the game starts or when spawned
 void AMyProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	//CreateMesh();
 }
 
 // Called every frame
 void AMyProceduralMesh::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 }
-
-//void AMyProceduralMesh::OnConstruction(const FTransform& Transform){
-//		ClearMeshData();
-//		GenerateVerts();
-//		GenerateTris();
-//		//Function that creates mesh section
-//		procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
-//}
 
 void AMyProceduralMesh::ClearMeshData(){
 	m_verts.Empty();
@@ -73,8 +64,11 @@ void AMyProceduralMesh::GenerateTris(){
 	}
 }
 
-void AMyProceduralMesh::CreateMesh()
+void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spacing_)
 {
+	height_ = d_height_;
+	width_ = d_width_;
+	spacing_ = d_spacing_;
 	ClearMeshData();
 	GenerateVerts();
 	GenerateTris();
