@@ -18,6 +18,7 @@ protected:
 	
 	void GeneratePlane();
 	void DeletePlane();
+	void OpenFileWindow();
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -27,6 +28,8 @@ protected:
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* height_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* file_button;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
@@ -46,6 +49,8 @@ protected:
 		void OnClickHeight();
 	UFUNCTION()
 		void OnEnterText();
+	UFUNCTION()
+		void OnFileButton();
 
 	AMyProceduralMesh* p_mesh;
 

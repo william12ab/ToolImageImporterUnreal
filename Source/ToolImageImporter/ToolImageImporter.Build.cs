@@ -8,7 +8,7 @@ public class ToolImageImporter : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ProceduralMeshComponent" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ProceduralMeshComponent","DesktopPlatform" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "ProceduralMeshComponent" });
 

@@ -3,7 +3,8 @@
 
 #include "UIWidget.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-
+#include "DesktopPlatform/Public/IDesktopPlatform.h"
+#include "DesktopPlatform/Public/DesktopPlatformModule.h"
 void UUIWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -15,7 +16,7 @@ void UUIWidget::NativeConstruct()
 	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	height_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeight);
-
+	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnFileButton);
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -62,8 +63,24 @@ void UUIWidget::OnEnterText()
 	s_ = FCString::Atof(*spacing_text.ToString());
 }
 
-
 void UUIWidget::OnClickHeight()
 {
 	p_mesh->ModiVerts();
+}
+
+void UUIWidget::OnFileButton()
+{
+	OpenFileWindow();
+}
+
+void UUIWidget::OpenFileWindow()
+{
+	FString default_path = "";
+	FString dialog_name = "";
+	FString default_file = "";
+	FString file_types = "";
+	TArray<FString> outfile_names;
+	uint32 flags_ = 1;
+	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
+	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
 }
