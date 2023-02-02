@@ -1,5 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+#include "IImageWrapperModule.h"
+#include "IImageWrapper.h"
 #include "MyProceduralMesh.h"
+#include <Runtime/Engine/Public/ImageUtils.h>
 
 // Sets default values
 AMyProceduralMesh::AMyProceduralMesh()
@@ -76,7 +79,6 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 }
 
-
 void AMyProceduralMesh::ModiVerts()
 {
 	for (int32 y = 0; y < height_; y++) {
@@ -86,5 +88,43 @@ void AMyProceduralMesh::ModiVerts()
 		}
 	}
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-	//procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 }
+
+TArray<int32> AMyProceduralMesh::ReadFileInfo(const FString& name_)
+{
+	TArray<int32> m_colors;
+
+	FString FilePath = "F:/this one looks good/track_image.png";
+	UE_LOG(LogTemp, Warning, TEXT("The path's name is %s"), *FilePath);
+	UE_LOG(LogTemp, Warning, TEXT("The path's name is %s"), *name_);
+	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(FilePath);
+
+	texture_->AddToRoot();
+	//height_ = 100;
+	//width_ = 100;
+	//spacing_ = 1;
+
+	//ClearMeshData();
+	//GenerateVerts();
+	//GenerateTris();
+
+
+	//since grey scale already. each rgb component should be greyscale value. therefore no need to add up and divide by 3.
+	//rgb comp is uint8 value. so, use this as the height and modifiy the height of terrain.
+	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
+	UE_LOG(LogTemp, Warning, TEXT("The Size is %d"), texture_->PlatformData->Mips[0].SizeY);
+
+	for (int32 y_ = 0; y_ < texture_->PlatformData->Mips[0].SizeY; y_++) {
+		for (int32 x_ = 0; x_ < texture_->PlatformData->Mips[0].SizeX; x_++) {
+			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
+			//m_verts[y_ * height_ + x_].Z = pixel_color.R;
+			UE_LOG(LogTemp, Warning, TEXT("The path's name is %d"), pixel_color.R);
+			m_colors.Add(pixel_color.R);
+		}
+	}
+	texture_->PlatformData->Mips[0].BulkData.Unlock();
+	//procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+
+	return m_colors;
+}
+

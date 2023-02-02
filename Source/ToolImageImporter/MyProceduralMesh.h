@@ -10,10 +10,10 @@ UCLASS()
 class TOOLIMAGEIMPORTER_API AMyProceduralMesh : public AActor
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(VisibleAnywhere, Category = "MyProceduralMesh")
-	UProceduralMeshComponent* procedural_mesh_comp;
-public:	
+
+		UPROPERTY(VisibleAnywhere, Category = "MyProceduralMesh")
+		UProceduralMeshComponent* procedural_mesh_comp;
+public:
 	// Sets default values for this actor's properties
 	AMyProceduralMesh();
 
@@ -30,13 +30,16 @@ public:
 	UPROPERTY()
 		TArray<FProcMeshTangent> m_tangents;
 
-	//virtual void OnConstruction(const FTransform& Transform) override;
 	void GenerateVerts();
 	void GenerateTris();
 	void ClearMeshData();
-	void CreateMesh(int &d_height_, int &d_width_, float &d_spacing_);
+	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
 
-	void ModiVerts();
+	void ModiVerts();		//changing the vertss
+
+	void SetAr(TArray<int32> t) { c_ = t; }
+
+	TArray<int32> ReadFileInfo(const FString& name_);
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,6 +48,7 @@ protected:
 	int32 height_;
 	int32 width_;
 	float spacing_;
+	TArray<int32> c_;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

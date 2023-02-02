@@ -17,6 +17,7 @@ class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
 protected:
 	
 	void GeneratePlane();
+	void CreateHeightmap();
 	void DeletePlane();
 	void OpenFileWindow();
 	void NativeConstruct() override;
@@ -30,6 +31,8 @@ protected:
 		class UButton* height_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* file_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* create_heightmap_button;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
@@ -51,9 +54,13 @@ protected:
 		void OnEnterText();
 	UFUNCTION()
 		void OnFileButton();
+	UFUNCTION()
+		void OnClickHeightmapButton();
 
 	AMyProceduralMesh* p_mesh;
 
 	int32 w_, h_;
 	float s_;
+
+	FString name_;
 };
