@@ -20,6 +20,8 @@ protected:
 	void CreateHeightmap();
 	void DeletePlane();
 	void OpenFileWindow();
+	void ReadFileInfo(const FString& name_);
+
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -63,4 +65,6 @@ protected:
 	float s_;
 
 	FString name_;
+
+	TArray<int32> m_colors;
 };

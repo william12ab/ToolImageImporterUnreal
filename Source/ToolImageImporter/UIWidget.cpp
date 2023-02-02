@@ -5,6 +5,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "DesktopPlatform/Public/IDesktopPlatform.h"
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
+#include <Runtime/Engine/Public/ImageUtils.h>
 void UUIWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -67,7 +68,9 @@ void UUIWidget::OnEnterText()
 
 void UUIWidget::OnClickHeight()
 {
-	p_mesh->ModiVerts();
+	s_ = 1;
+	p_mesh->CreateMesh(h_, w_, s_);
+	p_mesh->ModiVerts(m_colors);
 }
 
 void UUIWidget::OnFileButton()
@@ -92,10 +95,44 @@ void UUIWidget::OpenFileWindow()
 
 void UUIWidget::CreateHeightmap()
 {
-	p_mesh->SetAr(p_mesh->ReadFileInfo(name_));
+	ReadFileInfo(name_);
 }
 
 void UUIWidget::OnClickHeightmapButton()
 {
 	CreateHeightmap();
+}
+
+void UUIWidget::ReadFileInfo(const FString& name__)
+{
+
+	FString FilePath = "F:/this one looks good/track_image.png";
+	UE_LOG(LogTemp, Warning, TEXT("The path's name is %s"), *FilePath);
+	UE_LOG(LogTemp, Warning, TEXT("The path's name is %s"), *name__);
+	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(name__);
+
+	texture_->AddToRoot();
+	
+
+
+	//since grey scale already. each rgb component should be greyscale value. therefore no need to add up and divide by 3.
+	//rgb comp is uint8 value. so, use this as the height and modifiy the height of terrain.
+	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
+	UE_LOG(LogTemp, Warning, TEXT("The Size is %d"), texture_->PlatformData->Mips[0].SizeY);
+	h_ = texture_->PlatformData->Mips[0].SizeY;
+	w_ = texture_->PlatformData->Mips[0].SizeX;
+	for (int32 y_ = 0; y_ < texture_->PlatformData->Mips[0].SizeY; y_++) {
+		for (int32 x_ = 0; x_ < texture_->PlatformData->Mips[0].SizeX; x_++) {
+			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
+			//m_verts[y_ * height_ + x_].Z = pixel_color.R;
+			m_colors.Add(pixel_color.R);
+		}
+	}
+	texture_->PlatformData->Mips[0].BulkData.Unlock();
+	//procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+	texture_->UpdateResource();
+
+	UE_LOG(LogTemp, Warning, TEXT("The Size is %d"), h_);
+
+
 }

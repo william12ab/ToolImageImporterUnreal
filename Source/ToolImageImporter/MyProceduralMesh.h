@@ -35,11 +35,9 @@ public:
 	void ClearMeshData();
 	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
 
-	void ModiVerts();		//changing the vertss
+	void ModiVerts(TArray<int32> c_);		//changing the vertss
 
-	void SetAr(TArray<int32> t) { c_ = t; }
 
-	TArray<int32> ReadFileInfo(const FString& name_);
 
 protected:
 	// Called when the game starts or when spawned
@@ -48,7 +46,6 @@ protected:
 	int32 height_;
 	int32 width_;
 	float spacing_;
-	TArray<int32> c_;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
