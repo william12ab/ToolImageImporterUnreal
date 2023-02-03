@@ -71,6 +71,7 @@ void UUIWidget::OnClickHeight()
 {
 	//disused
 	//height button
+
 }
 
 void UUIWidget::OnFileButton()
@@ -125,4 +126,8 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 
 	p_mesh->CreateMesh(h_, w_, s_);
 	p_mesh->ModiVerts(m_colors);
+	UE_LOG(LogTemp, Warning, TEXT("name: %s"), *name_);
+
+
+	p_mesh->SetMaterial(name_,texture_);
 }

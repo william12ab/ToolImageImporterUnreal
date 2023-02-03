@@ -30,6 +30,15 @@ void AMyProceduralMesh::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 }
 
+void AMyProceduralMesh::SetMaterial(const FString& name_, UTexture2D* t_)
+{
+	FName n_ = FName(name_);
+	
+	
+	terrain_mat = UMaterialInstanceDynamic::Create(terrain_mat_interface, this);
+	procedural_mesh_comp->SetMaterial(0, terrain_mat);
+}
+
 void AMyProceduralMesh::ClearMeshData(){
 	m_verts.Empty();
 	m_tris.Empty();
