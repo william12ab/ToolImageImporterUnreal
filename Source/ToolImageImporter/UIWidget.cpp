@@ -13,6 +13,7 @@ void UUIWidget::NativeConstruct()
 	h_ = 4;
 	s_ = 50.0f;
 	Label->SetText(FText::FromString("Plane Generator"));
+	UE_LOG(LogTemp, Warning, TEXT("Native con"));
 
 	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
@@ -68,9 +69,8 @@ void UUIWidget::OnEnterText()
 
 void UUIWidget::OnClickHeight()
 {
-	s_ = 1;
-	p_mesh->CreateMesh(h_, w_, s_);
-	p_mesh->ModiVerts(m_colors);
+	//disused
+	//height button
 }
 
 void UUIWidget::OnFileButton()
@@ -105,20 +105,12 @@ void UUIWidget::OnClickHeightmapButton()
 
 void UUIWidget::ReadFileInfo(const FString& name__)
 {
-
-	FString FilePath = "F:/this one looks good/track_image.png";
-	UE_LOG(LogTemp, Warning, TEXT("The path's name is %s"), *FilePath);
-	UE_LOG(LogTemp, Warning, TEXT("The path's name is %s"), *name__);
 	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(name__);
-
 	texture_->AddToRoot();
 	
-
-
 	//since grey scale already. each rgb component should be greyscale value. therefore no need to add up and divide by 3.
 	//rgb comp is uint8 value. so, use this as the height and modifiy the height of terrain.
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
-	UE_LOG(LogTemp, Warning, TEXT("The Size is %d"), texture_->PlatformData->Mips[0].SizeY);
 	h_ = texture_->PlatformData->Mips[0].SizeY;
 	w_ = texture_->PlatformData->Mips[0].SizeX;
 	for (int32 y_ = 0; y_ < texture_->PlatformData->Mips[0].SizeY; y_++) {
@@ -129,10 +121,8 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 		}
 	}
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
-	//procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 	texture_->UpdateResource();
 
-	UE_LOG(LogTemp, Warning, TEXT("The Size is %d"), h_);
-
-
+	p_mesh->CreateMesh(h_, w_, s_);
+	p_mesh->ModiVerts(m_colors);
 }
