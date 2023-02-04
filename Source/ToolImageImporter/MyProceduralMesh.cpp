@@ -17,10 +17,6 @@ AMyProceduralMesh::AMyProceduralMesh()
 	width_ = 4;
 	height_ = 4;
 	spacing_ = 50.0f;
-
-
-	
-	UE_LOG(LogTemp, Warning, TEXT("con"));
 }
 
 // Called when the game starts or when spawned
@@ -38,8 +34,6 @@ void AMyProceduralMesh::Tick(float DeltaTime){
 void AMyProceduralMesh::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	UE_LOG(LogTemp, Warning, TEXT("Post"));
-
 }
 
 
@@ -47,11 +41,6 @@ void AMyProceduralMesh::SetMaterial(UTexture* t_)
 {
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/TerrainMaterial.TerrainMaterial'"));
 	terrain_mat = UMaterialInstanceDynamic::Create(material_interface, this);
-	FString s = t_->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("Post %s"),*s);
-
-	FName n_ = FName(s);
-
 	terrain_mat->SetTextureParameterValue(FName("terr_text"), t_);
 	procedural_mesh_comp->SetMaterial(0, terrain_mat);
 }

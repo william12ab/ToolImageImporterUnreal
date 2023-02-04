@@ -16,18 +16,16 @@ void UUIWidget::NativeConstruct()
 
 	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
-	height_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeight);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnFileButton);
 	create_heightmap_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeightmapButton);
-
+	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	// Make sure to call the base class's NativeTick function
 	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	// Do your custom tick stuff here]
+	// Do your custom tick stuff here
 	OnEnterText();
 }
 
@@ -37,8 +35,6 @@ void UUIWidget::GeneratePlane()
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0,0,112);
 	p_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	UE_LOG(LogTemp, Warning, TEXT("getworld/create"));
-	p_mesh->SetMaterial(t_);
 	p_mesh->CreateMesh(h_,w_,s_);
 }
 
@@ -67,13 +63,6 @@ void UUIWidget::OnEnterText()
 	s_ = FCString::Atof(*spacing_text.ToString());
 }
 
-void UUIWidget::OnClickHeight()
-{
-	//disused
-	//height button
-
-}
-
 void UUIWidget::OnFileButton()
 {
 	OpenFileWindow();
@@ -91,7 +80,6 @@ void UUIWidget::OpenFileWindow()
 	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
 	name_.Append(outfile_names[0]);
 	Label->SetText(FText::FromString(name_));
-
 }
 
 void UUIWidget::CreateHeightmap()
@@ -102,6 +90,23 @@ void UUIWidget::CreateHeightmap()
 void UUIWidget::OnClickHeightmapButton()
 {
 	CreateHeightmap();
+}
+
+void UUIWidget::OnAddTexture()
+{
+	FString default_path = "";
+	FString dialog_name = "";
+	FString default_file = "";
+	FString file_types = "";
+	TArray<FString> outfile_names;			//stores the file
+	uint32 flags_ = 1;
+	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
+	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
+	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(outfile_names[0]);
+	texture_->AddToRoot();
+	t_ = texture_;
+	t_->UpdateResource();
+	p_mesh->SetMaterial(t_);
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)
@@ -123,11 +128,7 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	}
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
-	t_ = texture_;
-	t_->UpdateResource();
+
 	GeneratePlane();
-	//p_mesh->CreateMesh(h_, w_, s_);
 	p_mesh->ModiVerts(m_colors);
-
-
 }

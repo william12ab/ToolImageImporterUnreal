@@ -30,11 +30,11 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
-		class UButton* height_button;
-	UPROPERTY(meta = (BindWidget))
 		class UButton* file_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* create_heightmap_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* add_texture_button;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
@@ -51,7 +51,7 @@ protected:
 	UFUNCTION()
 		void OnClickDelete();
 	UFUNCTION()
-		void OnClickHeight();
+		void OnAddTexture();
 	UFUNCTION()
 		void OnEnterText();
 	UFUNCTION()
