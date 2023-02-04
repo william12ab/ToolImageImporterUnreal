@@ -45,6 +45,8 @@ protected:
 		class UEditableTextBox* width_label;
 	UPROPERTY(meta = (BindWidget))
 		class UEditableTextBox* spacing_label;
+	UPROPERTY(meta = (BindWidget))
+		class UEditableTextBox* height_modi;
 
 	UFUNCTION()
 		void OnClick();
@@ -61,7 +63,7 @@ protected:
 
 	AMyProceduralMesh* p_mesh;
 
-	int32 w_, h_;
+	int32 w_, h_,m_;
 	float s_;
 
 	FString name_;

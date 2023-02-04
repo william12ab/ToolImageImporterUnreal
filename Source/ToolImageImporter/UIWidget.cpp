@@ -12,6 +12,7 @@ void UUIWidget::NativeConstruct()
 	w_ = 4;
 	h_ = 4;
 	s_ = 50.0f;
+	m_ = 1;
 	Label->SetText(FText::FromString("Plane Generator"));
 
 	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
@@ -51,6 +52,7 @@ void UUIWidget::OnClickDelete()
 void UUIWidget::DeletePlane()
 {
 	p_mesh->Destroy();
+	name_.Empty();
 }
 
 void UUIWidget::OnEnterText()
@@ -61,6 +63,8 @@ void UUIWidget::OnEnterText()
 	w_ = FCString::Atof(*width_text.ToString());
 	FText spacing_text = spacing_label->GetText();
 	s_ = FCString::Atof(*spacing_text.ToString());
+	FText modi_text = height_modi->GetText();
+	m_ = FCString::Atof(*modi_text.ToString());
 }
 
 void UUIWidget::OnFileButton()
@@ -119,8 +123,8 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
 	h_ = texture_->PlatformData->Mips[0].SizeY;
 	w_ = texture_->PlatformData->Mips[0].SizeX;
-	for (int32 y_ = 0; y_ < texture_->PlatformData->Mips[0].SizeY; y_++) {
-		for (int32 x_ = 0; x_ < texture_->PlatformData->Mips[0].SizeX; x_++) {
+	for (int32 y_ = 0; y_ < h_; y_++) {
+		for (int32 x_ = 0; x_ < w_; x_++) {
 			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
 			m_colors.Add(pixel_color.R);
 		}
@@ -129,5 +133,5 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	texture_->UpdateResource();
 
 	GeneratePlane();
-	p_mesh->ModiVerts(m_colors);
+	p_mesh->ModiVerts(m_colors,m_);
 }
