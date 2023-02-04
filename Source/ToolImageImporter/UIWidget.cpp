@@ -122,7 +122,6 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	for (int32 y_ = 0; y_ < texture_->PlatformData->Mips[0].SizeY; y_++) {
 		for (int32 x_ = 0; x_ < texture_->PlatformData->Mips[0].SizeX; x_++) {
 			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
-			//m_verts[y_ * height_ + x_].Z = pixel_color.R;
 			m_colors.Add(pixel_color.R);
 		}
 	}

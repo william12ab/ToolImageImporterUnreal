@@ -28,7 +28,6 @@ void AMyProceduralMesh::BeginPlay()
 // Called every frame
 void AMyProceduralMesh::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
-
 }
 
 void AMyProceduralMesh::PostInitializeComponents()
@@ -41,7 +40,7 @@ void AMyProceduralMesh::SetMaterial(UTexture* t_)
 {
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/TerrainMaterial.TerrainMaterial'"));
 	terrain_mat = UMaterialInstanceDynamic::Create(material_interface, this);
-	terrain_mat->SetTextureParameterValue(FName("terr_text"), t_);
+	terrain_mat->SetTextureParameterValue(FName("terr_text"), t_);		//this is reference also to the material obj in scene, have a look if you dont get it.
 	procedural_mesh_comp->SetMaterial(0, terrain_mat);
 }
 void AMyProceduralMesh::ClearMeshData(){
@@ -98,7 +97,6 @@ void AMyProceduralMesh::ModiVerts(TArray<int32> c_)
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			m_verts[y * height_ + x].Z = c_[y * height_ + x];
-			//this works when adding but not here?
 		}
 	}
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
