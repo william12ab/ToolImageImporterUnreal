@@ -13,7 +13,6 @@ void UUIWidget::NativeConstruct()
 	h_ = 4;
 	s_ = 50.0f;
 	Label->SetText(FText::FromString("Plane Generator"));
-	UE_LOG(LogTemp, Warning, TEXT("Native con"));
 
 	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
@@ -38,7 +37,8 @@ void UUIWidget::GeneratePlane()
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0,0,112);
 	p_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-
+	UE_LOG(LogTemp, Warning, TEXT("getworld/create"));
+	p_mesh->SetMaterial(t_);
 	p_mesh->CreateMesh(h_,w_,s_);
 }
 
@@ -123,11 +123,11 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	}
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
-
-	p_mesh->CreateMesh(h_, w_, s_);
+	t_ = texture_;
+	t_->UpdateResource();
+	GeneratePlane();
+	//p_mesh->CreateMesh(h_, w_, s_);
 	p_mesh->ModiVerts(m_colors);
-	UE_LOG(LogTemp, Warning, TEXT("name: %s"), *name_);
 
 
-	p_mesh->SetMaterial(name_,texture_);
 }

@@ -9,6 +9,8 @@ AMyProceduralMesh::AMyProceduralMesh()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	ScnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Main"));
+	SetRootComponent(ScnComponent);
 	procedural_mesh_comp = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	procedural_mesh_comp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 
@@ -17,6 +19,8 @@ AMyProceduralMesh::AMyProceduralMesh()
 	spacing_ = 50.0f;
 
 
+	
+	UE_LOG(LogTemp, Warning, TEXT("con"));
 }
 
 // Called when the game starts or when spawned
@@ -28,17 +32,29 @@ void AMyProceduralMesh::BeginPlay()
 // Called every frame
 void AMyProceduralMesh::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
+
 }
 
-void AMyProceduralMesh::SetMaterial(const FString& name_, UTexture2D* t_)
+void AMyProceduralMesh::PostInitializeComponents()
 {
-	FName n_ = FName(name_);
-	
-	
-	terrain_mat = UMaterialInstanceDynamic::Create(terrain_mat_interface, this);
+	Super::PostInitializeComponents();
+	UE_LOG(LogTemp, Warning, TEXT("Post"));
+
+}
+
+
+void AMyProceduralMesh::SetMaterial(UTexture* t_)
+{
+	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/TerrainMaterial.TerrainMaterial'"));
+	terrain_mat = UMaterialInstanceDynamic::Create(material_interface, this);
+	FString s = t_->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("Post %s"),*s);
+
+	FName n_ = FName(s);
+
+	terrain_mat->SetTextureParameterValue(FName("terr_text"), t_);
 	procedural_mesh_comp->SetMaterial(0, terrain_mat);
 }
-
 void AMyProceduralMesh::ClearMeshData(){
 	m_verts.Empty();
 	m_tris.Empty();

@@ -67,4 +67,5 @@ protected:
 	FString name_;
 
 	TArray<int32> m_colors;
+	UTexture* t_;
 };

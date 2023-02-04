@@ -13,15 +13,19 @@ class TOOLIMAGEIMPORTER_API AMyProceduralMesh : public AActor
 
 		UPROPERTY(VisibleAnywhere, Category = "MyProceduralMesh")
 		UProceduralMeshComponent* procedural_mesh_comp;
-
+	
 	
 public:
 	// Sets default values for this actor's properties
 	AMyProceduralMesh();
 
-	UPROPERTY(Category = AMyProceduralMesh, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere)
+		UMaterialInterface* material_interface;
+	UPROPERTY(VisibleAnywhere)
 		UMaterialInstanceDynamic* terrain_mat;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		USceneComponent* ScnComponent;
 	UPROPERTY()
 		TArray<FVector> m_verts;
 	UPROPERTY()
@@ -39,11 +43,11 @@ public:
 	void GenerateTris();
 	void ClearMeshData();
 	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
-	void SetMaterial(const FString& name_, UTexture2D *t_);
+	void SetMaterial(UTexture *t_);
 	void ModiVerts(TArray<int32> c_);		//changing the vertss
 
-	UMaterialInterface* terrain_mat_interface;
-
+	virtual void PostInitializeComponents() override;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
