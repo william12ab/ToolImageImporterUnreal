@@ -35,7 +35,9 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 void UUIWidget::OnClickUpdateButton()
 {
 	//update mesh after changing padding
-	p_mesh->UpdateVerts(s_);
+	p_mesh->Destroy();
+	GeneratePlane();
+	p_mesh->ModiVerts(m_colors, m_);
 }
 
 void UUIWidget::GeneratePlane()
@@ -65,12 +67,10 @@ void UUIWidget::DeletePlane()
 
 void UUIWidget::OnEnterText()
 {
-	//FText height_text = height_label->GetText();
-	//h_= FCString::Atof(*height_text.ToString());
-	//FText width_text = width_label->GetText();
-	//w_ = FCString::Atof(*width_text.ToString());
 	FText spacing_text = spacing_label->GetText();
 	s_ = FCString::Atof(*spacing_text.ToString());
+	FText height_text = height_label->GetText();
+	m_ = FCString::Atof(*height_text.ToString());
 }
 
 void UUIWidget::OnFileButton()
