@@ -45,6 +45,7 @@ public:
 	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
 	void SetMaterial(UTexture *t_);
 	void ModiVerts(TArray<int32> c_,const int& m_);		//changing the vertss
+	void UpdateVerts(const float& d_spacing_);
 
 	virtual void PostInitializeComponents() override;
 	

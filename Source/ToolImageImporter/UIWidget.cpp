@@ -20,7 +20,7 @@ void UUIWidget::NativeConstruct()
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnFileButton);
 	create_heightmap_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeightmapButton);
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
-	modi_slider->OnValueChanged.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
+	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -29,6 +29,13 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	// Do your custom tick stuff here
 	OnEnterText();
+	ReadSliders();
+}
+
+void UUIWidget::OnClickUpdateButton()
+{
+	//update mesh after changing padding
+	p_mesh->UpdateVerts(s_);
 }
 
 void UUIWidget::GeneratePlane()
@@ -58,14 +65,12 @@ void UUIWidget::DeletePlane()
 
 void UUIWidget::OnEnterText()
 {
-	FText height_text = height_label->GetText();
-	h_= FCString::Atof(*height_text.ToString());
-	FText width_text = width_label->GetText();
-	w_ = FCString::Atof(*width_text.ToString());
+	//FText height_text = height_label->GetText();
+	//h_= FCString::Atof(*height_text.ToString());
+	//FText width_text = width_label->GetText();
+	//w_ = FCString::Atof(*width_text.ToString());
 	FText spacing_text = spacing_label->GetText();
 	s_ = FCString::Atof(*spacing_text.ToString());
-	FText modi_text = height_modi->GetText();
-	m_ = FCString::Atof(*modi_text.ToString());
 }
 
 void UUIWidget::OnFileButton()
@@ -87,14 +92,23 @@ void UUIWidget::OpenFileWindow()
 	Label->SetText(FText::FromString(name_));
 }
 
-void UUIWidget::CreateHeightmap()
+void UUIWidget::OnClickHeightmapButton()
 {
 	ReadFileInfo(name_);
 }
 
-void UUIWidget::OnClickHeightmapButton()
+void UUIWidget::SliderFunc(const int& val_, UEditableTextBox* text_box)
 {
-	CreateHeightmap();
+	FString string_ = FString::FromInt(int(val_));
+	text_box->SetText(FText::FromString(string_));
+}
+
+void UUIWidget::ReadSliders()
+{
+	SliderFunc(modi_slider->GetValue(),height_modi);
+	SliderFunc(padding_slider->GetValue(),spacing_label);
+	height_label->SetText(FText::FromString(FString::FromInt(h_)));
+	width_label->SetText(FText::FromString(FString::FromInt(w_)));
 }
 
 void UUIWidget::OnAddTexture()

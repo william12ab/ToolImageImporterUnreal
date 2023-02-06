@@ -80,6 +80,17 @@ void AMyProceduralMesh::GenerateTris(){
 	}
 }
 
+void AMyProceduralMesh::UpdateVerts(const float& d_spacing_)
+{
+	for (int32 y = 0; y < height_; y++) {
+		for (int32 x = 0; x < width_; x++) {
+			m_verts[y * height_ + x].X*= d_spacing_;
+			m_verts[y * height_ + x].Y*= d_spacing_;
+		}
+	}
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+}
+
 void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spacing_)
 {
 	height_ = d_height_;

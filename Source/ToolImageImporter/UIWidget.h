@@ -17,11 +17,12 @@ class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
 	GENERATED_BODY()
 protected:
 	
-	void GeneratePlane();
-	void CreateHeightmap();
-	void DeletePlane();
-	void OpenFileWindow();
-	void ReadFileInfo(const FString& name_);
+	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
+	void DeletePlane();			//deletes the plane
+	void OpenFileWindow();		//open file window to read HEIGHTMAP	
+	void ReadFileInfo(const FString& name_);		//reads file for height map also calls generate plane and modi verts.
+	void ReadSliders();			//reads the values from the sliders and sets them to text fields
+	void SliderFunc(const int& val_, UEditableTextBox* text_box);
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -36,6 +37,8 @@ protected:
 		class UButton* create_heightmap_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* add_texture_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* update_button;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
@@ -55,22 +58,24 @@ protected:
 		class USlider* padding_slider;
 
 	UFUNCTION()
-		void OnClick();
+		void OnClick();			//calls generate plane for button
 	UFUNCTION()
-		void OnClickDelete();
+		void OnClickDelete();		//calls delete
 	UFUNCTION()
-		void OnAddTexture();
+		void OnAddTexture();		//calls the file window and sets the texture, calling set material on plane
 	UFUNCTION()
-		void OnEnterText();
+		void OnEnterText();			//allows the user to enter text to boxes
 	UFUNCTION()
-		void OnFileButton();
+		void OnFileButton();		//calls open file window
 	UFUNCTION()
-		void OnClickHeightmapButton();
+		void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
+	UFUNCTION()
+		void OnClickUpdateButton();
 
-	AMyProceduralMesh* p_mesh;
+	AMyProceduralMesh* p_mesh;		//obj
 
-	int32 w_, h_,m_;
-	float s_;
+	int32 w_, h_,m_;		//width, height, modifier
+	float s_;				//spacing
 
 	FString name_;
 
