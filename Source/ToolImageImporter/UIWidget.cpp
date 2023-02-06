@@ -20,6 +20,7 @@ void UUIWidget::NativeConstruct()
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnFileButton);
 	create_heightmap_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeightmapButton);
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
+	modi_slider->OnValueChanged.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
+#include "Components/Slider.h"
 #include "MyProceduralMesh.h"
 #include "UIWidget.generated.h"
 
@@ -47,6 +48,11 @@ protected:
 		class UEditableTextBox* spacing_label;
 	UPROPERTY(meta = (BindWidget))
 		class UEditableTextBox* height_modi;
+
+	UPROPERTY(meta = (BindWidget))
+		class USlider* modi_slider;
+	UPROPERTY(meta = (BindWidget))
+		class USlider* padding_slider;
 
 	UFUNCTION()
 		void OnClick();
