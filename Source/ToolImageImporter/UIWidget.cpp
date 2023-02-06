@@ -38,6 +38,7 @@ void UUIWidget::OnClickUpdateButton()
 	p_mesh->Destroy();
 	GeneratePlane();
 	p_mesh->ModiVerts(m_colors, m_);
+	p_mesh->SetMaterial(t_);
 }
 
 void UUIWidget::GeneratePlane()
@@ -69,7 +70,7 @@ void UUIWidget::OnEnterText()
 {
 	FText spacing_text = spacing_label->GetText();
 	s_ = FCString::Atof(*spacing_text.ToString());
-	FText height_text = height_label->GetText();
+	FText height_text = height_modi->GetText();
 	m_ = FCString::Atof(*height_text.ToString());
 }
 
