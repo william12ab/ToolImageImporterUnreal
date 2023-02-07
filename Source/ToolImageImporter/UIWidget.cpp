@@ -21,6 +21,7 @@ void UUIWidget::NativeConstruct()
 	create_heightmap_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeightmapButton);
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
+	load_file_track_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::LoadTrackPointsIn);
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -127,6 +128,34 @@ void UUIWidget::OnAddTexture()
 	t_ = texture_;
 	t_->UpdateResource();
 	p_mesh->SetMaterial(t_);
+}
+
+void UUIWidget::LoadTrackPointsIn()
+{
+	FString default_path = "";
+	FString dialog_name = "";
+	FString default_file = "";
+	FString file_types = "";
+	TArray<FString> outfile_names;			//stores the file
+	uint32 flags_ = 1;
+	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
+	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
+
+	IPlatformFile& file_manager= FPlatformFileManager::Get().GetPlatformFile();
+
+	if (file_manager.FileExists(*outfile_names[0]))
+	{
+		TArray<uint8> array_;
+		//TArray<FVector2D> track_array;
+		if (FFileHelper::LoadFileToArray(array_, *outfile_names[0]))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Text From File: %d"), array_[0]);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not load text from file"));
+		}
+	}
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)

@@ -39,6 +39,8 @@ protected:
 		class UButton* add_texture_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* update_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* load_file_track_button;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
@@ -71,6 +73,8 @@ protected:
 		void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
 	UFUNCTION()
 		void OnClickUpdateButton();
+	UFUNCTION()
+		void LoadTrackPointsIn();
 
 	AMyProceduralMesh* p_mesh;		//obj
 
