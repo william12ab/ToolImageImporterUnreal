@@ -47,6 +47,8 @@ public:
 	void ModiVerts(TArray<int32> c_,const int& m_);		//changing the vertss
 	void UpdateVerts(const float& d_spacing_);
 
+	void TestFunc();
+
 	virtual void PostInitializeComponents() override;
 	
 protected:

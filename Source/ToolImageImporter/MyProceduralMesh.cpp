@@ -66,6 +66,12 @@ void AMyProceduralMesh::GenerateVerts(){
 	}
 }
 
+void AMyProceduralMesh::TestFunc()
+{
+	//at coord for track, add plane.
+}
+
+
 void AMyProceduralMesh::GenerateTris(){
 	for (int32 y = 0; y < (height_-1); y++){
 		for (int32 x = 0; x < (width_ - 1); x++){
