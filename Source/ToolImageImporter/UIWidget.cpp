@@ -142,19 +142,22 @@ void UUIWidget::LoadTrackPointsIn()
 	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
 
 	IPlatformFile& file_manager= FPlatformFileManager::Get().GetPlatformFile();
-
+	
+	TArray<FVector2D> track_points;
+	TArray<FString> array_;
 	if (file_manager.FileExists(*outfile_names[0]))
 	{
-		TArray<uint8> array_;
-		//TArray<FVector2D> track_array;
-		if (FFileHelper::LoadFileToArray(array_, *outfile_names[0]))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Text From File: %d"), array_[0]);
+		
+		if (FFileHelper::LoadFileToStringArray(array_, *outfile_names[0])){
+			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: size of File: %d"), array_.Num());
 		}
-		else
-		{
+		else{
 			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not load text from file"));
 		}
+	}
+	for (int i = 0; i < array_.Num(); i++)
+	{
+		track_points.Add(FVector2D(FCString::Atof(*array_[i]), FCString::Atof(*array_[i].Right(1))));
 	}
 }
 
