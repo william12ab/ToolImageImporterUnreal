@@ -107,7 +107,7 @@ void AMyProceduralMesh::ModiVerts(TArray<int32> c_, const int& m_)
 {
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
-			m_verts[y * height_ + x].Z = c_[y * height_ + x]/m_;
+			m_verts[y * height_ + x].Z = (c_[y * height_ + x]* spacing_)/m_;
 		}
 	}
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
