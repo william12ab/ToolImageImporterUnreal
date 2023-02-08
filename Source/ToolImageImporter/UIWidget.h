@@ -9,6 +9,7 @@
 #include "Components/EditableTextBox.h"
 #include "Components/Slider.h"
 #include "MyProceduralMesh.h"
+#include "TrackInstance.h"
 #include "UIWidget.generated.h"
 
 UCLASS()
@@ -23,6 +24,9 @@ protected:
 	void ReadFileInfo(const FString& name_);		//reads file for height map also calls generate plane and modi verts.
 	void ReadSliders();			//reads the values from the sliders and sets them to text fields
 	void SliderFunc(const int& val_, UEditableTextBox* text_box);
+	void CreateTrack();
+	FTransform SetTranslationActor(FVector position_vector, FVector scale_vector, FRotator rotation_rotator);
+
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -72,12 +76,12 @@ protected:
 	UFUNCTION()
 		void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
 	UFUNCTION()
-		void OnClickUpdateButton();
+		void OnClickUpdateButton();		//updates the mesh with the new values from the slider. couldnt figure out how to work the sldier function
 	UFUNCTION()
-		void LoadTrackPointsIn();
+		void LoadTrackPointsIn();		//lodas in the text file and parses the data into a vector2d
 
 	AMyProceduralMesh* p_mesh;		//obj
-
+	ATrackInstance* track_;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
 
@@ -85,4 +89,7 @@ protected:
 
 	TArray<int32> m_colors;
 	UTexture* t_;
+
+	TArray<FVector2D> track_points;
+
 };

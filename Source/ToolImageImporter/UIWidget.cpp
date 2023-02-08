@@ -22,6 +22,7 @@ void UUIWidget::NativeConstruct()
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
 	load_file_track_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::LoadTrackPointsIn);
+	 
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -143,7 +144,6 @@ void UUIWidget::LoadTrackPointsIn()
 
 	IPlatformFile& file_manager= FPlatformFileManager::Get().GetPlatformFile();
 	
-	TArray<FVector2D> track_points;
 	TArray<FString> array_;
 	if (file_manager.FileExists(*outfile_names[0]))
 	{
@@ -157,8 +157,26 @@ void UUIWidget::LoadTrackPointsIn()
 	}
 	for (int i = 0; i < array_.Num(); i++)
 	{
-		track_points.Add(FVector2D(FCString::Atof(*array_[i]), FCString::Atof(*array_[i].Right(1))));
+		auto index_ = array_[0].Find(" ");
+		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
 	}
+
+	CreateTrack();
+}
+
+void UUIWidget::CreateTrack()
+{
+	FActorSpawnParameters SpawnInfo;
+	FRotator myRot(0, 0, 0);
+	FVector myLoc = FVector(0, 0, 112);
+	track_= GetWorld()->SpawnActor<ATrackInstance>(myLoc, myRot, SpawnInfo);
+
+	for (int i = 0; i < track_points.Num(); i++)
+	{
+		FTransform scale_ = SetTranslationActor(FVector((int)track_points[i].X, (int)track_points[i].Y, (m_colors[(int)track_points[i].Y * h_ + (int)track_points[i].X] * s_) / m_), FVector(.05f, .050f, .050f), FRotator(0, 0, 0));
+		track_->AddTrackComp(scale_);
+	}
+	
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)
@@ -182,4 +200,17 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 
 	GeneratePlane();
 	p_mesh->ModiVerts(m_colors,m_);
+}
+
+FTransform UUIWidget::SetTranslationActor(FVector position_vector, FVector scale_vector, FRotator rotation_rotator)
+{
+	FTransform local_trans = FTransform(FVector(0,0,0));
+	local_trans.AddToTranslation(position_vector);
+	FTranslationMatrix mat_translation_(local_trans.GetLocation());
+	FVector scale_ = scale_vector;
+	FScaleMatrix mat_scale_(scale_);
+	FRotator rot_ = rotation_rotator;
+	FRotationMatrix mat_rot_(rot_);
+	FMatrix mat_final = mat_scale_ * mat_rot_ * mat_translation_;
+	return FTransform(mat_final);
 }
