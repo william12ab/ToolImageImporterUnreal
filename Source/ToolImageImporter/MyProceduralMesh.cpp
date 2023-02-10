@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+#include "MyProceduralMesh.h"
 #include "IImageWrapperModule.h"
 #include "IImageWrapper.h"
-#include "MyProceduralMesh.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
 
 // Sets default values
@@ -17,6 +17,7 @@ AMyProceduralMesh::AMyProceduralMesh()
 	width_ = 4;
 	height_ = 4;
 	spacing_ = 50.0f;
+	
 }
 
 // Called when the game starts or when spawned

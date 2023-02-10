@@ -13,8 +13,7 @@ class TOOLIMAGEIMPORTER_API AMyProceduralMesh : public AActor
 
 		UPROPERTY(VisibleAnywhere, Category = "MyProceduralMesh")
 		UProceduralMeshComponent* procedural_mesh_comp;
-	
-	
+
 public:
 	// Sets default values for this actor's properties
 	AMyProceduralMesh();

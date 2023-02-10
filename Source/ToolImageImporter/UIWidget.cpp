@@ -22,7 +22,6 @@ void UUIWidget::NativeConstruct()
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
 	load_file_track_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::LoadTrackPointsIn);
-	 
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -160,8 +159,25 @@ void UUIWidget::LoadTrackPointsIn()
 		auto index_ = array_[0].Find(" ");
 		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
 	}
-
 	CreateTrack();
+}
+
+float UUIWidget::AngleCalculator(FVector2D& p1, FVector2D& p2)
+{
+	if (p1==p2){
+		return 0;
+		UE_LOG(LogTemp, Warning, TEXT("case"));
+	}
+	else{
+		auto p3 = FVector2D(p2.X, p1.Y);
+
+		float lx = p3.X - p1.X;
+		float ly = p2.Y - p3.Y;
+
+		float theta = ly / lx;
+		float angle = atan(theta) * 180.0f / 3.14159265;
+		return angle;
+	}	
 }
 
 void UUIWidget::CreateTrack()
@@ -171,12 +187,18 @@ void UUIWidget::CreateTrack()
 	FVector myLoc = FVector(0, 0, 112);
 	track_= GetWorld()->SpawnActor<ATrackInstance>(myLoc, myRot, SpawnInfo);
 
-	for (int i = 0; i < track_points.Num(); i++)
-	{
-		FTransform scale_ = SetTranslationActor(FVector((int)track_points[i].X, (int)track_points[i].Y, (m_colors[(int)track_points[i].Y * h_ + (int)track_points[i].X] * s_) / m_), FVector(.05f, .050f, .050f), FRotator(0, 0, 0));
+
+	float angle_ = 0;
+	for (int i = 0; i < track_points.Num(); i++){
+		if (i==track_points.Num()-1)	{
+
+		}
+		else{
+			angle_ = 0;// AngleCalculator(track_points[i], track_points[i + 1]);
+		}
+		FTransform scale_ = SetTranslationActor(FVector((int)track_points[i].X, (int)track_points[i].Y, (m_colors[(int)track_points[i].Y * h_ + (int)track_points[i].X] * s_) / m_), FVector(1.05f, 1.050f, 1.050f), FRotator(angle_, 0, 0));
 		track_->AddTrackComp(scale_);
-	}
-	
+	} 
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)

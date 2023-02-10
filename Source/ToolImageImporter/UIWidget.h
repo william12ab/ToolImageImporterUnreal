@@ -27,6 +27,7 @@ protected:
 	void CreateTrack();
 	FTransform SetTranslationActor(FVector position_vector, FVector scale_vector, FRotator rotation_rotator);
 
+	float AngleCalculator(FVector2D& p1, FVector2D& p2);
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
