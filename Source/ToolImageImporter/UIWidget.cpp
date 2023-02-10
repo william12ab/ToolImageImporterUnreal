@@ -196,7 +196,7 @@ void UUIWidget::CreateTrack()
 		else{
 			angle_ = 0;// AngleCalculator(track_points[i], track_points[i + 1]);
 		}
-		FTransform scale_ = SetTranslationActor(FVector((int)track_points[i].X, (int)track_points[i].Y, (m_colors[(int)track_points[i].Y * h_ + (int)track_points[i].X] * s_) / m_), FVector(1.05f, 1.050f, 1.050f), FRotator(angle_, 0, 0));
+		FTransform scale_ = SetTranslationActor(FVector((int)track_points[i].X*s_, (int)track_points[i].Y * s_, (m_colors[(int)track_points[i].Y * h_ + (int)track_points[i].X] * s_) / m_), FVector(1.05f, 1.050f, 1.050f), FRotator(angle_, 0, 0));
 		track_->AddTrackComp(scale_);
 	} 
 }
