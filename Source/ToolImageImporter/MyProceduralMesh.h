@@ -46,6 +46,10 @@ public:
 	void ModiVerts(TArray<int32> c_,const int& m_);		//changing the vertss
 	void UpdateVerts(const float& d_spacing_);
 
+	void GenerateTrackVerts(const TArray<FVector2D>& track_points);
+	void AddVert(int x, int y, const float& uv_spacing);
+	void GenerateTrackTris(const TArray<FVector2D>& track_points);
+	void CreateTrack(const TArray<FVector2D>& track_points);
 	void TestFunc(const TArray<FVector2D>& track_points);
 
 	virtual void PostInitializeComponents() override;

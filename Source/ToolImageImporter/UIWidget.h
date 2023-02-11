@@ -83,6 +83,7 @@ protected:
 
 	AMyProceduralMesh* p_mesh;		//obj
 	ATrackInstance* track_;
+	AMyProceduralMesh* track_mesh;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
 
