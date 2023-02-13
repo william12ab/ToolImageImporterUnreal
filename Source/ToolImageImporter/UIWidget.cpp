@@ -11,8 +11,8 @@ void UUIWidget::NativeConstruct()
 	Super::NativeConstruct();
 	w_ = 4;
 	h_ = 4;
-	s_ = 50.0f;
-	m_ = 1;
+	s_ = 20.0f;
+	m_ = 3;
 	Label->SetText(FText::FromString("Plane Generator"));
 
 	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
@@ -46,7 +46,7 @@ void UUIWidget::GeneratePlane()
 {
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(0,0,112);
+	FVector myLoc = FVector(0,0,0);
 	p_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	p_mesh->CreateMesh(h_,w_,s_);
 }
@@ -107,8 +107,8 @@ void UUIWidget::SliderFunc(const int& val_, UEditableTextBox* text_box)
 
 void UUIWidget::ReadSliders()
 {
-	SliderFunc(modi_slider->GetValue(),height_modi);
-	SliderFunc(padding_slider->GetValue(),spacing_label);
+	/*SliderFunc(modi_slider->GetValue(),height_modi);
+	SliderFunc(padding_slider->GetValue(),spacing_label);*/
 	height_label->SetText(FText::FromString(FString::FromInt(h_)));
 	width_label->SetText(FText::FromString(FString::FromInt(w_)));
 }
@@ -182,16 +182,12 @@ float UUIWidget::AngleCalculator(FVector2D& p1, FVector2D& p2)
 
 void UUIWidget::CreateTrack()
 {
-	float x, y;
-	x = track_points[0].X;
-	x = track_points[0].Y;
-	
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(-x, -y, 112);
+	FVector myLoc = FVector(0, 0, 0);
 
 	track_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	track_mesh->CreateTrack(track_points);
+	track_mesh->CreateTrack(track_points,m_colors,m_);
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)

@@ -16,8 +16,7 @@ AMyProceduralMesh::AMyProceduralMesh()
 
 	width_ = 4;
 	height_ = 4;
-	spacing_ = 50.0f;
-	
+	spacing_ = 20.0f;
 }
 
 // Called when the game starts or when spawned
@@ -53,34 +52,33 @@ void AMyProceduralMesh::ClearMeshData(){
 	m_tangents.Empty();
 }
 
-void AMyProceduralMesh::AddVert(int x, int y, const float& uv_spacing)
+void AMyProceduralMesh::AddVert(int x, int y, const float& uv_spacing, const TArray<int32>& c_, const int& m_)
 {
-	m_verts.Add(FVector(x * spacing_, y * spacing_, 0.0f));
+	m_verts.Add(FVector(x * spacing_, y * spacing_, (c_[y * 400 + x] * spacing_) / m_));									//youll need to do something about this
 	m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
 	m_u_vs.Add(FVector2D(x , y ));
 	m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	m_tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
 }
 
-void AMyProceduralMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points)
+void AMyProceduralMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points,const TArray<int32>& c_, const int& m_)
 {
 	float uv_spacing = 1.0f / FMath::Max(track_points.Num(), track_points.Num());
 
 	for (int i = 0; i < track_points.Num(); i++){
 		int x = track_points[i].X;
 		int y = track_points[i].Y;
-		AddVert(x,y,uv_spacing);			//bottom left
-		AddVert(x+1, y, uv_spacing);			//bottom right
-		AddVert(x, y+1, uv_spacing);			//top left
-		AddVert(x+1, y+1, uv_spacing);			//top right
+		
+		AddVert(x,y,uv_spacing,c_,m_);			//bottom left
+		AddVert(x+1, y, uv_spacing, c_, m_);			//bottom right
+		AddVert(x, y+1, uv_spacing, c_, m_);			//top left
+		AddVert(x+1, y+1, uv_spacing, c_, m_);			//top right
 	}
 }
 void AMyProceduralMesh::GenerateTrackTris(const TArray<FVector2D>& track_points)
 {
-	int amount_ = track_points.Num() * 4;
 	int count = 0;
-	for (size_t i = 0; i < track_points.Num()-1; i++)
-	{
+	for (size_t i = 0; i < track_points.Num()-1; i++){
 		m_tris.Add(count);
 		m_tris.Add(count+2);
 		m_tris.Add(count+1);
@@ -92,10 +90,10 @@ void AMyProceduralMesh::GenerateTrackTris(const TArray<FVector2D>& track_points)
 	}
 }
 
-void AMyProceduralMesh::CreateTrack(const TArray<FVector2D>& track_points)
+void AMyProceduralMesh::CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_)
 {
 	ClearMeshData();
-	GenerateTrackVerts(track_points);
+	GenerateTrackVerts(track_points, c_, m_);
 	GenerateTrackTris(track_points);
 	//Function that creates mesh section
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
@@ -126,7 +124,6 @@ void AMyProceduralMesh::GenerateTris(){
 			m_tris.Add(x + (y * width_));					//current vertex
 			m_tris.Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
 			m_tris.Add(x + (y * width_) + 1);				//current vertex + one right
-			
 		}
 	}
 }
@@ -154,7 +151,7 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 }
 
-void AMyProceduralMesh::ModiVerts(TArray<int32> c_, const int& m_)
+void AMyProceduralMesh::ModiVerts(const TArray<int32>& c_, const int& m_)
 {
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {

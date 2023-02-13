@@ -43,13 +43,13 @@ public:
 	void ClearMeshData();
 	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
 	void SetMaterial(UTexture *t_);
-	void ModiVerts(TArray<int32> c_,const int& m_);		//changing the vertss
+	void ModiVerts(const TArray<int32>& c_,const int& m_);		//changing the vertss
 	void UpdateVerts(const float& d_spacing_);
 
-	void GenerateTrackVerts(const TArray<FVector2D>& track_points);
-	void AddVert(int x, int y, const float& uv_spacing);
+	void GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
+	void AddVert(int x, int y, const float& uv_spacing, const TArray<int32>& c_, const int& m_);
 	void GenerateTrackTris(const TArray<FVector2D>& track_points);
-	void CreateTrack(const TArray<FVector2D>& track_points);
+	void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
 
 	virtual void PostInitializeComponents() override;
 	
