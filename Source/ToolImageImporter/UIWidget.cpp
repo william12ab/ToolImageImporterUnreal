@@ -16,7 +16,7 @@ void UUIWidget::NativeConstruct()
 	Label->SetText(FText::FromString("Plane Generator"));
 
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
-	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnFileButton);
+	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
 }
@@ -32,9 +32,10 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 void UUIWidget::OnClickLoadNewTrack()
 {
-	OnFileButton();
-	OnClickHeightmapButton();
-	LoadTrackPointsIn();
+	if (OpenFileWindow()){
+		OnClickHeightmapButton();
+		LoadTrackPointsIn();
+	}
 }
 
 void UUIWidget::OnClickUpdateButton()
@@ -55,8 +56,6 @@ void UUIWidget::GeneratePlane()
 	p_mesh->CreateMesh(h_,w_,s_);
 }
 
-
-
 void UUIWidget::OnClickDelete()
 {
 	DeletePlane();
@@ -65,7 +64,10 @@ void UUIWidget::OnClickDelete()
 void UUIWidget::DeletePlane()
 {
 	p_mesh->Destroy();
+	track_mesh->Destroy();
 	name_.Empty();
+	m_colors.Empty();
+	track_points.Empty();
 }
 
 void UUIWidget::OnEnterText()
@@ -76,23 +78,20 @@ void UUIWidget::OnEnterText()
 	m_ = FCString::Atof(*height_text.ToString());
 }
 
-void UUIWidget::OnFileButton()
-{
-	OpenFileWindow();
-}
-
-void UUIWidget::OpenFileWindow()
+bool UUIWidget::OpenFileWindow()
 {
 	FString default_path = "";
-	FString dialog_name = "";
+	FString dialog_name = "Open Heightmap";
 	FString default_file = "";
 	FString file_types = "";
 	TArray<FString> outfile_names;			//stores the file
 	uint32 flags_ = 1;
 	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
-	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
-	name_.Append(outfile_names[0]);
-	Label->SetText(FText::FromString(name_));
+	if (fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names)){
+		name_.Append(outfile_names[0]);
+		return true;
+	}
+	else { return false; }
 }
 
 void UUIWidget::OnClickHeightmapButton()
@@ -117,7 +116,7 @@ void UUIWidget::ReadSliders()
 void UUIWidget::OnAddTexture()
 {
 	FString default_path = "";
-	FString dialog_name = "";
+	FString dialog_name = "Open Texture";
 	FString default_file = "";
 	FString file_types = "";
 	TArray<FString> outfile_names;			//stores the file
@@ -134,7 +133,7 @@ void UUIWidget::OnAddTexture()
 void UUIWidget::LoadTrackPointsIn()
 {
 	FString default_path = "";
-	FString dialog_name = "";
+	FString dialog_name = "Open New Track";
 	FString default_file = "";
 	FString file_types = "";
 	TArray<FString> outfile_names;			//stores the file
@@ -148,10 +147,9 @@ void UUIWidget::LoadTrackPointsIn()
 	if (file_manager.FileExists(*outfile_names[0])){
 		
 		if (FFileHelper::LoadFileToStringArray(array_, *outfile_names[0])){
-			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: size of File: %d"), array_.Num());
 		}
 		else{
-			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not load text from file"));
+			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not track from file"));
 		}
 	}
 	for (int i = 0; i < array_.Num(); i++){
@@ -159,24 +157,6 @@ void UUIWidget::LoadTrackPointsIn()
 		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
 	}
 	CreateTrack();
-}
-
-float UUIWidget::AngleCalculator(FVector2D& p1, FVector2D& p2)
-{
-	if (p1==p2){
-		return 0;
-		UE_LOG(LogTemp, Warning, TEXT("case"));
-	}
-	else{
-		auto p3 = FVector2D(p2.X, p1.Y);
-
-		float lx = p3.X - p1.X;
-		float ly = p2.Y - p3.Y;
-
-		float theta = ly / lx;
-		float angle = atan(theta) * 180.0f / 3.14159265;
-		return angle;
-	}	
 }
 
 void UUIWidget::CreateTrack()
@@ -210,17 +190,4 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 
 	GeneratePlane();
 	p_mesh->ModiVerts(m_colors,m_);
-}
-
-FTransform UUIWidget::SetTranslationActor(FVector position_vector, FVector scale_vector, FRotator rotation_rotator)
-{
-	FTransform local_trans = FTransform(FVector(0,0,0));
-	local_trans.AddToTranslation(position_vector);
-	FTranslationMatrix mat_translation_(local_trans.GetLocation());
-	FVector scale_ = scale_vector;
-	FScaleMatrix mat_scale_(scale_);
-	FRotator rot_ = rotation_rotator;
-	FRotationMatrix mat_rot_(rot_);
-	FMatrix mat_final = mat_scale_ * mat_rot_ * mat_translation_;
-	return FTransform(mat_final);
 }

@@ -26,9 +26,7 @@ void AMyProceduralMesh::BeginPlay()
 }
 
 // Called every frame
-void AMyProceduralMesh::Tick(float DeltaTime){
-	Super::Tick(DeltaTime);
-}
+
 
 void AMyProceduralMesh::PostInitializeComponents()
 {
@@ -112,7 +110,6 @@ void AMyProceduralMesh::GenerateVerts(){
 		}
 	}
 }
-
 
 void AMyProceduralMesh::GenerateTris(){
 	for (int32 y = 0; y < (height_-1); y++){

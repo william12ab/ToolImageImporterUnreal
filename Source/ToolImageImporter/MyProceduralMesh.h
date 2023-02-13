@@ -62,6 +62,4 @@ protected:
 	float spacing_;
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 };

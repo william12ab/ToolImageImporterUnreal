@@ -19,17 +19,13 @@ class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
 protected:
 	void LoadTrackPointsIn();		//lodas in the text file and parses the data into a vector2d
 	void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
-	void OnFileButton();		//calls open file window
 	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
 	void DeletePlane();			//deletes the plane
-	void OpenFileWindow();		//open file window to read HEIGHTMAP	
+	bool OpenFileWindow();		//open file window to read HEIGHTMAP	
 	void ReadFileInfo(const FString& name_);		//reads file for height map also calls generate plane and modi verts.
 	void ReadSliders();			//reads the values from the sliders and sets them to text fields
 	void SliderFunc(const int& val_, UEditableTextBox* text_box);
 	void CreateTrack();
-	FTransform SetTranslationActor(FVector position_vector, FVector scale_vector, FRotator rotation_rotator);
-
-	float AngleCalculator(FVector2D& p1, FVector2D& p2);
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -74,7 +70,6 @@ protected:
 		
 
 	AMyProceduralMesh* p_mesh;		//obj
-	ATrackInstance* track_;
 	AMyProceduralMesh* track_mesh;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
