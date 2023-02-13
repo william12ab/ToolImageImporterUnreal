@@ -57,8 +57,8 @@ void AMyProceduralMesh::AddVert(int x, int y, const float& uv_spacing)
 {
 	m_verts.Add(FVector(x * spacing_, y * spacing_, 0.0f));
 	m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
-	m_u_vs.Add(FVector2D(x * uv_spacing, y * uv_spacing));
-	m_vert_colors.Add(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f));
+	m_u_vs.Add(FVector2D(x , y ));
+	m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	m_tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
 }
 
@@ -66,8 +66,7 @@ void AMyProceduralMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points
 {
 	float uv_spacing = 1.0f / FMath::Max(track_points.Num(), track_points.Num());
 
-	for (int i = 0; i < track_points.Num(); i++)
-	{
+	for (int i = 0; i < track_points.Num(); i++){
 		int x = track_points[i].X;
 		int y = track_points[i].Y;
 		AddVert(x,y,uv_spacing);			//bottom left
@@ -83,12 +82,12 @@ void AMyProceduralMesh::GenerateTrackTris(const TArray<FVector2D>& track_points)
 	for (size_t i = 0; i < track_points.Num()-1; i++)
 	{
 		m_tris.Add(count);
-		m_tris.Add(count+1);
 		m_tris.Add(count+2);
+		m_tris.Add(count+1);
 
 		m_tris.Add(count+1);
-		m_tris.Add(count+3);
 		m_tris.Add(count+2);
+		m_tris.Add(count+3);
 		count += 4;
 	}
 }
@@ -116,23 +115,6 @@ void AMyProceduralMesh::GenerateVerts(){
 	}
 }
 
-void AMyProceduralMesh::TestFunc(const TArray<FVector2D>& track_points)
-{
-	float uv_spacing = 1.0f / FMath::Max(1, 1);
-	width_ = track_points.Num();
-	height_ = track_points.Num();
-	//at coord for track, add plane.
-	for (int i = 0; i < track_points.Num(); i++)
-	{
-		m_verts.Add(FVector((int)track_points[i].X * spacing_, (int)track_points[i].Y * spacing_, 0.0f));
-		m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
-		m_u_vs.Add(FVector2D((int)track_points[i].X * uv_spacing, (int)track_points[i].Y * uv_spacing));
-		m_vert_colors.Add(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f));
-		m_tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
-	}
-	GenerateTris();
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
-}
 
 void AMyProceduralMesh::GenerateTris(){
 	for (int32 y = 0; y < (height_-1); y++){

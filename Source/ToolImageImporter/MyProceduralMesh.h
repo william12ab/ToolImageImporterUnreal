@@ -50,7 +50,6 @@ public:
 	void AddVert(int x, int y, const float& uv_spacing);
 	void GenerateTrackTris(const TArray<FVector2D>& track_points);
 	void CreateTrack(const TArray<FVector2D>& track_points);
-	void TestFunc(const TArray<FVector2D>& track_points);
 
 	virtual void PostInitializeComponents() override;
 	

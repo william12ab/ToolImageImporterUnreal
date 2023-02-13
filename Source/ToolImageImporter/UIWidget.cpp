@@ -182,25 +182,16 @@ float UUIWidget::AngleCalculator(FVector2D& p1, FVector2D& p2)
 
 void UUIWidget::CreateTrack()
 {
+	float x, y;
+	x = track_points[0].X;
+	x = track_points[0].Y;
+	
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(0, 0, 112);
-	//track_= GetWorld()->SpawnActor<ATrackInstance>(myLoc, myRot, SpawnInfo);
+	FVector myLoc = FVector(-x, -y, 112);
 
 	track_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	track_mesh->CreateTrack(track_points);
-
-	//float angle_ = 0;
-	//for (int i = 0; i < track_points.Num(); i++){
-	//	if (i==track_points.Num()-1)	{
-
-	//	}
-	//	else{
-	//		angle_ = 0;// AngleCalculator(track_points[i], track_points[i + 1]);
-	//	}
-	//	FTransform scale_ = SetTranslationActor(FVector((int)track_points[i].X*s_, (int)track_points[i].Y * s_, (m_colors[(int)track_points[i].Y * h_ + (int)track_points[i].X] * s_) / m_), FVector(1.05f, 1.050f, 1.050f), FRotator(angle_, 0, 0));
-	//	track_->AddTrackComp(scale_);
-	//} 
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)
