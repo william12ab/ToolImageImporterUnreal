@@ -17,7 +17,9 @@ class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
 {
 	GENERATED_BODY()
 protected:
-	
+	void LoadTrackPointsIn();		//lodas in the text file and parses the data into a vector2d
+	void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
+	void OnFileButton();		//calls open file window
 	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
 	void DeletePlane();			//deletes the plane
 	void OpenFileWindow();		//open file window to read HEIGHTMAP	
@@ -33,19 +35,13 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	UPROPERTY(meta = (BindWidget))
-		class UButton* generate_button;
-	UPROPERTY(meta = (BindWidget))
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* file_button;
 	UPROPERTY(meta = (BindWidget))
-		class UButton* create_heightmap_button;
-	UPROPERTY(meta = (BindWidget))
 		class UButton* add_texture_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* update_button;
-	UPROPERTY(meta = (BindWidget))
-		class UButton* load_file_track_button;
 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
@@ -65,7 +61,7 @@ protected:
 		class USlider* padding_slider;
 
 	UFUNCTION()
-		void OnClick();			//calls generate plane for button
+		void OnClickLoadNewTrack();		//on click load button
 	UFUNCTION()
 		void OnClickDelete();		//calls delete
 	UFUNCTION()
@@ -73,13 +69,9 @@ protected:
 	UFUNCTION()
 		void OnEnterText();			//allows the user to enter text to boxes
 	UFUNCTION()
-		void OnFileButton();		//calls open file window
-	UFUNCTION()
-		void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
-	UFUNCTION()
 		void OnClickUpdateButton();		//updates the mesh with the new values from the slider. couldnt figure out how to work the sldier function
-	UFUNCTION()
-		void LoadTrackPointsIn();		//lodas in the text file and parses the data into a vector2d
+
+		
 
 	AMyProceduralMesh* p_mesh;		//obj
 	ATrackInstance* track_;

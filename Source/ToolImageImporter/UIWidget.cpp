@@ -15,13 +15,10 @@ void UUIWidget::NativeConstruct()
 	m_ = 3;
 	Label->SetText(FText::FromString("Plane Generator"));
 
-	generate_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClick);
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnFileButton);
-	create_heightmap_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickHeightmapButton);
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
-	load_file_track_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::LoadTrackPointsIn);
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -31,6 +28,13 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	// Do your custom tick stuff here
 	OnEnterText();
 	ReadSliders();
+}
+
+void UUIWidget::OnClickLoadNewTrack()
+{
+	OnFileButton();
+	OnClickHeightmapButton();
+	LoadTrackPointsIn();
 }
 
 void UUIWidget::OnClickUpdateButton()
@@ -51,10 +55,7 @@ void UUIWidget::GeneratePlane()
 	p_mesh->CreateMesh(h_,w_,s_);
 }
 
-void UUIWidget::OnClick()
-{
-	GeneratePlane();
-}
+
 
 void UUIWidget::OnClickDelete()
 {
@@ -107,8 +108,8 @@ void UUIWidget::SliderFunc(const int& val_, UEditableTextBox* text_box)
 
 void UUIWidget::ReadSliders()
 {
-	/*SliderFunc(modi_slider->GetValue(),height_modi);
-	SliderFunc(padding_slider->GetValue(),spacing_label);*/
+	SliderFunc(modi_slider->GetValue(),height_modi);
+	SliderFunc(padding_slider->GetValue(),spacing_label);
 	height_label->SetText(FText::FromString(FString::FromInt(h_)));
 	width_label->SetText(FText::FromString(FString::FromInt(w_)));
 }
@@ -144,8 +145,7 @@ void UUIWidget::LoadTrackPointsIn()
 	IPlatformFile& file_manager= FPlatformFileManager::Get().GetPlatformFile();
 	
 	TArray<FString> array_;
-	if (file_manager.FileExists(*outfile_names[0]))
-	{
+	if (file_manager.FileExists(*outfile_names[0])){
 		
 		if (FFileHelper::LoadFileToStringArray(array_, *outfile_names[0])){
 			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: size of File: %d"), array_.Num());
@@ -154,8 +154,7 @@ void UUIWidget::LoadTrackPointsIn()
 			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not load text from file"));
 		}
 	}
-	for (int i = 0; i < array_.Num(); i++)
-	{
+	for (int i = 0; i < array_.Num(); i++){
 		auto index_ = array_[0].Find(" ");
 		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
 	}
