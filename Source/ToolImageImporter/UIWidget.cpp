@@ -65,8 +65,13 @@ void UUIWidget::OnClickDelete()
 
 void UUIWidget::DeletePlane()
 {
-	p_mesh->Destroy();
-	track_mesh->Destroy();
+	if (p_mesh)
+	{
+		p_mesh->Destroy();
+		track_mesh->Destroy();
+	}
+	
+	
 	name_.Empty();
 	m_colors.Empty();
 	track_points.Empty();

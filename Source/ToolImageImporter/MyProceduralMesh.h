@@ -51,7 +51,7 @@ public:
 	void AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_);
 	void GenerateTrackTris();
 	void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
-
+	void CoordAdjuster(float& x, float& y, const int& index, float part_added);
 	virtual void PostInitializeComponents() override;
 	
 protected:
