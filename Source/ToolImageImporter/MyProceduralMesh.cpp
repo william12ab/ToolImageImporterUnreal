@@ -70,25 +70,24 @@ void AMyProceduralMesh::CoordAdjuster(float& x, float& y, const int& index, floa
 	}
 }
 
-void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, const int& m_)
+void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
 	float part_added = 0.125;
 	for (int i = 0; i < 4; i++){
-		AddVert(x, y, c_, m_);			//bottom left
-		AddVert(x + part_added, y, c_, m_);			//bottom right
-		AddVert(x, y + part_added, c_, m_);			//top left
-		AddVert(x + part_added, y + part_added, c_, m_);			//top right
+		AddVert(x, y, c_, m_, og_x, og_y);			//bottom left
+		AddVert(x + part_added, y, c_, m_, og_x, og_y);			//bottom right
+		AddVert(x, y + part_added, c_, m_, og_x, og_y);			//top left
+		AddVert(x + part_added, y + part_added, c_, m_, og_x, og_y);			//top right
 		GenerateTrackTris();
 		CoordAdjuster(x, y,i, part_added);
 	}
 }
 
-void AMyProceduralMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m_)
+void AMyProceduralMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
-	//(c_[y * 400 + x] * spacing_) / m_
-	m_verts.Add(FVector(x*spacing_ , y * spacing_, 0));									//youll need to do something about this
+	m_verts.Add(FVector(x*spacing_ , y * spacing_, (c_[og_y * 400 + og_x] * spacing_) / m_));
 	m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
-	m_u_vs.Add(FVector2D(x , y ));
+	m_u_vs.Add(FVector2D(x , y));
 	m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	m_tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
 }
@@ -100,9 +99,11 @@ void AMyProceduralMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points
 	for (int i = 0; i < track_points.Num(); i++){
 		float x = track_points[i].X;
 		float y = track_points[i].Y;
+		int og_x = track_points[i].X;
+		int og_y = track_points[i].Y;
 		for (int j = 0; j < 4; j++){
 			for (int index_ = 0; index_ < 4; index_++) {
-				AddMultiVerts(x, y, c_, m_);
+				AddMultiVerts(x, y, c_, m_,og_x,og_y);
 				CoordAdjuster(x, y, index_, inner_part_added);
 			}
 			CoordAdjuster(x, y, j, outer_part_added);

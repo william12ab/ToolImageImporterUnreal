@@ -154,6 +154,9 @@ void UUIWidget::LoadTrackPointsIn()
 	if (file_manager.FileExists(*outfile_names[0])){
 		
 		if (FFileHelper::LoadFileToStringArray(array_, *outfile_names[0])){
+			float test = 0.6;
+			int r =round(test);
+			UE_LOG(LogTemp, Warning, TEXT("int: %d"),r);
 		}
 		else{
 			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not track from file"));

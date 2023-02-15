@@ -47,8 +47,8 @@ public:
 	void UpdateVerts(const float& d_spacing_);
 
 	void GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
-	void AddVert(float x, float y, const TArray<int32>& c_, const int& m_);
-	void AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_);
+	void AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
+	void AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
 	void GenerateTrackTris();
 	void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
 	void CoordAdjuster(float& x, float& y, const int& index, float part_added);
