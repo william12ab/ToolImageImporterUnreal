@@ -14,6 +14,7 @@ ATrackInstance::ATrackInstance()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	
 	instanced_mesh_comp->SetStaticMesh(MeshAsset.Object);
+	
 }
 
 

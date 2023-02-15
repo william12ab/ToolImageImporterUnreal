@@ -47,8 +47,9 @@ public:
 	void UpdateVerts(const float& d_spacing_);
 
 	void GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
-	void AddVert(int x, int y, const float& uv_spacing, const TArray<int32>& c_, const int& m_);
-	void GenerateTrackTris(const TArray<FVector2D>& track_points);
+	void AddVert(float x, float y, const TArray<int32>& c_, const int& m_);
+	void AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_);
+	void GenerateTrackTris();
 	void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
 
 	virtual void PostInitializeComponents() override;
@@ -60,6 +61,8 @@ protected:
 	int32 height_;
 	int32 width_;
 	float spacing_;
+	int count;
+
 public:	
 	// Called every frame
 };
