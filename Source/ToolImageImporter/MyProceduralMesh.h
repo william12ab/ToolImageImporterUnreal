@@ -54,9 +54,15 @@ public:
 	void CoordAdjuster(float& x, float& y, const int& index, float part_added);
 	virtual void PostInitializeComponents() override;
 	
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	float Lerp(const int& p1, const int& p2, const float& t);
+	float FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3);
+
 
 	int32 height_;
 	int32 width_;

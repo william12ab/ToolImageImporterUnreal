@@ -28,13 +28,49 @@ void AMyProceduralMesh::BeginPlay()
 }
 
 // Called every frame
-
-
 void AMyProceduralMesh::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 }
 
+float AMyProceduralMesh::Lerp(const int& p1, const int& p2, const float& t)
+{
+	//auto p3 = p1 + ((p2 - p1) * t);
+	//return (1 - t) * v0 + t * v1;
+	auto c = (1 - t) * p1 + t * p2;
+	return c;
+}
+
+float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3)
+{
+	auto a = p1 - p3;
+	auto b = p1 - p2;
+
+	float t = 0.0f;
+	if (a.X == 0 || b.X == 0){
+		float c2 = ((float)a.Y / (float)b.Y);
+		t = c2;
+		if (t < 0.0f){
+			t *= -1;
+		}
+		if (a.Y == 0 && b.Y == 0){
+			t = 0;
+		}
+	}
+	else if (a.Y == 0 || b.Y == 0){
+		float c1 = ((float)a.X / (float)b.X);
+		t = c1;
+		if (a.X == 0 && b.X == 0){
+			t = 0;
+		}
+	}
+	else{
+		float c1 = ((float)a.X / (float)b.X);
+		float c2 = ((float)a.Y / (float)b.Y);
+		t = (c1 + c2) / 2.0f;
+	}
+	return t;
+}
 
 void AMyProceduralMesh::SetMaterial(UTexture* t_)
 {
@@ -85,7 +121,8 @@ void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, 
 
 void AMyProceduralMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
-	m_verts.Add(FVector(x*spacing_ , y * spacing_, (c_[og_y * 400 + og_x] * spacing_) / m_));
+	float height = c_[og_y * 400 + og_x];
+	m_verts.Add(FVector(x*spacing_ , y * spacing_, (height * spacing_) / m_));
 	m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
 	m_u_vs.Add(FVector2D(x , y));
 	m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
