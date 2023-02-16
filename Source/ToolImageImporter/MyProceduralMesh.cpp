@@ -111,30 +111,30 @@ float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const 
 	float height;
 	if (x==(float)og_x){				//VERTICAL LINE
 		//p1=og_x,og_y. p2=og_x,og_y+1
-		float t = ((float)og_y + 1) - y;
+		float t = y - (float)(og_y);
 		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y+1) * 400 + og_x],t);
 	}
 	else if (x == (float)(og_x+1)) {			//VERTICAL LINE
 		//p1=og_x+1,og_y. p2=og_x+1,og_y+1
-		float t = ((float)og_y + 1) - y;
+		float t = y - (float)(og_y);
 		height = Lerp(c_[og_y * 400 + (og_x+1)], c_[(og_y + 1) * 400 + (og_x+1)], t);
 	}
 	else if (y == (float)og_y) {				//HORIZONTAL LINE
 		//p1=og_x,og_y. p2=og_x+1,og_y
-		float t = ((float)og_x + 1) - x;
+		float t = x - (float)(og_x);
 		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y) * 400 + (og_x+1)], t);
 	}
 	else if (y == (float)(og_y + 1)) {		//HORIZONTAL LINE
 		//p1=og_x,og_y+1. p2=og_x+1,og_y+1
-		float t = ((float)og_x + 1) - x;
+		float t = x- (float)(og_x);
 		height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], t);
 	}
 	else{
-		float p1_t = ((float)og_y)-y;//t on the coord p1. see diagram
+		float p1_t = y - (float)(og_y);//t on the coord p1. see diagram
 		float p1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x)], p1_t);
-		float p2_t = ((float)og_y + 1) - y;//t on the coord p2.
+		float p2_t = y - (float)(og_y);//t on the coord p2.
 		float p2_height = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], p2_t);
-		float t = ((float)og_x + 1) - x;
+		float t = x - (float)(og_x);
 		height = Lerp(p1_height, p2_height, t);
 	}
 	//other points
