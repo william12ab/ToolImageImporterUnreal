@@ -143,6 +143,10 @@ float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const 
 		float xp2_height = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], xp2_t);
 		float xt = x - (float)(og_x);
 		float xheight = Lerp(xp1_height, xp2_height, xt);
+		if (height!=xheight)
+		{
+			height = ((height + xheight) / 2);
+		}
 	}
 	//other points
 	//p1 = (og_x, p3.y)
