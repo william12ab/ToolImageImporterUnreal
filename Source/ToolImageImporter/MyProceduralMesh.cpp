@@ -136,6 +136,13 @@ float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const 
 		float p2_height = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], p2_t);
 		float t = x - (float)(og_x);
 		height = Lerp(p1_height, p2_height, t);
+
+		float xp1_t = x - (float)(og_x);//t on the coord p1. see diagram
+		float xp1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y ) * 400 + (og_x+1)], xp1_t);
+		float xp2_t = x - (float)(og_x);//t on the coord p2.
+		float xp2_height = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], xp2_t);
+		float xt = x - (float)(og_x);
+		float xheight = Lerp(xp1_height, xp2_height, xt);
 	}
 	//other points
 	//p1 = (og_x, p3.y)
