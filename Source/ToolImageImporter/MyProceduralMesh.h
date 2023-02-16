@@ -52,10 +52,10 @@ public:
 	void GenerateTrackTris();
 	void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
 	void CoordAdjuster(float& x, float& y, const int& index, float part_added);
-	virtual void PostInitializeComponents() override;
 	
+	float FindHeight(float x, float y, int og_x, int og_y, const TArray<int32>& c_);
 
-
+	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

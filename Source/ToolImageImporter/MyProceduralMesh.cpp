@@ -106,6 +106,44 @@ void AMyProceduralMesh::CoordAdjuster(float& x, float& y, const int& index, floa
 	}
 }
 
+float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const TArray<int32>& c_)
+{	
+	float height;
+	if (x==(float)og_x){				//VERTICAL LINE
+		//p1=og_x,og_y. p2=og_x,og_y+1
+		float t = ((float)og_y + 1) - y;
+		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y+1) * 400 + og_x],t);
+	}
+	else if (x == (float)(og_x+1)) {			//VERTICAL LINE
+		//p1=og_x+1,og_y. p2=og_x+1,og_y+1
+		float t = ((float)og_y + 1) - y;
+		height = Lerp(c_[og_y * 400 + (og_x+1)], c_[(og_y + 1) * 400 + (og_x+1)], t);
+	}
+	else if (y == (float)og_y) {				//HORIZONTAL LINE
+		//p1=og_x,og_y. p2=og_x+1,og_y
+		float t = ((float)og_x + 1) - x;
+		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y) * 400 + (og_x+1)], t);
+	}
+	else if (y == (float)(og_y + 1)) {		//HORIZONTAL LINE
+		//p1=og_x,og_y+1. p2=og_x+1,og_y+1
+		float t = ((float)og_x + 1) - x;
+		height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], t);
+	}
+	else{
+		float p1_t = ((float)og_y)-y;//t on the coord p1. see diagram
+		float p1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x)], p1_t);
+		float p2_t = ((float)og_y + 1) - y;//t on the coord p2.
+		float p2_height = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], p2_t);
+		float t = ((float)og_x + 1) - x;
+		height = Lerp(p1_height, p2_height, t);
+	}
+	//other points
+	//p1 = (og_x, p3.y)
+	//p2 = (og_x+1, p3.y)
+	//p3= (x, y)
+	return height;
+}
+
 void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
 	float part_added = 0.125;
@@ -121,8 +159,10 @@ void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, 
 
 void AMyProceduralMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
+	float cal_height = FindHeight(x, y, og_x, og_y, c_);
 	float height = c_[og_y * 400 + og_x];
-	m_verts.Add(FVector(x*spacing_ , y * spacing_, (height * spacing_) / m_));
+
+	m_verts.Add(FVector(x*spacing_ , y * spacing_, (cal_height * spacing_) / m_));
 	m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
 	m_u_vs.Add(FVector2D(x , y));
 	m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
