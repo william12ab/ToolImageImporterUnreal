@@ -113,57 +113,21 @@ float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const 
 		//p1=og_x,og_y. p2=og_x,og_y+1
 		float t = y - (float)(og_y);
 		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y+1) * 400 + og_x],t);
-
-		float ttwo = y - (float)(og_y);
-		float theight = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], ttwo);
-
-		float tthre = 0;
-		float tthreeheight = Lerp(height, theight, tthre);
-		if (height!=tthreeheight){
-			height = ((height + tthreeheight) / 2);
-		}
 	}
 	else if (x == (float)(og_x+1)) {			//VERTICAL LINE on right side
 		//p1=og_x+1,og_y. p2=og_x+1,og_y+1
 		float t = y - (float)(og_y);
 		height = Lerp(c_[og_y * 400 + (og_x+1)], c_[(og_y + 1) * 400 + (og_x+1)], t);
-
-		float ttwo = y - (float)(og_y);
-		float theight = Lerp(c_[og_y * 400 + (og_x )], c_[(og_y + 1) * 400 + (og_x)], ttwo);
-
-		float tthre = 1;
-		float tthreeheight = Lerp(height, theight, tthre);
-		if (height != tthreeheight) {
-			height = ((height + tthreeheight) / 2);
-		}
 	}
 	else if (y == (float)og_y) {				//HORIZONTAL LINE - bottom side
 		//p1=og_x,og_y. p2=og_x+1,og_y
 		float t = x - (float)(og_x);
 		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y) * 400 + (og_x+1)], t);
-
-		float ttwo = x - (float)(og_x);
-		float theight = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x+1)], ttwo);
-
-		float tthre = 0;
-		float tthreeheight = Lerp(height, theight, tthre);
-		if (height != tthreeheight) {
-			height = ((height + tthreeheight) / 2);
-		}
 	}
 	else if (y == (float)(og_y + 1)) {		//HORIZONTAL LINE - top side
 		//p1=og_x,og_y+1. p2=og_x+1,og_y+1
 		float t = x- (float)(og_x);
 		height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], t);
-
-		float ttwo = x - (float)(og_x);
-		float theight = Lerp(c_[(og_y ) * 400 + (og_x)], c_[(og_y) * 400 + (og_x + 1)], ttwo);
-
-		float tthre = 1;
-		float tthreeheight = Lerp(height, theight, tthre);
-		if (height != tthreeheight) {
-			height = ((height + tthreeheight) / 2);
-		}
 	}
 	else{
 		float p1_t = y - (float)(og_y);//t on the coord p1. see diagram
