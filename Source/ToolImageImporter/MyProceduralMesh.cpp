@@ -173,7 +173,6 @@ void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, 
 void AMyProceduralMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
 	float cal_height = FindHeight(x, y, og_x, og_y, c_);
-	float height = c_[og_y * 400 + og_x];
 
 	m_verts.Add(FVector(x*spacing_ , y * spacing_, (cal_height * spacing_) / m_));
 	m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
