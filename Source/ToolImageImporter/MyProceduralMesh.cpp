@@ -37,8 +37,8 @@ float AMyProceduralMesh::Lerp(const int& p1, const int& p2, const float& t)
 {
 	//auto p3 = p1 + ((p2 - p1) * t);
 	//return (1 - t) * v0 + t * v1;
-	//auto p = (1 - t) * p1 + t * p2;
-	auto c = p1 + t * (p2 - p1);
+	auto c = (1 - t) * p1 + t * p2;
+	auto p = p1 + t * (p2 - p1);
 	return c;
 }
 
@@ -110,27 +110,27 @@ void AMyProceduralMesh::CoordAdjuster(float& x, float& y, const int& index, floa
 float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const TArray<int32>& c_)
 {	
 	float height;
-	if (x==(float)og_x){				//VERTICAL LINE on left side
-		//p1=og_x,og_y. p2=og_x,og_y+1
-		float t = y - (float)(og_y);
-		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y+1) * 400 + og_x],t);
-	}
-	else if (x == (float)(og_x+1)) {			//VERTICAL LINE on right side
-		//p1=og_x+1,og_y. p2=og_x+1,og_y+1
-		float t = y - (float)(og_y);
-		height = Lerp(c_[og_y * 400 + (og_x+1)], c_[(og_y + 1) * 400 + (og_x+1)], t);
-	}
-	else if (y == (float)og_y) {				//HORIZONTAL LINE - bottom side
-		//p1=og_x,og_y. p2=og_x+1,og_y
-		float t = x - (float)(og_x);
-		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y) * 400 + (og_x+1)], t);
-	}
-	else if (y == (float)(og_y + 1)) {		//HORIZONTAL LINE - top side
-		//p1=og_x,og_y+1. p2=og_x+1,og_y+1
-		float t = x- (float)(og_x);
-		height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], t);
-	}
-	else{
+	//if (x==(float)og_x){				//VERTICAL LINE on left side
+	//	//p1=og_x,og_y. p2=og_x,og_y+1
+	//	float t = y - (float)(og_y);
+	//	height = Lerp(c_[og_y * 400 + og_x], c_[(og_y+1) * 400 + og_x],t);
+	//}
+	//else if (x == (float)(og_x+1)) {			//VERTICAL LINE on right side
+	//	//p1=og_x+1,og_y. p2=og_x+1,og_y+1
+	//	float t = y - (float)(og_y);
+	//	height = Lerp(c_[og_y * 400 + (og_x+1)], c_[(og_y + 1) * 400 + (og_x+1)], t);
+	//}
+	//else if (y == (float)og_y) {				//HORIZONTAL LINE - bottom side
+	//	//p1=og_x,og_y. p2=og_x+1,og_y
+	//	float t = x - (float)(og_x);
+	//	height = Lerp(c_[og_y * 400 + og_x], c_[(og_y) * 400 + (og_x+1)], t);
+	//}
+	//else if (y == (float)(og_y + 1)) {		//HORIZONTAL LINE - top side
+	//	//p1=og_x,og_y+1. p2=og_x+1,og_y+1
+	//	float t = x- (float)(og_x);
+	//	height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], t);
+	//}
+	//else{
 		float p1_t = y - (float)(og_y);//t on the coord p1. see diagram
 		float p1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x)], p1_t);
 		float p2_t = y - (float)(og_y);//t on the coord p2.
@@ -150,17 +150,13 @@ float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const 
 		//	UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not track from file"));
 		//	height = ((height + xheight) / 2);
 		//}
-	}
-	//other points
-	//p1 = (og_x, p3.y)
-	//p2 = (og_x+1, p3.y)
-	//p3= (x, y)
-	return height;
+	//}
+	return xheight;
 }
 
 void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
-	float part_added = 0.125;
+	float part_added = 0.0625;
 	for (int i = 0; i < 4; i++){
 		AddVert(x, y, c_, m_, og_x, og_y);			//bottom left
 		AddVert(x + part_added, y, c_, m_, og_x, og_y);			//bottom right
@@ -184,19 +180,23 @@ void AMyProceduralMesh::AddVert(float x, float y, const TArray<int32>& c_, const
 
 void AMyProceduralMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points,const TArray<int32>& c_, const int& m_)
 {
-	float outer_part_added = 0.5;
-	float inner_part_added = 0.25;
+	float outmost_part=0.5;
+	float outer_part_added = 0.25;
+	float inner_part_added = 0.125;
 	for (int i = 0; i < track_points.Num(); i++){
 		float x = track_points[i].X;
 		float y = track_points[i].Y;
 		int og_x = track_points[i].X;
 		int og_y = track_points[i].Y;
-		for (int j = 0; j < 4; j++){
-			for (int index_ = 0; index_ < 4; index_++) {
-				AddMultiVerts(x, y, c_, m_,og_x,og_y);
-				CoordAdjuster(x, y, index_, inner_part_added);
+		for (int f = 0; f < 4; f++) {
+			for (int j = 0; j < 4; j++) {
+				for (int index_ = 0; index_ < 4; index_++) {
+					AddMultiVerts(x, y, c_, m_, og_x, og_y);
+					CoordAdjuster(x, y, index_, inner_part_added);
+				}
+				CoordAdjuster(x, y, j, outer_part_added);
 			}
-			CoordAdjuster(x, y, j, outer_part_added);
+			CoordAdjuster(x, y, f, outmost_part);
 		}
 	}
 }
@@ -272,7 +272,6 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 
 void AMyProceduralMesh::ModiVerts(const TArray<int32>& c_, const int& m_)
 {
-
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			m_verts[y * height_ + x].Z = (c_[y * height_ + x]* spacing_)/m_;
