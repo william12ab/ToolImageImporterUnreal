@@ -39,7 +39,7 @@ float AMyProceduralMesh::Lerp(const int& p1, const int& p2, const float& t)
 	//return (1 - t) * v0 + t * v1;
 	auto c = (1 - t) * p1 + t * p2;
 	auto p = p1 + t * (p2 - p1);
-	return c;
+	return p;
 }
 
 float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3)
@@ -138,20 +138,19 @@ float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const 
 		float t = x - (float)(og_x);
 		height = Lerp(p1_height, p2_height, t);
 
-		float xp1_t = x - (float)(og_x);//t on the coord p1. see diagram
-		float xp1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y ) * 400 + (og_x+1)], xp1_t);
-		float xp2_t = x - (float)(og_x);//t on the coord p2.
-		float xp2_height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], xp2_t);
-		float xt = y - (float)(og_y);
-		float xheight = Lerp(xp1_height, xp2_height, xt);
-		
-		//if (height!=xheight)
-		//{
-		//	UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not track from file"));
-		//	height = ((height + xheight) / 2);
-		//}
+	//	float xp1_t = x - (float)(og_x);//t on the coord p1. see diagram
+	//	float xp1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y ) * 400 + (og_x+1)], xp1_t);
+	//	float xp2_t = x - (float)(og_x);//t on the coord p2.
+	//	float xp2_height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], xp2_t);
+	//	float xt = y - (float)(og_y);
+	//	float xheight = Lerp(xp1_height, xp2_height, xt);
+	//	
+	//	if (height!=xheight)
+	//	{
+	//		height = ((height + xheight) / 2);
+	//	}
 	//}
-	return xheight;
+	return height;
 }
 
 void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
