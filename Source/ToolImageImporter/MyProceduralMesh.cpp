@@ -38,7 +38,6 @@ float AMyProceduralMesh::Lerp(const float& p1, const float& p2, const float& t)
 	//auto p3 = p1 + ((p2 - p1) * t);
 	//return (1 - t) * v0 + t * v1;
 	auto c = (1.0 - t) * p1 + t * p2;
-	auto p = p1 + t * (p2 - p1);
 	return c;
 }
 
