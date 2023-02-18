@@ -60,7 +60,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	float Lerp(const int& p1, const int& p2, const float& t);
+	float Lerp(const float& p1, const float& p2, const float& t);
 	float FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3);
 
 

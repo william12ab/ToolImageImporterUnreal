@@ -33,13 +33,13 @@ void AMyProceduralMesh::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
-float AMyProceduralMesh::Lerp(const int& p1, const int& p2, const float& t)
+float AMyProceduralMesh::Lerp(const float& p1, const float& p2, const float& t)
 {
 	//auto p3 = p1 + ((p2 - p1) * t);
 	//return (1 - t) * v0 + t * v1;
-	auto c = (1 - t) * p1 + t * p2;
+	auto c = (1.0 - t) * p1 + t * p2;
 	auto p = p1 + t * (p2 - p1);
-	return p;
+	return c;
 }
 
 float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3)
@@ -110,46 +110,46 @@ void AMyProceduralMesh::CoordAdjuster(float& x, float& y, const int& index, floa
 float AMyProceduralMesh::FindHeight(float x, float y, int og_x, int og_y, const TArray<int32>& c_)
 {	
 	float height;
-	//if (x==(float)og_x){				//VERTICAL LINE on left side
-	//	//p1=og_x,og_y. p2=og_x,og_y+1
-	//	float t = y - (float)(og_y);
-	//	height = Lerp(c_[og_y * 400 + og_x], c_[(og_y+1) * 400 + og_x],t);
-	//}
-	//else if (x == (float)(og_x+1)) {			//VERTICAL LINE on right side
-	//	//p1=og_x+1,og_y. p2=og_x+1,og_y+1
-	//	float t = y - (float)(og_y);
-	//	height = Lerp(c_[og_y * 400 + (og_x+1)], c_[(og_y + 1) * 400 + (og_x+1)], t);
-	//}
-	//else if (y == (float)og_y) {				//HORIZONTAL LINE - bottom side
-	//	//p1=og_x,og_y. p2=og_x+1,og_y
-	//	float t = x - (float)(og_x);
-	//	height = Lerp(c_[og_y * 400 + og_x], c_[(og_y) * 400 + (og_x+1)], t);
-	//}
-	//else if (y == (float)(og_y + 1)) {		//HORIZONTAL LINE - top side
-	//	//p1=og_x,og_y+1. p2=og_x+1,og_y+1
-	//	float t = x- (float)(og_x);
-	//	height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], t);
-	//}
-	//else{
-		float p1_t = y - (float)(og_y);//t on the coord p1. see diagram
-		float p1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x)], p1_t);
-		float p2_t = y - (float)(og_y);//t on the coord p2.
-		float p2_height = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], p2_t);
+	if (x==(float)og_x){				//VERTICAL LINE on left side
+		//p1=og_x,og_y. p2=og_x,og_y+1
+		float t = y - (float)(og_y);
+		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y+1) * 400 + og_x],t);
+	}
+	else if (x == (float)(og_x+1)) {			//VERTICAL LINE on right side
+		//p1=og_x+1,og_y. p2=og_x+1,og_y+1
+		float t = y - (float)(og_y);
+		height = Lerp(c_[og_y * 400 + (og_x+1)], c_[(og_y + 1) * 400 + (og_x+1)], t);
+	}
+	else if (y == (float)og_y) {				//HORIZONTAL LINE - bottom side
+		//p1=og_x,og_y. p2=og_x+1,og_y
 		float t = x - (float)(og_x);
-		height = Lerp(p1_height, p2_height, t);
+		height = Lerp(c_[og_y * 400 + og_x], c_[(og_y) * 400 + (og_x+1)], t);
+	}
+	else if (y == (float)(og_y + 1)) {		//HORIZONTAL LINE - top side
+		//p1=og_x,og_y+1. p2=og_x+1,og_y+1
+		float t = x- (float)(og_x);
+		height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], t);
+	}
+	else{
+	float p1_t = y - (float)(og_y);//t on the coord p1. see diagram
+	float p1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x)], p1_t);
+	float p2_t = y - (float)(og_y);//t on the coord p2.
+	float p2_height = Lerp(c_[og_y * 400 + (og_x + 1)], c_[(og_y + 1) * 400 + (og_x + 1)], p2_t);
+	float t = x - (float)(og_x);
+	height = Lerp(p1_height, p2_height, t);
 
-	//	float xp1_t = x - (float)(og_x);//t on the coord p1. see diagram
-	//	float xp1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y ) * 400 + (og_x+1)], xp1_t);
-	//	float xp2_t = x - (float)(og_x);//t on the coord p2.
-	//	float xp2_height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], xp2_t);
-	//	float xt = y - (float)(og_y);
-	//	float xheight = Lerp(xp1_height, xp2_height, xt);
-	//	
-	//	if (height!=xheight)
-	//	{
-	//		height = ((height + xheight) / 2);
-	//	}
-	//}
+	float xp1_t = x - (float)(og_x);//t on the coord p1. see diagram
+	float xp1_height = Lerp(c_[og_y * 400 + (og_x)], c_[(og_y ) * 400 + (og_x+1)], xp1_t);
+	float xp2_t = x - (float)(og_x);//t on the coord p2.
+	float xp2_height = Lerp(c_[(og_y+1) * 400 + (og_x)], c_[(og_y + 1) * 400 + (og_x + 1)], xp2_t);
+	float xt = y - (float)(og_y);
+	float xheight = Lerp(xp1_height, xp2_height, xt);
+		
+	if (height!=xheight)
+	{
+		height = ((height + xheight) / 2);
+	}
+	}
 	return height;
 }
 
