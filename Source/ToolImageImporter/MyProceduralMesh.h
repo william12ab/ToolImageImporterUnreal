@@ -54,6 +54,7 @@ public:
 	void CoordAdjuster(float& x, float& y, const int& index, float part_added);
 	
 	float FindHeight(float x, float y, int og_x, int og_y, const TArray<int32>& c_);
+	void CalculateNormals();
 
 	virtual void PostInitializeComponents() override;
 protected:
