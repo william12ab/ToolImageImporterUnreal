@@ -11,6 +11,7 @@ AMyProceduralMesh::AMyProceduralMesh()
 	PrimaryActorTick.bCanEverTick = true;
 	ScnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Main"));
 	SetRootComponent(ScnComponent);
+	
 	procedural_mesh_comp = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	procedural_mesh_comp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	
@@ -259,7 +260,7 @@ void AMyProceduralMesh::CalculateNormals()
 		}
 	}
 
-	FVector smoothedNormal(0, 0, 1);
+	FVector smoothedNormal(0, 0, 0);
 	for (int j = 0; j < width_; j++) {
 		for (int i = 0; i < width_; i++) {
 			smoothedNormal.X = 0;
@@ -362,6 +363,8 @@ void AMyProceduralMesh::ModiVerts(const TArray<int32>& c_, const int& m_)
 		}
 	}
 	CalculateNormals();
+	
+	procedural_mesh_comp->bCastDynamicShadow=false;
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 }
 
