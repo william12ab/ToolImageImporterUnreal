@@ -75,7 +75,7 @@ float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const F
 
 void AMyProceduralMesh::SetMaterial(UTexture* t_)
 {
-	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/TerrainMaterial.TerrainMaterial'"));
+	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
 	terrain_mat = UMaterialInstanceDynamic::Create(material_interface, this);
 	terrain_mat->SetTextureParameterValue(FName("terr_text"), t_);		//this is reference also to the material obj in scene, have a look if you dont get it.
 	procedural_mesh_comp->SetMaterial(0, terrain_mat);
