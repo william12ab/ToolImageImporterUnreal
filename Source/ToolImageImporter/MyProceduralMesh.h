@@ -69,7 +69,7 @@ protected:
 	int32 width_;
 	float spacing_;
 	int count;
-
+	FVector2D uv_spacing_track;
 public:	
 	// Called every frame
 };

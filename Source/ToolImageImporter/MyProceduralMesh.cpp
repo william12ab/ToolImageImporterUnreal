@@ -93,17 +93,24 @@ void AMyProceduralMesh::CoordAdjuster(float& x, float& y, const int& index, floa
 {
 	if (index == 0) {
 		x += part_added;	//moving to br
+		uv_spacing_track.X += part_added;
 	}
 	if (index == 1) {			//moving to tl
 		x -= part_added;
 		y += part_added;
+		uv_spacing_track.Y += part_added;
+		uv_spacing_track.X -= part_added;
 	}
 	if (index == 2) {			//to tr
 		x += part_added;
+		uv_spacing_track.Y += part_added;
+		uv_spacing_track.X += part_added;
 	}
 	if (index == 3) {
 		x -= part_added;
 		y -= part_added;
+		uv_spacing_track.Y -= part_added;
+		uv_spacing_track.X -= part_added;
 	}
 }
 
@@ -158,9 +165,15 @@ void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, 
 	float part_added = 0.0625;
 	for (int i = 0; i < 4; i++){
 		AddVert(x, y, c_, m_, og_x, og_y);			//bottom left
+		uv_spacing_track.X += part_added;
 		AddVert(x + part_added, y, c_, m_, og_x, og_y);			//bottom right
+		uv_spacing_track.Y += part_added;
+		uv_spacing_track.X -= part_added;
 		AddVert(x, y + part_added, c_, m_, og_x, og_y);			//top left
+		uv_spacing_track.X += part_added;
 		AddVert(x + part_added, y + part_added, c_, m_, og_x, og_y);			//top right
+		uv_spacing_track.Y -= part_added;
+		uv_spacing_track.X -= part_added;
 		GenerateTrackTris();
 		CoordAdjuster(x, y,i, part_added);
 	}
@@ -169,10 +182,9 @@ void AMyProceduralMesh::AddMultiVerts(float x,float y, const TArray<int32>& c_, 
 void AMyProceduralMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y)
 {
 	float cal_height = FindHeight(x, y, og_x, og_y, c_);
-
 	m_verts.Add(FVector(x*spacing_ , y * spacing_, (cal_height * spacing_) / m_));
-	m_norms.Add(FVector(0.0f, 0.0f, 1.0f));
-	m_u_vs.Add(FVector2D(x , y));
+	m_norms.Add(FVector(0.0f, 0.0f, -1.0f));
+	m_u_vs.Add(FVector2D(uv_spacing_track.X, uv_spacing_track.Y));
 	m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	m_tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
 }
@@ -187,6 +199,7 @@ void AMyProceduralMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points
 		float y = track_points[i].Y;
 		int og_x = track_points[i].X;
 		int og_y = track_points[i].Y;
+		uv_spacing_track = FVector2D(0.0f,0.0f);
 		for (int f = 0; f < 4; f++) {
 			for (int j = 0; j < 4; j++) {
 				for (int index_ = 0; index_ < 4; index_++) {
