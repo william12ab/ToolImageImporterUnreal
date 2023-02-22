@@ -9,6 +9,7 @@
 #include "Components/EditableTextBox.h"
 #include "Components/Slider.h"
 #include "MyProceduralMesh.h"
+#include "TrackMesh.h"
 #include "TrackInstance.h"
 #include "UIWidget.generated.h"
 
@@ -70,7 +71,7 @@ protected:
 		
 
 	AMyProceduralMesh* p_mesh;		//obj
-	AMyProceduralMesh* track_mesh;
+	ATrackMesh* track_mesh;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
 

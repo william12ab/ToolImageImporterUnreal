@@ -172,8 +172,8 @@ void UUIWidget::CreateTrack()
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 
-	track_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	track_mesh->CreateTrack(track_points,m_colors,m_);
+	track_mesh = GetWorld()->SpawnActor<ATrackMesh>(myLoc, myRot, SpawnInfo);
+	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)

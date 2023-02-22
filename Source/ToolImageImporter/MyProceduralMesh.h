@@ -11,17 +11,19 @@ class TOOLIMAGEIMPORTER_API AMyProceduralMesh : public AActor
 {
 	GENERATED_BODY()
 
-		UPROPERTY(VisibleAnywhere, Category = "MyProceduralMesh")
-		UProceduralMeshComponent* procedural_mesh_comp;
 
 public:
 	// Sets default values for this actor's properties
 	AMyProceduralMesh();
 
+
+	UPROPERTY(VisibleAnywhere, Category = "MyProceduralMesh")
+		UProceduralMeshComponent* procedural_mesh_comp;
+
 	UPROPERTY(VisibleAnywhere)
 		UMaterialInterface* material_interface;
 	UPROPERTY(VisibleAnywhere)
-		UMaterialInstanceDynamic* terrain_mat;
+		UMaterialInstanceDynamic* material_instance;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		USceneComponent* ScnComponent;
@@ -46,14 +48,13 @@ public:
 	void ModiVerts(const TArray<int32>& c_,const int& m_);		//changing the vertss
 	void UpdateVerts(const float& d_spacing_);
 
-	void GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
-	void AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
-	void AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
-	void GenerateTrackTris();
-	void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
-	void CoordAdjuster(float& x, float& y, const int& index, float part_added);
+	//void GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
+	//void AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
+	//void AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
+//	void GenerateTrackTris();
+	//void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
+	//void CoordAdjuster(float& x, float& y, const int& index, float part_added);
 	
-	float FindHeight(float x, float y, int og_x, int og_y, const TArray<int32>& c_);
 	void CalculateNormals();
 
 	virtual void PostInitializeComponents() override;
@@ -61,7 +62,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	float Lerp(const float& p1, const float& p2, const float& t);
 	float FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3);
 
 
@@ -69,7 +69,7 @@ protected:
 	int32 width_;
 	float spacing_;
 	int count;
-	FVector2D uv_spacing_track;
+	//FVector2D uv_spacing_track;
 public:	
 	// Called every frame
 };
