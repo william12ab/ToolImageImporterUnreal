@@ -105,7 +105,8 @@ void ATrackMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m
 {
 	float cal_height = FindHeight(x, y, og_x, og_y, c_);
 	m_verts.Add(FVector(x * spacing_, y * spacing_, (cal_height * spacing_) / m_));
-
+	int x_n = round(x);
+	int y_n = round(y);
 	m_norms.Add(m_norms_terrain[og_y * 400 + (og_x)]);
 
 	m_u_vs.Add(FVector2D(uv_spacing_track.X, uv_spacing_track.Y));

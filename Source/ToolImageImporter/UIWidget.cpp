@@ -170,7 +170,7 @@ void UUIWidget::CreateTrack()
 {
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(0, 0, 10);
+	FVector myLoc = FVector(0, 0, 3);
 
 	track_mesh = GetWorld()->SpawnActor<ATrackMesh>(myLoc, myRot, SpawnInfo);
 	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);

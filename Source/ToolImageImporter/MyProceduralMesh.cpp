@@ -228,4 +228,7 @@ void AMyProceduralMesh::ModiVerts(const TArray<int32>& c_, const int& m_)
 	CalculateNormals();
 	procedural_mesh_comp->bCastDynamicShadow=false;
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
+	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
+	procedural_mesh_comp->SetMaterial(0, material_instance);
 }
