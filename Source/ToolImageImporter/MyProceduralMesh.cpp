@@ -2,6 +2,7 @@
 #include "MyProceduralMesh.h"
 #include "IImageWrapperModule.h"
 #include "IImageWrapper.h"
+
 #include <Runtime/Engine/Public/ImageUtils.h>
 
 // Sets default values
@@ -31,6 +32,68 @@ void AMyProceduralMesh::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
+
+void AMyProceduralMesh::SmoothTerrain()
+{
+	for (int j = 0; j < (width_); j++){
+		for (int i = 0; i < (width_); i++){
+			int count_loc = 0;
+			float tHeight = 0.0f;
+
+			if (i - 1 >= 0)											//left
+			{
+				count_loc++;
+				tHeight += m_verts[(j * width_) + (i - 1)].Z;
+			}
+
+			if (i + 1 < width_)									//right
+			{
+				count_loc++;
+				tHeight += m_verts[(j * width_) + (i + 1)].Z;
+			}
+
+			if (j - 1 >= 0)											//down	
+			{
+				count_loc++;
+				tHeight += m_verts[((j - 1) * width_) + i].Z;
+			}
+
+			if (j + 1 < width_)									//up
+			{
+				count_loc++;
+				tHeight += m_verts[((j + 1) * width_) + i].Z;
+			}
+
+			if ((i - 1 >= 0) && (j - 1 >= 0))								//down left 
+			{
+				count_loc++;
+				tHeight += m_verts[((j - 1) * width_) + (i - 1)].Z;
+			}
+
+			if ((i + 1 < width_) && (j - 1 >= 0))								//down right
+			{
+				count_loc++;
+				tHeight += m_verts[((j - 1) * width_) + (i + 1)].Z;
+			}
+
+			if ((i - 1 >= 0) && (j + 1 < width_))								//up left 
+			{
+				count_loc++;
+				tHeight += m_verts[((j + 1) * width_) + (i - 1)].Z;
+			}
+
+			if ((i + 1 < width_) && (j + 1 < width_))								//up right
+			{
+				count_loc++;
+				tHeight += m_verts[((j + 1) * width_) + (i + 1)].Z;
+			}
+
+			tHeight /= (float)count_loc;
+
+			m_verts[(j * width_) + i].Z = tHeight;
+		}
+	}
+}
 
 
 float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3)
@@ -209,7 +272,7 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 {
 	height_ = d_height_;
 	width_ = d_width_;
-	spacing_ = d_spacing_;
+	spacing_ = 20.0f;
 	ClearMeshData();
 	GenerateVerts();
 	GenerateTris();
@@ -218,14 +281,15 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 }
 
-void AMyProceduralMesh::ModiVerts(const TArray<int32>& c_, const int& m_)
+void AMyProceduralMesh::ModiVerts(const TArray<float>& c_, const int& m_)
 {
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
-			m_verts[y * height_ + x].Z = (c_[y * height_ + x]* spacing_)/m_;
+			m_verts[y * height_ + x].Z = (c_[y * height_ + x]* spacing_)/ 3.0f;
 		}
 	}
 	CalculateNormals();
+	SmoothTerrain();
 	procedural_mesh_comp->bCastDynamicShadow=false;
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));

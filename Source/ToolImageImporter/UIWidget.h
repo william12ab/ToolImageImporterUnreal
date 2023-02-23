@@ -77,7 +77,7 @@ protected:
 
 	FString name_;
 
-	TArray<int32> m_colors;
+	TArray<float> m_colors;
 	UTexture* t_;
 
 	TArray<FVector2D> track_points;

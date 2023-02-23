@@ -12,7 +12,7 @@ float ATrackMesh::Lerp(const float& p1, const float& p2, const float& t)
 	auto c = (1.0 - t) * p1 + t * p2;
 	return c;
 }
-float ATrackMesh::FindHeight(float x, float y, int og_x, int og_y, const TArray<int32>& c_)
+float ATrackMesh::FindHeight(float x, float y, int og_x, int og_y, const TArray<float>& c_)
 {
 	float height;
 	if (x == (float)og_x) {				//VERTICAL LINE on left side
@@ -82,7 +82,7 @@ void ATrackMesh::CoordAdjuster(float& x, float& y, const int& index, float part_
 	}
 }
 
-void ATrackMesh::AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y, const TArray<FVector>& m_norms_terrain)
+void ATrackMesh::AddMultiVerts(float x, float y, const TArray<float>& c_, const int& m_, int og_x, int og_y, const TArray<FVector>& m_norms_terrain)
 {
 	float part_added = 0.0625;
 	for (int i = 0; i < 4; i++) {
@@ -101,7 +101,7 @@ void ATrackMesh::AddMultiVerts(float x, float y, const TArray<int32>& c_, const 
 	}
 }
 
-void ATrackMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y, const TArray<FVector>&m_norms_terrain)
+void ATrackMesh::AddVert(float x, float y, const TArray<float>& c_, const int& m_, int og_x, int og_y, const TArray<FVector>&m_norms_terrain)
 {
 	float cal_height = FindHeight(x, y, og_x, og_y, c_);
 	m_verts.Add(FVector(x * spacing_, y * spacing_, (cal_height * spacing_) / m_));
@@ -114,7 +114,7 @@ void ATrackMesh::AddVert(float x, float y, const TArray<int32>& c_, const int& m
 	m_tangents.Add(FProcMeshTangent(1.0f, 0.0f, 0.0f));
 }
 
-void ATrackMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_, const TArray<FVector>& m_norms_terrain)
+void ATrackMesh::GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<float>& c_, const int& m_, const TArray<FVector>& m_norms_terrain)
 {
 	float outmost_part = 0.5;
 	float outer_part_added = 0.25;
@@ -148,7 +148,7 @@ void ATrackMesh::GenerateTrackTris()
 	count += 4;
 }
 
-void ATrackMesh::CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_, const TArray<FVector>& m_norms_terrain)
+void ATrackMesh::CreateTrack(const TArray<FVector2D>& track_points, const TArray<float>& c_, const int& m_, const TArray<FVector>& m_norms_terrain)
 {
 	ClearMeshData();
 	GenerateTrackVerts(track_points, c_, m_, m_norms_terrain);

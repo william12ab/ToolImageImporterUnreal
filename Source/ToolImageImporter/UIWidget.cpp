@@ -189,9 +189,13 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	for (int32 y_ = 0; y_ < h_; y_++) {
 		for (int32 x_ = 0; x_ < w_; x_++) {
 			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
-			m_colors.Add(pixel_color.R);
+			float pixel_colour_float = pixel_color.R;
+			//float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+			//pixel_colour_float += FMath::RandRange(-1.0f, 1.0f);
+			m_colors.Add(pixel_colour_float);
 		}
 	}
+
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
 

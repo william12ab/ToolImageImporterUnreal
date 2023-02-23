@@ -45,15 +45,9 @@ public:
 	void ClearMeshData();
 	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
 	void SetMaterial(UTexture *t_);
-	void ModiVerts(const TArray<int32>& c_,const int& m_);		//changing the vertss
+	void ModiVerts(const TArray<float>& c_,const int& m_);		//changing the vertss
 	void UpdateVerts(const float& d_spacing_);
-
-	//void GenerateTrackVerts(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
-	//void AddVert(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
-	//void AddMultiVerts(float x, float y, const TArray<int32>& c_, const int& m_, int og_x, int og_y);
-//	void GenerateTrackTris();
-	//void CreateTrack(const TArray<FVector2D>& track_points, const TArray<int32>& c_, const int& m_);
-	//void CoordAdjuster(float& x, float& y, const int& index, float part_added);
+	void SmoothTerrain();
 	
 	void CalculateNormals();
 
