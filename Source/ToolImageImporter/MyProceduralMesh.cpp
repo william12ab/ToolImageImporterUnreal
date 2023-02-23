@@ -288,8 +288,9 @@ void AMyProceduralMesh::ModiVerts(const TArray<float>& c_, const int& m_)
 			m_verts[y * height_ + x].Z = (c_[y * height_ + x]* spacing_)/ 3.0f;
 		}
 	}
-	CalculateNormals();
 	SmoothTerrain();
+	SmoothTerrain();
+	CalculateNormals();
 	procedural_mesh_comp->bCastDynamicShadow=false;
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
