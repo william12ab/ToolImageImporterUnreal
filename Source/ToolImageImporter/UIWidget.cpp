@@ -176,6 +176,24 @@ void UUIWidget::CreateTrack()
 	p_mesh->ModiVerts(m_colors, m_);
 	track_mesh = GetWorld()->SpawnActor<ATrackMesh>(myLoc, myRot, SpawnInfo);
 	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);
+
+
+	FActorSpawnParameters SpawnInfoTree;
+	FRotator myRotTree(0, 0, 0);
+	FVector myLocTree = FVector(0, 0, 0);
+	tree_instance = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+
+	for (int i = 0; i < 10; i++)
+	{
+		int pos_y= FMath::RandRange(0, 400);
+		int pos_x = FMath::RandRange(0, 400);
+		float z_pos = p_mesh->m_verts[pos_y * 400 + pos_x].Z;
+		FTransform A{
+		FRotator{0,0,0},                 // Rotation
+		FVector{(float)pos_x *20.0f, (float)pos_y * 20.0f, z_pos },  // Translation
+		FVector{1.0f, 1.0f, 1.0f} };	//Scale
+		tree_instance->AddBasicTree(A);
+	}
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)
@@ -198,14 +216,4 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
 	GeneratePlane();
-
-	FActorSpawnParameters SpawnInfo;
-	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(0, 50, 112);
-	tree_instance = GetWorld()->SpawnActor<ABasicTree>(myLoc, myRot, SpawnInfo);
-	FTransform A{
-	FRotator{},                 // Rotation
-	FVector{0.0f, 0.0f, 0.0f},  // Translation
-	FVector{1.0f, 1.0f, 1.0f} };	//Scale
-	tree_instance->AddBasicTree(A);
 }

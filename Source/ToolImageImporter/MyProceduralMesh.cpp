@@ -289,7 +289,6 @@ void AMyProceduralMesh::ChangeTest(const TArray< FVector2D>& track_points)
 		m_vert_colors[y * height_ + x] = FLinearColor(0.114435, 0.076185, 0.046665, 0.1);
 		x = track_points[i].X + 2;
 		m_vert_colors[y * height_ + x] = FLinearColor(0.114435, 0.076185, 0.046665, 0.1);
-		
 	}
 }
 
