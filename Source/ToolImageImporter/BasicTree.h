@@ -21,6 +21,8 @@ public:
 	void AddName(const FString& name_attachment_, const int& tree_, FString& name_);
 	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
 
+	void AddFoilage(const TArray<FVector>& m_verts, const int& max_, const int& min_, const TArray<FVector2D>& track_point);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

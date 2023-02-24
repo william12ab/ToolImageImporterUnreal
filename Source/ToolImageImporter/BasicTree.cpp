@@ -39,7 +39,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 		range_end = 11;
 	}
 	int tree_select = FMath::RandRange(range_start, range_end);
-	for (int i = 0; i < 75; i++) {
+	for (int i = 0; i < 85; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
@@ -69,13 +69,18 @@ void ABasicTree::AddName(const FString& name_attachment_,const int&tree_, FStrin
 			name_.AppendInt(0);
 			name_.AppendInt(tree_);
 		}
+		else if (tree_==0){
+			
+		}
 		else {
 			name_.AppendInt(tree_);
 		}
 	}
 	else {
 		name_.Append(name_attachment_);
-		name_.AppendInt(tree_);
+		if (tree_!=0){
+			name_.AppendInt(tree_);
+		}
 	}
 }
 
@@ -106,4 +111,36 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 		}
 	}
 	return true;
+}
+
+void ABasicTree::AddFoilage(const TArray<FVector>& m_verts, const int& max_, const int& min_, const TArray<FVector2D>& track_point)
+{
+	float max_m = max_;
+	float min_m = min_;
+	for (int i = 0; i < 10000; i++)
+	{
+		int pos_y = FMath::RandRange(010, 380);
+		int pos_x = FMath::RandRange(010, 380);
+		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
+
+		if (CheckBounds(track_point, pos_x, pos_y)) {
+			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_ + (max_m * 0.20f))) {
+				FTransform A{
+					FRotator{0,0,0},
+					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, z_pos },
+					FVector{0.250f, 0.250f, 0.250f} };	//Scale
+				AddBasicTree(A,0,"Sm_Grass");
+				instanced_basic_tree->bCastDynamicShadow = false;
+				instanced_basic_tree->CastShadow = false;
+				instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
+				instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			}
+			else {
+				i--;
+			}
+		}
+		else {
+			i--;
+		}
+	}
 }
