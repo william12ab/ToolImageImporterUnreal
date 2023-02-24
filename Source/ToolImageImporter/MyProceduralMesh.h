@@ -45,10 +45,12 @@ public:
 	void ClearMeshData();
 	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
 	void SetMaterial(UTexture *t_);
-	void ModiVerts(const TArray<float>& c_,const int& m_);		//changing the vertss
+	void ModiVerts(TArray<float>& c_,const int& m_);		//changing the vertss
 	void UpdateVerts(const float& d_spacing_);
-	void SmoothTerrain();
+	void SmoothTerrain(TArray<float>& c_);
 	
+
+	void ChangeTest(const TArray< FVector2D> &track_points);
 	void CalculateNormals();
 
 	virtual void PostInitializeComponents() override;

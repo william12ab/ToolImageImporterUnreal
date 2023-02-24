@@ -170,8 +170,10 @@ void UUIWidget::CreateTrack()
 {
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(0, 0, 3);
+	FVector myLoc = FVector(0, 0, -10.5f);
 
+	p_mesh->ChangeTest(track_points);
+	p_mesh->ModiVerts(m_colors, m_);
 	track_mesh = GetWorld()->SpawnActor<ATrackMesh>(myLoc, myRot, SpawnInfo);
 	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);
 }
@@ -198,5 +200,5 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
 	GeneratePlane();
-	p_mesh->ModiVerts(m_colors,m_);
+
 }
