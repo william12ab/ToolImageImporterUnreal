@@ -15,10 +15,11 @@ class TOOLIMAGEIMPORTER_API ABasicTree : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABasicTree();
-	void AddBasicTree(const FTransform& transform_);
+	void AddBasicTree(const FTransform& transform_, const int& tree_, const FString& name_attachment_);
 
+	void AddClusterTrees(const TArray<FVector> &m_verts);
 
-
+	void AddName(const FString& name_attachment_, const int& tree_, FString& name_);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

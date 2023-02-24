@@ -178,21 +178,13 @@ void UUIWidget::CreateTrack()
 	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);
 
 
-	FActorSpawnParameters SpawnInfoTree;
-	FRotator myRotTree(0, 0, 0);
-	FVector myLocTree = FVector(0, 0, 0);
-	tree_instance = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-
-	for (int i = 0; i < 10; i++)
-	{
-		int pos_y= FMath::RandRange(0, 400);
-		int pos_x = FMath::RandRange(0, 400);
-		float z_pos = p_mesh->m_verts[pos_y * 400 + pos_x].Z;
-		FTransform A{
-		FRotator{0,0,0},                 // Rotation
-		FVector{(float)pos_x *20.0f, (float)pos_y * 20.0f, z_pos },  // Translation
-		FVector{1.0f, 1.0f, 1.0f} };	//Scale
-		tree_instance->AddBasicTree(A);
+	for (int i = 0; i < 4; i++) {
+		ABasicTree* tree_instancea;
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddClusterTrees(p_mesh->m_verts);
 	}
 }
 
