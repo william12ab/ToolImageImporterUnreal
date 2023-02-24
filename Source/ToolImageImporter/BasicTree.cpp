@@ -17,24 +17,45 @@ void ABasicTree::BeginPlay(){
 }
 
 //change random range and the string part of addbasictree to change tree type
-void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts){
+void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const TArray<FVector2D> &track_point, const int&max_, const int&min_){
 
 	FString mesh_name = "SM_Pine_Tree_";
 	int range_start = 1;
 	int range_end = 4;
 
-	for (int a = 0; a < 4; a++){
+	float max_m = max_;
+	float min_m = min_;
+
+	for (int a = 0; a < 1; a++){
+		int rand_name = FMath::RandRange(0, 1);
+		if (rand_name == 1) {
+			mesh_name = "SM_Pine_Tree_";
+			range_start = 1;
+			range_end = 4;
+		}
+		else{
+			mesh_name = "SM_Common_Tree_";
+			range_start = 1;
+			range_end = 11;
+		}
 		int tree_select = FMath::RandRange(range_start, range_end);
-		for (int i = 0; i < 50; i++) {
-			int pos_y = FMath::RandRange(200, 300);
-			int pos_x = FMath::RandRange(200, 300);
+		for (int i = 0; i < 25; i++) {
+			int pos_y = FMath::RandRange(1, 300);
+			int pos_x = FMath::RandRange(1, 300);
 			float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 
-			FTransform A{
-			FRotator{0,0,0},                 // Rotation
-			FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, z_pos },  // Translation
-			FVector{0.250f, 0.250f, 0.250f} };	//Scale
-			AddBasicTree(A, tree_select, mesh_name);
+
+			if (m_verts[pos_y * 400 + pos_x].Z<(max_m-(max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_+ (max_m * 0.20f))) {
+				//place point
+				FTransform A{
+					FRotator{0,0,0},
+					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, z_pos },
+					FVector{0.250f, 0.250f, 0.250f}};	//Scale
+				AddBasicTree(A, tree_select, mesh_name);
+			}
+			else{
+				i--;
+			}
 		}
 	}
 }

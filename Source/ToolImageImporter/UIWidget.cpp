@@ -178,13 +178,25 @@ void UUIWidget::CreateTrack()
 	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);
 
 
+
+	int max = 0;
+	int min = 100000000;
+	for (int i = 0; i < p_mesh->m_verts.Num(); i++) {
+		if (p_mesh->m_verts[i].Z > max) {
+			max = p_mesh->m_verts[i].Z;
+		}
+		if (p_mesh->m_verts[i].Z < min) {
+			min = p_mesh->m_verts[i].Z;
+		}
+	}
+
 	for (int i = 0; i < 4; i++) {
 		ABasicTree* tree_instancea;
 		FActorSpawnParameters SpawnInfoTree;
 		FRotator myRotTree(0, 0, 0);
 		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->m_verts);
+		tree_instancea->AddClusterTrees(p_mesh->m_verts,track_points,max,min);
 	}
 }
 
