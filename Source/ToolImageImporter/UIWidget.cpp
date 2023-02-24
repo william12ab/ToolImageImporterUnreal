@@ -192,8 +192,6 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 		for (int32 x_ = 0; x_ < w_; x_++) {
 			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
 			float pixel_colour_float = pixel_color.R;
-	/*		float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-			pixel_colour_float += FMath::RandRange(-1.0f, 1.0f);*/
 			m_colors.Add(pixel_colour_float);
 		}
 	}
@@ -201,4 +199,13 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	texture_->UpdateResource();
 	GeneratePlane();
 
+	FActorSpawnParameters SpawnInfo;
+	FRotator myRot(0, 0, 0);
+	FVector myLoc = FVector(0, 50, 112);
+	tree_instance = GetWorld()->SpawnActor<ABasicTree>(myLoc, myRot, SpawnInfo);
+	FTransform A{
+	FRotator{},                 // Rotation
+	FVector{0.0f, 0.0f, 0.0f},  // Translation
+	FVector{1.0f, 1.0f, 1.0f} };	//Scale
+	tree_instance->AddBasicTree(A);
 }

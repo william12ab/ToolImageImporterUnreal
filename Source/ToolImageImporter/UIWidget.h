@@ -11,7 +11,9 @@
 #include "MyProceduralMesh.h"
 #include "TrackMesh.h"
 #include "TrackInstance.h"
+#include "BasicTree.h"
 #include "UIWidget.generated.h"
+
 
 UCLASS()
 class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
@@ -72,6 +74,7 @@ protected:
 
 	AMyProceduralMesh* p_mesh;		//obj
 	ATrackMesh* track_mesh;
+	ABasicTree* tree_instance;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
 
