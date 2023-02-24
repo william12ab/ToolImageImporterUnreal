@@ -17,9 +17,10 @@ public:
 	ABasicTree();
 	void AddBasicTree(const FTransform& transform_, const int& tree_, const FString& name_attachment_);
 
-	void AddClusterTrees(const TArray<FVector> &m_verts, const TArray<FVector2D>& track_point, const int& max_, const int& min_);
-
+	void AddClusterTrees(const TArray<FVector> &m_verts, const int& max_, const int& min_, const TArray<FVector2D>& track_point);
 	void AddName(const FString& name_attachment_, const int& tree_, FString& name_);
+	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

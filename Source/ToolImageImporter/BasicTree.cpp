@@ -16,9 +16,10 @@ void ABasicTree::BeginPlay(){
 	
 }
 
-//change random range and the string part of addbasictree to change tree type
-void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const TArray<FVector2D> &track_point, const int&max_, const int&min_){
+//selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
+void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point){
 
+	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh.
 	FString mesh_name = "SM_Pine_Tree_";
 	int range_start = 1;
 	int range_end = 4;
@@ -26,36 +27,37 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const TArray<FV
 	float max_m = max_;
 	float min_m = min_;
 
-	for (int a = 0; a < 1; a++){
-		int rand_name = FMath::RandRange(0, 1);
-		if (rand_name == 1) {
-			mesh_name = "SM_Pine_Tree_";
-			range_start = 1;
-			range_end = 4;
-		}
-		else{
-			mesh_name = "SM_Common_Tree_";
-			range_start = 1;
-			range_end = 11;
-		}
-		int tree_select = FMath::RandRange(range_start, range_end);
-		for (int i = 0; i < 25; i++) {
-			int pos_y = FMath::RandRange(1, 300);
-			int pos_x = FMath::RandRange(1, 300);
-			float z_pos = m_verts[pos_y * 400 + pos_x].Z;
-
-
-			if (m_verts[pos_y * 400 + pos_x].Z<(max_m-(max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_+ (max_m * 0.20f))) {
-				//place point
+	int rand_name = FMath::RandRange(0, 1);
+	if (rand_name == 1) {
+		mesh_name = "SM_Pine_Tree_";
+		range_start = 1;
+		range_end = 4;
+	}
+	else{
+		mesh_name = "SM_Common_Tree_";
+		range_start = 1;
+		range_end = 11;
+	}
+	int tree_select = FMath::RandRange(range_start, range_end);
+	for (int i = 0; i < 75; i++) {
+		int pos_y = FMath::RandRange(10, 380);
+		int pos_x = FMath::RandRange(10, 380);
+		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
+		
+		if (CheckBounds(track_point,pos_x,pos_y)) {
+			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_ + (max_m * 0.20f))) {
 				FTransform A{
 					FRotator{0,0,0},
 					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, z_pos },
-					FVector{0.250f, 0.250f, 0.250f}};	//Scale
+					FVector{0.250f, 0.250f, 0.250f} };	//Scale
 				AddBasicTree(A, tree_select, mesh_name);
 			}
-			else{
+			else {
 				i--;
 			}
+		}
+		else{
+			i--;
 		}
 	}
 }
@@ -89,4 +91,19 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 		instanced_basic_tree->SetStaticMesh(meshToUse);
 	}
 	instanced_basic_tree->AddInstance(transform_);
+}
+
+
+bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, int&point_y){
+	for (int i = 0; i < track_point.Num(); i++){
+		if ((float)point_x != track_point[i].X && (float)point_y != track_point[i].Y) {
+			//not allowed
+		}
+		else {
+			if ((float)point_x == track_point[i].X&& (float)point_y == track_point[i].Y){
+				return false;
+			}
+		}
+	}
+	return true;
 }

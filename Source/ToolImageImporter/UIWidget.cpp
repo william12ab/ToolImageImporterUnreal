@@ -196,7 +196,7 @@ void UUIWidget::CreateTrack()
 		FRotator myRotTree(0, 0, 0);
 		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->m_verts,track_points,max,min);
+		tree_instancea->AddClusterTrees(p_mesh->m_verts,max,min, track_points);
 	}
 }
 
