@@ -17,16 +17,16 @@ void ABasicTree::BeginPlay(){
 }
 
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
-void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point){
+void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, FString mesh_name_){
 
 	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh.
-	FString mesh_name = "SM_Pine_Tree_";
+	FString mesh_name = mesh_name_;
 	int range_start = 1;
 	int range_end = 4;
 
 	float max_m = max_;
 	float min_m = min_;
-
+	
 	int rand_name = FMath::RandRange(0, 1);
 	if (rand_name == 1) {
 		mesh_name = "SM_Pine_Tree_";
