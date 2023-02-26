@@ -17,40 +17,54 @@ void ABasicTree::BeginPlay(){
 }
 
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
-void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, FString mesh_name_){
+void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 
 	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh.
-	FString mesh_name = mesh_name_;
-	int range_start = 1;
-	int range_end = 4;
-
+	FString mesh_name;
+	int loop_range = 85;
+	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;
-	
-	int rand_name = FMath::RandRange(0, 1);
-	if (rand_name == 1) {
-		mesh_name = "SM_Pine_Tree_";
-		range_start = 1;
-		range_end = 4;
+	if (is_foilage){
+		loop_range = 1000;
+		mesh_name = "Sm_Grass";
 	}
-	else{
-		mesh_name = "SM_Common_Tree_";
-		range_start = 1;
-		range_end = 11;
+	else
+	{
+		int rand_name = FMath::RandRange(0, 1);
+		int range_start = 1;
+		int range_end = 4;
+
+		if (rand_name == 1) {
+			mesh_name = "SM_Pine_Tree_";
+			range_start = 1;
+			range_end = 4;
+		}
+		else {
+			mesh_name = "SM_Common_Tree_";
+			range_start = 1;
+			range_end = 11;
+		}
+		tree_select = FMath::RandRange(range_start, range_end);
 	}
-	int tree_select = FMath::RandRange(range_start, range_end);
-	for (int i = 0; i < 85; i++) {
+	for (int i = 0; i < loop_range; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 		
 		if (CheckBounds(track_point,pos_x,pos_y)) {
-			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_ + (max_m * 0.20f))) {
+			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_m + (max_m * 0.20f))) {
 				FTransform A{
 					FRotator{0,0,0},
 					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, z_pos },
 					FVector{0.250f, 0.250f, 0.250f} };	//Scale
 				AddBasicTree(A, tree_select, mesh_name);
+				if (is_foilage) {
+					instanced_basic_tree->bCastDynamicShadow = false;
+					instanced_basic_tree->CastShadow = false;
+					instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
+					instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				}
 			}
 			else {
 				i--;
@@ -111,36 +125,4 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 		}
 	}
 	return true;
-}
-
-void ABasicTree::AddFoilage(const TArray<FVector>& m_verts, const int& max_, const int& min_, const TArray<FVector2D>& track_point)
-{
-	float max_m = max_;
-	float min_m = min_;
-	for (int i = 0; i < 10000; i++)
-	{
-		int pos_y = FMath::RandRange(010, 380);
-		int pos_x = FMath::RandRange(010, 380);
-		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
-
-		if (CheckBounds(track_point, pos_x, pos_y)) {
-			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_ + (max_m * 0.20f))) {
-				FTransform A{
-					FRotator{0,0,0},
-					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, z_pos },
-					FVector{0.250f, 0.250f, 0.250f} };	//Scale
-				AddBasicTree(A,0,"Sm_Grass");
-				instanced_basic_tree->bCastDynamicShadow = false;
-				instanced_basic_tree->CastShadow = false;
-				instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
-				instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			}
-			else {
-				i--;
-			}
-		}
-		else {
-			i--;
-		}
-	}
 }
