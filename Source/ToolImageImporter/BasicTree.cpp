@@ -16,6 +16,52 @@ void ABasicTree::BeginPlay(){
 	
 }
 
+void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select)
+{
+	int rand_name = FMath::RandRange(0, 1);
+	int range_start = 1;
+	int range_end = 4;
+
+	if (rand_name == 1) {
+		mesh_name = "SM_Pine_Tree_";
+		range_start = 1;
+		range_end = 4;
+	}
+	else {
+		mesh_name = "SM_Common_Tree_";
+		range_start = 1;
+		range_end = 11;
+	}
+	tree_select = FMath::RandRange(range_start, range_end);
+}
+
+void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter)
+{
+	int ran_name = FMath::RandRange(0, 2);
+	switch (ran_name)
+	{
+	case 0:
+	{
+		mesh_name = "SM_Grass";
+		z_alter = 0;
+		break;
+	}
+	case 1:
+	{
+		mesh_name = "SM_Bush";
+		z_alter = 8.0f;
+		break;
+	}
+	case 2:
+	{
+		mesh_name = "SM_Fern";
+		z_alter = 2.0f;
+		break;
+	}
+	}
+}
+
+
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 
@@ -25,28 +71,19 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;
+	float z_alter = 0.0f;
 	if (is_foilage){
 		loop_range = 1000;
-		mesh_name = "Sm_Grass";
+		NameChoicePlant(mesh_name,z_alter);
+		UE_LOG(LogTemp, Warning, TEXT("bush selct: %s"), *mesh_name);
+		UE_LOG(LogTemp, Warning, TEXT("z alter selct: %f"), z_alter);
 	}
 	else
 	{
-		int rand_name = FMath::RandRange(0, 1);
-		int range_start = 1;
-		int range_end = 4;
-
-		if (rand_name == 1) {
-			mesh_name = "SM_Pine_Tree_";
-			range_start = 1;
-			range_end = 4;
-		}
-		else {
-			mesh_name = "SM_Common_Tree_";
-			range_start = 1;
-			range_end = 11;
-		}
-		tree_select = FMath::RandRange(range_start, range_end);
+		NameChoiceTree(mesh_name, tree_select);
 	}
+	
+
 	for (int i = 0; i < loop_range; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
@@ -56,7 +93,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_m + (max_m * 0.20f))) {
 				FTransform A{
 					FRotator{0,0,0},
-					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, z_pos },
+					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos- z_alter) },
 					FVector{0.250f, 0.250f, 0.250f} };	//Scale
 				AddBasicTree(A, tree_select, mesh_name);
 				if (is_foilage) {

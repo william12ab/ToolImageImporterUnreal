@@ -22,6 +22,9 @@ public:
 	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
 
 
+	void NameChoiceTree(FString& mesh_name, int& tree_select);
+	void NameChoicePlant(FString& mesh_name, float& z_alter);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
