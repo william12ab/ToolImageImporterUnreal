@@ -65,7 +65,7 @@ void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter)
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 
-	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh.
+	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh, ttree sleect is for sleecting a tree. z_alter is for fixing the position of foilage.
 	FString mesh_name;
 	int loop_range = 85;
 	int tree_select = 0;
@@ -75,14 +75,11 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	if (is_foilage){
 		loop_range = 1000;
 		NameChoicePlant(mesh_name,z_alter);
-		UE_LOG(LogTemp, Warning, TEXT("bush selct: %s"), *mesh_name);
-		UE_LOG(LogTemp, Warning, TEXT("z alter selct: %f"), z_alter);
 	}
 	else
 	{
 		NameChoiceTree(mesh_name, tree_select);
 	}
-	
 
 	for (int i = 0; i < loop_range; i++) {
 		int pos_y = FMath::RandRange(10, 380);
@@ -96,6 +93,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos- z_alter) },
 					FVector{0.250f, 0.250f, 0.250f} };	//Scale
 				AddBasicTree(A, tree_select, mesh_name);
+				instanced_basic_tree->SetMobility(EComponentMobility::Static);
 				if (is_foilage) {
 					instanced_basic_tree->bCastDynamicShadow = false;
 					instanced_basic_tree->CastShadow = false;
