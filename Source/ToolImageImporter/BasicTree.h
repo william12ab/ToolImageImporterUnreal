@@ -12,15 +12,23 @@ class TOOLIMAGEIMPORTER_API ABasicTree : public AActor
 	GENERATED_BODY()
 		UPROPERTY(VisibleAnywhere)
 		UInstancedStaticMeshComponent* instanced_basic_tree;
+
+
 public:	
 	// Sets default values for this actor's properties
 	ABasicTree();
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		USceneComponent* ScnComponent;
+
 	void AddBasicTree(const FTransform& transform_, const int& tree_, const FString& name_attachment_);
 
 	void AddClusterTrees(const TArray<FVector> &m_verts, const int& max_, const int& min_, const TArray<FVector2D>& track_point, const bool& is_foliage);
 	void AddName(const FString& name_attachment_, const int& tree_, FString& name_);
 	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
 
+	void AddRockClusters();
 
 	void NameChoiceTree(FString& mesh_name, int& tree_select);
 	void NameChoicePlant(FString& mesh_name, float& z_alter);

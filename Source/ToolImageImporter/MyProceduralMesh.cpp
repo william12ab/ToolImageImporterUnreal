@@ -277,7 +277,7 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	GenerateVerts();
 	GenerateTris();
 	//Function that creates mesh section
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
+	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, true);
 }
 
 

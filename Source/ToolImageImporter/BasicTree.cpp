@@ -7,6 +7,8 @@
 ABasicTree::ABasicTree(){
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	ScnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Default Scene"));
+	SetRootComponent(ScnComponent);
 	instanced_basic_tree = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("BasicInstancedTree"));
 	SetRootComponent(instanced_basic_tree);
 }
@@ -160,4 +162,21 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 		}
 	}
 	return true;
+}
+
+void ABasicTree::AddRockClusters(){
+	/*get the total length of the track.
+	produce change to spawn rock out of the length: 
+	so say at anywhere between 0-20% of the length, can spawn new rock
+
+	1.find length
+	2. find amount of rocks to spawn
+	2.1 int rand_percent = rand_range(0,20)
+	2.2 rand_percent % of length = amount of rocks to spawwn - so this gives how many.
+	3. for amount of rocks
+	3.1 spawn at random edge of track.
+	*/
+
+	//length
+	//could take distance between start and end, or actual length...
 }
