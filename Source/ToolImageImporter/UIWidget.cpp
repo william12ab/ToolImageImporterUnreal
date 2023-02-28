@@ -215,6 +215,15 @@ void UUIWidget::CreateTrack()
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddRockClusters(track_points,p_mesh->m_verts);
 	}
+
+	for (int i = 0; i < 1; i++) {
+		ABasicTree* tree_instancea;
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddGrass(track_points, p_mesh->m_verts,max,min);
+	}
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)

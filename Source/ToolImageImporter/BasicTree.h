@@ -29,6 +29,8 @@ public:
 	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
 
 	void AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts);
+	void AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float& max, const float& min);
+
 
 	void NameChoiceTree(FString& mesh_name, int& tree_select);
 	void NameChoicePlant(FString& mesh_name, float& z_alter);

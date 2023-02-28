@@ -39,22 +39,16 @@ void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select)
 
 void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter)
 {
-	int ran_name = FMath::RandRange(0, 2);
+	int ran_name = FMath::RandRange(0, 1);
 	switch (ran_name)
 	{
 	case 0:
-	{
-		mesh_name = "SM_Grass";
-		z_alter = 0;
-		break;
-	}
-	case 1:
 	{
 		mesh_name = "SM_Bush";
 		z_alter = 8.0f;
 		break;
 	}
-	case 2:
+	case 1:
 	{
 		mesh_name = "SM_Fern";
 		z_alter = 2.0f;
@@ -87,28 +81,39 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
-		
-		if (CheckBounds(track_point,pos_x,pos_y)) {
-			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_m + (max_m * 0.20f))) {
-				FTransform A{
-					FRotator{0,0,0},
-					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos- z_alter) },
-					FVector{0.250f, 0.250f, 0.250f} };	//Scale
-				AddBasicTree(A, tree_select, mesh_name);
-				instanced_basic_tree->SetMobility(EComponentMobility::Static);
-				if (is_foilage) {
-					instanced_basic_tree->bCastDynamicShadow = false;
-					instanced_basic_tree->CastShadow = false;
-					instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
-					instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		bool is_found = false;
+		while (!is_found)
+		{
+			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_m + (max_m * 0.20f)))
+			{
+				if (CheckBounds(track_point, pos_x, pos_y)) 
+				{
+					is_found = true;
+					FTransform A{
+						FRotator{0,0,0},
+						FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos - z_alter) },
+						FVector{0.250f, 0.250f, 0.250f} };	//Scale
+					AddBasicTree(A, tree_select, mesh_name);
+					instanced_basic_tree->SetMobility(EComponentMobility::Static);
+					if (is_foilage) {
+						instanced_basic_tree->bCastDynamicShadow = false;
+						instanced_basic_tree->CastShadow = false;
+						instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
+						instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+					}
+				}
+				else{
+					pos_x += FMath::RandRange(-5, 5);
+					pos_y += FMath::RandRange(-5, 5);
 				}
 			}
-			else {
-				i--;
+			else
+			{
+				pos_y = FMath::RandRange(10, 380);
+				pos_x = FMath::RandRange(10, 380);
+				z_pos = m_verts[pos_y * 400 + pos_x].Z;
 			}
-		}
-		else{
-			i--;
+			
 		}
 	}
 }
@@ -172,7 +177,6 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 	int rocks_to_spawn = round(rocks_to_spawn_float);
 
 
-
 	for (int i = 0; i < rocks_to_spawn; i++){
 
 		int rand_point = FMath::RandRange(0, track_point.Num());
@@ -196,12 +200,47 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				FRotator{0,rand_yaw,0},
 				FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos) },
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
-				instanced_basic_tree->AddInstance(A);
+				instanced_basic_tree->AddInstance(A);				
 			}
 			else {
-				pos_x += FMath::RandRange(-5, 5);
-				pos_y += FMath::RandRange(-5, 5);
+				pos_x += FMath::RandRange(-8, 8);
+				pos_y += FMath::RandRange(-8, 8);
 			}
+		}
+	}
+}
+
+
+void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float&max, const float&min){
+
+	float max_m = max;
+	float min_m = min;
+
+
+	for (int i = 0; i < 5000; i++) {
+		int pos_y = FMath::RandRange(10, 380);
+		int pos_x = FMath::RandRange(10, 380);
+		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
+
+		if (CheckBounds(track_point, pos_x, pos_y)) {
+			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_m + (max_m * 0.20f))) {
+				FTransform A{
+					FRotator{0,0,0},
+					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos) },
+					FVector{0.250f, 0.250f, 0.250f} };	//Scale
+				AddBasicTree(A, 0, "SM_Grass");
+				instanced_basic_tree->SetMobility(EComponentMobility::Static);
+				instanced_basic_tree->bCastDynamicShadow = false;
+				instanced_basic_tree->CastShadow = false;
+				instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
+				instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			}
+			else {
+				i--;
+			}
+		}
+		else {
+			i--;
 		}
 	}
 }
