@@ -75,7 +75,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	float min_m = min_;
 	float z_alter = 0.0f;
 	if (is_foilage){
-		loop_range = 1000;
+		loop_range = 2000;
 		NameChoicePlant(mesh_name,z_alter);
 	}
 	else
@@ -164,31 +164,44 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 	return true;
 }
 
-void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point){
-	/*get the total length of the track.
-	produce change to spawn rock out of the length: 
-	so say at anywhere between 0-20% of the length, can spawn new rock
+void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts){
 
-	1.find length
-	2. find amount of rocks to spawn
-	2.1 int rand_percent = rand_range(0,20)
-	2.2 rand_percent % of length = amount of rocks to spawwn - so this gives how many.
-	3. for amount of rocks
-	3.1 spawn at random edge of track.
-	*/
-
-	//length
-	//could take distance between start and end, or actual length...
-
-	//c^2 = a^2+b^2
 	auto d = FVector2D::Distance(track_point[0], track_point.Last());
-	UE_LOG(LogTemp, Warning, TEXT("dist: %f"), d);
-
 	float rand_percent = FMath::RandRange(0.0f, 20.0f);
-	UE_LOG(LogTemp, Warning, TEXT("percent: %f"), rand_percent);
-
 	float rocks_to_spawn_float = d * (rand_percent/100.0f);
 	int rocks_to_spawn = round(rocks_to_spawn_float);
-	UE_LOG(LogTemp, Warning, TEXT("rocks: %d"),rocks_to_spawn);
 
+
+
+	for (int i = 0; i < rocks_to_spawn; i++){
+
+		int rand_point = FMath::RandRange(0, track_point.Num());
+		int pos_y = track_point[rand_point].Y;
+		int pos_x = track_point[rand_point].X;
+		
+		bool is_found = false;
+		while (!is_found)
+		{
+			if (CheckBounds(track_point, pos_x, pos_y)) {
+				is_found = true;
+				float z_pos = m_verts[pos_y * 400 + pos_x].Z;
+				float rand_scale = FMath::RandRange(0.01f, 0.2f);
+				float rand_yaw = FMath::RandRange(0.0f, 180.f);
+
+				UStaticMesh* meshToUse = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Game/Stylized_PBR_Nature/Rocks/Assets/SM_R_Rock_02.SM_R_Rock_02'")));
+				if (meshToUse && instanced_basic_tree) {
+					instanced_basic_tree->SetStaticMesh(meshToUse);
+				}
+				FTransform A{
+				FRotator{0,rand_yaw,0},
+				FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos) },
+				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
+				instanced_basic_tree->AddInstance(A);
+			}
+			else {
+				pos_x += FMath::RandRange(-5, 5);
+				pos_y += FMath::RandRange(-5, 5);
+			}
+		}
+	}
 }
