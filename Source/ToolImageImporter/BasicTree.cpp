@@ -68,9 +68,11 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	float max_m = max_;
 	float min_m = min_;
 	float z_alter = 0.0f;
+	float yaw_rot = 0.0f;
 	if (is_foilage){
 		loop_range = 2000;
 		NameChoicePlant(mesh_name,z_alter);
+		yaw_rot = 270.0f;
 	}
 	else
 	{
@@ -84,14 +86,14 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 		bool is_found = false;
 		while (!is_found)
 		{
-			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_m + (max_m * 0.20f)))
+			if (z_pos<(max_m - (max_m * 0.30f)) && z_pos>(min_m + (max_m * 0.20f)))
 			{
 				if (CheckBounds(track_point, pos_x, pos_y)) 
 				{
 					is_found = true;
 					FTransform A{
-						FRotator{0,0,0},
-						FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos - z_alter) },
+						FRotator{0,yaw_rot,0},
+						FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos - z_alter) },
 						FVector{0.250f, 0.250f, 0.250f} };	//Scale
 					AddBasicTree(A, tree_select, mesh_name);
 					instanced_basic_tree->SetMobility(EComponentMobility::Static);
@@ -105,6 +107,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 				else{
 					pos_x += FMath::RandRange(-5, 5);
 					pos_y += FMath::RandRange(-5, 5);
+					z_pos = m_verts[pos_y * 400 + pos_x].Z;
 				}
 			}
 			else
@@ -157,13 +160,33 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 
 bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, int&point_y){
 	for (int i = 0; i < track_point.Num(); i++){
-		if ((float)point_x != track_point[i].X && (float)point_y != track_point[i].Y) {
-			//not allowed
+		if ((int)point_x != (int)track_point[i].X && (int)point_y != (int)track_point[i].Y ) {
+			//if not on track point, do nothing and continue to see if it is on a track point.
 		}
 		else {
-			if ((float)point_x == track_point[i].X&& (float)point_y == track_point[i].Y){
+			if ((int)point_x == (int)track_point[i].X&& (int)point_y == (int)track_point[i].Y){
 				return false;
 			}
+			if ((int)point_x == (int)track_point[i].X+1 && (int)point_y == (int)track_point[i].Y) {
+				return false;
+			}
+			if ((int)point_x == (int)track_point[i].X - 1 && (int)point_y == (int)track_point[i].Y) {
+				return false;
+			}
+			if ((int)point_x == (int)track_point[i].X && (int)point_y == (int)track_point[i].Y+1) {
+				return false;
+			}
+			if ((int)point_x == (int)track_point[i].X && (int)point_y == (int)track_point[i].Y-1) {
+				return false;
+			}
+			if ((int)point_x == (int)track_point[i].X+1 && (int)point_y == (int)track_point[i].Y + 1) {
+				return false;
+			}
+			if ((int)point_x == (int)track_point[i].X -1&& (int)point_y == (int)track_point[i].Y - 1) {
+				return false;
+			}
+
+			//if equals point, or right, left, up, down 
 		}
 	}
 	return true;
@@ -198,12 +221,12 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				}
 				FTransform A{
 				FRotator{0,rand_yaw,0},
-				FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos) },
+				FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos) },
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				instanced_basic_tree->AddInstance(A);				
 			}
 			else {
-				pos_x += FMath::RandRange(-8, 8);
+				pos_x += FMath::RandRange(-4, 8);
 				pos_y += FMath::RandRange(-8, 8);
 			}
 		}
@@ -223,10 +246,10 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 
 		if (CheckBounds(track_point, pos_x, pos_y)) {
-			if (m_verts[pos_y * 400 + pos_x].Z<(max_m - (max_m * 0.30f)) && m_verts[pos_y * 400 + pos_x].Z>(min_m + (max_m * 0.20f))) {
+			if (z_pos<(max_m - (max_m * 0.30f)) && z_pos>(min_m + (max_m * 0.20f))) {
 				FTransform A{
-					FRotator{0,0,0},
-					FVector{(float)pos_x * 20.0f, (float)pos_y * 20.0f, (z_pos) },
+					FRotator{0,270.0f,0},
+					FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos) },
 					FVector{0.250f, 0.250f, 0.250f} };	//Scale
 				AddBasicTree(A, 0, "SM_Grass");
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
