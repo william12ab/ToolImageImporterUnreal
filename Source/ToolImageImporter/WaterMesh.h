@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
-#include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "WaterMesh.generated.h"
 
@@ -21,6 +19,14 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		USceneComponent* ScnComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		UStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(VisibleAnywhere)
+		UMaterialInstanceDynamic* material_instance;
+	UMaterialInterface* material_interface;
 
 };
