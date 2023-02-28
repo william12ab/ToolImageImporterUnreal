@@ -185,7 +185,6 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 			if ((int)point_x == (int)track_point[i].X -1&& (int)point_y == (int)track_point[i].Y - 1) {
 				return false;
 			}
-
 			//if equals point, or right, left, up, down 
 		}
 	}
@@ -198,8 +197,6 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 	float rand_percent = FMath::RandRange(0.0f, 20.0f);
 	float rocks_to_spawn_float = d * (rand_percent/100.0f);
 	int rocks_to_spawn = round(rocks_to_spawn_float);
-
-
 	for (int i = 0; i < rocks_to_spawn; i++){
 
 		int rand_point = FMath::RandRange(0, track_point.Num());
@@ -223,7 +220,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				FRotator{0,rand_yaw,0},
 				FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos) },
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
-				instanced_basic_tree->AddInstance(A);				
+				instanced_basic_tree->AddInstance(A);
 			}
 			else {
 				pos_x += FMath::RandRange(-4, 8);
