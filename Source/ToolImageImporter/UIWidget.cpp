@@ -213,7 +213,7 @@ void UUIWidget::CreateTrack()
 		FRotator myRotTree(0, 0, 0);
 		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->SpawnTestRock();
+		tree_instancea->AddRockClusters(track_points);
 	}
 }
 

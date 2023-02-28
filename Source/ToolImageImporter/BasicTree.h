@@ -28,7 +28,7 @@ public:
 	void AddName(const FString& name_attachment_, const int& tree_, FString& name_);
 	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
 
-	void AddRockClusters();
+	void AddRockClusters(const TArray<FVector2D>& track_point);
 
 	void NameChoiceTree(FString& mesh_name, int& tree_select);
 	void NameChoicePlant(FString& mesh_name, float& z_alter);

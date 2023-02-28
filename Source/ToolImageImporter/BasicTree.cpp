@@ -164,7 +164,7 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 	return true;
 }
 
-void ABasicTree::AddRockClusters(){
+void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point){
 	/*get the total length of the track.
 	produce change to spawn rock out of the length: 
 	so say at anywhere between 0-20% of the length, can spawn new rock
@@ -179,4 +179,16 @@ void ABasicTree::AddRockClusters(){
 
 	//length
 	//could take distance between start and end, or actual length...
+
+	//c^2 = a^2+b^2
+	auto d = FVector2D::Distance(track_point[0], track_point.Last());
+	UE_LOG(LogTemp, Warning, TEXT("dist: %f"), d);
+
+	float rand_percent = FMath::RandRange(0.0f, 20.0f);
+	UE_LOG(LogTemp, Warning, TEXT("percent: %f"), rand_percent);
+
+	float rocks_to_spawn_float = d * (rand_percent/100.0f);
+	int rocks_to_spawn = round(rocks_to_spawn_float);
+	UE_LOG(LogTemp, Warning, TEXT("rocks: %d"),rocks_to_spawn);
+
 }
