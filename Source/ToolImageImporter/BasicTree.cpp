@@ -221,6 +221,8 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos) },
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				instanced_basic_tree->AddInstance(A);
+				instanced_basic_tree->SetMobility(EComponentMobility::Static);
+
 			}
 			else {
 				pos_x += FMath::RandRange(-4, 8);

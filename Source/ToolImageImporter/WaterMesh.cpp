@@ -15,15 +15,16 @@ AWaterMesh::AWaterMesh()
 	StaticMeshComponent->SetStaticMesh(MeshAsset.Object);
 	StaticMeshComponent->SetupAttachment(RootComponent);
 
-	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Stylized_PBR_Nature/Terrain/M_Water_Basic.M_Water_Basic'"));
-	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
-	StaticMeshComponent->SetMaterial(0, material_instance);
 }
 
 // Called when the game starts or when spawned
 void AWaterMesh::BeginPlay()
 {
 	Super::BeginPlay();
+
+	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Stylized_PBR_Nature/Terrain/M_Water_Basic.M_Water_Basic'"));
+	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
+	StaticMeshComponent->SetMaterial(0, material_instance);
 }
 
 
