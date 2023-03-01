@@ -238,18 +238,18 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 	float max_m = max;
 	float min_m = min;
 
-
-	for (int i = 0; i < 5000; i++) {
+	for (int i = 0; i < 25000; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
-
+		float rand_rot_yaw = FMath::RandRange(-360, 360);
+		float rand_scale = FMath::RandRange(0.125f, 0.3f);
 		if (CheckBounds(track_point, pos_x, pos_y)) {
-			if (z_pos<(max_m - (max_m * 0.30f)) && z_pos>(min_m + (max_m * 0.20f))) {
+			if (z_pos<(max_m - (max_m * 0.550f)) && z_pos>(min_m + (max_m * 0.050f))) {
 				FTransform A{
-					FRotator{0,270.0f,0},
+					FRotator{0,rand_rot_yaw,0},
 					FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos) },
-					FVector{0.250f, 0.250f, 0.250f} };	//Scale
+					FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				AddBasicTree(A, 0, "SM_Grass");
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
 				instanced_basic_tree->bCastDynamicShadow = false;

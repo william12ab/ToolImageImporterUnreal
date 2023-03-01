@@ -12,6 +12,7 @@
 #include "TrackMesh.h"
 #include "TrackInstance.h"
 #include "BasicTree.h"
+#include "WaterMesh.h"
 #include "UIWidget.generated.h"
 
 
@@ -71,7 +72,7 @@ protected:
 		void OnClickUpdateButton();		//updates the mesh with the new values from the slider. couldnt figure out how to work the sldier function
 
 		
-
+	AWaterMesh* w_mesh;
 	AMyProceduralMesh* p_mesh;		//obj
 	ATrackMesh* track_mesh;
 	ABasicTree* tree_instance;

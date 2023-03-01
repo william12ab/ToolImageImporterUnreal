@@ -22,7 +22,7 @@ void AWaterMesh::BeginPlay()
 {
 	Super::BeginPlay();
 
-	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Stylized_PBR_Nature/Terrain/M_Water_Basic.M_Water_Basic'"));
+	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/WaterMaterials/Materials/M_Water_Opaque.M_Water_Opaque'"));
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
 	StaticMeshComponent->SetMaterial(0, material_instance);
 }

@@ -181,12 +181,14 @@ void UUIWidget::CreateTrack()
 
 	int max = 0;
 	int min = 100000000;
+	int index = 0;
 	for (int i = 0; i < p_mesh->m_verts.Num(); i++) {
 		if (p_mesh->m_verts[i].Z > max) {
 			max = p_mesh->m_verts[i].Z;
 		}
 		if (p_mesh->m_verts[i].Z < min) {
 			min = p_mesh->m_verts[i].Z;
+			index = i;
 		}
 	}
 
@@ -224,6 +226,12 @@ void UUIWidget::CreateTrack()
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddGrass(track_points, p_mesh->m_verts,max,min);
 	}
+
+	FActorSpawnParameters SpawnInfoTree;
+	FRotator myRotTree(0, 0, 0);
+	FVector myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
+	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
+	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)
