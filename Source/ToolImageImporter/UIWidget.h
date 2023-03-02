@@ -30,6 +30,8 @@ protected:
 	void ReadSliders();			//reads the values from the sliders and sets them to text fields
 	void SliderFunc(const int& val_, UEditableTextBox* text_box);
 	void CreateTrack();
+	void CreateFoilage();
+
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;

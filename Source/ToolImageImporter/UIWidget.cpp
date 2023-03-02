@@ -166,8 +166,7 @@ void UUIWidget::LoadTrackPointsIn()
 	CreateTrack();
 }
 
-void UUIWidget::CreateTrack()
-{
+void UUIWidget::CreateTrack(){
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0.2f);
@@ -176,62 +175,7 @@ void UUIWidget::CreateTrack()
 	p_mesh->ModiVerts(m_colors, m_);
 	track_mesh = GetWorld()->SpawnActor<ATrackMesh>(myLoc, myRot, SpawnInfo);
 	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);
-
-
-
-	int max = 0;
-	int min = 100000000;
-	int index = 0;
-	for (int i = 0; i < p_mesh->m_verts.Num(); i++) {
-		if (p_mesh->m_verts[i].Z > max) {
-			max = p_mesh->m_verts[i].Z;
-		}
-		if (p_mesh->m_verts[i].Z < min) {
-			min = p_mesh->m_verts[i].Z;
-			index = i;
-		}
-	}
-
-	for (int i = 0; i < 4; i++) {
-		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->m_verts,max,min, track_points,false);
-	}
-	for (int i = 0; i < 2; i++) {
-		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, true);
-	}
-
-	for (int i = 0; i < 1; i++) {
-		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddRockClusters(track_points,p_mesh->m_verts);
-	}
-
-	for (int i = 0; i < 1; i++) {
-		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddGrass(track_points, p_mesh->m_verts,max,min);
-	}
-
-	FActorSpawnParameters SpawnInfoTree;
-	FRotator myRotTree(0, 0, 0);
-	FVector myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
-	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
-	w_mesh->SetActorScale3D(FVector(30, 30, 30));
+	CreateFoilage();
 }
 
 void UUIWidget::ReadFileInfo(const FString& name__)
@@ -254,4 +198,58 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
 	GeneratePlane();
+}
+
+void UUIWidget::CreateFoilage()
+{
+	int max = 0;
+	int min = 100000000;
+	int index = 0;
+	for (int i = 0; i < p_mesh->m_verts.Num(); i++) {
+		if (p_mesh->m_verts[i].Z > max) {
+			max = p_mesh->m_verts[i].Z;
+		}
+		if (p_mesh->m_verts[i].Z < min) {
+			min = p_mesh->m_verts[i].Z;
+			index = i;
+		}
+	}
+	//tree
+	for (int i = 0; i < 4; i++) {
+		ABasicTree* tree_instancea;
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, false);
+	}
+	for (int i = 0; i < 2; i++) {//ferns bushes
+		ABasicTree* tree_instancea;
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, true);
+	}
+	for (int i = 0; i < 1; i++) {//rocks
+		ABasicTree* tree_instancea;
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddRockClusters(track_points, p_mesh->m_verts);
+	}
+	for (int i = 0; i < 1; i++) {//grass
+		ABasicTree* tree_instancea;
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddGrass(track_points, p_mesh->m_verts, max, min);
+	}
+	FActorSpawnParameters SpawnInfoTree;//water
+	FRotator myRotTree(0, 0, 0);
+	FVector myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
+	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
+	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 }
