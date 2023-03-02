@@ -153,7 +153,7 @@ void ATrackMesh::CreateTrack(const TArray<FVector2D>& track_points, const TArray
 	ClearMeshData();
 	GenerateTrackVerts(track_points, c_, m_, m_norms_terrain);
 	//Function that creates mesh section
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, true);
+	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, false);
 	procedural_mesh_comp->bCastDynamicShadow = false;
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TrackMaterial.TrackMaterial'"));
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);

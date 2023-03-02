@@ -87,5 +87,5 @@ protected:
 	UTexture* t_;
 
 	TArray<FVector2D> track_points;
-
+	APawn* player_pawn;
 };

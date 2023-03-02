@@ -8,6 +8,7 @@
 #include "DesktopPlatform/Public/IDesktopPlatform.h"
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
+
 void UUIWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -21,6 +22,11 @@ void UUIWidget::NativeConstruct()
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
+
+
+	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+
+
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -30,6 +36,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	// Do your custom tick stuff here
 	OnEnterText();
 	ReadSliders();
+
 }
 
 void UUIWidget::OnClickLoadNewTrack()
@@ -164,6 +171,12 @@ void UUIWidget::LoadTrackPointsIn()
 		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
 	}
 	CreateTrack();
+	float pos_y = track_points[0].Y ;
+	float pos_x = track_points[0].X ;
+	float z_pos = p_mesh->m_verts[pos_y * 400 + pos_x].Z;
+	FVector loc_ = FVector(pos_x*20, pos_y*20,z_pos+50);
+	player_pawn->SetActorScale3D(FVector(0.3, 0.3, 0.3));
+	player_pawn->TeleportTo(loc_,FRotator(0,0,0));
 }
 
 void UUIWidget::CreateTrack(){
