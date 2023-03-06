@@ -266,3 +266,11 @@ void UUIWidget::CreateFoilage()
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 }
+
+
+void UUIWidget::CreateSpline(){
+	FActorSpawnParameters SpawnInfoTree;
+	FRotator myRotTree(0, 0, 0);
+	FVector myLocTree = FVector(0, 0, 0);
+	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
+}

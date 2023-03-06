@@ -23,7 +23,6 @@ void ATrackSpline::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 }
 
 void ATrackSpline::OnConstruction(const FTransform& Transform)
@@ -42,40 +41,40 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("true"));
 
-		const int32 SplinePoints = spline->GetNumberOfSplinePoints();
-		UE_LOG(LogTemp, Warning, TEXT("spline points: %d"), SplinePoints);
+		const int32 spline_points = spline->GetNumberOfSplinePoints();
+		UE_LOG(LogTemp, Warning, TEXT("spline points: %d"), spline_points);
 
-		for (int SplineCount = 0; SplineCount < (SplinePoints - 1); SplineCount++)
+		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)
 		{
 		
-			USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-			UStaticMesh* StaticMesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'")));
+			USplineMeshComponent* spline_mesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+			UStaticMesh* static_mesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'")));
 			UMaterialInterface* Material = nullptr;
 			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
 			
-			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
 			// update mesh details
-			SplineMesh->SetStaticMesh(StaticMesh);
-			SplineMesh->SetForwardAxis(ESplineMeshAxis::X, true);
-			SplineMesh->SetMaterial(0, Material);
+			spline_mesh->SetStaticMesh(static_mesh);
+			spline_mesh->SetForwardAxis(ESplineMeshAxis::X, true);
+			spline_mesh->SetMaterial(0, Material);
 			
 			// initialize the object
-			SplineMesh->RegisterComponentWithWorld(GetWorld());
+			spline_mesh->RegisterComponentWithWorld(GetWorld());
 
-			SplineMesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
-			SplineMesh->SetMobility(EComponentMobility::Movable);
+			spline_mesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
+			spline_mesh->SetMobility(EComponentMobility::Movable);
 
-			SplineMesh->AttachToComponent(spline, FAttachmentTransformRules::KeepRelativeTransform);
+			spline_mesh->AttachToComponent(spline, FAttachmentTransformRules::KeepRelativeTransform);
 
 			// define the positions of the points and tangents
-			const FVector StartPoint = spline->GetLocationAtSplinePoint(SplineCount, ESplineCoordinateSpace::Type::Local);
-			const FVector StartTangent = spline->GetTangentAtSplinePoint(SplineCount, ESplineCoordinateSpace::Type::Local);
-			const FVector EndPoint = spline->GetLocationAtSplinePoint(SplineCount + 1, ESplineCoordinateSpace::Type::Local);
-			const FVector EndTangent = spline->GetTangentAtSplinePoint(SplineCount + 1, ESplineCoordinateSpace::Type::Local);
-			SplineMesh->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
+			const FVector StartPoint = spline->GetLocationAtSplinePoint(spline_count, ESplineCoordinateSpace::Type::Local);
+			const FVector StartTangent = spline->GetTangentAtSplinePoint(spline_count, ESplineCoordinateSpace::Type::Local);
+			const FVector EndPoint = spline->GetLocationAtSplinePoint(spline_count + 1, ESplineCoordinateSpace::Type::Local);
+			const FVector EndTangent = spline->GetTangentAtSplinePoint(spline_count + 1, ESplineCoordinateSpace::Type::Local);
+			spline_mesh->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
 
 			// query physics
-			SplineMesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-		}
+			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+			spline_mesh->bCastDynamicShadow=false;		}
 	}
+	
 }

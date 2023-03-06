@@ -24,12 +24,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "TrackSpline")
 		USplineComponent* spline;
+
+	void SetControlPoints(TArray<FVector> c_p) { control_points = c_p; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-
+private:
+	TArray<FVector> control_points;
 	
 };

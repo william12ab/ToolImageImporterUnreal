@@ -13,6 +13,7 @@
 #include "TrackInstance.h"
 #include "BasicTree.h"
 #include "WaterMesh.h"
+#include "TrackSpline.h"
 #include "UIWidget.generated.h"
 
 
@@ -31,7 +32,7 @@ protected:
 	void SliderFunc(const int& val_, UEditableTextBox* text_box);
 	void CreateTrack();
 	void CreateFoilage();
-
+	void CreateSpline();
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -88,4 +89,6 @@ protected:
 
 	TArray<FVector2D> track_points;
 	APawn* player_pawn;
+
+	ATrackSpline* track_spline;
 };
