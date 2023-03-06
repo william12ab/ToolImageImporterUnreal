@@ -24,6 +24,7 @@ void AWaterMesh::BeginPlay()
 
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/WaterMaterials/Materials/M_Water_Opaque.M_Water_Opaque'"));
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
+	
 	StaticMeshComponent->SetMaterial(0, material_instance);
 }
 

@@ -26,7 +26,7 @@ void UUIWidget::NativeConstruct()
 
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
-
+	CreateSpline();
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -265,12 +265,30 @@ void UUIWidget::CreateFoilage()
 	FVector myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
+
 }
 
 
 void UUIWidget::CreateSpline(){
+
+	TArray<FVector2D> points_;
+	points_.Add(FVector2D(0, 0));
+	points_.Add(FVector2D(100, 0));
+	points_.Add(FVector2D(800, 0));
+	points_.Add(FVector2D(1600, 500));
+
+
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
+	UE_LOG(LogTemp, Warning, TEXT("create"));
 	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
+	track_spline->SetControlPoints(points_);
+	FTransform t_transform_{
+					FRotator{0,0,0},
+					FVector{0, 0, 0},
+					FVector{1, 1, 1} };	//Scale
+	track_spline->OnConstruction(t_transform_);
+	UE_LOG(LogTemp, Warning, TEXT("end create"));
+
 }

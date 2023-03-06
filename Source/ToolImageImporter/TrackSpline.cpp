@@ -11,7 +11,7 @@ ATrackSpline::ATrackSpline()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-    spline = CreateDefaultSubobject<USplineComponent>("Spline");
+    spline = CreateDefaultSubobject<USplineComponent>("Spline",true);
     if (spline)
     {
         SetRootComponent(spline);
@@ -29,13 +29,13 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	int x = 0;
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < control_points.Num(); i++) {
 		FSplinePoint myPoint;
-		myPoint.Position = FVector(x, 0.0f, 0.0f);
+		myPoint.Position = FVector(control_points[i].X, control_points[i].Y, 0.0f);
 		myPoint.Rotation = FRotator(0.0f, 0.0f, 0.0f);
 		myPoint.Scale = FVector(0.0f, 0.0f, 0.0f);
 		x += 100;
-		spline->AddPoint(myPoint, false);
+		spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, 0.0f));
 	}
 	if (spline)
 	{
@@ -46,12 +46,11 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 
 		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)
 		{
-		
 			USplineMeshComponent* spline_mesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 			UStaticMesh* static_mesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'")));
 			UMaterialInterface* Material = nullptr;
 			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
-			
+
 			// update mesh details
 			spline_mesh->SetStaticMesh(static_mesh);
 			spline_mesh->SetForwardAxis(ESplineMeshAxis::X, true);
@@ -74,7 +73,8 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 
 			// query physics
 			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-			spline_mesh->bCastDynamicShadow=false;		}
+			spline_mesh->bCastDynamicShadow=false;		
+		}
 	}
 	
 }
