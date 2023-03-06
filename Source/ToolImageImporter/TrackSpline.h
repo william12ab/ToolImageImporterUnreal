@@ -2,10 +2,14 @@
 
 #pragma once
 
-#include "GameFramework/Actor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
+#include "GameFramework/Actor.h"
+
+
 #include "TrackSpline.generated.h"
+
+
 
 UCLASS()
 class TOOLIMAGEIMPORTER_API ATrackSpline : public AActor
@@ -16,13 +20,16 @@ public:
 	// Sets default values for this actor's properties
 	ATrackSpline();
 
+	void OnConstruction(const FTransform& Transform) override;
+
+	UPROPERTY(VisibleAnywhere, Category = "TrackSpline")
+		USplineComponent* spline;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	
 };
