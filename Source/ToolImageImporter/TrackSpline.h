@@ -26,11 +26,13 @@ public:
 		USplineComponent* spline;
 
 	void SetControlPoints(TArray<FVector2D> c_p) { control_points = c_p; }
+	void SetHeightArray(TArray<float> h_) { height_z = h_; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
 	TArray<FVector2D> control_points;
+	TArray<float> height_z;
 	
 };

@@ -30,22 +30,19 @@ void ATrackSpline::BeginPlay()
 void ATrackSpline::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+
+	//spline->RemoveSplinePoint(0, true);
+	spline->ClearSplinePoints();
+
 	
-	int p=spline->GetNumberOfSplinePoints();
-	UE_LOG(LogTemp, Warning, TEXT("splinecount first: %d"), p);
-	spline->RemoveSplinePoint(0, true);
-	p = spline->GetNumberOfSplinePoints();
-	UE_LOG(LogTemp, Warning, TEXT("splinecount first removal: %d"), p);
-
 	for (int i = 0; i < (control_points.Num()); i++) {
-		spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, 0.0f));
+		int x = control_points[i].X / 20;
+		int y = control_points[i].Y / 20;
+		spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (height_z[y * 400 + x]*20)/3.0f));
 	}
-	p = spline->GetNumberOfSplinePoints();
-	UE_LOG(LogTemp, Warning, TEXT("splinecount after loop: %d"), p);
-
+	
 	if (spline)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("in spline loop"));
 
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
 		UE_LOG(LogTemp, Warning, TEXT("spline points in loop: %d"), spline_points);
@@ -80,6 +77,8 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			// query physics
 			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 			spline_mesh->bCastDynamicShadow=false;		
+
+			
 		}
 	}
 	

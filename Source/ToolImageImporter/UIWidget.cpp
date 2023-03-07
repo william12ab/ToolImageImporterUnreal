@@ -26,7 +26,6 @@ void UUIWidget::NativeConstruct()
 
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
-	CreateSpline();
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -265,6 +264,7 @@ void UUIWidget::CreateFoilage()
 	FVector myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
+	CreateSpline();
 
 }
 
@@ -288,11 +288,7 @@ void UUIWidget::CreateSpline(){
 	points_.Add(FVector2D(334 * 20, 51 * 20));
 	points_.Add(FVector2D(329 * 20, 33 * 20));
 
-	//points_.Add(FVector2D(100, 100));
-	//points_.Add(FVector2D(200, 300));
-	//points_.Add(FVector2D(400, 300));
-	//points_.Add(FVector2D(500, 300));
-	//points_.Add(FVector2D(500, 200));
+
 
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
@@ -306,6 +302,7 @@ void UUIWidget::CreateSpline(){
 
 
 	track_spline->SetControlPoints(points_);
+	track_spline->SetHeightArray(m_colors);
 	FTransform t_transform_{
 					FRotator{0,0,0},
 					FVector{0, 0, 0},
