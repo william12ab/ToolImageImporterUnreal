@@ -272,23 +272,46 @@ void UUIWidget::CreateFoilage()
 void UUIWidget::CreateSpline(){
 
 	TArray<FVector2D> points_;
-	points_.Add(FVector2D(0, 0));
-	points_.Add(FVector2D(100, 0));
-	points_.Add(FVector2D(800, 0));
-	points_.Add(FVector2D(1600, 500));
+	points_.Add(FVector2D(4 *20, 251 * 20));
+	points_.Add(FVector2D(21 * 20, 254 * 20));
+	points_.Add(FVector2D(55 * 20, 265 * 20));
+	points_.Add(FVector2D(56 * 20, 266 * 20));
+	points_.Add(FVector2D(73 * 20, 256 * 20));
+	points_.Add(FVector2D(109 * 20, 165 * 20));
+	points_.Add(FVector2D(137 * 20, 134 * 20));
+	points_.Add(FVector2D(167 * 20, 103 * 20));
+	points_.Add(FVector2D(168 * 20, 102 * 20));
+	points_.Add(FVector2D(224 * 20, 76 * 20));
+	points_.Add(FVector2D(241 * 20, 87 * 20));
+	points_.Add(FVector2D(243 * 20, 88 * 20));
+	points_.Add(FVector2D(322 * 20, 99 * 20));
+	points_.Add(FVector2D(334 * 20, 51 * 20));
+	points_.Add(FVector2D(329 * 20, 33 * 20));
 
+	//points_.Add(FVector2D(100, 100));
+	//points_.Add(FVector2D(200, 300));
+	//points_.Add(FVector2D(400, 300));
+	//points_.Add(FVector2D(500, 300));
+	//points_.Add(FVector2D(500, 200));
 
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
-	UE_LOG(LogTemp, Warning, TEXT("create"));
+	UE_LOG(LogTemp, Warning, TEXT("getworld"));
 	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
+	UE_LOG(LogTemp, Warning, TEXT("after getworld"));
+
+
+	
+
+
 	track_spline->SetControlPoints(points_);
 	FTransform t_transform_{
 					FRotator{0,0,0},
 					FVector{0, 0, 0},
 					FVector{1, 1, 1} };	//Scale
+	UE_LOG(LogTemp, Warning, TEXT("before onconstruction"));
 	track_spline->OnConstruction(t_transform_);
-	UE_LOG(LogTemp, Warning, TEXT("end create"));
+	UE_LOG(LogTemp, Warning, TEXT("last line"));
 
 }

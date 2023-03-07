@@ -16,6 +16,8 @@ ATrackSpline::ATrackSpline()
     {
         SetRootComponent(spline);
     }
+	UE_LOG(LogTemp, Warning, TEXT("constructor"));
+
 }
 
 // Called when the game starts or when spawned
@@ -28,21 +30,25 @@ void ATrackSpline::BeginPlay()
 void ATrackSpline::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	int x = 0;
-	for (int i = 0; i < control_points.Num(); i++) {
-		FSplinePoint myPoint;
-		myPoint.Position = FVector(control_points[i].X, control_points[i].Y, 0.0f);
-		myPoint.Rotation = FRotator(0.0f, 0.0f, 0.0f);
-		myPoint.Scale = FVector(0.0f, 0.0f, 0.0f);
-		x += 100;
+	
+	int p=spline->GetNumberOfSplinePoints();
+	UE_LOG(LogTemp, Warning, TEXT("splinecount first: %d"), p);
+	spline->RemoveSplinePoint(0, true);
+	p = spline->GetNumberOfSplinePoints();
+	UE_LOG(LogTemp, Warning, TEXT("splinecount first removal: %d"), p);
+
+	for (int i = 0; i < (control_points.Num()); i++) {
 		spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, 0.0f));
 	}
+	p = spline->GetNumberOfSplinePoints();
+	UE_LOG(LogTemp, Warning, TEXT("splinecount after loop: %d"), p);
+
 	if (spline)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("true"));
+		UE_LOG(LogTemp, Warning, TEXT("in spline loop"));
 
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
-		UE_LOG(LogTemp, Warning, TEXT("spline points: %d"), spline_points);
+		UE_LOG(LogTemp, Warning, TEXT("spline points in loop: %d"), spline_points);
 
 		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)
 		{
