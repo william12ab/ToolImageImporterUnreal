@@ -293,13 +293,7 @@ void UUIWidget::CreateSpline(){
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
-	UE_LOG(LogTemp, Warning, TEXT("getworld"));
 	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
-	UE_LOG(LogTemp, Warning, TEXT("after getworld"));
-
-
-	
-
 
 	track_spline->SetControlPoints(points_);
 	track_spline->SetHeightArray(m_colors);
@@ -307,8 +301,5 @@ void UUIWidget::CreateSpline(){
 					FRotator{0,0,0},
 					FVector{0, 0, 0},
 					FVector{1, 1, 1} };	//Scale
-	UE_LOG(LogTemp, Warning, TEXT("before onconstruction"));
 	track_spline->OnConstruction(t_transform_);
-	UE_LOG(LogTemp, Warning, TEXT("last line"));
-
 }

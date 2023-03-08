@@ -45,8 +45,6 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 	{
 
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
-		UE_LOG(LogTemp, Warning, TEXT("spline points in loop: %d"), spline_points);
-
 		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)
 		{
 			USplineMeshComponent* spline_mesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
