@@ -53,6 +53,8 @@ public:
 	void ChangeTest(const TArray< FVector2D> &track_points);
 	void CalculateNormals();
 
+	void ChangeForSpline(const TArray<FVector>&verts_);
+
 	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned
@@ -65,7 +67,5 @@ protected:
 	int32 width_;
 	float spacing_;
 	int count;
-	//FVector2D uv_spacing_track;
 public:	
-	// Called every frame
 };

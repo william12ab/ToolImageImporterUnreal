@@ -4,6 +4,9 @@
 #include "TrackSpline.h"
 #include "Components/SplineMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "DrawDebugHelpers.h"
+
 #include "Engine/Engine.h"
 // Sets default values
 ATrackSpline::ATrackSpline()
@@ -26,6 +29,19 @@ void ATrackSpline::BeginPlay()
 	Super::BeginPlay();
 
 }
+
+FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosition, USplineMeshComponent* SplineMeshComponent)
+{
+	const float VertexPositionAlongSpline = StaticMeshVertexPosition[SplineMeshComponent->ForwardAxis];
+	const FTransform StaticMeshToSplineMeshTransform = SplineMeshComponent->CalcSliceTransform(VertexPositionAlongSpline);
+	FVector SlicePos = StaticMeshVertexPosition;
+	SlicePos[SplineMeshComponent->ForwardAxis] = 0;
+	const FVector SplineMeshSpaceVector = StaticMeshToSplineMeshTransform.TransformPosition(SlicePos);
+	FVector ResultPos = SplineMeshSpaceVector;
+	return SplineMeshSpaceVector;
+}
+
+
 
 void ATrackSpline::OnConstruction(const FTransform& Transform)
 {
@@ -52,11 +68,12 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			UMaterialInterface* Material = nullptr;
 			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
 
+			
 			// update mesh details
 			spline_mesh->SetStaticMesh(static_mesh);
 			spline_mesh->SetForwardAxis(ESplineMeshAxis::X, true);
 			spline_mesh->SetMaterial(0, Material);
-			
+
 			// initialize the object
 			spline_mesh->RegisterComponentWithWorld(GetWorld());
 
@@ -74,10 +91,34 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 
 			// query physics
 			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-			spline_mesh->bCastDynamicShadow=false;		
-
+			spline_mesh->bCastDynamicShadow = false;
 			
+			if (spline_mesh->GetStaticMesh()->RenderData->LODResources.Num() > 0)
+			{
+				
+				FPositionVertexBuffer* vertex_buffer = &spline_mesh->GetStaticMesh()->RenderData->LODResources[0].VertexBuffers.PositionVertexBuffer;
+				if (vertex_buffer)
+				{
+					const int32 vertex_count= vertex_buffer->GetNumVertices();
+					for (int32 index_ = 0; index_ < vertex_count; index_++)
+					{
+						//This is in the Static Mesh Actor Class, so it is location and tranform of the SMActor
+						
+						const FVector StaticMeshSpacePosition = vertex_buffer->VertexPosition(index_);
+						const FVector SplineMeshSpacePosition = StaticMeshToSplineMeshVertexPosition(StaticMeshSpacePosition, spline_mesh);
+						const FVector WorldSpacePosition = spline_mesh->GetComponentLocation() + spline_mesh->GetComponentTransform().TransformVector(SplineMeshSpacePosition);
+						UE_LOG(LogTemp, Warning, TEXT("verts x:%f "), WorldSpacePosition.X);
+						UE_LOG(LogTemp, Warning, TEXT("verts y:%f "), WorldSpacePosition.Y);
+						UE_LOG(LogTemp, Warning, TEXT("verts z:%f "), WorldSpacePosition.Z);
+						UE_LOG(LogTemp, Warning, TEXT(" "));
+						m_verts.Add(WorldSpacePosition);
+					}
+				}
+			}
 		}
 	}
-	
+}
+
+void ATrackSpline::TestingBounds(){
+
 }

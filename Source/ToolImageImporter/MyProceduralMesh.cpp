@@ -310,3 +310,58 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
 	procedural_mesh_comp->SetMaterial(0, material_instance);
 }
+
+int count_digit(int number) {
+	int count = 0;
+	while (number != 0) {
+		number = number / 10;
+		count++;
+	}
+	return count;
+}
+
+//takes in int (the coord in question) rounds to the nearest 10 integer. so 406 becomes 410
+int round_up(const int& d)
+{
+	int divider = 0;
+	int digits = count_digit(d);
+	switch (digits)
+	{
+	case 1:
+		divider = 10;
+		break;
+	case 2:
+		divider = 10;
+		break;
+	case 3:
+		divider = 10;
+		break;
+	case 4:
+		divider = 100;
+		break;
+	}
+	float division_amount = round(d) / divider;
+	int rounded_to_nearest_ten = round(division_amount);
+	int final_digit = rounded_to_nearest_ten * divider;
+	return final_digit;
+}
+
+void AMyProceduralMesh::ChangeForSpline(const TArray<FVector>& verts_)
+{
+	int d = (int)verts_[0].X;
+
+
+	for (int i = 0; i < m_verts.Num(); i++)
+	{
+		
+		if ((int)verts_[0].X == (int)m_verts[i].X || round(verts_[0].X) == (int)m_verts[i].X)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("equal to "));
+		}
+		if (((int)verts_[0].X+10) == (int)m_verts[i].X || (round(verts_[0].X)+10) == (int)m_verts[i].X)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("equal to "));
+		}
+	}
+
+}

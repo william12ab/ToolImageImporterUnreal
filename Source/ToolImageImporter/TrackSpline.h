@@ -27,6 +27,10 @@ public:
 
 	void SetControlPoints(TArray<FVector2D> c_p) { control_points = c_p; }
 	void SetHeightArray(TArray<float> h_) { height_z = h_; }
+
+	void TestingBounds();
+
+	TArray<FVector> GetVerts() { return m_verts; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,5 +38,7 @@ protected:
 private:
 	TArray<FVector2D> control_points;
 	TArray<float> height_z;
+
+	TArray<FVector> m_verts;
 	
 };

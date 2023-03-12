@@ -265,7 +265,7 @@ void UUIWidget::CreateFoilage()
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 	CreateSpline();
-
+	track_spline->TestingBounds();
 }
 
 
@@ -302,4 +302,6 @@ void UUIWidget::CreateSpline(){
 					FVector{0, 0, 0},
 					FVector{1, 1, 1} };	//Scale
 	track_spline->OnConstruction(t_transform_);
+
+	p_mesh->ChangeForSpline(track_spline->GetVerts());
 }
