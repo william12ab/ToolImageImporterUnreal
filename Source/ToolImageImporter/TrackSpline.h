@@ -31,6 +31,7 @@ public:
 	void TestingBounds();
 
 	TArray<FVector> GetVerts() { return m_verts; }
+	TArray<FVector> GetSEPoints() { return start_end_points; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -40,5 +41,5 @@ private:
 	TArray<float> height_z;
 
 	TArray<FVector> m_verts;
-	
+	TArray<FVector> start_end_points;
 };

@@ -55,6 +55,8 @@ public:
 
 	void ChangeForSpline(const TArray<FVector>&verts_);
 
+	void SetTrackHeight(const TArray<FVector>& points_);
+
 	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned

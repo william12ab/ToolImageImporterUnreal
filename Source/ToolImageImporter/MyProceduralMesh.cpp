@@ -348,20 +348,89 @@ int round_up(const int& d)
 
 void AMyProceduralMesh::ChangeForSpline(const TArray<FVector>& verts_)
 {
-	int d = (int)verts_[0].X;
+	int non_rounded = (int)verts_[0].X;		//rounded down so 406.6 = 406
+	int rounded = round(non_rounded);		//up so 406.6 = 407
 
+	int new_num = round_up(non_rounded);
+	int new_num_rounded = round_up(rounded);
 
 	for (int i = 0; i < m_verts.Num(); i++)
 	{
-		
-		if ((int)verts_[0].X == (int)m_verts[i].X || round(verts_[0].X) == (int)m_verts[i].X)
+		if (new_num == (int)m_verts[i].X || new_num_rounded == (int)m_verts[i].X)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("equal to "));
+			non_rounded = (int)verts_[0].Y;
+			rounded = round(non_rounded);
+			new_num = round_up(non_rounded);
+			new_num_rounded = round_up(non_rounded);
+			for (int j = 0; j < m_verts.Num(); j++)
+			{
+				if (new_num == (int)m_verts[j].Y || new_num_rounded == (int)m_verts[j].Y)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("equal to y"));
+					UE_LOG(LogTemp, Warning, TEXT("x %d"), (int)m_verts[i].X);
+					UE_LOG(LogTemp, Warning, TEXT("y %d"), (int)m_verts[i].Y);
+				}
+			}
 		}
-		if (((int)verts_[0].X+10) == (int)m_verts[i].X || (round(verts_[0].X)+10) == (int)m_verts[i].X)
+		if ((new_num+10) == (int)m_verts[i].X || (new_num_rounded+10) == (int)m_verts[i].X)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("equal to "));
+			non_rounded = (int)verts_[0].Y;
+			rounded = round(non_rounded);
+			new_num = round_up(non_rounded);
+			new_num_rounded = round_up(non_rounded);
+			for (int j = 0; j < m_verts.Num(); j++)
+			{
+				if ((new_num +10)== (int)m_verts[j].Y || (new_num_rounded+10) == (int)m_verts[j].Y)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("equal to y, plus 10"));
+				}
+			}
 		}
 	}
 
+}
+
+
+FVector2D NormalisedOppositeDir(const FVector& c1, const FVector& c2)
+{
+	FVector2D dir_, dir_norm_, dir_opp_, dir_norm_opp_;
+
+	FVector2D p1= FVector2D(c1.X,c1.Y);					//control points
+	FVector2D p2 = FVector2D(c2.X,c2.Y);
+
+	auto p3 = (p1.X, p2.Y);				//opposite of control points kinda
+	auto p4 = (p2.X, p1.Y);
+
+	//directional vector
+	dir_ = FVector2D(p2 - p1);
+	dir_opp_ = FVector2D(p4 - p3);
+
+	//normalising vector
+	dir_norm_.X = dir_.X / sqrt(pow(dir_.X, 2) + pow(dir_.Y, 2));
+	dir_norm_.Y = dir_.Y / sqrt(pow(dir_.X, 2) + pow(dir_.Y, 2));
+	dir_norm_opp_.X = dir_opp_.X / sqrt(pow(dir_opp_.X, 2) + pow(dir_opp_.Y, 2));
+	dir_norm_opp_.Y = dir_opp_.Y / sqrt(pow(dir_opp_.X, 2) + pow(dir_opp_.Y, 2));
+
+	//doesnt work if the line is | or -, you know what i mean 
+	if (dir_norm_ == FVector2D(0.0f, 1.0f) || dir_norm_ == FVector2D(0.0f, -1.0f))
+	{
+		dir_norm_opp_ = FVector2D(1.f, 0.f);
+	}
+	if (dir_norm_ == FVector2D(1.0, 0.0) || dir_norm_ == FVector2D(1.0f, 0.0f))
+	{
+		dir_norm_opp_ = FVector2D(0.f, 1.f);
+	}
+	return dir_norm_opp_;
+}
+
+void AMyProceduralMesh::SetTrackHeight(const TArray<FVector>& points_)
+{
+	/*find opposite direction between start and end point.
+	set height for pmesh for 80 units in opposite direction. 
+	and for each point moving forward to the end point.
+	*/
+	for (int i = 0; i < points_.Num(); i++){
+		auto opp=NormalisedOppositeDir(points_[i], points_[i + 1]);
+
+	}
 }
