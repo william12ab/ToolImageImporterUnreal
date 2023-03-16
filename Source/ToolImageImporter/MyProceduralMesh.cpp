@@ -490,6 +490,7 @@ FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
 	auto a = p2 - p1;
 	auto b = FVector(a.X * t, a.Y * t,a.Z*t);
 	auto c = p1 + b;
+	//auto c= (1.0f - t)* p1 + t * p2;
 	return c;
 }
 
@@ -500,30 +501,30 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 	int right, left;
 	left = 3;
 	right = 2;
+	float count_size = 10000.0f;
 	for (int i = 0; i < points_.Num(); i+=2)
 	{
-		for (int j = 0; j < 20; j++)
+		for (int j = 0; j < (int)count_size; j++)
 		{
-			float t = (j / 20.0f);
+			float t = (j / count_size);
 			auto left_pos = LerpV(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left-2)], t);	//gives pos on left
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
-			auto centre_pos = LerpV(points_[i], points_[i + 1], t);//gives centre pos
+			auto centre_pos = LerpV(points_[i], points_[i + 1], t);
+			m_verts[(static_cast<int>(centre_pos.Y/20))* 400 + (static_cast<int>(centre_pos.X/20))].Z = static_cast<int>(centre_pos.Z);
 
 			int xv = left_pos.X / 20;
 			int yv = left_pos.Y / 20;
-			m_verts[yv * 400 + xv].Z = left_pos.Z;
+			m_verts[yv * 400 + xv].Z = static_cast<int>(left_pos.Z);
 			int xvb = right_pos.X / 20;
 			int yvb = right_pos.Y / 20;
-			m_verts[yvb * 400 + xvb].Z = right_pos.Z;
-			for (int k = 0; k < 20; k++)
+			m_verts[yvb * 400 + xvb].Z = static_cast<int>(right_pos.Z);
+
+			for (int k = 0; k < (int)count_size; k++)
 			{
-				float t_inner = (k / 20.0f);
-				FVector p1 = FVector(xv, yv, left_pos.Z);
-				FVector p2 = FVector(xvb, yvb, right_pos.Z);
-				auto a = LerpV(p1, p2, t_inner);
+				float t_inner = (k / count_size);
+				auto a = LerpV(left_pos, right_pos, t_inner);
 
-				m_verts[((int)(a.Y)) * 400 + ((int)(a.X))].Z = a.Z;
-
+				m_verts[(static_cast<int>(a.Y/20.f)) * 400 + (static_cast<int>(a.X / 20.f))].Z = static_cast<int>(a.Z);
 			}
 		}
 		index_tracker_verts += 4;
