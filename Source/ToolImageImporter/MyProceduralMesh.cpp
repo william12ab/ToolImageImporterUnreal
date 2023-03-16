@@ -353,11 +353,14 @@ void AMyProceduralMesh::ChangeForSpline(const TArray<FVector>& verts_)
 
 	int new_num = round_up(non_rounded);
 	int new_num_rounded = round_up(rounded);
-
+	int x_place, y_place;
+	
 	for (int i = 0; i < m_verts.Num(); i++)
 	{
 		if (new_num == (int)m_verts[i].X || new_num_rounded == (int)m_verts[i].X)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("equal to y"));
+
 			non_rounded = (int)verts_[0].Y;
 			rounded = round(non_rounded);
 			new_num = round_up(non_rounded);
@@ -369,24 +372,53 @@ void AMyProceduralMesh::ChangeForSpline(const TArray<FVector>& verts_)
 					UE_LOG(LogTemp, Warning, TEXT("equal to y"));
 					UE_LOG(LogTemp, Warning, TEXT("x %d"), (int)m_verts[i].X);
 					UE_LOG(LogTemp, Warning, TEXT("y %d"), (int)m_verts[i].Y);
+					x_place = (int)m_verts[i].X;
+					y_place = (int)m_verts[j].Y;
+					break;
+				}
+				else if ((new_num + 10) == (int)m_verts[j].Y || (new_num_rounded + 10) == (int)m_verts[j].Y)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("equal to y, plus 10"));
+					x_place = (int)m_verts[i].X;
+					y_place = (int)m_verts[j].Y;
+					break;
 				}
 			}
+			break;
 		}
-		if ((new_num+10) == (int)m_verts[i].X || (new_num_rounded+10) == (int)m_verts[i].X)
+		else if ((new_num+10) == (int)m_verts[i].X || (new_num_rounded+10) == (int)m_verts[i].X)
 		{
 			non_rounded = (int)verts_[0].Y;
 			rounded = round(non_rounded);
 			new_num = round_up(non_rounded);
 			new_num_rounded = round_up(non_rounded);
+			UE_LOG(LogTemp, Warning, TEXT("equal to y10"));
 			for (int j = 0; j < m_verts.Num(); j++)
 			{
 				if ((new_num +10)== (int)m_verts[j].Y || (new_num_rounded+10) == (int)m_verts[j].Y)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("equal to y, plus 10"));
+					x_place = (int)m_verts[i].X;
+					y_place = (int)m_verts[j].Y;
+					break;
+				}
+				else if (new_num == (int)m_verts[j].Y || new_num_rounded == (int)m_verts[j].Y)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("equal to y"));
+					UE_LOG(LogTemp, Warning, TEXT("x %d"), (int)m_verts[i].X);
+					UE_LOG(LogTemp, Warning, TEXT("y %d"), (int)m_verts[j].Y);
+					x_place = (int)m_verts[i].X;
+					y_place = (int)m_verts[j].Y;
+					break;
 				}
 			}
+			break;
 		}
 	}
+	x_place /= 20;
+	y_place /= 20;
+	m_verts[y_place * 400 + x_place].Z = verts_[0].Z;
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 
 }
 
@@ -394,6 +426,8 @@ void AMyProceduralMesh::ChangeForSpline(const TArray<FVector>& verts_)
 FVector2D NormalisedOppositeDir(const FVector& c1, const FVector& c2)
 {
 	FVector2D dir_, dir_norm_, dir_opp_, dir_norm_opp_;
+
+
 
 	FVector2D p1= FVector2D(c1.X,c1.Y);					//control points
 	FVector2D p2 = FVector2D(c2.X,c2.Y);
@@ -410,16 +444,6 @@ FVector2D NormalisedOppositeDir(const FVector& c1, const FVector& c2)
 	dir_norm_.Y = dir_.Y / sqrt(pow(dir_.X, 2) + pow(dir_.Y, 2));
 	dir_norm_opp_.X = dir_opp_.X / sqrt(pow(dir_opp_.X, 2) + pow(dir_opp_.Y, 2));
 	dir_norm_opp_.Y = dir_opp_.Y / sqrt(pow(dir_opp_.X, 2) + pow(dir_opp_.Y, 2));
-
-	//doesnt work if the line is | or -, you know what i mean 
-	if (dir_norm_ == FVector2D(0.0f, 1.0f) || dir_norm_ == FVector2D(0.0f, -1.0f))
-	{
-		dir_norm_opp_ = FVector2D(1.f, 0.f);
-	}
-	if (dir_norm_ == FVector2D(1.0, 0.0) || dir_norm_ == FVector2D(1.0f, 0.0f))
-	{
-		dir_norm_opp_ = FVector2D(0.f, 1.f);
-	}
 	return dir_norm_opp_;
 }
 
@@ -429,8 +453,96 @@ void AMyProceduralMesh::SetTrackHeight(const TArray<FVector>& points_)
 	set height for pmesh for 80 units in opposite direction. 
 	and for each point moving forward to the end point.
 	*/
-	for (int i = 0; i < points_.Num(); i++){
-		auto opp=NormalisedOppositeDir(points_[i], points_[i + 1]);
+	int x = points_[0].X;
+	x /= 20;
+	int y = points_[0].Y;
+	y /= 20;
+	int v = m_verts[y * 400 + x].X;
+	//v gives the original position (x)
+
+	auto opp = NormalisedOppositeDir(points_[0], points_[0 + 1]);
+
+
+	for (int i = 0; i <3; i++){
+		m_verts[y * 400 + x].Z = points_[0].Z;
+		y += 1;
+	}
+	y = points_[0].Y / 20;
+	for (int i = 0; i < 3; i++) {
+		m_verts[y * 400 + x].Z = points_[0].Z;
+		y -= 1;
+	}
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+
+}
+
+
+float Lerp(const float& p1, const float& p2, const float& t)
+{
+	//auto p3 = p1 + ((p2 - p1) * t);
+	//return (1 - t) * v0 + t * v1;
+	auto c = (1.0f - t) * p1 + t * p2;
+	return c;
+}
+
+FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
+{
+	auto a = p2 - p1;
+	auto b = FVector(a.X * t, a.Y * t,a.Z*t);
+	auto c = p1 + b;
+	return c;
+}
+
+
+void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_)
+{
+	int index_tracker_verts=0;
+	int right, left;
+	left = 3;
+	right = 2;
+	for (int i = 0; i < points_.Num(); i+=2)
+	{
+		for (int j = 0; j < 20; j++)
+		{
+			float t = (j / 20.0f);
+			auto left_pos = LerpV(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left-2)], t);	//gives pos on left
+			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
+			auto centre_pos = LerpV(points_[i], points_[i + 1], t);//gives centre pos
+
+			int xv = left_pos.X / 20;
+			int yv = left_pos.Y / 20;
+			m_verts[yv * 400 + xv].Z = left_pos.Z;
+			int xvb = right_pos.X / 20;
+			int yvb = right_pos.Y / 20;
+			m_verts[yvb * 400 + xvb].Z = right_pos.Z;
+			for (int k = 0; k < 20; k++)
+			{
+				float t_inner = (k / 20.0f);
+				FVector p1 = FVector(xv, yv, left_pos.Z);
+				FVector p2 = FVector(xvb, yvb, right_pos.Z);
+				auto a = LerpV(p1, p2, t_inner);
+
+				m_verts[((int)(a.Y)) * 400 + ((int)(a.X))].Z = a.Z;
+
+			}
+		}
+		index_tracker_verts += 4;
+	}
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+}
+
+
+void AMyProceduralMesh::SetHeightP(const TArray<FVector2D>& points_)
+{
+	for (int i = 0; i < points_.Num(); i++)
+	{
+		int x = points_[i].X/20;
+		int y = points_[i].Y/20;
+
+
+		m_verts[(y ) * 400 + x].Z = 200;
 
 	}
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+
 }
