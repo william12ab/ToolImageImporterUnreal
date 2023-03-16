@@ -53,12 +53,7 @@ public:
 	void ChangeTest(const TArray< FVector2D> &track_points);
 	void CalculateNormals();
 
-	void ChangeForSpline(const TArray<FVector>&verts_);
 	void SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_);
-	void SetTrackHeight(const TArray<FVector>& points_);
-
-
-	void SetHeightP(const TArray<FVector2D>& points_);
 
 	virtual void PostInitializeComponents() override;
 protected:

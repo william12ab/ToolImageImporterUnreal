@@ -311,171 +311,6 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
 	procedural_mesh_comp->SetMaterial(0, material_instance);
 }
 
-int count_digit(int number) {
-	int count = 0;
-	while (number != 0) {
-		number = number / 10;
-		count++;
-	}
-	return count;
-}
-
-//takes in int (the coord in question) rounds to the nearest 10 integer. so 406 becomes 410
-int round_up(const int& d)
-{
-	int divider = 0;
-	int digits = count_digit(d);
-	switch (digits)
-	{
-	case 1:
-		divider = 10;
-		break;
-	case 2:
-		divider = 10;
-		break;
-	case 3:
-		divider = 10;
-		break;
-	case 4:
-		divider = 100;
-		break;
-	}
-	float division_amount = round(d) / divider;
-	int rounded_to_nearest_ten = round(division_amount);
-	int final_digit = rounded_to_nearest_ten * divider;
-	return final_digit;
-}
-
-void AMyProceduralMesh::ChangeForSpline(const TArray<FVector>& verts_)
-{
-	int non_rounded = (int)verts_[0].X;		//rounded down so 406.6 = 406
-	int rounded = round(non_rounded);		//up so 406.6 = 407
-
-	int new_num = round_up(non_rounded);
-	int new_num_rounded = round_up(rounded);
-	int x_place, y_place;
-	
-	for (int i = 0; i < m_verts.Num(); i++)
-	{
-		if (new_num == (int)m_verts[i].X || new_num_rounded == (int)m_verts[i].X)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("equal to y"));
-
-			non_rounded = (int)verts_[0].Y;
-			rounded = round(non_rounded);
-			new_num = round_up(non_rounded);
-			new_num_rounded = round_up(non_rounded);
-			for (int j = 0; j < m_verts.Num(); j++)
-			{
-				if (new_num == (int)m_verts[j].Y || new_num_rounded == (int)m_verts[j].Y)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("equal to y"));
-					UE_LOG(LogTemp, Warning, TEXT("x %d"), (int)m_verts[i].X);
-					UE_LOG(LogTemp, Warning, TEXT("y %d"), (int)m_verts[i].Y);
-					x_place = (int)m_verts[i].X;
-					y_place = (int)m_verts[j].Y;
-					break;
-				}
-				else if ((new_num + 10) == (int)m_verts[j].Y || (new_num_rounded + 10) == (int)m_verts[j].Y)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("equal to y, plus 10"));
-					x_place = (int)m_verts[i].X;
-					y_place = (int)m_verts[j].Y;
-					break;
-				}
-			}
-			break;
-		}
-		else if ((new_num+10) == (int)m_verts[i].X || (new_num_rounded+10) == (int)m_verts[i].X)
-		{
-			non_rounded = (int)verts_[0].Y;
-			rounded = round(non_rounded);
-			new_num = round_up(non_rounded);
-			new_num_rounded = round_up(non_rounded);
-			UE_LOG(LogTemp, Warning, TEXT("equal to y10"));
-			for (int j = 0; j < m_verts.Num(); j++)
-			{
-				if ((new_num +10)== (int)m_verts[j].Y || (new_num_rounded+10) == (int)m_verts[j].Y)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("equal to y, plus 10"));
-					x_place = (int)m_verts[i].X;
-					y_place = (int)m_verts[j].Y;
-					break;
-				}
-				else if (new_num == (int)m_verts[j].Y || new_num_rounded == (int)m_verts[j].Y)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("equal to y"));
-					UE_LOG(LogTemp, Warning, TEXT("x %d"), (int)m_verts[i].X);
-					UE_LOG(LogTemp, Warning, TEXT("y %d"), (int)m_verts[j].Y);
-					x_place = (int)m_verts[i].X;
-					y_place = (int)m_verts[j].Y;
-					break;
-				}
-			}
-			break;
-		}
-	}
-	x_place /= 20;
-	y_place /= 20;
-	m_verts[y_place * 400 + x_place].Z = verts_[0].Z;
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-
-}
-
-
-FVector2D NormalisedOppositeDir(const FVector& c1, const FVector& c2)
-{
-	FVector2D dir_, dir_norm_, dir_opp_, dir_norm_opp_;
-
-
-
-	FVector2D p1= FVector2D(c1.X,c1.Y);					//control points
-	FVector2D p2 = FVector2D(c2.X,c2.Y);
-
-	auto p3 = (p1.X, p2.Y);				//opposite of control points kinda
-	auto p4 = (p2.X, p1.Y);
-
-	//directional vector
-	dir_ = FVector2D(p2 - p1);
-	dir_opp_ = FVector2D(p4 - p3);
-
-	//normalising vector
-	dir_norm_.X = dir_.X / sqrt(pow(dir_.X, 2) + pow(dir_.Y, 2));
-	dir_norm_.Y = dir_.Y / sqrt(pow(dir_.X, 2) + pow(dir_.Y, 2));
-	dir_norm_opp_.X = dir_opp_.X / sqrt(pow(dir_opp_.X, 2) + pow(dir_opp_.Y, 2));
-	dir_norm_opp_.Y = dir_opp_.Y / sqrt(pow(dir_opp_.X, 2) + pow(dir_opp_.Y, 2));
-	return dir_norm_opp_;
-}
-
-void AMyProceduralMesh::SetTrackHeight(const TArray<FVector>& points_)
-{
-	/*find opposite direction between start and end point.
-	set height for pmesh for 80 units in opposite direction. 
-	and for each point moving forward to the end point.
-	*/
-	int x = points_[0].X;
-	x /= 20;
-	int y = points_[0].Y;
-	y /= 20;
-	int v = m_verts[y * 400 + x].X;
-	//v gives the original position (x)
-
-	auto opp = NormalisedOppositeDir(points_[0], points_[0 + 1]);
-
-
-	for (int i = 0; i <3; i++){
-		m_verts[y * 400 + x].Z = points_[0].Z;
-		y += 1;
-	}
-	y = points_[0].Y / 20;
-	for (int i = 0; i < 3; i++) {
-		m_verts[y * 400 + x].Z = points_[0].Z;
-		y -= 1;
-	}
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-
-}
-
 
 float Lerp(const float& p1, const float& p2, const float& t)
 {
@@ -494,14 +329,13 @@ FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
 	return c;
 }
 
-
 void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_)
 {
 	int index_tracker_verts=0;
 	int right, left;
 	left = 3;
 	right = 2;
-	float count_size = 10000.0f;
+	float count_size = 5000.0f;
 	for (int i = 0; i < points_.Num(); i+=2)
 	{
 		for (int j = 0; j < (int)count_size; j++)
@@ -510,14 +344,10 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 			auto left_pos = LerpV(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left-2)], t);	//gives pos on left
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
 			auto centre_pos = LerpV(points_[i], points_[i + 1], t);
-			m_verts[(static_cast<int>(centre_pos.Y/20))* 400 + (static_cast<int>(centre_pos.X/20))].Z = static_cast<int>(centre_pos.Z);
 
-			int xv = left_pos.X / 20;
-			int yv = left_pos.Y / 20;
-			m_verts[yv * 400 + xv].Z = static_cast<int>(left_pos.Z);
-			int xvb = right_pos.X / 20;
-			int yvb = right_pos.Y / 20;
-			m_verts[yvb * 400 + xvb].Z = static_cast<int>(right_pos.Z);
+			m_verts[(static_cast<int>(centre_pos.Y/20))* 400 + (static_cast<int>(centre_pos.X/20))].Z = static_cast<int>(centre_pos.Z);
+			m_verts[static_cast<int>(left_pos.Y / 20) * 400 + static_cast<int>(left_pos.X / 20)].Z = static_cast<int>(left_pos.Z);
+			m_verts[static_cast<int>(right_pos.Y / 20) * 400 + static_cast<int>(right_pos.X / 20)].Z = static_cast<int>(right_pos.Z);
 
 			for (int k = 0; k < (int)count_size; k++)
 			{
@@ -530,20 +360,4 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 		index_tracker_verts += 4;
 	}
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-}
-
-
-void AMyProceduralMesh::SetHeightP(const TArray<FVector2D>& points_)
-{
-	for (int i = 0; i < points_.Num(); i++)
-	{
-		int x = points_[i].X/20;
-		int y = points_[i].Y/20;
-
-
-		m_verts[(y ) * 400 + x].Z = 200;
-
-	}
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-
 }
