@@ -302,10 +302,7 @@ void UUIWidget::CreateSpline(){
 					FVector{0, 0, 0},
 					FVector{1, 1, 1} };	//Scale
 	track_spline->OnConstruction(t_transform_);
-
-
-	//p_mesh->ChangeForSpline(track_spline->GetVerts());
-	//p_mesh->SetTrackHeight(track_spline->GetSEPoints());
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
-	
+
+
 }
