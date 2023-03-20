@@ -33,6 +33,14 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	// Do your custom tick stuff here
 	OnEnterText();
 	ReadSliders();
+	
+
+	auto r=player_pawn->GetActorRotation();
+	
+
+
+	player_pawn->GetController()->SetControlRotation(r);
+	auto a = player_pawn->GetController()->GetControlRotation();
 
 }
 
@@ -319,6 +327,8 @@ void UUIWidget::FixScales()
 
 
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
-	UE_LOG(LogTemp, Warning, TEXT("angle: %f"),angle);
 	player_pawn->TeleportTo(loc_, FRotator(0.0f, angle, 0.0f));
+
+	
+
 }
