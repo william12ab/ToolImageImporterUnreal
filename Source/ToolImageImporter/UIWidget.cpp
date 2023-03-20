@@ -316,4 +316,9 @@ void UUIWidget::FixScales()
 
 	loc_ *= 6.0f;
 	loc_.X += 220.f;
+
+
+	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
+	UE_LOG(LogTemp, Warning, TEXT("angle: %f"),angle);
+	player_pawn->TeleportTo(loc_, FRotator(0.0f, angle, 0.0f));
 }
