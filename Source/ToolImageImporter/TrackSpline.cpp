@@ -79,6 +79,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 
 			spline_mesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 			spline_mesh->SetMobility(EComponentMobility::Movable);
+			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 
 			spline_mesh->AttachToComponent(spline, FAttachmentTransformRules::KeepRelativeTransform);
 
@@ -92,10 +93,6 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			start_end_points.Add(EndPoint);
 
 			// query physics
-			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-			spline_mesh->bCastDynamicShadow = false;
-			
-
 			//getting vertices of spline
 			if (spline_mesh->GetStaticMesh()->RenderData->LODResources.Num() > 0)
 			{
@@ -117,8 +114,4 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 		}
 	}
 	
-}
-
-void ATrackSpline::TestingBounds(){
-
 }

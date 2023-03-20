@@ -27,9 +27,6 @@ public:
 
 	void SetControlPoints(TArray<FVector2D> c_p) { control_points = c_p; }
 	void SetHeightArray(TArray<float> h_) { height_z = h_; }
-
-	void TestingBounds();
-
 	TArray<FVector> GetVerts() { return m_verts; }
 	TArray<FVector> GetSEPoints() { return start_end_points; }
 protected:

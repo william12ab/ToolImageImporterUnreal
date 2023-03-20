@@ -314,8 +314,6 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
 
 float Lerp(const float& p1, const float& p2, const float& t)
 {
-	//auto p3 = p1 + ((p2 - p1) * t);
-	//return (1 - t) * v0 + t * v1;
 	auto c = (1.0f - t) * p1 + t * p2;
 	return c;
 }
@@ -325,7 +323,6 @@ FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
 	auto a = p2 - p1;
 	auto b = FVector(a.X * t, a.Y * t,a.Z*t);
 	auto c = p1 + b;
-	//auto c= (1.0f - t)* p1 + t * p2;
 	return c;
 }
 
@@ -349,7 +346,6 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 	{
 		float dist = Distance(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
-		int_dist *= 2.0f;
 		for (int j = 0; j < (int)int_dist; j++)
 		{
 			float t = (float)(j / (float)int_dist);
@@ -357,25 +353,23 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
 			auto centre_pos = LerpV(points_[i], points_[i + 1], t);
 
-			m_verts[(static_cast<int>(centre_pos.Y/20))* 400 + (static_cast<int>(centre_pos.X/20))].X = (centre_pos.X);
-			m_verts[(static_cast<int>(centre_pos.Y / 20)) * 400 + (static_cast<int>(centre_pos.X / 20))].Y = (centre_pos.Y);
-			m_verts[(static_cast<int>(centre_pos.Y / 20)) * 400 + (static_cast<int>(centre_pos.X / 20))].Z = (centre_pos.Z);
+			m_verts[(static_cast<int>(centre_pos.Y/ 20.f))* 400 + (static_cast<int>(centre_pos.X/ 20.f))].X = (centre_pos.X);
+			m_verts[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))].Y = (centre_pos.Y);
+			m_verts[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))].Z = (centre_pos.Z);
 
 
-			m_verts[static_cast<int>(left_pos.Y / 20) * 400 + static_cast<int>(left_pos.X / 20)].X = (left_pos.X);
-			m_verts[static_cast<int>(left_pos.Y / 20) * 400 + static_cast<int>(left_pos.X / 20)].Y = (left_pos.Y);
-			m_verts[static_cast<int>(left_pos.Y / 20) * 400 + static_cast<int>(left_pos.X / 20)].Z = (left_pos.Z);
+			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].X = (left_pos.X);
+			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].Y = (left_pos.Y);
+			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].Z = (left_pos.Z);
 
-			m_verts[static_cast<int>(right_pos.Y / 20) * 400 + static_cast<int>(right_pos.X / 20)].X = (right_pos.X);
-			m_verts[static_cast<int>(right_pos.Y / 20) * 400 + static_cast<int>(right_pos.X / 20)].Y = (right_pos.Y);
-			m_verts[static_cast<int>(right_pos.Y / 20) * 400 + static_cast<int>(right_pos.X / 20)].Z = (right_pos.Z);
+			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].X = (right_pos.X);
+			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].Y = (right_pos.Y);
+			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].Z = (right_pos.Z);
 
 			for (int k = 0; k < (int)inner_count_size; k++)
 			{
 				float t_inner = (float)(k / inner_count_size);
 				auto a = LerpV(left_pos, right_pos, t_inner);
-
-
 				m_verts[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))].X = (a.X);
 				m_verts[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))].Y = (a.Y);
 				m_verts[(static_cast<int>(a.Y/20.f)) * 400 + (static_cast<int>(a.X / 20.f))].Z = (a.Z);
@@ -383,6 +377,5 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 		}
 		index_tracker_verts += 4;
 	}
-
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 }

@@ -33,6 +33,8 @@ protected:
 	void CreateTrack();
 	void CreateFoilage();
 	void CreateSpline();
+	void FixScales();
+
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;

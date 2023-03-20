@@ -23,9 +23,7 @@ void UUIWidget::NativeConstruct()
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
 
-
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -170,12 +168,7 @@ void UUIWidget::LoadTrackPointsIn()
 		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
 	}
 	CreateTrack();
-	float pos_y = track_points[0].Y ;
-	float pos_x = track_points[0].X ;
-	float z_pos = p_mesh->m_verts[pos_y * 400 + pos_x].Z;
-	FVector loc_ = FVector(pos_x*20, pos_y*20,z_pos+50);
-	player_pawn->SetActorScale3D(FVector(0.3, 0.3, 0.3));
-	player_pawn->TeleportTo(loc_,FRotator(0,0,0));
+	//player_pawn->SetActorScale3D(FVector(0.3, 0.3, 0.3));
 }
 
 void UUIWidget::CreateTrack(){
@@ -234,6 +227,7 @@ void UUIWidget::CreateFoilage()
 		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, false);
+		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
 	for (int i = 0; i < 2; i++) {//ferns bushes
 		ABasicTree* tree_instancea;
@@ -242,6 +236,7 @@ void UUIWidget::CreateFoilage()
 		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, true);
+		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
 	for (int i = 0; i < 1; i++) {//rocks
 		ABasicTree* tree_instancea;
@@ -250,6 +245,7 @@ void UUIWidget::CreateFoilage()
 		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddRockClusters(track_points, p_mesh->m_verts);
+		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
 	for (int i = 0; i < 1; i++) {//grass
 		ABasicTree* tree_instancea;
@@ -258,6 +254,7 @@ void UUIWidget::CreateFoilage()
 		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddGrass(track_points, p_mesh->m_verts, max, min);
+		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
 	FActorSpawnParameters SpawnInfoTree;//water
 	FRotator myRotTree(0, 0, 0);
@@ -265,7 +262,6 @@ void UUIWidget::CreateFoilage()
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 	CreateSpline();
-	track_spline->TestingBounds();
 }
 
 
@@ -288,8 +284,6 @@ void UUIWidget::CreateSpline(){
 	points_.Add(FVector2D(334 * 20, 51 * 20));
 	points_.Add(FVector2D(329 * 20, 33 * 20));
 
-
-
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
@@ -303,6 +297,23 @@ void UUIWidget::CreateSpline(){
 					FVector{1, 1, 1} };	//Scale
 	track_spline->OnConstruction(t_transform_);
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
+	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
+	 
+	track_spline->SetActorEnableCollision(true);
 
 
+	FixScales();
+}
+
+void UUIWidget::FixScales()
+{
+	p_mesh->SetActorScale3D(FVector(6, 6, 6));
+	track_spline->SetActorScale3D(FVector(6, 6, 6));
+	w_mesh->SetActorScale3D(FVector(30*6, 30*6, 30*6));
+	auto t = w_mesh->GetActorLocation();
+	w_mesh->SetActorLocation(t*6.0f);
+	FVector loc_ = track_spline->GetSEPoints()[0];
+
+	loc_ *= 6.0f;
+	loc_.X += 220.f;
 }
