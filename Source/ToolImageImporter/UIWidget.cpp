@@ -41,7 +41,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	player_pawn->GetController()->SetControlRotation(r);
 	auto a = player_pawn->GetController()->GetControlRotation();
-
+	
 }
 
 void UUIWidget::OnClickLoadNewTrack()
