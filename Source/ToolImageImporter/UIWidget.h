@@ -42,8 +42,7 @@ protected:
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* file_button;
-	UPROPERTY(meta = (BindWidget))
-		class UButton* add_texture_button;
+
 	UPROPERTY(meta = (BindWidget))
 		class UButton* update_button;
 
@@ -68,8 +67,6 @@ protected:
 		void OnClickLoadNewTrack();		//on click load button
 	UFUNCTION()
 		void OnClickDelete();		//calls delete
-	UFUNCTION()
-		void OnAddTexture();		//calls the file window and sets the texture, calling set material on plane
 	UFUNCTION()
 		void OnEnterText();			//allows the user to enter text to boxes
 	UFUNCTION()

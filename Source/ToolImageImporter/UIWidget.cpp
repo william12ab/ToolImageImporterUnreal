@@ -20,7 +20,6 @@ void UUIWidget::NativeConstruct()
 
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
-	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
 	pitch_ = 0.0f;
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
@@ -44,10 +43,21 @@ bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
 		return false;
 	}
 }
+
+void AngleCap(float& angle_){
+	if (angle_ < -90.0f) {
+		angle_ = -90.0f;
+	}
+	else if (angle_ > 90.0f) {
+		angle_ = 90.0f;
+	}
+}
+
 void RotatarFinder(const float &d_one, const float& d_two,float &angle_, const float &d_t, const float& rot_speed)
 {
 	if (d_one == -1.0f) {
 		angle_ -= rot_speed * d_t;
+		
 	}
 	else if (d_two == 1.0f) {
 		angle_ += rot_speed * d_t;
@@ -63,6 +73,7 @@ void RotatarFinder(const float &d_one, const float& d_two,float &angle_, const f
 			angle_ = 0.0f;
 		}
 	}
+	AngleCap(angle_);
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
@@ -148,19 +159,6 @@ void UUIWidget::ReadSliders(){
 	width_label->SetText(FText::FromString(FString::FromInt(w_)));
 }
 
-void UUIWidget::OnAddTexture()
-{
-	FString n = "Open Texture.";
-	FString outfile_names;
-	auto b = ReadFileInfoA(n, outfile_names);
-	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(outfile_names);
-	texture_->AddToRoot();
-	t_ = texture_;
-	t_->UpdateResource();
-	p_mesh->SetMaterial(t_);
-}
-
-
 void UUIWidget::LoadTrackPointsIn()
 {
 	FString n = "Open New Track.";
@@ -222,6 +220,7 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	GeneratePlane();
 }
 
+
 void UUIWidget::CreateFoilage()
 {
 	int max = 0;
@@ -236,45 +235,35 @@ void UUIWidget::CreateFoilage()
 			index = i;
 		}
 	}
+	FActorSpawnParameters SpawnInfoTree;
+	FRotator myRotTree(0, 0, 0);
+	FVector myLocTree = FVector(0, 0, 0);
 	for (int i = 0; i < 4; i++) {//tree
 		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, false);
 		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
 	for (int i = 0; i < 2; i++) {//ferns bushes
 		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, true);
 		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
 	for (int i = 0; i < 1; i++) {//rocks
 		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddRockClusters(track_points, p_mesh->m_verts);
 		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
 	for (int i = 0; i < 1; i++) {//grass
 		ABasicTree* tree_instancea;
-		FActorSpawnParameters SpawnInfoTree;
-		FRotator myRotTree(0, 0, 0);
-		FVector myLocTree = FVector(0, 0, 0);
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddGrass(track_points, p_mesh->m_verts, max, min);
 		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
 	}
-	FActorSpawnParameters SpawnInfoTree;//water
-	FRotator myRotTree(0, 0, 0);
-	FVector myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
+	//water
+	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 	CreateSpline();

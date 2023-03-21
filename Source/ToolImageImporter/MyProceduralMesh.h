@@ -51,6 +51,7 @@ public:
 	void CalculateNormals();
 	void SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_);
 
+
 	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned

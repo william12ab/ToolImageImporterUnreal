@@ -153,7 +153,7 @@ void AMyProceduralMesh::GenerateVerts(){
 			m_verts.Add(FVector(x * spacing_, y * spacing_, 0.0f));
 			m_norms.Add(FVector(0.0f, 0.0f, .0f));
 			m_u_vs.Add(FVector2D(x * uv_spacing, y * uv_spacing));
-			m_vert_colors.Add(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f));
+			m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 			m_tangents.Add(FProcMeshTangent(0.0f, 1.0f, 0.0f));
 		}
 	}
@@ -280,6 +280,7 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, true);
 }
 
+
 void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
 {
 	SmoothTerrain(c_);
@@ -344,15 +345,18 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 			m_verts[(static_cast<int>(centre_pos.Y/ 20.f))* 400 + (static_cast<int>(centre_pos.X/ 20.f))].X = (centre_pos.X);
 			m_verts[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))].Y = (centre_pos.Y);
 			m_verts[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))].Z = (centre_pos.Z);
+			m_vert_colors[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))] = FLinearColor::Black;
 
 
 			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].X = (left_pos.X);
 			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].Y = (left_pos.Y);
 			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].Z = (left_pos.Z);
+			m_vert_colors[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)] = FLinearColor::Black;
 
 			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].X = (right_pos.X);
 			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].Y = (right_pos.Y);
 			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].Z = (right_pos.Z);
+			m_vert_colors[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)] = FLinearColor::Black;
 
 			for (int k = 0; k < (int)inner_count_size; k++)
 			{
@@ -361,6 +365,7 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 				m_verts[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))].X = (a.X);
 				m_verts[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))].Y = (a.Y);
 				m_verts[(static_cast<int>(a.Y/20.f)) * 400 + (static_cast<int>(a.X / 20.f))].Z = (a.Z);
+				m_vert_colors[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))] = FLinearColor::Black;
 			}
 		}
 		index_tracker_verts += 4;

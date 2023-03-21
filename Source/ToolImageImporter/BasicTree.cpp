@@ -164,8 +164,8 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 		else {
 			for (size_t switcher_ = 0; switcher_ < 2; switcher_++)
 			{
-			for (size_t x = 0; x < 3; x++){
-				for (size_t y = 0; y < 3; y++){
+			for (size_t x = 0; x < 5; x++){
+				for (size_t y = 0; y < 5; y++){
 					if ((int)point_x == (int)track_point[i].X + x*pos_ && (int)point_y == (int)track_point[i].Y + y*pos_) {
 						return false;
 					}
