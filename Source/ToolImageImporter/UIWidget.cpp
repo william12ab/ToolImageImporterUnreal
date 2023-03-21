@@ -27,6 +27,23 @@ void UUIWidget::NativeConstruct()
 	rot_speed_ = 100.0f;
 }
 
+bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
+{
+	FString default_path = "";
+	FString dialog_name = dialog_name_;
+	FString default_file = "";
+	FString file_types = "";
+	TArray<FString> outfile_names;			//stores the file
+	uint32 flags_ = 1;
+	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
+	if (fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names)) {
+		file_name = outfile_names[0];
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 void RotatarFinder(const float &d_one, const float& d_two,float &angle_, const float &d_t, const float& rot_speed)
 {
 	if (d_one == -1.0f) {
@@ -48,8 +65,7 @@ void RotatarFinder(const float &d_one, const float& d_two,float &angle_, const f
 	}
 }
 
-void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
+void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	// Make sure to call the base class's NativeTick function
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	// Do your custom tick stuff here
@@ -69,17 +85,17 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	player_pawn->GetController()->SetControlRotation(r);
 }
 
-
-void UUIWidget::OnClickLoadNewTrack()
-{
-	if (OpenFileWindow()){
+void UUIWidget::OnClickLoadNewTrack(){
+	FString dialog_name = "Open Heightmap";
+	FString return_name;
+	if (ReadFileInfoA(dialog_name, return_name)){
+		name_ = return_name;
 		OnClickHeightmapButton();
 		LoadTrackPointsIn();
 	}
 }
 
-void UUIWidget::OnClickUpdateButton() 
-{
+void UUIWidget::OnClickUpdateButton() {
 	//update mesh after changing padding
 	p_mesh->Destroy();
 	GeneratePlane();
@@ -87,8 +103,7 @@ void UUIWidget::OnClickUpdateButton()
 	p_mesh->SetMaterial(t_);
 }
 
-void UUIWidget::GeneratePlane()
-{
+void UUIWidget::GeneratePlane(){
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0,0,0);
@@ -96,62 +111,37 @@ void UUIWidget::GeneratePlane()
 	p_mesh->CreateMesh(h_,w_,s_);
 }
 
-void UUIWidget::OnClickDelete()
-{
+void UUIWidget::OnClickDelete(){
 	DeletePlane();
 }
 
-void UUIWidget::DeletePlane()
-{
-	if (p_mesh)
-	{
+void UUIWidget::DeletePlane(){
+	if (p_mesh){
 		p_mesh->Destroy();
-		track_mesh->Destroy();
 	}
-	
-	
 	name_.Empty();
 	m_colors.Empty();
 	track_points.Empty();
 }
 
-void UUIWidget::OnEnterText()
-{
+void UUIWidget::OnEnterText(){
 	FText spacing_text = spacing_label->GetText();
 	s_ = FCString::Atof(*spacing_text.ToString());
 	FText height_text = height_modi->GetText();
 	m_ = FCString::Atof(*height_text.ToString());
 }
 
-bool UUIWidget::OpenFileWindow()
-{
-	FString default_path = "";
-	FString dialog_name = "Open Heightmap";
-	FString default_file = "";
-	FString file_types = "";
-	TArray<FString> outfile_names;			//stores the file
-	uint32 flags_ = 1;
-	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
-	if (fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names)){
-		name_.Append(outfile_names[0]);
-		return true;
-	}
-	else { return false; }
-}
 
-void UUIWidget::OnClickHeightmapButton()
-{
+void UUIWidget::OnClickHeightmapButton(){
 	ReadFileInfo(name_);
 }
 
-void UUIWidget::SliderFunc(const int& val_, UEditableTextBox* text_box)
-{
+void UUIWidget::SliderFunc(const int& val_, UEditableTextBox* text_box){
 	FString string_ = FString::FromInt(int(val_));
 	text_box->SetText(FText::FromString(string_));
 }
 
-void UUIWidget::ReadSliders()
-{
+void UUIWidget::ReadSliders(){
 	SliderFunc(modi_slider->GetValue(),height_modi);
 	SliderFunc(padding_slider->GetValue(),spacing_label);
 	height_label->SetText(FText::FromString(FString::FromInt(h_)));
@@ -160,59 +150,53 @@ void UUIWidget::ReadSliders()
 
 void UUIWidget::OnAddTexture()
 {
-	FString default_path = "";
-	FString dialog_name = "Open Texture";
-	FString default_file = "";
-	FString file_types = "";
-	TArray<FString> outfile_names;			//stores the file
-	uint32 flags_ = 1;
-	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
-	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
-	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(outfile_names[0]);
+	FString n = "Open Texture.";
+	FString outfile_names;
+	auto b = ReadFileInfoA(n, outfile_names);
+	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(outfile_names);
 	texture_->AddToRoot();
 	t_ = texture_;
 	t_->UpdateResource();
 	p_mesh->SetMaterial(t_);
 }
 
+
 void UUIWidget::LoadTrackPointsIn()
 {
-	FString default_path = "";
-	FString dialog_name = "Open New Track";
-	FString default_file = "";
-	FString file_types = "";
-	TArray<FString> outfile_names;			//stores the file
-	uint32 flags_ = 1;
-	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
-	fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names);
-
+	FString n = "Open New Track.";
+	FString outfile_names;
+	auto b= ReadFileInfoA(n, outfile_names);
 	IPlatformFile& file_manager= FPlatformFileManager::Get().GetPlatformFile();
-	
 	TArray<FString> array_;
-	if (file_manager.FileExists(*outfile_names[0])){
-		
-		if (FFileHelper::LoadFileToStringArray(array_, *outfile_names[0])){
+	if (file_manager.FileExists(*outfile_names)){
+		if (FFileHelper::LoadFileToStringArray(array_, *outfile_names)){
 		}
 		else{
-			UE_LOG(LogTemp, Warning, TEXT("FileManipulation: Did not track from file"));
 		}
 	}
+	bool found_ = false;
 	for (int i = 0; i < array_.Num(); i++){
-		auto index_ = array_[0].Find(" ");
-		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
+
+		if (array_[i].Contains(FString("end"))){
+			found_ = true;
+		}
+		else
+		{
+			if (!found_) {
+				auto index_ = array_[0].Find(" ");
+				control_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+			}
+			else {
+				auto index_ = array_[0].Find(" ");
+				track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+			}
+		}
 	}
 	CreateTrack();
 }
 
 void UUIWidget::CreateTrack(){
-	FActorSpawnParameters SpawnInfo;
-	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(0, 0, 0.2f);
-
-	p_mesh->ChangeTest(track_points);
 	p_mesh->ModiVerts(m_colors, m_);
-	track_mesh = GetWorld()->SpawnActor<ATrackMesh>(myLoc, myRot, SpawnInfo);
-	track_mesh->CreateTrack(track_points,m_colors,m_,p_mesh->m_norms);
 	CreateFoilage();
 }
 
@@ -252,8 +236,7 @@ void UUIWidget::CreateFoilage()
 			index = i;
 		}
 	}
-	//tree
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {//tree
 		ABasicTree* tree_instancea;
 		FActorSpawnParameters SpawnInfoTree;
 		FRotator myRotTree(0, 0, 0);
@@ -299,30 +282,17 @@ void UUIWidget::CreateFoilage()
 
 
 void UUIWidget::CreateSpline(){
-
-	TArray<FVector2D> points_;
-	points_.Add(FVector2D(4 *20, 251 * 20));
-	points_.Add(FVector2D(21 * 20, 254 * 20));
-	points_.Add(FVector2D(55 * 20, 265 * 20));
-	points_.Add(FVector2D(56 * 20, 266 * 20));
-	points_.Add(FVector2D(73 * 20, 256 * 20));
-	points_.Add(FVector2D(109 * 20, 165 * 20));
-	points_.Add(FVector2D(137 * 20, 134 * 20));
-	points_.Add(FVector2D(167 * 20, 103 * 20));
-	points_.Add(FVector2D(168 * 20, 102 * 20));
-	points_.Add(FVector2D(224 * 20, 76 * 20));
-	points_.Add(FVector2D(241 * 20, 87 * 20));
-	points_.Add(FVector2D(243 * 20, 88 * 20));
-	points_.Add(FVector2D(322 * 20, 99 * 20));
-	points_.Add(FVector2D(334 * 20, 51 * 20));
-	points_.Add(FVector2D(329 * 20, 33 * 20));
-
+	for (size_t i = 0; i < control_points.Num(); i++)
+	{
+		control_points[i].X *= 20.0f;
+		control_points[i].Y *= 20.0f;
+	}
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
 	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
 
-	track_spline->SetControlPoints(points_);
+	track_spline->SetControlPoints(control_points);
 	track_spline->SetHeightArray(m_colors);
 	FTransform t_transform_{
 					FRotator{0,0,0},
@@ -333,8 +303,6 @@ void UUIWidget::CreateSpline(){
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	 
 	track_spline->SetActorEnableCollision(true);
-
-
 	FixScales();
 }
 
@@ -349,11 +317,6 @@ void UUIWidget::FixScales()
 
 	loc_ *= 6.0f;
 	loc_.X += 220.f;
-
-
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
 	player_pawn->TeleportTo(loc_, FRotator(0.0f, angle, 0.0f));
-
-	
-
 }

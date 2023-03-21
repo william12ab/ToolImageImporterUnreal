@@ -26,7 +26,6 @@ protected:
 	void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
 	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
 	void DeletePlane();			//deletes the plane
-	bool OpenFileWindow();		//open file window to read HEIGHTMAP	
 	void ReadFileInfo(const FString& name_);		//reads file for height map also calls generate plane and modi verts.
 	void ReadSliders();			//reads the values from the sliders and sets them to text fields
 	void SliderFunc(const int& val_, UEditableTextBox* text_box);
@@ -89,6 +88,7 @@ protected:
 	TArray<float> m_colors;
 	UTexture* t_;
 
+	TArray<FVector2D> control_points;
 	TArray<FVector2D> track_points;
 	APawn* player_pawn;
 

@@ -105,18 +105,16 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 					}
 				}
 				else{
-					pos_x += FMath::RandRange(-5, 5);
-					pos_y += FMath::RandRange(-5, 5);
+					pos_x += FMath::RandRange(-5, 5 );
+					pos_y += FMath::RandRange(-5, 5 );
 					z_pos = m_verts[pos_y * 400 + pos_x].Z;
 				}
 			}
-			else
-			{
+			else{
 				pos_y = FMath::RandRange(10, 380);
 				pos_x = FMath::RandRange(10, 380);
 				z_pos = m_verts[pos_y * 400 + pos_x].Z;
 			}
-			
 		}
 	}
 }
@@ -157,33 +155,23 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 	instanced_basic_tree->AddInstance(transform_);
 }
 
-
 bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, int&point_y){
+	int pos_ = 1;
 	for (int i = 0; i < track_point.Num(); i++){
 		if ((int)point_x != (int)track_point[i].X && (int)point_y != (int)track_point[i].Y ) {
 			//if not on track point, do nothing and continue to see if it is on a track point.
 		}
 		else {
-			if ((int)point_x == (int)track_point[i].X&& (int)point_y == (int)track_point[i].Y){
-				return false;
+			for (size_t switcher_ = 0; switcher_ < 2; switcher_++)
+			{
+			for (size_t x = 0; x < 3; x++){
+				for (size_t y = 0; y < 3; y++){
+					if ((int)point_x == (int)track_point[i].X + x*pos_ && (int)point_y == (int)track_point[i].Y + y*pos_) {
+						return false;
+					}
+				}
 			}
-			if ((int)point_x == (int)track_point[i].X+1 && (int)point_y == (int)track_point[i].Y) {
-				return false;
-			}
-			if ((int)point_x == (int)track_point[i].X - 1 && (int)point_y == (int)track_point[i].Y) {
-				return false;
-			}
-			if ((int)point_x == (int)track_point[i].X && (int)point_y == (int)track_point[i].Y+1) {
-				return false;
-			}
-			if ((int)point_x == (int)track_point[i].X && (int)point_y == (int)track_point[i].Y-1) {
-				return false;
-			}
-			if ((int)point_x == (int)track_point[i].X+1 && (int)point_y == (int)track_point[i].Y + 1) {
-				return false;
-			}
-			if ((int)point_x == (int)track_point[i].X -1&& (int)point_y == (int)track_point[i].Y - 1) {
-				return false;
+			pos_ *= -1;
 			}
 			//if equals point, or right, left, up, down 
 		}
@@ -197,6 +185,8 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 	float rand_percent = FMath::RandRange(0.0f, 20.0f);
 	float rocks_to_spawn_float = d * (rand_percent/100.0f);
 	int rocks_to_spawn = round(rocks_to_spawn_float);
+	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
+
 	for (int i = 0; i < rocks_to_spawn; i++){
 
 		int rand_point = FMath::RandRange(0, track_point.Num());
@@ -243,7 +233,7 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 		float rand_rot_yaw = FMath::RandRange(-360, 360);
-		float rand_scale = FMath::RandRange(0.125f, 0.3f);
+		float rand_scale = FMath::RandRange(0.125f, 0.2f);
 		if (CheckBounds(track_point, pos_x, pos_y)) {
 			if (z_pos<(max_m - (max_m * 0.550f)) && z_pos>(min_m + (max_m * 0.050f))) {
 				FTransform A{

@@ -48,11 +48,7 @@ public:
 	void ModiVerts(TArray<float>& c_,const int& m_);		//changing the vertss
 	void UpdateVerts(const float& d_spacing_);
 	void SmoothTerrain(TArray<float>& c_);
-	
-
-	void ChangeTest(const TArray< FVector2D> &track_points);
 	void CalculateNormals();
-
 	void SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_);
 
 	virtual void PostInitializeComponents() override;
