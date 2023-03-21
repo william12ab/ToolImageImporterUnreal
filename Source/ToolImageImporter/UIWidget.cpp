@@ -22,8 +22,30 @@ void UUIWidget::NativeConstruct()
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	add_texture_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnAddTexture);
 	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
-
+	pitch_ = 0.0f;
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	rot_speed_ = 100.0f;
+}
+
+void RotatarFinder(const float &d_one, const float& d_two,float &angle_, const float &d_t, const float& rot_speed)
+{
+	if (d_one == -1.0f) {
+		angle_ -= rot_speed * d_t;
+	}
+	else if (d_two == 1.0f) {
+		angle_ += rot_speed * d_t;
+	}
+	else {
+		if (angle_ < -(1.0f)) {
+			angle_ += rot_speed * d_t;
+		}
+		else if (angle_ > (1.0f)) {
+			angle_ -= rot_speed * d_t;
+		}
+		else {
+			angle_ = 0.0f;
+		}
+	}
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -34,15 +56,19 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	OnEnterText();
 	ReadSliders();
 	
+	auto r = player_pawn->GetActorRotation();
+	auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
+	auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight"));
+	auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
+	side_left *= -1.0f;
 
-	auto r=player_pawn->GetActorRotation();
-	
-
-
+	RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
+	RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
+	r.Pitch += pitch_;
+	r.Yaw += yaw_;
 	player_pawn->GetController()->SetControlRotation(r);
-	auto a = player_pawn->GetController()->GetControlRotation();
-	
 }
+
 
 void UUIWidget::OnClickLoadNewTrack()
 {
@@ -52,7 +78,7 @@ void UUIWidget::OnClickLoadNewTrack()
 	}
 }
 
-void UUIWidget::OnClickUpdateButton()
+void UUIWidget::OnClickUpdateButton() 
 {
 	//update mesh after changing padding
 	p_mesh->Destroy();
@@ -176,7 +202,6 @@ void UUIWidget::LoadTrackPointsIn()
 		track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_+1))));
 	}
 	CreateTrack();
-	//player_pawn->SetActorScale3D(FVector(0.3, 0.3, 0.3));
 }
 
 void UUIWidget::CreateTrack(){

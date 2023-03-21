@@ -79,7 +79,7 @@ protected:
 		
 	AWaterMesh* w_mesh;
 	AMyProceduralMesh* p_mesh;		//obj
-	ATrackMesh* track_mesh;
+	//ATrackMesh* track_mesh;
 	ABasicTree* tree_instance;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
@@ -93,4 +93,8 @@ protected:
 	APawn* player_pawn;
 
 	ATrackSpline* track_spline;
+
+	float pitch_;
+	float yaw_;
+	float rot_speed_;
 };

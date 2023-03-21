@@ -280,7 +280,7 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, true);
 }
 
-
+//change this for point 3
 void AMyProceduralMesh::ChangeTest(const TArray< FVector2D>& track_points)
 {
 	for (int i = 0; i < track_points.Num(); i++){
