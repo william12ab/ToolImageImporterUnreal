@@ -27,13 +27,12 @@ protected:
 	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
 	void DeletePlane();			//deletes the plane
 	void ReadFileInfo(const FString& name_);		//reads file for height map also calls generate plane and modi verts.
-	void ReadSliders();			//reads the values from the sliders and sets them to text fields
-	void SliderFunc(const int& val_, UEditableTextBox* text_box);
 	void CreateTrack();
 	void CreateFoilage();
 	void CreateSpline();
 	void FixScales();
-
+	//void FillInGaps();
+	//void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -42,35 +41,13 @@ protected:
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* file_button;
-
-	UPROPERTY(meta = (BindWidget))
-		class UButton* update_button;
-
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
-
-	UPROPERTY(meta = (BindWidget))
-		class UEditableTextBox* height_label;
-	UPROPERTY(meta = (BindWidget))
-		class UEditableTextBox* width_label;
-	UPROPERTY(meta = (BindWidget))
-		class UEditableTextBox* spacing_label;
-	UPROPERTY(meta = (BindWidget))
-		class UEditableTextBox* height_modi;
-
-	UPROPERTY(meta = (BindWidget))
-		class USlider* modi_slider;
-	UPROPERTY(meta = (BindWidget))
-		class USlider* padding_slider;
 
 	UFUNCTION()
 		void OnClickLoadNewTrack();		//on click load button
 	UFUNCTION()
 		void OnClickDelete();		//calls delete
-	UFUNCTION()
-		void OnEnterText();			//allows the user to enter text to boxes
-	UFUNCTION()
-		void OnClickUpdateButton();		//updates the mesh with the new values from the slider. couldnt figure out how to work the sldier function
 
 		
 	AWaterMesh* w_mesh;

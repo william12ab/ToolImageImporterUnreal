@@ -15,12 +15,11 @@ void UUIWidget::NativeConstruct()
 	w_ = 4;
 	h_ = 4;
 	s_ = 20.0f;
-	m_ = 3;
+	m_ = 5;
 	Label->SetText(FText::FromString("Plane Generator"));
 
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
-	update_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickUpdateButton);
 	pitch_ = 0.0f;
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	rot_speed_ = 100.0f;
@@ -80,8 +79,6 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	// Make sure to call the base class's NativeTick function
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	// Do your custom tick stuff here
-	OnEnterText();
-	ReadSliders();
 	
 	auto r = player_pawn->GetActorRotation();
 	auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
@@ -106,14 +103,6 @@ void UUIWidget::OnClickLoadNewTrack(){
 	}
 }
 
-void UUIWidget::OnClickUpdateButton() {
-	//update mesh after changing padding
-	p_mesh->Destroy();
-	GeneratePlane();
-	p_mesh->ModiVerts(m_colors, m_);
-	p_mesh->SetMaterial(t_);
-}
-
 void UUIWidget::GeneratePlane(){
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
@@ -135,28 +124,9 @@ void UUIWidget::DeletePlane(){
 	track_points.Empty();
 }
 
-void UUIWidget::OnEnterText(){
-	FText spacing_text = spacing_label->GetText();
-	s_ = FCString::Atof(*spacing_text.ToString());
-	FText height_text = height_modi->GetText();
-	m_ = FCString::Atof(*height_text.ToString());
-}
-
 
 void UUIWidget::OnClickHeightmapButton(){
 	ReadFileInfo(name_);
-}
-
-void UUIWidget::SliderFunc(const int& val_, UEditableTextBox* text_box){
-	FString string_ = FString::FromInt(int(val_));
-	text_box->SetText(FText::FromString(string_));
-}
-
-void UUIWidget::ReadSliders(){
-	SliderFunc(modi_slider->GetValue(),height_modi);
-	SliderFunc(padding_slider->GetValue(),spacing_label);
-	height_label->SetText(FText::FromString(FString::FromInt(h_)));
-	width_label->SetText(FText::FromString(FString::FromInt(w_)));
 }
 
 void UUIWidget::LoadTrackPointsIn()
@@ -220,9 +190,31 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	GeneratePlane();
 }
 
+//
+//void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_saftey_p, const int& index_t_p){
+//	auto safet_p = track_spline->GetSafetyPoints();
+//	for (int t = 0; t < 10; t++) {
+//		float t_val = t / 10.f;
+//		if (index_saftey_p==1){
+//			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], safet_p[index_saftey_p], t_val));
+//		}
+//		else{
+//			temp_arr.Add(track_spline->LerpV2D(safet_p[index_saftey_p], track_points[index_t_p], t_val));
+//		}
+//		
+//	}
+//	track_points.Insert(temp_arr, index_t_p);
+//}
+//
+//void UUIWidget::FillInGaps(){
+//	TArray<FVector2D> temp_vec_first_pos;
+//	LerpCalculation(temp_vec_first_pos, 0, 0);
+//	temp_vec_first_pos.Empty();
+//
+//	LerpCalculation(temp_vec_first_pos, 1, track_points.Num());
+//}
 
-void UUIWidget::CreateFoilage()
-{
+void UUIWidget::CreateFoilage(){
 	int max = 0;
 	int min = 100000000;
 	int index = 0;
@@ -235,6 +227,10 @@ void UUIWidget::CreateFoilage()
 			index = i;
 		}
 	}
+	CreateSpline();
+	//FillInGaps();
+
+
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
@@ -266,7 +262,8 @@ void UUIWidget::CreateFoilage()
 	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
-	CreateSpline();
+	FixScales();
+
 }
 
 
@@ -292,7 +289,6 @@ void UUIWidget::CreateSpline(){
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	 
 	track_spline->SetActorEnableCollision(true);
-	FixScales();
 }
 
 void UUIWidget::FixScales()

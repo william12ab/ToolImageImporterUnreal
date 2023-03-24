@@ -20,14 +20,12 @@ ATrackSpline::ATrackSpline()
         SetRootComponent(spline);
     }
 	UE_LOG(LogTemp, Warning, TEXT("constructor"));
-
 }
 
 // Called when the game starts or when spawned
 void ATrackSpline::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosition, USplineMeshComponent* SplineMeshComponent)
@@ -41,25 +39,58 @@ FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosi
 	return SplineMeshSpaceVector;
 }
 
+FVector2D ATrackSpline::LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t)
+{
+	auto a = p2 - p1;
+	auto b = FVector2D(a.X * t, a.Y * t);
+	auto c = p1 + b;
+	return c;
+}
+
+
+void ATrackSpline::CombinePoints(){
+	control_points.EmplaceAt(0, saftey_points[0]);
+	control_points.EmplaceAt(control_points.Num(), saftey_points[1]);
+}
+
+void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, const int& index_, const float& t_value){
+	int x = control_points[index_one].X / 20;
+	int y = control_points[index_one].Y / 20;
+	FVector2D safe_point;
+	safe_point = LerpV2D(control_points[index_zero], control_points[index_one], t_value);
+	if (t_value>0.0f){
+		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
+	}
+	else	{
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
+		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
+	}	
+	saftey_points.Add(safe_point);
+}
 
 
 void ATrackSpline::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	//spline->RemoveSplinePoint(0, true);
 	spline->ClearSplinePoints();
-
-	
 	for (int i = 0; i < (control_points.Num()); i++) {
 		int x = control_points[i].X / 20;
 		int y = control_points[i].Y / 20;
-		spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (height_z[y * 400 + x]*20)/3.0f));
+		if (i == 0){
+			AddSafePoint(1, 0, i,-2.5f);
+		}
+		else if (i == (control_points.Num()-1)){
+			AddSafePoint(i, control_points.Num() - 2, i,1.1f);
+		}
+		else{
+			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (height_z[y * 400 + x] * 20) / 5.0f));
+		}
 	}
 	
 	if (spline)
 	{
-
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
 		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)
 		{

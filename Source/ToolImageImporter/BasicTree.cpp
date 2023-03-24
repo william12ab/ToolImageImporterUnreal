@@ -189,7 +189,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 
 	for (int i = 0; i < rocks_to_spawn; i++){
 
-		int rand_point = FMath::RandRange(0, track_point.Num());
+		int rand_point = FMath::RandRange(0, track_point.Num()-1);
 		int pos_y = track_point[rand_point].Y;
 		int pos_x = track_point[rand_point].X;
 		
@@ -217,6 +217,10 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 			else {
 				pos_x += FMath::RandRange(-4, 8);
 				pos_y += FMath::RandRange(-8, 8);
+				if (pos_x<=0 ||pos_x>=400 || pos_y>=400 || pos_y<=0){
+					pos_y = track_point[rand_point].Y;
+					pos_x = track_point[rand_point].X;
+				}
 			}
 		}
 	}
