@@ -34,6 +34,8 @@ protected:
 	void FillInGaps();
 	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);
 
+	void RestartPosition();
+	void Release();
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -71,4 +73,10 @@ protected:
 	float pitch_;
 	float yaw_;
 	float rot_speed_;
+
+	int index_recorder;
+
+	FVector last_point;
+	bool pressed_;
+	float counter_;
 };

@@ -5,8 +5,6 @@
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
 #include "GameFramework/Actor.h"
-
-
 #include "TrackSpline.generated.h"
 
 
@@ -19,7 +17,7 @@ class TOOLIMAGEIMPORTER_API ATrackSpline : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ATrackSpline();
-
+	virtual void Tick(float DeltaTime) override;
 	void OnConstruction(const FTransform& Transform) override;
 
 	UPROPERTY(VisibleAnywhere, Category = "TrackSpline")
@@ -42,6 +40,11 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+
 	TArray<FVector2D> control_points;
 	TArray<FVector2D> saftey_points;
 	TArray<float> height_z;

@@ -22,6 +22,8 @@ void UUIWidget::NativeConstruct()
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	pitch_ = 0.0f;
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	pressed_ = false;
+	counter_ = 0.0f;
 	rot_speed_ = 100.0f;
 }
 
@@ -80,6 +82,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	// Do your custom tick stuff here
 	
+	//setting camera work
 	auto r = player_pawn->GetActorRotation();
 	auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
 	auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight"));
@@ -91,6 +94,45 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	r.Pitch += pitch_;
 	r.Yaw += yaw_;
 	player_pawn->GetController()->SetControlRotation(r);
+	//camera end
+
+
+	//collisons for restarting position
+	auto l=player_pawn->GetActorLocation();
+	l /= 20;
+	l /= 6;
+	FVector2D current_point = FVector2D(l.X, l.Y);
+	for (int i = 0; i < track_points.Num(); i++){
+		if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)){
+			last_point = FVector(track_points[i].X, track_points[i].Y,l.Z);
+			index_recorder = i;
+		}
+	}
+	
+	player_pawn->InputComponent->BindAction("Restart", IE_Pressed, this, &UUIWidget::RestartPosition);
+	player_pawn->InputComponent->BindAction("Restart", IE_Released, this, &UUIWidget::Release);
+
+	if (pressed_){
+		counter_ += InDeltaTime;
+		if (counter_>=1.5f){
+			pressed_ = false;
+			//last_point *= 20;
+			float angle = atan2(track_points[index_recorder+1].Y - last_point.Y, track_points[index_recorder+1].X - last_point.X) * 180.0f / PI;
+			last_point *= 6;
+			last_point *= 20;
+			player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
+		}
+	}
+}
+
+void UUIWidget::RestartPosition(){
+	pressed_ = true;
+}
+
+void UUIWidget::Release(){
+	pressed_ = false;
+	counter_ = 0.0f;
+	
 }
 
 void UUIWidget::OnClickLoadNewTrack(){
@@ -99,7 +141,7 @@ void UUIWidget::OnClickLoadNewTrack(){
 	if (ReadFileInfoA(dialog_name, return_name)){
 		name_ = return_name;
 		OnClickHeightmapButton();
-		LoadTrackPointsIn();
+			LoadTrackPointsIn();
 	}
 }
 

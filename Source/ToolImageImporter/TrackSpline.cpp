@@ -12,21 +12,32 @@
 ATrackSpline::ATrackSpline()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
     spline = CreateDefaultSubobject<USplineComponent>("Spline",true);
     if (spline)
     {
+
         SetRootComponent(spline);
     }
-	UE_LOG(LogTemp, Warning, TEXT("constructor"));
 }
 
 // Called when the game starts or when spawned
 void ATrackSpline::BeginPlay()
 {
 	Super::BeginPlay();
+	spline->SetGenerateOverlapEvents(true);
+	
+	spline->SetNotifyRigidBodyCollision(true);
+	spline->OnComponentHit.AddDynamic(this, &ATrackSpline::OnHit);
 }
+
+void ATrackSpline::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
 
 FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosition, USplineMeshComponent* SplineMeshComponent)
 {
@@ -73,7 +84,6 @@ void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, con
 void ATrackSpline::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-
 	spline->ClearSplinePoints();
 	for (int i = 0; i < (control_points.Num()); i++) {
 		int x = control_points[i].X / 20;
@@ -88,7 +98,6 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (height_z[y * 400 + x] * 20) / 5.0f));
 		}
 	}
-	
 	if (spline)
 	{
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
@@ -98,8 +107,6 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			UStaticMesh* static_mesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'")));
 			UMaterialInterface* Material = nullptr;
 			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
-
-			
 			// update mesh details
 			spline_mesh->SetStaticMesh(static_mesh);
 			spline_mesh->SetForwardAxis(ESplineMeshAxis::X, true);
@@ -111,7 +118,6 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			spline_mesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 			spline_mesh->SetMobility(EComponentMobility::Movable);
 			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
-
 			spline_mesh->AttachToComponent(spline, FAttachmentTransformRules::KeepRelativeTransform);
 
 			// define the positions of the points and tangents
@@ -123,6 +129,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			start_end_points.Add(StartPoint);
 			start_end_points.Add(EndPoint);
 
+			
 			// query physics
 			//getting vertices of spline
 			if (spline_mesh->GetStaticMesh()->RenderData->LODResources.Num() > 0)
@@ -142,7 +149,22 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 					}
 				}
 			}
+
 		}
+
 	}
 	
+}
+
+
+void ATrackSpline::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("name this: %s"), *this->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("other name: %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("other name: "));
+
+	if (this->GetName() == "left_goal"){
+		if (OtherActor->GetName() == "Ball"){
+		}
+	}
 }

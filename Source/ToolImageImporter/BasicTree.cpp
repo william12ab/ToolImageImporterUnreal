@@ -15,7 +15,7 @@ ABasicTree::ABasicTree(){
 // Called when the game starts or when spawned
 void ABasicTree::BeginPlay(){
 	Super::BeginPlay();
-	
+
 }
 
 void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select)
