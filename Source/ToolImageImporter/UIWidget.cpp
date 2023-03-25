@@ -190,29 +190,29 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	GeneratePlane();
 }
 
-//
-//void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_saftey_p, const int& index_t_p){
-//	auto safet_p = track_spline->GetSafetyPoints();
-//	for (int t = 0; t < 10; t++) {
-//		float t_val = t / 10.f;
-//		if (index_saftey_p==1){
-//			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], safet_p[index_saftey_p], t_val));
-//		}
-//		else{
-//			temp_arr.Add(track_spline->LerpV2D(safet_p[index_saftey_p], track_points[index_t_p], t_val));
-//		}
-//		
-//	}
-//	track_points.Insert(temp_arr, index_t_p);
-//}
-//
-//void UUIWidget::FillInGaps(){
-//	TArray<FVector2D> temp_vec_first_pos;
-//	LerpCalculation(temp_vec_first_pos, 0, 0);
-//	temp_vec_first_pos.Empty();
-//
-//	LerpCalculation(temp_vec_first_pos, 1, track_points.Num());
-//}
+
+void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_saftey_p, const int& index_t_p){
+	auto safet_p = track_spline->GetSafetyPoints();
+	for (int t = 0; t < 10; t++) {
+		float t_val = t / 10.f;
+		if (index_saftey_p==1){
+			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], (safet_p[index_saftey_p]/20), t_val));
+		}
+		else{
+			temp_arr.Add(track_spline->LerpV2D((safet_p[index_saftey_p]/20), track_points[index_t_p], t_val));
+		}
+		
+	}
+	track_points.Insert(temp_arr, index_t_p);
+}
+
+void UUIWidget::FillInGaps(){
+	TArray<FVector2D> temp_vec_first_pos;
+	LerpCalculation(temp_vec_first_pos, 0, 0);
+	temp_vec_first_pos.Empty();
+
+	LerpCalculation(temp_vec_first_pos, 1, track_points.Num()-1);
+}
 
 void UUIWidget::CreateFoilage(){
 	int max = 0;
@@ -228,7 +228,7 @@ void UUIWidget::CreateFoilage(){
 		}
 	}
 	CreateSpline();
-	//FillInGaps();
+	FillInGaps();
 
 
 	FActorSpawnParameters SpawnInfoTree;

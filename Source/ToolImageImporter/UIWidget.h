@@ -31,8 +31,8 @@ protected:
 	void CreateFoilage();
 	void CreateSpline();
 	void FixScales();
-	//void FillInGaps();
-	//void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);
+	void FillInGaps();
+	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
