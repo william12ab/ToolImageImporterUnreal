@@ -36,7 +36,7 @@ public:
 
 	FVector2D LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t);
 
-	void SetSpacing(float s_) { spacing_ = s_; }
+	void SetSpacing(int32 s_) { spacing_ = s_; }
 	void SetDivision(float d_) { division_ = d_; }
 protected:
 	// Called when the game starts or when spawned
@@ -50,7 +50,7 @@ private:
 	TArray<float> height_z;
 
 	TArray<FVector> m_verts;
-	float spacing_;
+	int32 spacing_;
 	float division_;
 	TArray<FVector> start_end_points;
 };

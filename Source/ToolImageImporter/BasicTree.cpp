@@ -13,7 +13,7 @@ ABasicTree::ABasicTree(){
 	SetRootComponent(instanced_basic_tree);
 
 
-	spacing_=20.0f;
+	spacing_=20;
 	division_=5.0f;
 }
 // Called when the game starts or when spawned

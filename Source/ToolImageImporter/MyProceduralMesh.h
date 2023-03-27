@@ -50,7 +50,7 @@ public:
 	void SmoothTerrain(TArray<float>& c_);
 	void CalculateNormals();
 	void SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_);
-
+	void ChangeVert(const float& x_pos, const float& y_pos, const float& z_pos);
 
 	virtual void PostInitializeComponents() override;
 protected:

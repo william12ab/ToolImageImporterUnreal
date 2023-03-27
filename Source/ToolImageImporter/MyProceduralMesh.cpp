@@ -291,7 +291,6 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
 		}
 	}
 	
-	CalculateNormals();
 	procedural_mesh_comp->bCastDynamicShadow=false;
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 	
@@ -324,6 +323,16 @@ float Distance(const FVector& p1, const FVector& p2)
 	return c;
 }
 
+void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const float &z_pos){
+	//float rand_z = FMath::RandRange(-0.5f, 0.5f);
+	m_verts[(static_cast<int>(y_pos/ spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].X = (x_pos);
+	m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Y = (y_pos);
+	m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Z = (z_pos);
+	m_vert_colors[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
+}
+
+
+
 void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_)
 {
 	int index_tracker_verts=0;
@@ -331,44 +340,30 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 	left = 3;
 	right = 2;
 	float inner_count_size = 15.0f;
-	for (int i = 0; i < points_.Num(); i+=2)
-	{
+	for (int i = 0; i < points_.Num(); i+=2){
 		float dist = Distance(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
-		for (int j = 0; j < (int)int_dist; j++)
-		{
+		for (int j = 0; j < (int)int_dist; j++){
 			float t = (float)(j / (float)int_dist);
 			auto left_pos = LerpV(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left-2)], t);	//gives pos on left
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
 			auto centre_pos = LerpV(points_[i], points_[i + 1], t);
 
-			m_verts[(static_cast<int>(centre_pos.Y/ spacing_))* 400 + (static_cast<int>(centre_pos.X/ spacing_))].X = (centre_pos.X);
-			m_verts[(static_cast<int>(centre_pos.Y / spacing_)) * 400 + (static_cast<int>(centre_pos.X / spacing_))].Y = (centre_pos.Y);
-			m_verts[(static_cast<int>(centre_pos.Y / spacing_)) * 400 + (static_cast<int>(centre_pos.X / spacing_))].Z = (centre_pos.Z);
-			m_vert_colors[(static_cast<int>(centre_pos.Y / spacing_)) * 400 + (static_cast<int>(centre_pos.X / spacing_))] = FLinearColor::Black;
 
+			ChangeVert(centre_pos.X, centre_pos.Y, centre_pos.Z);
+			ChangeVert(left_pos.X, left_pos.Y, left_pos.Z);
+			ChangeVert(right_pos.X, right_pos.Y, right_pos.Z);
 
-			m_verts[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)].X = (left_pos.X);
-			m_verts[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)].Y = (left_pos.Y);
-			m_verts[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)].Z = (left_pos.Z);
-			m_vert_colors[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)] = FLinearColor::Black;
-
-			m_verts[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)].X = (right_pos.X);
-			m_verts[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)].Y = (right_pos.Y);
-			m_verts[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)].Z = (right_pos.Z);
-			m_vert_colors[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)] = FLinearColor::Black;
-
-			for (int k = 0; k < (int)inner_count_size; k++)
-			{
+			for (int k = 0; k < (int)inner_count_size; k++){
 				float t_inner = (float)(k / inner_count_size);
 				auto a = LerpV(left_pos, right_pos, t_inner);
-				m_verts[(static_cast<int>(a.Y / spacing_)) * 400 + (static_cast<int>(a.X / spacing_))].X = (a.X);
-				m_verts[(static_cast<int>(a.Y / spacing_)) * 400 + (static_cast<int>(a.X / spacing_))].Y = (a.Y);
-				m_verts[(static_cast<int>(a.Y/ spacing_)) * 400 + (static_cast<int>(a.X / spacing_))].Z = (a.Z);
-				m_vert_colors[(static_cast<int>(a.Y / spacing_)) * 400 + (static_cast<int>(a.X / spacing_))] = FLinearColor::Black;
+				ChangeVert(a.X, a.Y, a.Z);
 			}
 		}
 		index_tracker_verts += 4;
 	}
+	CalculateNormals();
+
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+
 }

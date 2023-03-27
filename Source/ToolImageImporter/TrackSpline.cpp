@@ -20,7 +20,7 @@ ATrackSpline::ATrackSpline()
 
         SetRootComponent(spline);
     }
-	spacing_ = 20.f;
+	spacing_ = 20;
 	division_ = 5.0f;
 	
 }
