@@ -58,7 +58,7 @@ protected:
 	ABasicTree* tree_instance;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
-
+	float scaling_down_;
 	FString name_;
 
 	TArray<float> m_colors;

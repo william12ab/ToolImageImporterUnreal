@@ -16,6 +16,7 @@ void UUIWidget::NativeConstruct()
 	h_ = 4;
 	s_ = 20.0f;
 	m_ = 5;
+	scaling_down_ = 6.0f;
 	Label->SetText(FText::FromString("Plane Generator"));
 
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
@@ -99,8 +100,8 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 
 	//collisons for restarting position
 	auto l=player_pawn->GetActorLocation();
-	l /= 20;
-	l /= 6;
+	l /= s_;
+	l /= scaling_down_;
 	FVector2D current_point = FVector2D(l.X, l.Y);
 	for (int i = 0; i < track_points.Num(); i++){
 		if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)){
@@ -116,10 +117,9 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 		counter_ += InDeltaTime;
 		if (counter_>=1.5f){
 			pressed_ = false;
-			//last_point *= 20;
 			float angle = atan2(track_points[index_recorder+1].Y - last_point.Y, track_points[index_recorder+1].X - last_point.X) * 180.0f / PI;
-			last_point *= 6;
-			last_point *= 20;
+			last_point *= scaling_down_;
+			last_point *= s_;
 			player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
 		}
 	}
@@ -238,10 +238,10 @@ void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_sa
 	for (int t = 0; t < 10; t++) {
 		float t_val = t / 10.f;
 		if (index_saftey_p==1){
-			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], (safet_p[index_saftey_p]/20), t_val));
+			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], (safet_p[index_saftey_p]/ s_), t_val));
 		}
 		else{
-			temp_arr.Add(track_spline->LerpV2D((safet_p[index_saftey_p]/20), track_points[index_t_p], t_val));
+			temp_arr.Add(track_spline->LerpV2D((safet_p[index_saftey_p]/ s_), track_points[index_t_p], t_val));
 		}
 		
 	}
@@ -280,25 +280,25 @@ void UUIWidget::CreateFoilage(){
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, false);
-		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	for (int i = 0; i < 2; i++) {//ferns bushes
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, true);
-		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	for (int i = 0; i < 1; i++) {//rocks
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddRockClusters(track_points, p_mesh->m_verts);
-		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	for (int i = 0; i < 1; i++) {//grass
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddGrass(track_points, p_mesh->m_verts, max, min);
-		tree_instancea->SetActorScale3D(FVector(6, 6, 6));
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	//water
 	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
@@ -312,37 +312,37 @@ void UUIWidget::CreateFoilage(){
 void UUIWidget::CreateSpline(){
 	for (size_t i = 0; i < control_points.Num(); i++)
 	{
-		control_points[i].X *= 20.0f;
-		control_points[i].Y *= 20.0f;
+		control_points[i].X *= s_;
+		control_points[i].Y *= s_;
 	}
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
-	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
-
-	track_spline->SetControlPoints(control_points);
-	track_spline->SetHeightArray(m_colors);
 	FTransform t_transform_{
 					FRotator{0,0,0},
 					FVector{0, 0, 0},
-					FVector{1, 1, 1} };	//Scale
+					FVector{1, 1, 1} };
+	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
+	track_spline->SetSpacing(s_);
+	track_spline->SetDivision(m_);
+	track_spline->SetControlPoints(control_points);
+	track_spline->SetHeightArray(m_colors);
 	track_spline->OnConstruction(t_transform_);
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
-	 
 	track_spline->SetActorEnableCollision(true);
 }
 
 void UUIWidget::FixScales()
 {
-	p_mesh->SetActorScale3D(FVector(6, 6, 6));
-	track_spline->SetActorScale3D(FVector(6, 6, 6));
-	w_mesh->SetActorScale3D(FVector(30*6, 30*6, 30*6));
+	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	w_mesh->SetActorScale3D(FVector(30* scaling_down_, 30* scaling_down_, 30* scaling_down_));
 	auto t = w_mesh->GetActorLocation();
-	w_mesh->SetActorLocation(t*6.0f);
+	w_mesh->SetActorLocation(t* scaling_down_);
 	FVector loc_ = track_spline->GetSEPoints()[0];
 
-	loc_ *= 6.0f;
+	loc_ *= scaling_down_;
 	loc_.X += 220.f;
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
 	player_pawn->TeleportTo(loc_, FRotator(0.0f, angle, 0.0f));

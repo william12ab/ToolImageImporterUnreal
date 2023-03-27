@@ -342,30 +342,30 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
 			auto centre_pos = LerpV(points_[i], points_[i + 1], t);
 
-			m_verts[(static_cast<int>(centre_pos.Y/ 20.f))* 400 + (static_cast<int>(centre_pos.X/ 20.f))].X = (centre_pos.X);
-			m_verts[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))].Y = (centre_pos.Y);
-			m_verts[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))].Z = (centre_pos.Z);
-			m_vert_colors[(static_cast<int>(centre_pos.Y / 20.f)) * 400 + (static_cast<int>(centre_pos.X / 20.f))] = FLinearColor::Black;
+			m_verts[(static_cast<int>(centre_pos.Y/ spacing_))* 400 + (static_cast<int>(centre_pos.X/ spacing_))].X = (centre_pos.X);
+			m_verts[(static_cast<int>(centre_pos.Y / spacing_)) * 400 + (static_cast<int>(centre_pos.X / spacing_))].Y = (centre_pos.Y);
+			m_verts[(static_cast<int>(centre_pos.Y / spacing_)) * 400 + (static_cast<int>(centre_pos.X / spacing_))].Z = (centre_pos.Z);
+			m_vert_colors[(static_cast<int>(centre_pos.Y / spacing_)) * 400 + (static_cast<int>(centre_pos.X / spacing_))] = FLinearColor::Black;
 
 
-			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].X = (left_pos.X);
-			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].Y = (left_pos.Y);
-			m_verts[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)].Z = (left_pos.Z);
-			m_vert_colors[static_cast<int>(left_pos.Y / 20.f) * 400 + static_cast<int>(left_pos.X / 20.f)] = FLinearColor::Black;
+			m_verts[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)].X = (left_pos.X);
+			m_verts[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)].Y = (left_pos.Y);
+			m_verts[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)].Z = (left_pos.Z);
+			m_vert_colors[static_cast<int>(left_pos.Y / spacing_) * 400 + static_cast<int>(left_pos.X / spacing_)] = FLinearColor::Black;
 
-			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].X = (right_pos.X);
-			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].Y = (right_pos.Y);
-			m_verts[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)].Z = (right_pos.Z);
-			m_vert_colors[static_cast<int>(right_pos.Y / 20.f) * 400 + static_cast<int>(right_pos.X / 20.f)] = FLinearColor::Black;
+			m_verts[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)].X = (right_pos.X);
+			m_verts[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)].Y = (right_pos.Y);
+			m_verts[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)].Z = (right_pos.Z);
+			m_vert_colors[static_cast<int>(right_pos.Y / spacing_) * 400 + static_cast<int>(right_pos.X / spacing_)] = FLinearColor::Black;
 
 			for (int k = 0; k < (int)inner_count_size; k++)
 			{
 				float t_inner = (float)(k / inner_count_size);
 				auto a = LerpV(left_pos, right_pos, t_inner);
-				m_verts[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))].X = (a.X);
-				m_verts[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))].Y = (a.Y);
-				m_verts[(static_cast<int>(a.Y/20.f)) * 400 + (static_cast<int>(a.X / 20.f))].Z = (a.Z);
-				m_vert_colors[(static_cast<int>(a.Y / 20.f)) * 400 + (static_cast<int>(a.X / 20.f))] = FLinearColor::Black;
+				m_verts[(static_cast<int>(a.Y / spacing_)) * 400 + (static_cast<int>(a.X / spacing_))].X = (a.X);
+				m_verts[(static_cast<int>(a.Y / spacing_)) * 400 + (static_cast<int>(a.X / spacing_))].Y = (a.Y);
+				m_verts[(static_cast<int>(a.Y/ spacing_)) * 400 + (static_cast<int>(a.X / spacing_))].Z = (a.Z);
+				m_vert_colors[(static_cast<int>(a.Y / spacing_)) * 400 + (static_cast<int>(a.X / spacing_))] = FLinearColor::Black;
 			}
 		}
 		index_tracker_verts += 4;

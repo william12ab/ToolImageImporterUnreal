@@ -20,6 +20,9 @@ ATrackSpline::ATrackSpline()
 
         SetRootComponent(spline);
     }
+	spacing_ = 20.f;
+	division_ = 5.0f;
+	
 }
 
 // Called when the game starts or when spawned
@@ -29,7 +32,6 @@ void ATrackSpline::BeginPlay()
 	spline->SetGenerateOverlapEvents(true);
 	
 	spline->SetNotifyRigidBodyCollision(true);
-	spline->OnComponentHit.AddDynamic(this, &ATrackSpline::OnHit);
 }
 
 void ATrackSpline::Tick(float DeltaTime)
@@ -65,17 +67,17 @@ void ATrackSpline::CombinePoints(){
 }
 
 void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, const int& index_, const float& t_value){
-	int x = control_points[index_one].X / 20;
-	int y = control_points[index_one].Y / 20;
+	int x = control_points[index_one].X / spacing_;
+	int y = control_points[index_one].Y / spacing_;
 	FVector2D safe_point;
 	safe_point = LerpV2D(control_points[index_zero], control_points[index_one], t_value);
 	if (t_value>0.0f){
-		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
+		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * spacing_) / division_));
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * spacing_) / division_));
 	}
 	else	{
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
-		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * 20) / 5.0f));
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * spacing_) / division_));
+		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * spacing_) / division_));
 	}	
 	saftey_points.Add(safe_point);
 }
@@ -86,8 +88,8 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 	spline->ClearSplinePoints();
 	for (int i = 0; i < (control_points.Num()); i++) {
-		int x = control_points[i].X / 20;
-		int y = control_points[i].Y / 20;
+		int x = control_points[i].X / spacing_;
+		int y = control_points[i].Y / spacing_;
 		if (i == 0){
 			AddSafePoint(1, 0, i,-2.5f);
 		}
@@ -95,11 +97,10 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			AddSafePoint(i, control_points.Num() - 2, i,1.1f);
 		}
 		else{
-			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (height_z[y * 400 + x] * 20) / 5.0f));
+			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (height_z[y * 400 + x] * spacing_) / division_));
 		}
 	}
-	if (spline)
-	{
+	if (spline)	{
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
 		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)
 		{
@@ -154,17 +155,4 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 
 	}
 	
-}
-
-
-void ATrackSpline::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	UE_LOG(LogTemp, Warning, TEXT("name this: %s"), *this->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("other name: %s"), *OtherActor->GetName());
-	UE_LOG(LogTemp, Warning, TEXT("other name: "));
-
-	if (this->GetName() == "left_goal"){
-		if (OtherActor->GetName() == "Ball"){
-		}
-	}
 }

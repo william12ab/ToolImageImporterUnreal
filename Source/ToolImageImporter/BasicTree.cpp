@@ -11,6 +11,10 @@ ABasicTree::ABasicTree(){
 	SetRootComponent(ScnComponent);
 	instanced_basic_tree = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("BasicInstancedTree"));
 	SetRootComponent(instanced_basic_tree);
+
+
+	spacing_=20.0f;
+	division_=5.0f;
 }
 // Called when the game starts or when spawned
 void ABasicTree::BeginPlay(){
@@ -70,7 +74,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	float z_alter = 0.0f;
 	float yaw_rot = 0.0f;
 	if (is_foilage){
-		loop_range = 2000;
+		loop_range =  00;
 		NameChoicePlant(mesh_name,z_alter);
 		yaw_rot = 270.0f;
 	}
@@ -86,14 +90,14 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 		bool is_found = false;
 		while (!is_found)
 		{
-			if (z_pos<(max_m - (max_m * 0.30f)) && z_pos>(min_m + (max_m * 0.20f)))
+			if (z_pos<(max_m - (max_m * 0.30f)) && z_pos>(min_m + (max_m * (spacing_/100.f))))
 			{
 				if (CheckBounds(track_point, pos_x, pos_y)) 
 				{
 					is_found = true;
 					FTransform A{
 						FRotator{0,yaw_rot,0},
-						FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos - z_alter) },
+						FVector{pos_x * spacing_, pos_y * spacing_, (z_pos - z_alter) },
 						FVector{0.250f, 0.250f, 0.250f} };	//Scale
 					AddBasicTree(A, tree_select, mesh_name);
 					instanced_basic_tree->SetMobility(EComponentMobility::Static);
@@ -182,7 +186,7 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts){
 
 	auto d = FVector2D::Distance(track_point[0], track_point.Last());
-	float rand_percent = FMath::RandRange(0.0f, 20.0f);
+	float rand_percent = FMath::RandRange(0.0f, spacing_);
 	float rocks_to_spawn_float = d * (rand_percent/100.0f);
 	int rocks_to_spawn = round(rocks_to_spawn_float);
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
@@ -208,7 +212,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				}
 				FTransform A{
 				FRotator{0,rand_yaw,0},
-				FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos) },
+				FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				instanced_basic_tree->AddInstance(A);
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
@@ -242,7 +246,7 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 			if (z_pos<(max_m - (max_m * 0.550f)) && z_pos>(min_m + (max_m * 0.050f))) {
 				FTransform A{
 					FRotator{0,rand_rot_yaw,0},
-					FVector{pos_x * 20.0f, pos_y * 20.0f, (z_pos) },
+					FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 					FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				AddBasicTree(A, 0, "SM_Grass");
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);

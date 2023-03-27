@@ -35,11 +35,14 @@ public:
 	void NameChoiceTree(FString& mesh_name, int& tree_select);
 	void NameChoicePlant(FString& mesh_name, float& z_alter);
 
+	void SetSpacing(float s_) { spacing_ = s_; }
+	void SetDivision(float d_) { division_ = d_; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-
+private:
+	float spacing_;
+	float division_;
 };

@@ -35,14 +35,14 @@ public:
 	TArray<FVector2D> GetSafetyPoints() { return saftey_points; }
 
 	FVector2D LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t);
+
+	void SetSpacing(float s_) { spacing_ = s_; }
+	void SetDivision(float d_) { division_ = d_; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
-
-	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 
 	TArray<FVector2D> control_points;
@@ -50,5 +50,7 @@ private:
 	TArray<float> height_z;
 
 	TArray<FVector> m_verts;
+	float spacing_;
+	float division_;
 	TArray<FVector> start_end_points;
 };
