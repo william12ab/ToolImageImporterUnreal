@@ -84,45 +84,48 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	// Do your custom tick stuff here
 	
 	//setting camera work
-	auto r = player_pawn->GetActorRotation();
-	auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
-	auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight"));
-	auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
-	side_left *= -1.0f;
+	if (player_pawn){
+		auto r = player_pawn->GetActorRotation();
+		auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
+		auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight"));
+		auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
+		side_left *= -1.0f;
 
-	RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
-	RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
-	r.Pitch += pitch_;
-	r.Yaw += yaw_;
-	player_pawn->GetController()->SetControlRotation(r);
-	//camera end
+		RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
+		RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
+		r.Pitch += pitch_;
+		r.Yaw += yaw_;
+		player_pawn->GetController()->SetControlRotation(r);
+		//camera end
 
 
-	//collisons for restarting position
-	auto l=player_pawn->GetActorLocation();
-	l /= s_;
-	l /= scaling_down_;
-	FVector2D current_point = FVector2D(l.X, l.Y);
-	for (int i = 0; i < track_points.Num(); i++){
-		if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)){
-			last_point = FVector(track_points[i].X, track_points[i].Y,l.Z);
-			index_recorder = i;
+		//collisons for restarting position
+		auto l = player_pawn->GetActorLocation();
+		l /= s_;
+		l /= scaling_down_;
+		FVector2D current_point = FVector2D(l.X, l.Y);
+		for (int i = 0; i < track_points.Num(); i++) {
+			if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
+				last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
+				index_recorder = i;
+			}
+		}
+
+		player_pawn->InputComponent->BindAction("Restart", IE_Pressed, this, &UUIWidget::RestartPosition);
+		player_pawn->InputComponent->BindAction("Restart", IE_Released, this, &UUIWidget::Release);
+
+		if (pressed_) {
+			counter_ += InDeltaTime;
+			if (counter_ >= 1.5f) {
+				pressed_ = false;
+				float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
+				last_point *= scaling_down_;
+				last_point *= s_;
+				player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
+			}
 		}
 	}
 	
-	player_pawn->InputComponent->BindAction("Restart", IE_Pressed, this, &UUIWidget::RestartPosition);
-	player_pawn->InputComponent->BindAction("Restart", IE_Released, this, &UUIWidget::Release);
-
-	if (pressed_){
-		counter_ += InDeltaTime;
-		if (counter_>=1.5f){
-			pressed_ = false;
-			float angle = atan2(track_points[index_recorder+1].Y - last_point.Y, track_points[index_recorder+1].X - last_point.X) * 180.0f / PI;
-			last_point *= scaling_down_;
-			last_point *= s_;
-			player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
-		}
-	}
 }
 
 void UUIWidget::RestartPosition(){
@@ -310,10 +313,12 @@ void UUIWidget::CreateFoilage(){
 
 
 void UUIWidget::CreateSpline(){
-	for (size_t i = 0; i < control_points.Num(); i++)
+	for (size_t i = 0; i < track_points.Num(); i++)
 	{
-		control_points[i].X *= s_;
-		control_points[i].Y *= s_;
+		track_points[i].X *= s_;
+		track_points[i].Y *= s_;
+		//track_points[i].X *= s_;
+		//track_points[i].Y *= s_;
 	}
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
@@ -325,12 +330,19 @@ void UUIWidget::CreateSpline(){
 	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
 	track_spline->SetSpacing(s_);
 	track_spline->SetDivision(m_);
-	track_spline->SetControlPoints(control_points);
+	track_spline->SetControlPoints(track_points);
 	track_spline->SetHeightArray(m_colors);
 	track_spline->OnConstruction(t_transform_);
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	track_spline->SetActorEnableCollision(true);
+	for (size_t i = 0; i < track_points.Num(); i++)
+	{
+		//control_points[i].X *= s_;
+		//control_points[i].Y *= s_;
+		track_points[i].X /= s_;
+		track_points[i].Y /= s_;
+	}
 }
 
 void UUIWidget::FixScales()
