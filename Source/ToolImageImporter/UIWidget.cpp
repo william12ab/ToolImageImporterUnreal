@@ -14,9 +14,9 @@ void UUIWidget::NativeConstruct()
 	Super::NativeConstruct();
 	w_ = 4;
 	h_ = 4;
-	s_ = 20.0f;
-	m_ = 5;
-	scaling_down_ = 6.0f;
+	s_ = 20.0f;		//distance between verts in proc mesh
+	m_ = 8;			//division of height
+	scaling_down_ = 8.0f;		//scale factor of everything, so 8 times what it is now
 	Label->SetText(FText::FromString("Plane Generator"));
 
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
@@ -87,7 +87,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	if (player_pawn){
 		auto r = player_pawn->GetActorRotation();
 		auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
-		auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight"));
+		auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight")); //here
 		auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
 		side_left *= -1.0f;
 
@@ -334,6 +334,7 @@ void UUIWidget::CreateSpline(){
 	track_spline->SetHeightArray(m_colors);
 	track_spline->OnConstruction(t_transform_);
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
+	p_mesh->ReplaceC(m_colors);
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	track_spline->SetActorEnableCollision(true);
 	for (size_t i = 0; i < track_points.Num(); i++)

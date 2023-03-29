@@ -14,7 +14,7 @@ ABasicTree::ABasicTree(){
 
 
 	spacing_=20;
-	division_=5.0f;
+	division_=8.0f;
 }
 // Called when the game starts or when spawned
 void ABasicTree::BeginPlay(){

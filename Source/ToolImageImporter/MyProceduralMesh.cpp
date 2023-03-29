@@ -35,62 +35,62 @@ void AMyProceduralMesh::PostInitializeComponents()
 
 void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_)
 {
-	for (int j = 0; j < (width_); j++){
-		for (int i = 0; i < (width_); i++){
+	for (int j = 0; j < (400); j++){
+		for (int i = 0; i < (400); i++){
 			int count_loc = 0;
 			float tHeight = 0.0f;
 
 			if (i - 1 >= 0)											//left
 			{
 				count_loc++;
-				tHeight += c_[(j * width_) + (i - 1)];
+				tHeight += c_[(j * 400) + (i - 1)];
 			}
 
-			if (i + 1 < width_)									//right
+			if (i + 1 < 400)									//right
 			{
 				count_loc++;
-				tHeight += c_[(j * width_) + (i + 1)];
+				tHeight += c_[(j * 400) + (i + 1)];
 			}
 
 			if (j - 1 >= 0)											//down	
 			{
 				count_loc++;
-				tHeight += c_[((j - 1) * width_) + i];
+				tHeight += c_[((j - 1) * 400) + i];
 			}
 
-			if (j + 1 < width_)									//up
+			if (j + 1 < 400)									//up
 			{
 				count_loc++;
-				tHeight += c_[((j + 1) * width_) + i];
+				tHeight += c_[((j + 1) * 400) + i];
 			}
 
 			if ((i - 1 >= 0) && (j - 1 >= 0))								//down left 
 			{
 				count_loc++;
-				tHeight += c_[((j - 1) * width_) + (i - 1)];
+				tHeight += c_[((j - 1) * 400) + (i - 1)];
 			}
 
-			if ((i + 1 < width_) && (j - 1 >= 0))								//down right
+			if ((i + 1 < 400) && (j - 1 >= 0))								//down right
 			{
 				count_loc++;
-				tHeight += c_[((j - 1) * width_) + (i + 1)];
+				tHeight += c_[((j - 1) * 400) + (i + 1)];
 			}
 
-			if ((i - 1 >= 0) && (j + 1 < width_))								//up left 
+			if ((i - 1 >= 0) && (j + 1 < 400))								//up left 
 			{
 				count_loc++;
-				tHeight += c_[((j + 1) * width_) + (i - 1)];
+				tHeight += c_[((j + 1) * 400) + (i - 1)];
 			}
 
-			if ((i + 1 < width_) && (j + 1 < width_))								//up right
+			if ((i + 1 < 400) && (j + 1 < 400))								//up right
 			{
 				count_loc++;
-				tHeight += c_[((j + 1) * width_) + (i + 1)];
+				tHeight += c_[((j + 1) * 400) + (i + 1)];
 			}
 
 			tHeight /= (float)count_loc;
 
-			c_[(j * width_) + i] = tHeight;
+			c_[(j * 400) + i] = tHeight;
 		}
 	}
 }
@@ -285,6 +285,7 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
 {
 	SmoothTerrain(c_);
 	SmoothTerrain(c_);
+
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			m_verts[y * height_ + x].Z = (c_[y * height_ + x]* spacing_)/ m_;
@@ -331,6 +332,23 @@ void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const
 	m_vert_colors[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
 }
 
+void AMyProceduralMesh::ReplaceC(TArray<float>& c_)
+{
+	TArray<float> temp;
+	for (int i = 0; i < m_verts.Num(); i++)
+	{
+		temp.Add(m_verts[i].Z);
+	}
+	SmoothTerrain(temp);
+	for (int32 y = 0; y < height_; y++) {
+		for (int32 x = 0; x < width_; x++) {
+			m_verts[y * height_ + x].Z = temp[y * height_ + x];
+		}
+	}
+	CalculateNormals();
+
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+}
 
 
 void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_)
@@ -353,7 +371,6 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 			ChangeVert(centre_pos.X, centre_pos.Y, centre_pos.Z);
 			ChangeVert(left_pos.X, left_pos.Y, left_pos.Z);
 			ChangeVert(right_pos.X, right_pos.Y, right_pos.Z);
-
 			for (int k = 0; k < (int)inner_count_size; k++){
 				float t_inner = (float)(k / inner_count_size);
 				auto a = LerpV(left_pos, right_pos, t_inner);
@@ -362,8 +379,4 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 		}
 		index_tracker_verts += 4;
 	}
-	CalculateNormals();
-
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-
 }

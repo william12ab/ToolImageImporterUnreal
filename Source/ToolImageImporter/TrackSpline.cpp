@@ -21,7 +21,7 @@ ATrackSpline::ATrackSpline()
         SetRootComponent(spline);
     }
 	spacing_ = 20;
-	division_ = 5.0f;
+	division_ = 8.0f;
 	
 }
 
@@ -97,7 +97,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			AddSafePoint(i, control_points.Num() - 2, i,1.1f);
 		}
 		else{
-			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (height_z[y * 400 + x] * spacing_) / division_));
+			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (float)((height_z[y * 400 + x] * spacing_) / division_)));
 		}
 	}
 	if (spline)	{
@@ -150,9 +150,6 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 					}
 				}
 			}
-
 		}
-
 	}
-	
 }
