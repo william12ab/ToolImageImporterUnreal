@@ -15,7 +15,7 @@ void UUIWidget::NativeConstruct()
 	w_ = 4;
 	h_ = 4;
 	s_ = 20.0f;		//distance between verts in proc mesh
-	m_ = 8;			//division of height
+	m_ = 5;			//division of height
 	scaling_down_ = 8.0f;		//scale factor of everything, so 8 times what it is now
 	Label->SetText(FText::FromString("Plane Generator"));
 

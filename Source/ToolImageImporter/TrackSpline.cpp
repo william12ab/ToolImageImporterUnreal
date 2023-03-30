@@ -21,7 +21,7 @@ ATrackSpline::ATrackSpline()
         SetRootComponent(spline);
     }
 	spacing_ = 20;
-	division_ = 8.0f;
+	division_ = 5.0f;
 	
 }
 
@@ -39,7 +39,6 @@ void ATrackSpline::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-
 
 FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosition, USplineMeshComponent* SplineMeshComponent)
 {
@@ -59,7 +58,6 @@ FVector2D ATrackSpline::LerpV2D(const FVector2D& p1, const FVector2D& p2, const 
 	auto c = p1 + b;
 	return c;
 }
-
 
 void ATrackSpline::CombinePoints(){
 	control_points.EmplaceAt(0, saftey_points[0]);

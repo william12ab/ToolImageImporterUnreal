@@ -309,9 +309,13 @@ float Lerp(const float& p1, const float& p2, const float& t)
 
 FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
 {
-	auto a = p2 - p1;
+	/*auto a = p2 - p1;
 	auto b = FVector(a.X * t, a.Y * t,a.Z*t);
-	auto c = p1 + b;
+	auto c = p1 + b;*/
+
+
+	auto c =(1.0f - t)* p1 + t * p2;
+
 	return c;
 }
 
@@ -326,8 +330,8 @@ float Distance(const FVector& p1, const FVector& p2)
 
 void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const float &z_pos){
 	//float rand_z = FMath::RandRange(-0.5f, 0.5f);
-	m_verts[(static_cast<int>(y_pos/ spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].X = (x_pos);
-	m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Y = (y_pos);
+	//m_verts[(static_cast<int>(y_pos/ spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].X = (x_pos);
+	//m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Y = (y_pos);
 	m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Z = (z_pos);
 	m_vert_colors[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
 }
@@ -357,24 +361,23 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 	int right, left;
 	left = 3;
 	right = 2;
-	float inner_count_size = 15.0f;
+	float inner_count_size = 100.0f;
 	for (int i = 0; i < points_.Num(); i+=2){
 		float dist = Distance(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
+		int_dist *= 20;
 		for (int j = 0; j < (int)int_dist; j++){
 			float t = (float)(j / (float)int_dist);
 			auto left_pos = LerpV(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left-2)], t);	//gives pos on left
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
 			auto centre_pos = LerpV(points_[i], points_[i + 1], t);
-
-
-			ChangeVert(centre_pos.X, centre_pos.Y, centre_pos.Z);
+			ChangeVert(centre_pos.X, centre_pos.Y, left_pos.Z);
 			ChangeVert(left_pos.X, left_pos.Y, left_pos.Z);
-			ChangeVert(right_pos.X, right_pos.Y, right_pos.Z);
+			ChangeVert(right_pos.X, right_pos.Y, left_pos.Z);
 			for (int k = 0; k < (int)inner_count_size; k++){
 				float t_inner = (float)(k / inner_count_size);
 				auto a = LerpV(left_pos, right_pos, t_inner);
-				ChangeVert(a.X, a.Y, a.Z);
+				ChangeVert(a.X, a.Y, left_pos.Z);
 			}
 		}
 		index_tracker_verts += 4;
