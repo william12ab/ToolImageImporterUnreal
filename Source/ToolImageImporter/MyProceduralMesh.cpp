@@ -332,7 +332,7 @@ void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const
 	//float rand_z = FMath::RandRange(-0.5f, 0.5f);
 	//m_verts[(static_cast<int>(y_pos/ spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].X = (x_pos);
 	//m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Y = (y_pos);
-	m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Z = (z_pos);
+	m_verts[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))].Z = (int)z_pos;
 	m_vert_colors[(static_cast<int>(y_pos / spacing_)) * 400 + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
 }
 
