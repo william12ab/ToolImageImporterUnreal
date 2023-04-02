@@ -21,6 +21,7 @@ void UUIWidget::NativeConstruct()
 
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
+	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
 	pitch_ = 0.0f;
 	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	pressed_ = false;
@@ -313,10 +314,10 @@ void UUIWidget::CreateFoilage(){
 
 
 void UUIWidget::CreateSpline(){
-	for (size_t i = 0; i < track_points.Num(); i++)
+	for (size_t i = 0; i < control_points.Num(); i++)
 	{
-		track_points[i].X *= s_;
-		track_points[i].Y *= s_;
+		control_points[i].X *= s_;
+		control_points[i].Y *= s_;
 		//track_points[i].X *= s_;
 		//track_points[i].Y *= s_;
 	}
@@ -330,20 +331,20 @@ void UUIWidget::CreateSpline(){
 	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
 	track_spline->SetSpacing(s_);
 	track_spline->SetDivision(m_);
-	track_spline->SetControlPoints(track_points);
+	track_spline->SetControlPoints(control_points);
 	track_spline->SetHeightArray(m_colors);
 	track_spline->OnConstruction(t_transform_);
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
 	p_mesh->ReplaceC(m_colors);
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	track_spline->SetActorEnableCollision(true);
-	for (size_t i = 0; i < track_points.Num(); i++)
-	{
-		//control_points[i].X *= s_;
-		//control_points[i].Y *= s_;
-		track_points[i].X /= s_;
-		track_points[i].Y /= s_;
-	}
+	//for (size_t i = 0; i < track_points.Num(); i++)
+	//{
+	//	//control_points[i].X *= s_;
+	//	//control_points[i].Y *= s_;
+	//	track_points[i].X /= s_;
+	//	track_points[i].Y /= s_;
+	//}
 }
 
 void UUIWidget::FixScales()
@@ -356,7 +357,26 @@ void UUIWidget::FixScales()
 	FVector loc_ = track_spline->GetSEPoints()[0];
 
 	loc_ *= scaling_down_;
-	loc_.X += 220.f;
+	//loc_.X += 220.f;
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
 	player_pawn->TeleportTo(loc_, FRotator(0.0f, angle, 0.0f));
+	track_spline->Destroy();
+
+	
+}
+
+
+void UUIWidget::OnTest()
+{
+	p_mesh->Save(temp_vec);
+	FActorSpawnParameters SpawnInfo;
+	FRotator myRot(0, 0, 0);
+	FVector myLoc = FVector(0, 0, 0);
+
+	
+	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+
+	new_temp->Resize(temp_vec);
+	new_temp->SetActorScale3D(FVector(80, 80, scaling_down_));
+
 }

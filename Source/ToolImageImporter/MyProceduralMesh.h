@@ -46,13 +46,16 @@ public:
 	void CreateMesh(int& d_height_, int& d_width_, float& d_spacing_);
 	void SetMaterial(UTexture *t_);
 	void ModiVerts(TArray<float>& c_,const int& m_);		//changing the vertss
-	void UpdateVerts(const float& d_spacing_);
 	void SmoothTerrain(TArray<float>& c_);
 	void CalculateNormals();
 	void SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_);
 	void ChangeVert(const float& x_pos, const float& y_pos, const float& z_pos);
 	void ReplaceC(TArray<float>& c_);
 	virtual void PostInitializeComponents() override;
+
+	void Resize(const TArray<FVector>& m_verts_);
+	void Save(TArray<FVector> &temp_);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -64,5 +67,7 @@ protected:
 	int32 width_;
 	float spacing_;
 	int count;
+
+	const float terrain_scale = 100.0f;
 public:	
 };

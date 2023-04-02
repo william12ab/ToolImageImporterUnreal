@@ -46,20 +46,27 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
 
+	UPROPERTY(meta = (BindWidget))
+		class UButton* test_button;
+
 	UFUNCTION()
 		void OnClickLoadNewTrack();		//on click load button
 	UFUNCTION()
 		void OnClickDelete();		//calls delete
 
+	UFUNCTION()
+		void OnTest();
 		
 	AWaterMesh* w_mesh;
 	AMyProceduralMesh* p_mesh;		//obj
-	//ATrackMesh* track_mesh;
 	ABasicTree* tree_instance;
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
 	float scaling_down_;
 	FString name_;
+
+
+	AMyProceduralMesh* new_temp;
 
 	TArray<float> m_colors;
 	UTexture* t_;
@@ -79,4 +86,7 @@ protected:
 	FVector last_point;
 	bool pressed_;
 	float counter_;
+
+
+	TArray<FVector> temp_vec;
 };
