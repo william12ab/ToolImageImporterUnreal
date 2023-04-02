@@ -371,7 +371,7 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_){
 	width_ = 800;
 
 	int scale = 2;
-	int grid_size = height_;
+	int grid_size = 400;
 	int new_size = grid_size * scale;
 	TArray<FVector> new_z;
 	new_z.SetNum(new_size*new_size);
@@ -429,9 +429,10 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_){
 			temp_c[y * height_ + x] = new_z[y * height_ + x].Z;
 		}
 	}
-	//CalculateNormals();
 
 	SmoothTerrain(temp_c);
+	SmoothTerrain(temp_c);
+
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			m_verts[y * height_ + x].Z = temp_c[y * height_ + x];
