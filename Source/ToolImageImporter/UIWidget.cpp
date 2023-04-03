@@ -15,7 +15,7 @@ void UUIWidget::NativeConstruct()
 	w_ = 4;
 	h_ = 4;
 	s_ = 20.0f;		//distance between verts in proc mesh
-	m_ = 5;			//division of height
+	m_ = 7;			//division of height
 	scaling_down_ = 8.0f;		//scale factor of everything, so 8 times what it is now
 	Label->SetText(FText::FromString("Plane Generator"));
 
@@ -85,44 +85,47 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	// Do your custom tick stuff here
 	
 	//setting camera work
-	if (player_pawn){
+	if (player_pawn) {
 		auto r = player_pawn->GetActorRotation();
 		auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
-		auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight")); //here
-		auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
-		side_left *= -1.0f;
+		if (player_pawn) {
+			auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight")); //here
 
-		RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
-		RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
-		r.Pitch += pitch_;
-		r.Yaw += yaw_;
-		player_pawn->GetController()->SetControlRotation(r);
-		//camera end
+			auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
+			side_left *= -1.0f;
+
+			RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
+			RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
+			r.Pitch += pitch_;
+			r.Yaw += yaw_;
+			player_pawn->GetController()->SetControlRotation(r);
+			//camera end
 
 
-		//collisons for restarting position
-		auto l = player_pawn->GetActorLocation();
-		l /= s_;
-		l /= scaling_down_;
-		FVector2D current_point = FVector2D(l.X, l.Y);
-		for (int i = 0; i < track_points.Num(); i++) {
-			if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
-				last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
-				index_recorder = i;
+			//collisons for restarting position
+			auto l = player_pawn->GetActorLocation();
+			l /= s_;
+			l /= scaling_down_;
+			FVector2D current_point = FVector2D(l.X, l.Y);
+			for (int i = 0; i < track_points.Num(); i++) {
+				if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
+					last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
+					index_recorder = i;
+				}
 			}
-		}
 
-		player_pawn->InputComponent->BindAction("Restart", IE_Pressed, this, &UUIWidget::RestartPosition);
-		player_pawn->InputComponent->BindAction("Restart", IE_Released, this, &UUIWidget::Release);
+			player_pawn->InputComponent->BindAction("Restart", IE_Pressed, this, &UUIWidget::RestartPosition);
+			player_pawn->InputComponent->BindAction("Restart", IE_Released, this, &UUIWidget::Release);
 
-		if (pressed_) {
-			counter_ += InDeltaTime;
-			if (counter_ >= 1.5f) {
-				pressed_ = false;
-				float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
-				last_point *= scaling_down_;
-				last_point *= s_;
-				player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
+			if (pressed_) {
+				counter_ += InDeltaTime;
+				if (counter_ >= 1.5f) {
+					pressed_ = false;
+					float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
+					last_point *= scaling_down_;
+					last_point *= s_;
+					player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
+				}
 			}
 		}
 	}

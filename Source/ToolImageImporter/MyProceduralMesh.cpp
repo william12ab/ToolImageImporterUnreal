@@ -378,9 +378,7 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 			temp_vec[i * new_size + j].X = x_dash;
 			temp_vec[i * new_size + j].Y = y_dash;
 			temp_vec[i * new_size + j].Z = m_verts_[i * grid_size + j].Z;
-
 			new_c[y_dash * new_size + x_dash] = temp_colour[i * grid_size + j];
-
 		}
 	}
 	//coloums
@@ -390,9 +388,7 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 			auto c_ = temp_colour[(i / scale) * grid_size + (j / scale)];
 			for (int g = 0; g < scale; g++) {
 				temp_vec[(i * new_size) + (j + g)] = FVector(j + g, i, c);
-
 				new_c[(i * new_size) + (j + g)] = c_;
-
 			}
 		}
 	}
@@ -401,11 +397,9 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 		for (int j = 0; j < (new_size); j++) {
 			auto c = m_verts_[(i / scale) * grid_size + (j / scale)].Z;
 			auto c_ = temp_colour[(i / scale) * grid_size + (j / scale)];
-
 			for (int g = 0; g < scale; g++) {
 				temp_vec[(i + g) * new_size + j] = FVector(j, i + g, c);
 				new_c[(i * new_size) + (j + g)] = c_;
-
 			}
 		}
 	}
