@@ -277,13 +277,18 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
 
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
-			m_verts[y * height_ + x].Z = (c_[y * height_ + x]* spacing_)/ m_;
+			if (height_==400){
+				m_verts[y * height_ + x].Z = (c_[y * height_ + x] * spacing_) / m_;
+			}
+			else{
+				m_verts[y * height_ + x].Z = (c_[y * height_ + x] );
+			}
 		}
 	}
-	
+	CalculateNormals();
+
 	procedural_mesh_comp->bCastDynamicShadow=false;
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-	
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
 	procedural_mesh_comp->SetMaterial(0, material_instance);
@@ -365,92 +370,78 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 	}
 }
 
-
-void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_){
-	height_ = 800;
-	width_ = 800;
-
-	int scale = 2;
-	int grid_size = 400;
-	int new_size = grid_size * scale;
-	TArray<FVector> new_z;
-	new_z.SetNum(new_size*new_size);
-
-	//initial positions
-	for (int i = 0; i < (grid_size); i++)
-	{
-		for (int j = 0; j < (grid_size); j++)										//x
-		{
+void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector> & temp_vec, const int&scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor> &new_c){
+	for (int i = 0; i < (grid_size); i++) {
+		for (int j = 0; j < (grid_size); j++) {
 			int x_dash = j * new_size / grid_size;
 			int y_dash = i * new_size / grid_size;
-			new_z[i * new_size + j].X = x_dash;
-			new_z[i * new_size + j].Y = y_dash;
-			new_z[i * new_size + j].Z = m_verts_[i * grid_size + j].Z;
+			temp_vec[i * new_size + j].X = x_dash;
+			temp_vec[i * new_size + j].Y = y_dash;
+			temp_vec[i * new_size + j].Z = m_verts_[i * grid_size + j].Z;
+
+			new_c[y_dash * new_size + x_dash] = temp_colour[i * grid_size + j];
 
 		}
 	}
-
 	//coloums
-	for (int i = 0; i < (new_size); i++)
-	{
-		for (int j = 0; j < (new_size - 1); j += scale)
-		{
-			auto c = m_verts_[(i / scale )* grid_size + (j / scale)].Z;
-			for (int g = 0; g < scale; g++)
-			{
-				new_z[(i * new_size) + (j + g)]= FVector(j+g,i,c);
-			}
-		}
-	}
-
-	//////rows - same for rows
-
-	for (int i = 0; i < (new_size - 1); i += scale)											//y
-	{
-		for (int j = 0; j < (new_size); j++)
-		{
+	for (int i = 0; i < (new_size); i++) {
+		for (int j = 0; j < (new_size - 1); j += scale) {
 			auto c = m_verts_[(i / scale) * grid_size + (j / scale)].Z;
-			for (int g = 0; g < scale; g++)
-			{
-				new_z[(i + g) * new_size + j]= FVector(j,i+g,c);
+			auto c_ = temp_colour[(i / scale) * grid_size + (j / scale)];
+			for (int g = 0; g < scale; g++) {
+				temp_vec[(i * new_size) + (j + g)] = FVector(j + g, i, c);
+
+				new_c[(i * new_size) + (j + g)] = c_;
+
 			}
 		}
 	}
+	//////rows - same for rows
+	for (int i = 0; i < (new_size - 1); i += scale) {
+		for (int j = 0; j < (new_size); j++) {
+			auto c = m_verts_[(i / scale) * grid_size + (j / scale)].Z;
+			auto c_ = temp_colour[(i / scale) * grid_size + (j / scale)];
 
-	ClearMeshData();
-	GenerateVerts();
-	GenerateTris();
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, true);
+			for (int g = 0; g < scale; g++) {
+				temp_vec[(i + g) * new_size + j] = FVector(j, i + g, c);
+				new_c[(i * new_size) + (j + g)] = c_;
+
+			}
+		}
+	}
+}
+
+void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour){
+	int grid_size = 400;
+	float spacing = 0.0f;
+	int new_size = grid_size * scale_;
+	TArray<FVector> new_z;
+	TArray<FLinearColor> new_c;
+	new_z.SetNum(new_size*new_size);
+	new_c.SetNum(new_size * new_size);
+	height_ = new_size;
+	width_ = new_size;
+	//inital vals
+	
+	NearestNeighbourSample(grid_size, new_size, m_verts_, new_z, scale_, temp_colour, new_c);
+	CreateMesh(height_, width_, spacing);
+
+	//gaining temp verts
 	TArray<float> temp_c;
 	temp_c.SetNum(new_size * new_size);
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			m_verts[y * height_ + x] = new_z[y * height_ + x];
+			m_vert_colors[y * height_ + x] = new_c[y * height_ + x];
 			temp_c[y * height_ + x] = new_z[y * height_ + x].Z;
 		}
 	}
-
-	SmoothTerrain(temp_c);
-	SmoothTerrain(temp_c);
-
-	for (int32 y = 0; y < height_; y++) {
-		for (int32 x = 0; x < width_; x++) {
-			m_verts[y * height_ + x].Z = temp_c[y * height_ + x];
-		}
-	}
-	CalculateNormals();
-	procedural_mesh_comp->bCastDynamicShadow = false;
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
-
-	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
-	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
-	procedural_mesh_comp->SetMaterial(0, material_instance);
+	ModiVerts(temp_c, 0);
 }
 
-void AMyProceduralMesh::Save(TArray<FVector>& temp_)
-{
-	for (int i = 0; i < m_verts.Num(); i++)
-	{
+void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_colours){
+	for (int i = 0; i < m_verts.Num(); i++){
 		temp_.Add(m_verts[i]);
+		temp_colours.Add(m_vert_colors[i]);
 	}
 }

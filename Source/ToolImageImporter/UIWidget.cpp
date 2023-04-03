@@ -361,14 +361,13 @@ void UUIWidget::FixScales()
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
 	player_pawn->TeleportTo(loc_, FRotator(0.0f, angle, 0.0f));
 	track_spline->Destroy();
-
-	
 }
 
 
 void UUIWidget::OnTest()
 {
-	p_mesh->Save(temp_vec);
+	TArray<FLinearColor> temp_color;
+	p_mesh->Save(temp_vec, temp_color);
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
@@ -376,7 +375,7 @@ void UUIWidget::OnTest()
 	
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 
-	new_temp->Resize(temp_vec);
+	new_temp->Resize(temp_vec,2, temp_color);
 	new_temp->SetActorScale3D(FVector(80, 80, scaling_down_));
 
 }

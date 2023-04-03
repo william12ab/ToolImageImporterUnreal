@@ -53,21 +53,17 @@ public:
 	void ReplaceC(TArray<float>& c_);
 	virtual void PostInitializeComponents() override;
 
-	void Resize(const TArray<FVector>& m_verts_);
-	void Save(TArray<FVector> &temp_);
+	void Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour);
+	void NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector>& temp_vec, const int& scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor>& new_c);
+	void Save(TArray<FVector> &temp_, TArray<FLinearColor> &temp_colours);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	float FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3);
-
-
 	int32 height_;
 	int32 width_;
 	float spacing_;
 	int count;
-
-	const float terrain_scale = 100.0f;
-public:	
 };
