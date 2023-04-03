@@ -138,7 +138,6 @@ void UUIWidget::RestartPosition(){
 void UUIWidget::Release(){
 	pressed_ = false;
 	counter_ = 0.0f;
-	
 }
 
 void UUIWidget::OnClickLoadNewTrack(){
