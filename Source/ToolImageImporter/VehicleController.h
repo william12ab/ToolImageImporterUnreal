@@ -26,7 +26,10 @@ public:
 
 protected:
 	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* Camera;
+		class USpringArmComponent* SpringArm;
+
+	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* Camera;
 	
 };
 

@@ -1,4 +1,5 @@
 #include "VehicleController.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
@@ -36,9 +37,15 @@ AVehicleController::AVehicleController()
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
 	Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
 
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("FPCamera"));
-	Camera->FieldOfView = 90.0f;
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArm->SetupAttachment(RootComponent);
+	SpringArm->TargetArmLength = 250.0f;
+	SpringArm->bUsePawnControlRotation = true;
 
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	Camera->FieldOfView = 90.0f;
+	
 }
 
 void AVehicleController::Tick(float DeltaTime) {
@@ -47,19 +54,19 @@ void AVehicleController::Tick(float DeltaTime) {
 
 }
 
-
-
 void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	InputComponent->BindAction("Handbrake", IE_Pressed,this,&AVehicleController::Handbrake);
-	InputComponent->BindAction("Restart", IE_Pressed, this, &AVehicleController::Restart);
+	PlayerInputComponent->BindAction("Handbrake", IE_Pressed,this,&AVehicleController::Handbrake);
+	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AVehicleController::HandbrakeRelease);
 
-	InputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
-	InputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
-	InputComponent->BindAxis("LookUp", this, &AVehicleController::LookUp);
-	InputComponent->BindAxis("LookLeft", this, &AVehicleController::LookLeft);
-	InputComponent->BindAxis("LookRight", this, &AVehicleController::LookRight);
+	PlayerInputComponent->BindAction("Restart", IE_Pressed, this, &AVehicleController::Restart);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
+	PlayerInputComponent->BindAxis("LookUp", this, &AVehicleController::LookUp);
+	PlayerInputComponent->BindAxis("LookLeft", this, &AVehicleController::LookLeft);
+	PlayerInputComponent->BindAxis("LookRight", this, &AVehicleController::LookRight);
 }
 
 void AVehicleController::Handbrake(){
@@ -74,7 +81,7 @@ void AVehicleController::Restart(){
 	UE_LOG(LogTemp, Warning, TEXT("r"));
 }
 void AVehicleController::MoveForward(float AxisValue){
-	UE_LOG(LogTemp, Warning, TEXT("mf"));
+	UE_LOG(LogTemp, Warning, TEXT("move f val: %f"), AxisValue);
 	GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
 }
 void AVehicleController::MoveRight(float AxisValue){

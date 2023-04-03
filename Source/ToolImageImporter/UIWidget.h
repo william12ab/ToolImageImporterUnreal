@@ -73,7 +73,7 @@ protected:
 
 	TArray<FVector2D> control_points;
 	TArray<FVector2D> track_points;
-	APawn* player_pawn;
+	//APawn* player_pawn;
 
 	ATrackSpline* track_spline;
 
