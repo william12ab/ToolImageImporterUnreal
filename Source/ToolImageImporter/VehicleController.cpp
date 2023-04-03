@@ -30,7 +30,7 @@ AVehicleController::AVehicleController()
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.60f);
 
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
-	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65f;
+	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65;
 
 	//gearbox
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
@@ -70,29 +70,34 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 }
 
 void AVehicleController::Handbrake(){
-	UE_LOG(LogTemp, Warning, TEXT("hb"));
 	GetVehicleMovementComponent()->SetHandbrakeInput(true);
 }
 void AVehicleController::HandbrakeRelease() {
-	UE_LOG(LogTemp, Warning, TEXT("hb r"));
 	GetVehicleMovementComponent()->SetHandbrakeInput(false);
 }
 void AVehicleController::Restart(){
-	UE_LOG(LogTemp, Warning, TEXT("r"));
 }
 void AVehicleController::MoveForward(float AxisValue){
-	UE_LOG(LogTemp, Warning, TEXT("move f val: %f"), AxisValue);
 	GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
 }
 void AVehicleController::MoveRight(float AxisValue){
-	UE_LOG(LogTemp, Warning, TEXT("mr/l"));
+	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
 }
 void AVehicleController::LookUp(float AxisValue){
-	UE_LOG(LogTemp, Warning, TEXT("lu/d"));
+	if (AxisValue!=0.f)
+	{
+		AddControllerPitchInput(AxisValue);
+	}
 }
 void AVehicleController::LookLeft(float AxisValue){
-	UE_LOG(LogTemp, Warning, TEXT("ll"));
+	if (AxisValue != 0.f)
+	{
+		AddControllerYawInput(AxisValue);
+	}
 }
 void AVehicleController::LookRight(float AxisValue){
-	UE_LOG(LogTemp, Warning, TEXT("lr"));
+	if (AxisValue != 0.f)
+	{
+		AddControllerYawInput(AxisValue);
+	}
 }
