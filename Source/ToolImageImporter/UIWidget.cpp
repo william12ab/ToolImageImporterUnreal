@@ -129,7 +129,6 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 			}
 		}
 	}
-	
 }
 
 void UUIWidget::RestartPosition(){
