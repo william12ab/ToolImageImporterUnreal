@@ -86,20 +86,20 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	
 	//setting camera work
 	//if (player_pawn) {
-	//	auto r = player_pawn->GetActorRotation();
-	//	auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
-	//	if (player_pawn) {
-	//		auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight")); //here
+		//auto r = player_pawn->GetActorRotation();
+		//auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
+		//if (player_pawn) {
+		//	auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight")); //here
 
-	//		auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
-	//		side_left *= -1.0f;
+		//	auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
+		//	side_left *= -1.0f;
 
-	//		RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
-	//		RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
-	//		r.Pitch += pitch_;
-	//		r.Yaw += yaw_;
-	//		player_pawn->GetController()->SetControlRotation(r);
-	//		//camera end
+		//	RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
+		//	RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
+		//	r.Pitch += pitch_;
+		//	r.Yaw += yaw_;
+		//	player_pawn->GetController()->SetControlRotation(r);
+			//camera end
 
 
 	//		//collisons for restarting position
@@ -109,8 +109,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	//		FVector2D current_point = FVector2D(l.X, l.Y);
 	//		for (int i = 0; i < track_points.Num(); i++) {
 	//			if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
-	//				last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
-	//				index_recorder = i;
+	//						index_recorder = i;
 	//			}
 	//		}
 
@@ -128,7 +127,8 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	//			}
 	//		}
 	//	}
-	//}
+	//}		last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
+	//
 }
 
 void UUIWidget::RestartPosition(){
