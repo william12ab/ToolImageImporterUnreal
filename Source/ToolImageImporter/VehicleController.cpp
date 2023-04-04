@@ -68,7 +68,7 @@ AVehicleController::AVehicleController()
 	pitch_ = 0.0f;
 	pressed_ = false;
 	counter_ = 0.0f;
-	rot_speed_ = 5.0f;
+	rot_speed_ = 100.0f;
 	Camera->Activate();
 	InternalCamera->Deactivate();
 	
@@ -89,11 +89,14 @@ void AVehicleController::Tick(float DeltaTime) {
 	if (InternalCamera->IsActive()){
 		InternalCamera->bUsePawnControlRotation = false;
 		auto r = InternalCamera->GetRelativeRotation();
-		RotatarFinder(left_, right_, yaw_, DeltaTime, rot_speed_);
-		RotatarFinder(vertical_, vertical_, pitch_, DeltaTime, rot_speed_);
+		RotatarFinder(left_, right_, r.Yaw, DeltaTime, rot_speed_);
+		RotatarFinder(vertical_, vertical_, r.Pitch, DeltaTime, rot_speed_);
 		r.Pitch += pitch_;
 		r.Yaw += yaw_;
 		InternalCamera->SetRelativeRotation(r);
+
+		UE_LOG(LogTemp, Warning, TEXT("pitch: %f"),r.Pitch);
+		UE_LOG(LogTemp, Warning, TEXT("yaw: %f"), r.Yaw);
 	}
 	
 	if (pressed_) {
