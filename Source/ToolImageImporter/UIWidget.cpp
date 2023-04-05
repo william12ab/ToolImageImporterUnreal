@@ -22,7 +22,8 @@ void UUIWidget::NativeConstruct()
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
-	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	//player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	pressed_ = false;
 	counter_ = 0.0f;
 }
@@ -50,33 +51,29 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	// Do your custom tick stuff here
 	
-	//		//collisons for restarting position
-	//		auto l = player_pawn->GetActorLocation();
-	//		l /= s_;
-	//		l /= scaling_down_;
-	//		FVector2D current_point = FVector2D(l.X, l.Y);
-	//		for (int i = 0; i < track_points.Num(); i++) {
-	//			if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
-	//						index_recorder = i;
-	//			}
-	//		}
+	//collisons for restarting position
+	auto l = vehicle_pawn->GetActorLocation();
+	l /= s_;
+	l /= scaling_down_;
+	FVector2D current_point = FVector2D(l.X, l.Y);
+	for (int i = 0; i < track_points.Num(); i++) {
+		if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
+		index_recorder = i;
+		}
+	}
 
-	//		player_pawn->InputComponent->BindAction("Restart", IE_Pressed, this, &UUIWidget::RestartPosition);
-	//		player_pawn->InputComponent->BindAction("Restart", IE_Released, this, &UUIWidget::Release);
-
-	//		if (pressed_) {
-	//			counter_ += InDeltaTime;
-	//			if (counter_ >= 1.5f) {
-	//				pressed_ = false;
-	//				float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
-	//				last_point *= scaling_down_;
-	//				last_point *= s_;
-	//				player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
-	//			}
-	//		}
-	//	}
-	//}		last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
-	//
+	if (pressed_) {
+		counter_ += InDeltaTime;
+		if (counter_ >= 1.5f) {
+			pressed_ = false;
+			float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
+			last_point *= scaling_down_;
+			last_point *= s_;
+			vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
+		}
+	}
+	last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
+	
 }
 
 void UUIWidget::RestartPosition(){
@@ -143,8 +140,7 @@ void UUIWidget::LoadTrackPointsIn()
 		if (array_[i].Contains(FString("end"))){
 			found_ = true;
 		}
-		else
-		{
+		else{
 			if (!found_) {
 				auto index_ = array_[0].Find(" ");
 				control_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
@@ -305,7 +301,7 @@ void UUIWidget::FixScales(){
 	middle_point *= scaling_down_;
 	//loc_.X += 220.f;
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
-	player_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f));
+	vehicle_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f));
 	track_spline->Destroy();
 }
 
