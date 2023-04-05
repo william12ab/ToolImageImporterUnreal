@@ -166,6 +166,8 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("Restart", IE_Released, this, &AVehicleController::Release);
 	PlayerInputComponent->BindAction("CameraReverse", IE_Pressed, this, &AVehicleController::CameraReverseView);
 	PlayerInputComponent->BindAction("CameraReverse", IE_Released, this, &AVehicleController::CameraReverseViewRelease);
+	PlayerInputComponent->BindAction("GearUp", IE_Pressed, this, &AVehicleController::GearUp);
+	PlayerInputComponent->BindAction("GearDown", IE_Pressed, this, &AVehicleController::GearDown);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
@@ -223,7 +225,14 @@ void AVehicleController::LookLeft(float AxisValue){
 void AVehicleController::LookRight(float AxisValue){
 		right_ = AxisValue;
 }
-
+void AVehicleController::GearUp() {
+	GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear()+1, true);
+	UE_LOG(LogTemp, Warning, TEXT("up"));
+}
+void AVehicleController::GearDown() {
+	GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear() - 1, true);
+	UE_LOG(LogTemp, Warning, TEXT("down"));
+}
 void AVehicleController::SwitchCamera() {
 	ActiveCamera();
 	cameras[0]->Activate();

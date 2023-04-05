@@ -40,6 +40,8 @@ public:
 	void Release();
 	void CameraReverseView();
 	void CameraReverseViewRelease();
+	void GearUp();
+	void GearDown();
 	//axis maps
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
