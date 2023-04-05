@@ -1,13 +1,46 @@
+
 #include "VehicleController.h"
+#include "VehicleFrontWheel.h"
+#include "VehicleReerWheel.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
-#include "WheeledVehicleMovementComponent4W.h"
+#include "Engine/SkeletalMesh.h"
+#include "Engine/Engine.h"
+#include "UObject/ConstructorHelpers.h"
+#include "GameFramework/Controller.h"
 
+#include "WheeledVehicleMovementComponent4W.h"
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
 AVehicleController::AVehicleController()
 {
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/VehicleVarietyPack/Skeletons/SK_Pickup.SK_Pickup'"));
+	GetMesh()->SetSkeletalMesh(CarMesh.Object);
+
+	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Anim_BP_PICKUP"));
+	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
+
+
 	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
+
+
+	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
+	Vehicle4W->WheelSetups[0].BoneName = FName("Wheel_Front_Left");
+	Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
+
+	Vehicle4W->WheelSetups[1].WheelClass = UVehicleFrontWheel::StaticClass();
+	Vehicle4W->WheelSetups[1].BoneName = FName("Wheel_Front_Right");
+	Vehicle4W->WheelSetups[1].AdditionalOffset = FVector(0.f, 0.f, 0.f);
+
+	Vehicle4W->WheelSetups[2].WheelClass = UVehicleReerWheel::StaticClass();
+	Vehicle4W->WheelSetups[2].BoneName = FName("Wheel_Rear_Left");
+	Vehicle4W->WheelSetups[2].AdditionalOffset = FVector(0.f, 0.f, 0.f);
+
+	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
+	Vehicle4W->WheelSetups[3].BoneName = FName("Wheel_Rear_Right");
+	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
@@ -63,6 +96,7 @@ AVehicleController::AVehicleController()
 	cameras.Add(Camera);
 	cameras.Add(InternalCamera);
 
+	//defaults
 	left_=0.0f, right_=0.0f, vertical_=0.0f;
 	yaw_ = 0.0f;
 	pitch_ = 0.0f;
@@ -71,7 +105,6 @@ AVehicleController::AVehicleController()
 	rot_speed_ = 100.0f;
 	Camera->Activate();
 	InternalCamera->Deactivate();
-	
 }
 
 
@@ -94,9 +127,6 @@ void AVehicleController::Tick(float DeltaTime) {
 		r.Pitch += pitch_;
 		r.Yaw += yaw_;
 		InternalCamera->SetRelativeRotation(r);
-
-		UE_LOG(LogTemp, Warning, TEXT("pitch: %f"),r.Pitch);
-		UE_LOG(LogTemp, Warning, TEXT("yaw: %f"), r.Yaw);
 	}
 	
 	if (pressed_) {
@@ -214,12 +244,7 @@ void AVehicleController::RotatarFinder(const float& d_one, const float& d_two, f
 			angle_ = 0.0f;
 		}
 	}
-	AngleCap(angle_);
-	
-
-	UE_LOG(LogTemp, Warning, TEXT("angle : %f"), angle_);
-	
-}
+	AngleCap(angle_);}
 
 void AVehicleController::RestartPosition() {
 	pressed_ = true;
@@ -229,3 +254,4 @@ void AVehicleController::Release() {
 	pressed_ = false;
 	counter_ = 0.0f;
 }
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
