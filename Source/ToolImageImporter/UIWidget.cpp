@@ -22,11 +22,9 @@ void UUIWidget::NativeConstruct()
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
-	pitch_ = 0.0f;
 	//player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	pressed_ = false;
 	counter_ = 0.0f;
-	rot_speed_ = 100.0f;
 }
 
 bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
@@ -47,61 +45,11 @@ bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
 	}
 }
 
-void AngleCap(float& angle_){
-	if (angle_ < -90.0f) {
-		angle_ = -90.0f;
-	}
-	else if (angle_ > 90.0f) {
-		angle_ = 90.0f;
-	}
-}
-
-void RotatarFinder(const float &d_one, const float& d_two,float &angle_, const float &d_t, const float& rot_speed)
-{
-	if (d_one == -1.0f) {
-		angle_ -= rot_speed * d_t;
-		
-	}
-	else if (d_two == 1.0f) {
-		angle_ += rot_speed * d_t;
-	}
-	else {
-		if (angle_ < -(1.0f)) {
-			angle_ += rot_speed * d_t;
-		}
-		else if (angle_ > (1.0f)) {
-			angle_ -= rot_speed * d_t;
-		}
-		else {
-			angle_ = 0.0f;
-		}
-	}
-	AngleCap(angle_);
-}
-
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	// Make sure to call the base class's NativeTick function
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	// Do your custom tick stuff here
 	
-	//setting camera work
-	//if (player_pawn) {
-		//auto r = player_pawn->GetActorRotation();
-		//auto t = player_pawn->InputComponent->GetAxisValue(FName("LookUp"));
-		//if (player_pawn) {
-		//	auto side_right = player_pawn->InputComponent->GetAxisValue(FName("LookRight")); //here
-
-		//	auto side_left = player_pawn->InputComponent->GetAxisValue(FName("LookLeft"));
-		//	side_left *= -1.0f;
-
-		//	RotatarFinder(side_left, side_right, yaw_, InDeltaTime, rot_speed_);
-		//	RotatarFinder(t, t, pitch_, InDeltaTime, rot_speed_);
-		//	r.Pitch += pitch_;
-		//	r.Yaw += yaw_;
-		//	player_pawn->GetController()->SetControlRotation(r);
-			//camera end
-
-
 	//		//collisons for restarting position
 	//		auto l = player_pawn->GetActorLocation();
 	//		l /= s_;

@@ -9,11 +9,26 @@ public:
 
 	AVehicleController();
 	virtual void Tick(float DeltaTime) override;
-
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
+		FText SpeedDisplayString;
+	/** The current gear as a string (R,N, 1,2 etc) */
+	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
+		FText GearDisplayString;
+	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
+		/** The color of the incar gear text in forward gears */
+		FColor	GearDisplayColor;
+	/** The color of the incar gear text when in reverse */
+	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
+		FColor	GearDisplayReverseColor;
+	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly)
+		bool bInReverseGear;
 
 	void RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed);
 	void AngleCap(float& angle_);
+
+	void UpdateHUDStrings();
 
 	//action maps
 	void Handbrake();

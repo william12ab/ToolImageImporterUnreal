@@ -76,17 +76,10 @@ protected:
 	//APawn* player_pawn;
 
 	ATrackSpline* track_spline;
-
-	float pitch_;
-	float yaw_;
-	float rot_speed_;
-
 	int index_recorder;
 
 	FVector last_point;
 	bool pressed_;
 	float counter_;
-
-
 	TArray<FVector> temp_vec;
 };

@@ -2,6 +2,7 @@
 #include "VehicleController.h"
 #include "VehicleFrontWheel.h"
 #include "VehicleReerWheel.h"
+#include "CarHUD.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
@@ -9,9 +10,13 @@
 #include "Engine/SkeletalMesh.h"
 #include "Engine/Engine.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Components/TextRenderComponent.h"
+//#include "Materials/Material.h
 #include "GameFramework/Controller.h"
-
 #include "WheeledVehicleMovementComponent4W.h"
+
+#define LOCTEXT_NAMESPACE "VehiclePawn"
+
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 AVehicleController::AVehicleController(){
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/VehicleVarietyPack/Skeletons/SK_Pickup.SK_Pickup'"));
@@ -102,6 +107,17 @@ AVehicleController::AVehicleController(){
 	InternalCamera->Deactivate();
 	reverse_p = false;
 	max_camera_rot = 80.f;
+
+	//hud
+	GearDisplayReverseColor = FColor(255, 0, 0, 255);
+	GearDisplayColor = FColor(255, 255, 255, 255);
+
+	// Colors for the in-car gear display. One for normal one for reverse
+	GearDisplayReverseColor = FColor(255, 0, 0, 255);
+	GearDisplayColor = FColor(255, 255, 255, 255);
+	bInReverseGear = false;
+	static ConstructorHelpers::FObjectFinder<UMaterial> TextMaterial(TEXT("Material'/Engine/EngineMaterials/AntiAliasedTextMaterialTranslucent.AntiAliasedTextMaterialTranslucent'"));
+	UMaterialInterface* Material = TextMaterial.Object;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -112,6 +128,9 @@ void AVehicleController::BeginPlay() {
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
+	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
+
+	UpdateHUDStrings();
 	//inside camera
 	if (InternalCamera->IsActive()){
 		InternalCamera->bUsePawnControlRotation = false;
@@ -239,7 +258,6 @@ void AVehicleController::AngleCap(float& angle_) {
 void AVehicleController::RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed){
 	if (d_one == -1.0f) {
 		angle_ -= rot_speed * d_t;
-		
 	}
 	else if (d_two == 1.0f) {
 		angle_ += rot_speed * d_t;
@@ -265,4 +283,22 @@ void AVehicleController::Release() {
 	pressed_ = false;
 	counter_ = 0.0f;
 }
+
+void AVehicleController::UpdateHUDStrings(){
+	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
+	int32 KPH_int = FMath::FloorToInt(KPH);
+
+	// Using FText because this is display text that should be localizable
+	SpeedDisplayString = FText::Format(LOCTEXT("SpeedFormat", "{0} km/h"), FText::AsNumber(KPH_int));
+
+	if (bInReverseGear == true){
+		GearDisplayString = FText(LOCTEXT("ReverseGear", "R"));
+	}
+	else{
+		int32 Gear = GetVehicleMovement()->GetCurrentGear();
+		GearDisplayString = (Gear == 0) ? LOCTEXT("N", "N") : FText::AsNumber(Gear);
+	}
+}
+
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
