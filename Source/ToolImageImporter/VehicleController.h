@@ -52,6 +52,7 @@ public:
 
 	bool GetPressed() { return pressed_; }
 	float GetCounter() { return counter_; }
+	float GetVelocityFromComp();
 protected:
 
 	virtual void BeginPlay() override;

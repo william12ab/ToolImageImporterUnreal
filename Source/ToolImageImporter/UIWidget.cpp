@@ -61,18 +61,25 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 		}
 	}
 	
+	//if pressed, start timer, if held for 1.5sec, and v <5, put back to correct place.
 	if (vehicle_pawn->GetPressed()) {
 		counter_ += InDeltaTime;
 		vehicle_pawn->SetCounter(counter_);
-		UE_LOG(LogTemp, Warning, TEXT("counter: %f"), vehicle_pawn->GetCounter());
-
 		if (vehicle_pawn->GetCounter()>= 1.5f) {
-			vehicle_pawn->SetPressed(false);
-			float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
-			last_point *= scaling_down_;
-			last_point *= s_;
-			vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
-			counter_ = 0.0f;
+			if (vehicle_pawn->GetVelocityFromComp() < 5.f) {
+				UE_LOG(LogTemp, Warning, TEXT("Hello"));
+
+				vehicle_pawn->SetPressed(false);
+				float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
+				last_point *= scaling_down_;
+				last_point *= s_;
+				last_point.Z += 5;
+				while (!vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f), false, false)){
+					last_point.Z += 1.f;
+					UE_LOG(LogTemp, Warning, TEXT("add"));
+				}
+				counter_ = 0.0f;
+			}
 		}
 	}
 }

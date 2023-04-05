@@ -270,6 +270,7 @@ void AVehicleController::RestartPosition() {
 void AVehicleController::Release() {
 	pressed_ = false;
 	counter_ = 0.0f;
+	GetVehicleMovementComponent()->SetThrottleInput(0.f);
 }
 
 void AVehicleController::UpdateHUDStrings(){
@@ -288,5 +289,9 @@ void AVehicleController::UpdateHUDStrings(){
 	}
 }
 
+float AVehicleController::GetVelocityFromComp() {
+	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f; 
+	return KPH; 
+}
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
