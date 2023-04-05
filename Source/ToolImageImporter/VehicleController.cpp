@@ -166,7 +166,6 @@ void AVehicleController::Tick(float DeltaTime) {
 			player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));*/
 		}
 	}
-
 }
 
 void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){

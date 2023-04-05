@@ -22,7 +22,7 @@ void UUIWidget::NativeConstruct()
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
-	//player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	pressed_ = false;
 	counter_ = 0.0f;
 }
@@ -185,7 +185,6 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 	GeneratePlane();
 }
 
-
 void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_saftey_p, const int& index_t_p){
 	auto safet_p = track_spline->GetSafetyPoints();
 	for (int t = 0; t < 10; t++) {
@@ -195,8 +194,7 @@ void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_sa
 		}
 		else{
 			temp_arr.Add(track_spline->LerpV2D((safet_p[index_saftey_p]/ s_), track_points[index_t_p], t_val));
-		}
-		
+		}	
 	}
 	track_points.Insert(temp_arr, index_t_p);
 }
@@ -205,7 +203,6 @@ void UUIWidget::FillInGaps(){
 	TArray<FVector2D> temp_vec_first_pos;
 	LerpCalculation(temp_vec_first_pos, 0, 0);
 	temp_vec_first_pos.Empty();
-
 	LerpCalculation(temp_vec_first_pos, 1, track_points.Num()-1);
 }
 
@@ -224,7 +221,6 @@ void UUIWidget::CreateFoilage(){
 	}
 	CreateSpline();
 	FillInGaps();
-
 
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
@@ -258,7 +254,6 @@ void UUIWidget::CreateFoilage(){
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 	FixScales();
-
 }
 
 
@@ -296,35 +291,32 @@ void UUIWidget::CreateSpline(){
 	//}
 }
 
-void UUIWidget::FixScales()
-{
+void UUIWidget::FixScales(){
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	w_mesh->SetActorScale3D(FVector(30* scaling_down_, 30* scaling_down_, 30* scaling_down_));
 	auto t = w_mesh->GetActorLocation();
 	w_mesh->SetActorLocation(t* scaling_down_);
+
+	auto middle_point = FMath::Lerp(track_spline->GetSEPoints()[0], track_spline->GetSEPoints()[1], 0.5f);
+
 	FVector loc_ = track_spline->GetSEPoints()[0];
 
-	loc_ *= scaling_down_;
+	middle_point *= scaling_down_;
 	//loc_.X += 220.f;
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
-	//player_pawn->TeleportTo(loc_, FRotator(0.0f, angle, 0.0f));
+	player_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f));
 	track_spline->Destroy();
 }
 
 
-void UUIWidget::OnTest()
-{
+void UUIWidget::OnTest(){
 	TArray<FLinearColor> temp_color;
 	p_mesh->Save(temp_vec, temp_color);
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
-
-	
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-
 	new_temp->Resize(temp_vec,2, temp_color);
 	new_temp->SetActorScale3D(FVector(80, 80, scaling_down_));
-
 }

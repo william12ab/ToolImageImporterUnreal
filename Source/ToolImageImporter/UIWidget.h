@@ -27,59 +27,56 @@ protected:
 	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
 	void DeletePlane();			//deletes the plane
 	void ReadFileInfo(const FString& name_);		//reads file for height map also calls generate plane and modi verts.
-	void CreateTrack();
-	void CreateFoilage();
-	void CreateSpline();
-	void FixScales();
-	void FillInGaps();
-	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);
+	void CreateTrack();//creates track
+	void CreateFoilage();//creates foilage
+	void CreateSpline();//spine
+	void FixScales();//does scale of everything
+	void FillInGaps();//creates end and start
+	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function
 
-	void RestartPosition();
-	void Release();
+	void RestartPosition();//used for resarting car pos
+	void Release();//same
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* file_button;
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
-
 	UPROPERTY(meta = (BindWidget))
 		class UButton* test_button;
-
 	UFUNCTION()
 		void OnClickLoadNewTrack();		//on click load button
 	UFUNCTION()
 		void OnClickDelete();		//calls delete
-
 	UFUNCTION()
-		void OnTest();
+		void OnTest();//new heightmap with more verts merge this
 		
-	AWaterMesh* w_mesh;
+	AWaterMesh* w_mesh;//water
 	AMyProceduralMesh* p_mesh;		//obj
-	ABasicTree* tree_instance;
+	ABasicTree* tree_instance;//trees
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
-	float scaling_down_;
+	float scaling_down_;//scaling factor, so multiples everything so set scale
 	FString name_;
 
 
-	AMyProceduralMesh* new_temp;
+	AMyProceduralMesh* new_temp;//new mesh
 
-	TArray<float> m_colors;
-	UTexture* t_;
+	TArray<float> m_colors;//heightmapcolours
+	UTexture* t_;//texutre obj for terrain 
 
-	TArray<FVector2D> control_points;
+	TArray<FVector2D> control_points;//control points
 	TArray<FVector2D> track_points;
-	//APawn* player_pawn;
+	APawn* player_pawn;//player pawn
 
-	ATrackSpline* track_spline;
-	int index_recorder;
-
-	FVector last_point;
-	bool pressed_;
-	float counter_;
-	TArray<FVector> temp_vec;
+	ATrackSpline* track_spline;//track spline
+	int index_recorder;//used for resetting car to track
+	FVector last_point;//used for keeping track of last active point on car
+	bool pressed_;//if key pressed for resetting
+	float counter_;//time counter for reset
+	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
 };
