@@ -22,9 +22,7 @@ void UUIWidget::NativeConstruct()
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
-	//player_pawn = Cast<APawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	pressed_ = false;
 	counter_ = 0.0f;
 }
 
@@ -58,31 +56,25 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	FVector2D current_point = FVector2D(l.X, l.Y);
 	for (int i = 0; i < track_points.Num(); i++) {
 		if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
-		index_recorder = i;
+			last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
+			index_recorder = i;
 		}
 	}
-
-	if (pressed_) {
+	
+	if (vehicle_pawn->GetPressed()) {
 		counter_ += InDeltaTime;
-		if (counter_ >= 1.5f) {
-			pressed_ = false;
+		vehicle_pawn->SetCounter(counter_);
+		UE_LOG(LogTemp, Warning, TEXT("counter: %f"), vehicle_pawn->GetCounter());
+
+		if (vehicle_pawn->GetCounter()>= 1.5f) {
+			vehicle_pawn->SetPressed(false);
 			float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
 			last_point *= scaling_down_;
 			last_point *= s_;
 			vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));
+			counter_ = 0.0f;
 		}
 	}
-	last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
-	
-}
-
-void UUIWidget::RestartPosition(){
-	pressed_ = true;
-}
-
-void UUIWidget::Release(){
-	pressed_ = false;
-	counter_ = 0.0f;
 }
 
 void UUIWidget::OnClickLoadNewTrack(){

@@ -35,8 +35,6 @@ protected:
 	void FillInGaps();//creates end and start
 	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function
 
-	void RestartPosition();//used for resarting car pos
-	void Release();//same
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -72,12 +70,10 @@ protected:
 
 	TArray<FVector2D> control_points;//control points
 	TArray<FVector2D> track_points;
-	APawn* player_pawn;//player pawn
 	AVehicleController* vehicle_pawn;
 	ATrackSpline* track_spline;//track spline
 	int index_recorder;//used for resetting car to track
 	FVector last_point;//used for keeping track of last active point on car
-	bool pressed_;//if key pressed for resetting
 	float counter_;//time counter for reset
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
 };

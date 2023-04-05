@@ -155,17 +155,6 @@ void AVehicleController::Tick(float DeltaTime) {
 			SpringArm->SetRelativeRotation(r);
 		}
 	}
-	
-	if (pressed_) {
-		counter_ += DeltaTime;
-		if (counter_ >= 1.5f) {
-			pressed_ = false;
-			/*float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
-			last_point *= scaling_down_;
-			last_point *= s_;
-			player_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f));*/
-		}
-	}
 }
 
 void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){

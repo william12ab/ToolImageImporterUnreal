@@ -46,6 +46,12 @@ public:
 	void LookUp(float AxisValue);
 	void LookLeft(float AxisValue);
 	void LookRight(float AxisValue);
+
+	void SetPressed(bool b_) { pressed_ = b_; }
+	void SetCounter(float c_) { counter_ = c_; }
+
+	bool GetPressed() { return pressed_; }
+	float GetCounter() { return counter_; }
 protected:
 
 	virtual void BeginPlay() override;
@@ -77,6 +83,5 @@ protected:
 	FVector last_point;
 	bool pressed_;
 	float counter_;
-	
 };
 
