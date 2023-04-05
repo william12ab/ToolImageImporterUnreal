@@ -13,19 +13,14 @@
 
 #include "WheeledVehicleMovementComponent4W.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
-AVehicleController::AVehicleController()
-{
-
+AVehicleController::AVehicleController(){
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/VehicleVarietyPack/Skeletons/SK_Pickup.SK_Pickup'"));
 	GetMesh()->SetSkeletalMesh(CarMesh.Object);
-
 	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Anim_BP_PICKUP"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
 
 
 	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
-
-
 	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
 	Vehicle4W->WheelSetups[0].BoneName = FName("Wheel_Front_Left");
 	Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
@@ -89,7 +84,7 @@ AVehicleController::AVehicleController()
 	InternalCameraBase->SetRelativeLocation(InternalCameraOrigin);
 	InternalCameraBase->SetupAttachment(GetMesh());
 	InternalCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("InternalCamera"));
-	InternalCamera->bUsePawnControlRotation = true;
+	InternalCamera->bUsePawnControlRotation = false;
 	InternalCamera->FieldOfView = 90.f;
 	InternalCamera->SetupAttachment(InternalCameraBase);
 
@@ -105,14 +100,13 @@ AVehicleController::AVehicleController()
 	rot_speed_ = 100.0f;
 	Camera->Activate();
 	InternalCamera->Deactivate();
+	reverse_p = false;
+	max_camera_rot = 80.f;
 }
-
-
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
 	Camera->Activate();
 	InternalCamera->Deactivate();
-
 }
 
 void AVehicleController::Tick(float DeltaTime) {
@@ -121,12 +115,26 @@ void AVehicleController::Tick(float DeltaTime) {
 	//inside camera
 	if (InternalCamera->IsActive()){
 		InternalCamera->bUsePawnControlRotation = false;
-		auto r = InternalCamera->GetRelativeRotation();
-		RotatarFinder(left_, right_, r.Yaw, DeltaTime, rot_speed_);
-		RotatarFinder(vertical_, vertical_, r.Pitch, DeltaTime, rot_speed_);
-		r.Pitch += pitch_;
-		r.Yaw += yaw_;
-		InternalCamera->SetRelativeRotation(r);
+		if (!reverse_p) {
+			auto r = InternalCamera->GetRelativeRotation();
+			RotatarFinder(left_, right_, r.Yaw, DeltaTime, rot_speed_);
+			RotatarFinder(vertical_, vertical_, r.Pitch, DeltaTime, rot_speed_);
+			r.Pitch += pitch_;
+			r.Yaw += yaw_;
+			InternalCamera->SetRelativeRotation(r);
+		}
+	}
+	else{
+		SpringArm->bUsePawnControlRotation = false;
+		Camera->bUsePawnControlRotation = false;
+		if (!reverse_p) {
+			auto r = SpringArm->GetRelativeRotation();
+			RotatarFinder(left_, right_, r.Yaw, DeltaTime, rot_speed_);
+			RotatarFinder(vertical_, vertical_, r.Pitch, DeltaTime, rot_speed_);
+			r.Pitch += pitch_;
+			r.Yaw += yaw_;
+			SpringArm->SetRelativeRotation(r);
+		}
 	}
 	
 	if (pressed_) {
@@ -144,13 +152,13 @@ void AVehicleController::Tick(float DeltaTime) {
 
 void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 	PlayerInputComponent->BindAction("Handbrake", IE_Pressed,this,&AVehicleController::Handbrake);
 	PlayerInputComponent->BindAction("Handbrake", IE_Released, this, &AVehicleController::HandbrakeRelease);
 	PlayerInputComponent->BindAction("SwitchCamera", IE_Pressed, this, &AVehicleController::SwitchCamera);
 	PlayerInputComponent->BindAction("Restart", IE_Pressed, this, &AVehicleController::RestartPosition);
 	PlayerInputComponent->BindAction("Restart", IE_Released, this, &AVehicleController::Release);
-
+	PlayerInputComponent->BindAction("CameraReverse", IE_Pressed, this, &AVehicleController::CameraReverseView);
+	PlayerInputComponent->BindAction("CameraReverse", IE_Released, this, &AVehicleController::CameraReverseViewRelease);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
@@ -158,7 +166,32 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("LookLeft", this, &AVehicleController::LookLeft);
 	PlayerInputComponent->BindAxis("LookRight", this, &AVehicleController::LookRight);
 }
-
+void AVehicleController::CameraReverseViewRelease() {
+	if (InternalCamera->IsActive()){
+		auto r = InternalCamera->GetRelativeRotation();
+		r.Yaw += 180.f;
+		InternalCamera->SetRelativeRotation(r);
+	}
+	else{
+		auto r = SpringArm->GetRelativeRotation();
+		r.Yaw += 180.f;
+		SpringArm->SetRelativeRotation(r);
+	}
+	reverse_p = false;
+}
+void AVehicleController::CameraReverseView() {
+	if (InternalCamera->IsActive()) {
+		auto r = InternalCamera->GetRelativeRotation();
+		r.Yaw -= 180.f;
+		InternalCamera->SetRelativeRotation(r);
+	}
+	else{
+		auto r = SpringArm->GetRelativeRotation();
+		r.Yaw -= 180.f;
+		SpringArm->SetRelativeRotation(r);
+	}
+	reverse_p = true;
+}
 void AVehicleController::Handbrake(){
 	GetVehicleMovementComponent()->SetHandbrakeInput(true);
 }
@@ -174,36 +207,14 @@ void AVehicleController::MoveRight(float AxisValue){
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
 }
 void AVehicleController::LookUp(float AxisValue){
-	
-	if (InternalCamera->IsActive()){
 		vertical_ = AxisValue;
-	}
-	else{
-		if (AxisValue!=0.f){
-			AddControllerPitchInput(-AxisValue);
-		}
-	}
 }
 void AVehicleController::LookLeft(float AxisValue){
-	if (InternalCamera->IsActive()){
 		left_ = AxisValue;
 		left_ *= -1.0f;
-	}
-	else{
-		if (AxisValue != 0.f){
-			AddControllerYawInput(-AxisValue);
-		}
-	}
 }
 void AVehicleController::LookRight(float AxisValue){
-	if (InternalCamera->IsActive()) {
 		right_ = AxisValue;
-	}
-	else {
-		if (AxisValue != 0.f) {
-			AddControllerYawInput(AxisValue);
-		}
-	}
 }
 
 void AVehicleController::SwitchCamera() {
@@ -217,11 +228,11 @@ void AVehicleController::ActiveCamera() {
 }
 
 void AVehicleController::AngleCap(float& angle_) {
-	if (angle_ < -90.0f) {
-		angle_ = -90.0f;
+	if (angle_ < -max_camera_rot) {
+		angle_ = -max_camera_rot;
 	}
-	else if (angle_ > 90.0f) {
-		angle_ = 90.0f;
+	else if (angle_ > max_camera_rot) {
+		angle_ = max_camera_rot;
 	}
 }
 

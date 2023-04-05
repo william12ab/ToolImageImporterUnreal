@@ -23,24 +23,19 @@ public:
 	void ActiveCamera();
 	void RestartPosition();
 	void Release();
+	void CameraReverseView();
+	void CameraReverseViewRelease();
 	//axis maps
 	void MoveForward(float AxisValue);
 	void MoveRight(float AxisValue);
 	void LookUp(float AxisValue);
 	void LookLeft(float AxisValue);
 	void LookRight(float AxisValue);
-
-
-	//FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
-	///** Returns Camera subobject **/
-	//FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
-	///** Returns InternalCamera subobject **/
-	//FORCEINLINE UCameraComponent* GetInternalCamera() const { return InternalCamera; }
 protected:
 
 	virtual void BeginPlay() override;
 
-
+	//camera stuff
 	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* SpringArm;
 	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -51,17 +46,22 @@ protected:
 		class USceneComponent* InternalCameraBase;
 	FVector InternalCameraOrigin;
 
-	bool camera_;
+	//array of cameras used for swapping
 	TArray<UCameraComponent*> cameras;
 
+	//defaults these control camera stuff
 	float pitch_;
 	float yaw_;
 	float rot_speed_;
 	float left_, right_, vertical_;
+	float max_camera_rot;
+	bool reverse_p;//used for keeping track of if camera is in resever or not
 
+	//used for resetting position
 	int index_recorder;
 	FVector last_point;
 	bool pressed_;
 	float counter_;
+	
 };
 
