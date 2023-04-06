@@ -83,6 +83,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 	spline->ClearSplinePoints();
+	min_height = 1000000000000;
 	for (int i = 0; i < (control_points.Num()); i++) {
 		int x = control_points[i].X / spacing_;
 		int y = control_points[i].Y / spacing_;
@@ -93,6 +94,9 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			AddSafePoint(i, control_points.Num() - 2, i,1.1f);//add point at end
 		}
 		else{
+			if ((float)((height_z[y * 400 + x] * spacing_) / division_<min_height)){
+				min_height = (float)((height_z[y * 400 + x] * spacing_) / division_);
+			}
 			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (float)((height_z[y * 400 + x] * spacing_) / division_)));
 		}
 	}

@@ -33,6 +33,7 @@ public:
 	TArray<FVector> GetVerts() { return m_verts; }
 	TArray<FVector> GetSEPoints() { return start_end_points; }
 	TArray<FVector2D> GetSafetyPoints() { return saftey_points; }
+	float GetMinHeight() { return min_height;}
 
 	FVector2D LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t);
 
@@ -43,8 +44,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-
-
 	TArray<FVector2D> control_points;
 	TArray<FVector2D> saftey_points;
 	TArray<float> height_z;
@@ -53,4 +52,5 @@ private:
 	int32 spacing_;
 	float division_;
 	TArray<FVector> start_end_points;
+	float min_height;
 };

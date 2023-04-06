@@ -37,7 +37,7 @@ protected:
 
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-
+	
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UButton* delete_button;

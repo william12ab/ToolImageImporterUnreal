@@ -242,18 +242,25 @@ void UUIWidget::CreateFoilage(){
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	//water
-	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, (min + (max * 0.050f)));
+	float water_height = (min + (max * 0.05f));
+	if (water_height>=track_spline->GetMinHeight()){
+		water_height = track_spline->GetMinHeight() ;
+	}
+	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, water_height);
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 	FixScales();
 }
-
-
 void UUIWidget::CreateSpline(){
-	for (size_t i = 0; i < track_points.Num(); i++)
-	{
+	for (size_t i = 0; i < track_points.Num(); i++){
 		track_points[i].X *= s_;
 		track_points[i].Y *= s_;
+		//track_points[i].X *= s_;
+		//track_points[i].Y *= s_;
+	}
+	for (size_t i = 0; i < control_points.Num(); i++) {
+		control_points[i].X *= s_;
+		control_points[i].Y *= s_;
 		//track_points[i].X *= s_;
 		//track_points[i].Y *= s_;
 	}
@@ -269,15 +276,12 @@ void UUIWidget::CreateSpline(){
 	track_spline->SetDivision(m_);//setters
 	track_spline->SetControlPoints(track_points);//setting array in class to the points
 	track_spline->SetHeightArray(m_colors);//setting array as well
-	track_spline->OnConstruction(t_transform_);
-	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
-	p_mesh->ReplaceC(m_colors);
+	track_spline->OnConstruction(t_transform_);//consttruction
+	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());//changing height of mesh
+	p_mesh->ReplaceC(m_colors);//replacing heightmap to match new mesh, also normals and smoothing
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	track_spline->SetActorEnableCollision(true);
-	for (size_t i = 0; i < track_points.Num(); i++)
-	{
-		//control_points[i].X *= s_;
-		//control_points[i].Y *= s_;
+	for (size_t i = 0; i < track_points.Num(); i++){
 		track_points[i].X /= s_;
 		track_points[i].Y /= s_;
 	}
