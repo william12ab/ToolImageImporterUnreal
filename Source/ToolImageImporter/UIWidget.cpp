@@ -258,12 +258,6 @@ void UUIWidget::CreateSpline(){
 		//track_points[i].X *= s_;
 		//track_points[i].Y *= s_;
 	}
-	for (size_t i = 0; i < control_points.Num(); i++) {
-		control_points[i].X *= s_;
-		control_points[i].Y *= s_;
-		//track_points[i].X *= s_;
-		//track_points[i].Y *= s_;
-	}
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
