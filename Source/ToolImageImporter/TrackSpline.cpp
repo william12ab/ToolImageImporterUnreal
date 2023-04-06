@@ -6,7 +6,6 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
-
 #include "Engine/Engine.h"
 // Sets default values
 ATrackSpline::ATrackSpline()
@@ -15,14 +14,12 @@ ATrackSpline::ATrackSpline()
 	PrimaryActorTick.bCanEverTick = true;
 
     spline = CreateDefaultSubobject<USplineComponent>("Spline",true);
-    if (spline)
-    {
+    if (spline){
 
         SetRootComponent(spline);
     }
 	spacing_ = 20;
 	division_ = 5.0f;
-	
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +61,7 @@ void ATrackSpline::CombinePoints(){
 	control_points.EmplaceAt(control_points.Num(), saftey_points[1]);
 }
 
+//gets point, lerps between that and next point to create safe(start/endpoints)
 void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, const int& index_, const float& t_value){
 	int x = control_points[index_one].X / spacing_;
 	int y = control_points[index_one].Y / spacing_;
@@ -89,10 +87,10 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 		int x = control_points[i].X / spacing_;
 		int y = control_points[i].Y / spacing_;
 		if (i == 0){
-			AddSafePoint(1, 0, i,-2.5f);
+			AddSafePoint(1, 0, i,-2.5f);//adds in point at start
 		}
 		else if (i == (control_points.Num()-1)){
-			AddSafePoint(i, control_points.Num() - 2, i,1.1f);
+			AddSafePoint(i, control_points.Num() - 2, i,1.1f);//add point at end
 		}
 		else{
 			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (float)((height_z[y * 400 + x] * spacing_) / division_)));
@@ -127,7 +125,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform)
 			spline_mesh->SetStartAndEnd(StartPoint, StartTangent, EndPoint, EndTangent, true);
 			start_end_points.Add(StartPoint);
 			start_end_points.Add(EndPoint);
-
+			//holds the start and end point of each spline part.
 			
 			// query physics
 			//getting vertices of spline

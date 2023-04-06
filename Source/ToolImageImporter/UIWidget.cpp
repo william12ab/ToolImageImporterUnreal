@@ -179,8 +179,8 @@ void UUIWidget::ReadFileInfo(const FString& name__)
 
 void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_saftey_p, const int& index_t_p){
 	auto safet_p = track_spline->GetSafetyPoints();
-	for (int t = 0; t < 10; t++) {
-		float t_val = t / 10.f;
+	for (int t = 0; t < 100; t++) {
+		float t_val = t / 100.f;
 		if (index_saftey_p==1){
 			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], (safet_p[index_saftey_p]/ s_), t_val));
 		}
@@ -193,9 +193,9 @@ void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_sa
 
 void UUIWidget::FillInGaps(){
 	TArray<FVector2D> temp_vec_first_pos;
-	LerpCalculation(temp_vec_first_pos, 0, 0);
+	LerpCalculation(temp_vec_first_pos, 0, 0);//between start and start respectively
 	temp_vec_first_pos.Empty();
-	LerpCalculation(temp_vec_first_pos, 1, track_points.Num()-1);
+	LerpCalculation(temp_vec_first_pos, 1, track_points.Num()-1);//end and end respectively
 }
 
 void UUIWidget::CreateFoilage(){
@@ -250,10 +250,10 @@ void UUIWidget::CreateFoilage(){
 
 
 void UUIWidget::CreateSpline(){
-	for (size_t i = 0; i < control_points.Num(); i++)
+	for (size_t i = 0; i < track_points.Num(); i++)
 	{
-		control_points[i].X *= s_;
-		control_points[i].Y *= s_;
+		track_points[i].X *= s_;
+		track_points[i].Y *= s_;
 		//track_points[i].X *= s_;
 		//track_points[i].Y *= s_;
 	}
@@ -264,23 +264,23 @@ void UUIWidget::CreateSpline(){
 					FRotator{0,0,0},
 					FVector{0, 0, 0},
 					FVector{1, 1, 1} };
-	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);
+	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);//above to here just spawning actor
 	track_spline->SetSpacing(s_);
-	track_spline->SetDivision(m_);
-	track_spline->SetControlPoints(control_points);
-	track_spline->SetHeightArray(m_colors);
+	track_spline->SetDivision(m_);//setters
+	track_spline->SetControlPoints(track_points);//setting array in class to the points
+	track_spline->SetHeightArray(m_colors);//setting array as well
 	track_spline->OnConstruction(t_transform_);
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());
 	p_mesh->ReplaceC(m_colors);
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	track_spline->SetActorEnableCollision(true);
-	//for (size_t i = 0; i < track_points.Num(); i++)
-	//{
-	//	//control_points[i].X *= s_;
-	//	//control_points[i].Y *= s_;
-	//	track_points[i].X /= s_;
-	//	track_points[i].Y /= s_;
-	//}
+	for (size_t i = 0; i < track_points.Num(); i++)
+	{
+		//control_points[i].X *= s_;
+		//control_points[i].Y *= s_;
+		track_points[i].X /= s_;
+		track_points[i].Y /= s_;
+	}
 }
 
 void UUIWidget::FixScales(){
@@ -291,13 +291,11 @@ void UUIWidget::FixScales(){
 	w_mesh->SetActorLocation(t* scaling_down_);
 
 	auto middle_point = FMath::Lerp(track_spline->GetSEPoints()[0], track_spline->GetSEPoints()[1], 0.5f);
-
-	FVector loc_ = track_spline->GetSEPoints()[0];
-
 	middle_point *= scaling_down_;
-	//loc_.X += 220.f;
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
-	vehicle_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f));
+	while (!vehicle_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f), false, false)) {
+		middle_point.Z += 1.f;
+	}
 	track_spline->Destroy();
 }
 
@@ -310,5 +308,5 @@ void UUIWidget::OnTest(){
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	new_temp->Resize(temp_vec,2, temp_color);
-	new_temp->SetActorScale3D(FVector(80, 80, scaling_down_));
+	new_temp->SetActorScale3D(FVector(80, 80, 1));//scaling*(s/2)(8*10) =80
 }

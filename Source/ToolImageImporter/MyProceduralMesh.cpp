@@ -427,10 +427,10 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale
 		for (int32 x = 0; x < width_; x++) {
 			m_verts[y * height_ + x] = new_z[y * height_ + x];
 			m_vert_colors[y * height_ + x] = new_c[y * height_ + x];
-			temp_c[y * height_ + x] = new_z[y * height_ + x].Z;
+			temp_c[y * height_ + x] = new_z[y * height_ + x].Z*8.f;
 		}
 	}
-	ModiVerts(temp_c, 0);
+	ModiVerts(temp_c, 0);//smoothing and setting verts plus regen.
 }
 
 void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_colours){
