@@ -61,7 +61,7 @@ protected:
 	float s_;				//spacing
 	float scaling_down_;//scaling factor, so multiples everything so set scale
 	FString name_;
-
+	bool point_type; //used for reading the data from file and choosing what points to use in generation. true = t.p, false = c.p
 
 	AMyProceduralMesh* new_temp;//new mesh
 

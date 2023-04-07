@@ -24,6 +24,7 @@ void UUIWidget::NativeConstruct()
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	counter_ = 0.0f;
+	point_type = false;
 }
 
 bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
@@ -132,18 +133,27 @@ void UUIWidget::LoadTrackPointsIn()
 	}
 	bool found_ = false;
 	for (int i = 0; i < array_.Num(); i++){
-
-		if (array_[i].Contains(FString("end"))){
-			found_ = true;
-		}
-		else{
-			if (!found_) {
-				auto index_ = array_[0].Find(" ");
-				control_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+		if (i > 0) {
+			if (array_[i].Contains(FString("end"))) {
+				found_ = true;
 			}
 			else {
-				auto index_ = array_[0].Find(" ");
-				track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+				if (!found_) {
+					auto index_ = array_[1].Find(" ");
+					control_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+				}
+				else {
+					auto index_ = array_[1].Find(" ");
+					track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+				}
+			}
+		}
+		else{
+			if (array_[0] == "t.p") {
+				point_type = true;
+			}
+			else {
+				point_type = false;
 			}
 		}
 	}
@@ -252,11 +262,17 @@ void UUIWidget::CreateFoilage(){
 	FixScales();
 }
 void UUIWidget::CreateSpline(){
-	for (size_t i = 0; i < track_points.Num(); i++){
-		track_points[i].X *= s_;
-		track_points[i].Y *= s_;
-		//track_points[i].X *= s_;
-		//track_points[i].Y *= s_;
+	TArray<FVector2D> temp_arr;
+	if (point_type){
+		temp_arr = track_points;
+	}
+	else {
+		temp_arr = control_points;
+	}
+
+	for (size_t i = 0; i < temp_arr.Num(); i++){
+		(temp_arr[i].X) *= s_;
+		(temp_arr[i].Y) *= s_;
 	}
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
@@ -268,17 +284,24 @@ void UUIWidget::CreateSpline(){
 	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);//above to here just spawning actor
 	track_spline->SetSpacing(s_);
 	track_spline->SetDivision(m_);//setters
-	track_spline->SetControlPoints(track_points);//setting array in class to the points
+	track_spline->SetControlPoints(temp_arr);//setting array in class to the points
 	track_spline->SetHeightArray(m_colors);//setting array as well
 	track_spline->OnConstruction(t_transform_);//consttruction
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());//changing height of mesh
 	p_mesh->ReplaceC(m_colors);//replacing heightmap to match new mesh, also normals and smoothing
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
 	track_spline->SetActorEnableCollision(true);
-	for (size_t i = 0; i < track_points.Num(); i++){
-		track_points[i].X /= s_;
-		track_points[i].Y /= s_;
+	if (point_type) {
+		for (size_t i = 0; i < temp_arr.Num(); i++) {
+			temp_arr[i].X /= s_;
+			temp_arr[i].Y /= s_;
+		}
+		track_points = temp_arr;
 	}
+	else {
+		control_points = temp_arr;
+	}
+
 }
 
 void UUIWidget::FixScales(){
