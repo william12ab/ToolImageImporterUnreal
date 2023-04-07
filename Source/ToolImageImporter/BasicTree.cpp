@@ -41,27 +41,21 @@ void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select)
 	tree_select = FMath::RandRange(range_start, range_end);
 }
 
-void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter)
-{
+void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter){
 	int ran_name = FMath::RandRange(0, 1);
-	switch (ran_name)
-	{
-	case 0:
-	{
+	switch (ran_name){
+	case 0:{
 		mesh_name = "SM_Bush";
 		z_alter = 8.0f;
 		break;
 	}
-	case 1:
-	{
+	case 1:{
 		mesh_name = "SM_Fern";
 		z_alter = 2.0f;
 		break;
 	}
 	}
 }
-
-
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 
@@ -70,30 +64,30 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	int loop_range = 85;
 	int tree_select = 0;
 	float max_m = max_;
-	float min_m = min_;
-	float z_alter = 0.0f;
-	float yaw_rot = 0.0f;
+	float min_m = min_;//min and max terrain mesh points
+	float z_alter = 0.0f;//making sure placed on plane
+	float yaw_rot = 0.0f;//gives random yaw
+	float min_height_modi = 0.3f;//for the height check, different for trees and bushes
+	float max_height_modi = spacing_ / 100.0f; //same above
 	if (is_foilage){
-		loop_range =  00;
+		loop_range =  4000;
 		NameChoicePlant(mesh_name,z_alter);
 		yaw_rot = 270.0f;
+		min_height_modi = 0.55f;
+		max_height_modi = 0.05f;
 	}
-	else
-	{
+	else{
 		NameChoiceTree(mesh_name, tree_select);
+		yaw_rot = FMath::RandRange(-360, 360);
 	}
-
 	for (int i = 0; i < loop_range; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 		bool is_found = false;
-		while (!is_found)
-		{
-			if (z_pos<(max_m - (max_m * 0.30f)) && z_pos>(min_m + (max_m * (spacing_/100.f))))
-			{
-				if (CheckBounds(track_point, pos_x, pos_y)) 
-				{
+		while (!is_found){
+			if (z_pos<(max_m - (max_m * min_height_modi)) && z_pos>(min_m + (max_m * max_height_modi))){
+				if (CheckBounds(track_point, pos_x, pos_y)) {
 					is_found = true;
 					FTransform A{
 						FRotator{0,yaw_rot,0},
@@ -184,11 +178,11 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 }
 
 void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts){
-
 	auto d = FVector2D::Distance(track_point[0], track_point.Last());
 	float rand_percent = FMath::RandRange(0.0f, spacing_);
 	float rocks_to_spawn_float = d * (rand_percent/100.0f);
 	int rocks_to_spawn = round(rocks_to_spawn_float);
+	rocks_to_spawn *= 2;
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
 
 	for (int i = 0; i < rocks_to_spawn; i++){
@@ -229,13 +223,9 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 		}
 	}
 }
-
-
 void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float&max, const float&min){
-
 	float max_m = max;
 	float min_m = min;
-
 	for (int i = 0; i < 25000; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
