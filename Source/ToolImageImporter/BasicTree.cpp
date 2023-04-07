@@ -60,7 +60,7 @@ void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter){
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh, ttree sleect is for sleecting a tree. z_alter is for fixing the position of foilage.
 	FString mesh_name;
-	int loop_range = 200;
+	int loop_range = FMath::RandRange(100, 280);
 	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
@@ -68,6 +68,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	float yaw_rot = 0.0f;//gives random yaw
 	float min_height_modi = 0.3f;//for the height check, different for trees and bushes
 	float max_height_modi =0.15f; //same above
+	max_height_modi = FMath::RandRange(0.1f,0.2f);
 	if (is_foilage){
 		loop_range =  4000;
 		NameChoicePlant(mesh_name,z_alter);
