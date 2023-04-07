@@ -306,5 +306,5 @@ void UUIWidget::OnTest(){
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	new_temp->Resize(temp_vec,2, temp_color);
-	new_temp->SetActorScale3D(FVector(80, 80, 1));//scaling*(s/2)(8*10) =80
+	new_temp->SetActorScale3D(FVector(4, 4, 8));//scaling*(s/2)(8*10) =80
 }

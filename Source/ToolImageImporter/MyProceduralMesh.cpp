@@ -270,11 +270,9 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 }
 
 
-void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_)
-{
+void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_){
 	SmoothTerrain(c_);
 	SmoothTerrain(c_);
-
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			if (height_==400){
@@ -369,14 +367,11 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 		index_tracker_verts += 4;
 	}
 }
-
 void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector> & temp_vec, const int&scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor> &new_c){
 	for (int i = 0; i < (grid_size); i++) {
 		for (int j = 0; j < (grid_size); j++) {
 			int x_dash = j * new_size / grid_size;
 			int y_dash = i * new_size / grid_size;
-			temp_vec[i * new_size + j].X = x_dash;
-			temp_vec[i * new_size + j].Y = y_dash;
 			temp_vec[i * new_size + j].Z = m_verts_[i * grid_size + j].Z;
 			new_c[y_dash * new_size + x_dash] = temp_colour[i * grid_size + j];
 		}
@@ -387,7 +382,7 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 			auto c = m_verts_[(i / scale) * grid_size + (j / scale)].Z;
 			auto c_ = temp_colour[(i / scale) * grid_size + (j / scale)];
 			for (int g = 0; g < scale; g++) {
-				temp_vec[(i * new_size) + (j + g)] = FVector(j + g, i, c);
+				temp_vec[(i * new_size) + (j + g)].Z = ( c);
 				new_c[(i * new_size) + (j + g)] = c_;
 			}
 		}
@@ -398,8 +393,8 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 			auto c = m_verts_[(i / scale) * grid_size + (j / scale)].Z;
 			auto c_ = temp_colour[(i / scale) * grid_size + (j / scale)];
 			for (int g = 0; g < scale; g++) {
-				temp_vec[(i + g) * new_size + j] = FVector(j, i + g, c);
-				new_c[(i * new_size) + (j + g)] = c_;
+				temp_vec[(i + g) * new_size + j].Z = c;
+				new_c[(i + g) * new_size + j] = c_;
 			}
 		}
 	}
@@ -407,7 +402,7 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 
 void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour){
 	int grid_size = 400;
-	float spacing = 0.0f;
+	float spacing = 0.f;//just for passing in
 	int new_size = grid_size * scale_;
 	TArray<FVector> new_z;
 	TArray<FLinearColor> new_c;
@@ -425,9 +420,9 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale
 	temp_c.SetNum(new_size * new_size);
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
-			m_verts[y * height_ + x] = new_z[y * height_ + x];
+			m_verts[y * height_ + x].Z = new_z[y * height_ + x].Z;
 			m_vert_colors[y * height_ + x] = new_c[y * height_ + x];
-			temp_c[y * height_ + x] = new_z[y * height_ + x].Z*8.f;
+			temp_c[y * height_ + x] = new_z[y * height_ + x].Z;
 		}
 	}
 	ModiVerts(temp_c, 0);//smoothing and setting verts plus regen.
