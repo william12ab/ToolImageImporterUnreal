@@ -31,7 +31,7 @@ void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select)
 	if (rand_name == 1) {
 		mesh_name = "SM_Pine_Tree_";
 		range_start = 1;
-		range_end = 4;
+		range_end = 2;
 	}
 	else {
 		mesh_name = "SM_Common_Tree_";
@@ -58,22 +58,20 @@ void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter){
 }
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
-
 	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh, ttree sleect is for sleecting a tree. z_alter is for fixing the position of foilage.
 	FString mesh_name;
-	int loop_range = 85;
+	int loop_range = 200;
 	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
 	float z_alter = 0.0f;//making sure placed on plane
 	float yaw_rot = 0.0f;//gives random yaw
 	float min_height_modi = 0.3f;//for the height check, different for trees and bushes
-	float max_height_modi = spacing_ / 100.0f; //same above
+	float max_height_modi =0.15f; //same above
 	if (is_foilage){
 		loop_range =  4000;
 		NameChoicePlant(mesh_name,z_alter);
 		yaw_rot = 270.0f;
-		min_height_modi = 0.55f;
 		max_height_modi = 0.05f;
 	}
 	else{
@@ -199,7 +197,6 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 				float rand_scale = FMath::RandRange(0.01f, 0.2f);
 				float rand_yaw = FMath::RandRange(0.0f, 180.f);
-
 				UStaticMesh* meshToUse = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Game/Stylized_PBR_Nature/Rocks/Assets/SM_R_Rock_02.SM_R_Rock_02'")));
 				if (meshToUse && instanced_basic_tree) {
 					instanced_basic_tree->SetStaticMesh(meshToUse);
@@ -210,7 +207,6 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				instanced_basic_tree->AddInstance(A);
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
-
 			}
 			else {
 				pos_x += FMath::RandRange(-4, 8);
@@ -226,14 +222,14 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float&max, const float&min){
 	float max_m = max;
 	float min_m = min;
-	for (int i = 0; i < 25000; i++) {
+	for (int i = 0; i < 30000; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 		float rand_rot_yaw = FMath::RandRange(-360, 360);
 		float rand_scale = FMath::RandRange(0.125f, 0.2f);
 		if (CheckBounds(track_point, pos_x, pos_y)) {
-			if (z_pos<(max_m - (max_m * 0.550f)) && z_pos>(min_m + (max_m * 0.050f))) {
+			if (z_pos<(max_m - (max_m * 0.3f)) && z_pos>(min_m + (max_m * 0.050f))) {
 				FTransform A{
 					FRotator{0,rand_rot_yaw,0},
 					FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
