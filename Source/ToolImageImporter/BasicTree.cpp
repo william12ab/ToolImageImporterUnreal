@@ -83,7 +83,9 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	if (is_foilage){
 		loop_range =  4000;
 		NameChoicePlant(mesh_name,z_alter);
-		yaw_rot = 270.0f;
+		//yaw_rot = 270.0f;
+		yaw_rot = FMath::RandRange(-360, 360);
+
 		max_height_modi = 0.05f;
 	}
 	else{
@@ -240,8 +242,10 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 		float rand_rot_yaw = FMath::RandRange(-360, 360);
 		float rand_scale = FMath::RandRange(0.125f, 0.2f);
+		float min_range = FMath::RandRange(0.250f, 0.350f);
+		float max_range = FMath::RandRange(0.050f, 0.10f);
 		if (CheckBounds(track_point, pos_x, pos_y)) {
-			if (z_pos<(max_m - (max_m * 0.3f)) && z_pos>(min_m + (max_m * 0.050f))) {
+			if (z_pos<(max_m - (max_m * min_range)) && z_pos>(min_m + (max_m * max_range))) {
 				FTransform A{
 					FRotator{0,rand_rot_yaw,0},
 					FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
@@ -249,8 +253,8 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 				TArray<FVector2D>a;
 				AddBasicTree(A, 0, "SM_Grass",a,0,0);
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
-				instanced_basic_tree->bCastDynamicShadow = true;
-				instanced_basic_tree->CastShadow = true;
+				instanced_basic_tree->bCastDynamicShadow = false;
+				instanced_basic_tree->CastShadow = false;
 				instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
 				instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
