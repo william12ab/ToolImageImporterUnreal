@@ -301,7 +301,6 @@ void UUIWidget::CreateSpline(){
 	else {
 		control_points = temp_arr;
 	}
-
 }
 
 void UUIWidget::FixScales(){

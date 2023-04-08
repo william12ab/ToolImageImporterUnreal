@@ -2,7 +2,7 @@
 
 
 #include "BasicTree.h"
-
+#include "PhysicsEngine/BodySetup.h"
 // Sets default values
 ABasicTree::ABasicTree(){
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -11,8 +11,6 @@ ABasicTree::ABasicTree(){
 	SetRootComponent(ScnComponent);
 	instanced_basic_tree = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("BasicInstancedTree"));
 	SetRootComponent(instanced_basic_tree);
-
-
 	spacing_=20;
 	division_=5.0f;
 }
@@ -22,8 +20,7 @@ void ABasicTree::BeginPlay(){
 
 }
 
-void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select)
-{
+void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select){
 	int rand_name = FMath::RandRange(0, 1);
 	int range_start = 1;
 	int range_end = 4;
@@ -56,6 +53,20 @@ void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter){
 	}
 	}
 }
+
+void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos, UStaticMesh& mesh_) {
+	for (int i = 0; i < track_point_arr.Num(); i++){
+		auto dist = FVector2D::Distance(track_point_arr[i], FVector2D(x_pos, y_pos));
+		if (dist<10){
+			mesh_.BodySetup->CollisionTraceFlag = ECollisionTraceFlag::CTF_UseComplexAsSimple;
+			i = track_point_arr.Num() - 1;
+		}
+		else {
+			mesh_.BodySetup->CollisionTraceFlag = ECollisionTraceFlag::CTF_UseSimpleAsComplex;
+		}
+	}
+}
+
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh, ttree sleect is for sleecting a tree. z_alter is for fixing the position of foilage.
@@ -92,7 +103,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 						FRotator{0,yaw_rot,0},
 						FVector{pos_x * spacing_, pos_y * spacing_, (z_pos - z_alter) },
 						FVector{0.250f, 0.250f, 0.250f} };	//Scale
-					AddBasicTree(A, tree_select, mesh_name);
+					AddBasicTree(A, tree_select, mesh_name,track_point,pos_x,pos_y);
 					instanced_basic_tree->SetMobility(EComponentMobility::Static);
 					if (is_foilage) {
 						instanced_basic_tree->bCastDynamicShadow = false;
@@ -138,7 +149,7 @@ void ABasicTree::AddName(const FString& name_attachment_,const int&tree_, FStrin
 	}
 }
 
-void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, const FString& name_attachment_){
+void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, const FString& name_attachment_,const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos){
 	FString name_;
 	name_.Append("StaticMesh'/Game/Stylized_PBR_Nature/Foliage/Assets/");
 	AddName(name_attachment_, tree_, name_);
@@ -146,6 +157,9 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 	AddName(name_attachment_, tree_, name_);
 	name_.Append("'");
 	UStaticMesh* meshToUse = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, *name_));
+	if (name_attachment_=="SM_Pine_Tree_"|| name_attachment_ == "SM_Common_Tree_"){
+		CheckDistance(track_point_arr, x_pos, y_pos, *meshToUse);
+	}
 	if (meshToUse && instanced_basic_tree){
 		instanced_basic_tree->SetStaticMesh(meshToUse);
 	}
@@ -168,9 +182,8 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 					}
 				}
 			}
-			pos_ *= -1;
+			pos_ *= -1;//if equals point, or right, left, up, down 
 			}
-			//if equals point, or right, left, up, down 
 		}
 	}
 	return true;
@@ -183,16 +196,14 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 	int rocks_to_spawn = round(rocks_to_spawn_float);
 	rocks_to_spawn *= 2;
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
+	UE_LOG(LogTemp, Warning, TEXT("amount rocks: %d"), rocks_to_spawn);
 
 	for (int i = 0; i < rocks_to_spawn; i++){
-
 		int rand_point = FMath::RandRange(0, track_point.Num()-1);
 		int pos_y = track_point[rand_point].Y;
 		int pos_x = track_point[rand_point].X;
-		
 		bool is_found = false;
-		while (!is_found)
-		{
+		while (!is_found){
 			if (CheckBounds(track_point, pos_x, pos_y)) {
 				is_found = true;
 				float z_pos = m_verts[pos_y * 400 + pos_x].Z;
@@ -235,10 +246,11 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 					FRotator{0,rand_rot_yaw,0},
 					FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 					FVector{rand_scale, rand_scale, rand_scale} };	//Scale
-				AddBasicTree(A, 0, "SM_Grass");
+				TArray<FVector2D>a;
+				AddBasicTree(A, 0, "SM_Grass",a,0,0);
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
-				instanced_basic_tree->bCastDynamicShadow = false;
-				instanced_basic_tree->CastShadow = false;
+				instanced_basic_tree->bCastDynamicShadow = true;
+				instanced_basic_tree->CastShadow = true;
 				instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
 				instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
