@@ -45,8 +45,8 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");//Wheel_Rear_Right
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-
-
+	
+	
 
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
@@ -83,7 +83,7 @@ AVehicleController::AVehicleController(){
 	SpringArm->bEnableCameraRotationLag = true;
 	SpringArm->CameraLagMaxDistance = 100.0f;
 	SpringArm->bUsePawnControlRotation = true;
-	SpringArm->CameraRotationLagSpeed = 7.f;
+	SpringArm->CameraRotationLagSpeed = 3.7f;
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = true;

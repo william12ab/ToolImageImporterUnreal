@@ -10,5 +10,6 @@ UVehicleReerWheel::UVehicleReerWheel()
 	ShapeWidth = 18.0f;//18
 	bAffectedByHandbrake = true;
 	SteerAngle = 0.f;
+	
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
