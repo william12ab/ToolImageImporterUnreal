@@ -11,9 +11,11 @@
 #include "Engine/Engine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/TextRenderComponent.h"
-//#include "Materials/Material.h
+#include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/Controller.h"
 #include "WheeledVehicleMovementComponent4W.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
@@ -44,17 +46,19 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");//Wheel_Rear_Right
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 
+
+
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
 	Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
 	Vehicle4W->MaxNormalizedTireLoad = 2.0f;
 	Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
 	//torque
-	Vehicle4W->MaxEngineRPM = 5700.0f;
+	Vehicle4W->MaxEngineRPM = 6000.f;
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 400.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1890.0f, 500.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5730.0f, 400.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 400.0f);
 
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
@@ -69,7 +73,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
 	Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
-
+	
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -120,17 +124,51 @@ AVehicleController::AVehicleController(){
 	bInReverseGear = false;
 	static ConstructorHelpers::FObjectFinder<UMaterial> TextMaterial(TEXT("Material'/Engine/EngineMaterials/AntiAliasedTextMaterialTranslucent.AntiAliasedTextMaterialTranslucent'"));
 	UMaterialInterface* Material = TextMaterial.Object;
+
+	ParticleSystemRightWheel = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particlesright"));
+	ParticleSystemLeftWheel = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particlesleft"));
+
+	//particle system work
+	particle_arr.Add(ParticleSystemRightWheel);
+	particle_arr.Add(ParticleSystemLeftWheel);
+	FVector local_loc =FVector(-270.f,100.f,0.f);
+	for (int i = 0; i < 2; i++){
+		particle_arr[i]->AttachTo(GetMesh());
+		particle_arr[i]->bAutoActivate = false;
+		particle_arr[i]->SetRelativeLocation(local_loc);
+		local_loc.Y *= -1;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("ParticleSystem'/Game/Effects/P_dirt_wheel_kickup.P_dirt_wheel_kickup'"));
+	if (ParticleAsset.Succeeded()){
+		particle_arr[0]->SetTemplate(ParticleAsset.Object);
+		particle_arr[1]->SetTemplate(ParticleAsset.Object);
+	}
+
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
 	Camera->Activate();
 	InternalCamera->Deactivate();
+
 }
 
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
+
+	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
+	if (KPH>20.f){
+		if (ParticleSystemRightWheel != nullptr) {
+			ParticleSystemRightWheel->SetActive(true);
+			ParticleSystemLeftWheel->SetActive(true);
+		}
+	}
+	else{
+		ParticleSystemRightWheel->SetActive(false);
+		ParticleSystemLeftWheel->SetActive(false);
+	}
 
 	UpdateHUDStrings();
 	//inside camera

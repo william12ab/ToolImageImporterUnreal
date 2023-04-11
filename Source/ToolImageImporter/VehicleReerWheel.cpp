@@ -6,9 +6,9 @@ PRAGMA_DISABLE_DEPRECATION_WARNINGS
 
 UVehicleReerWheel::UVehicleReerWheel()
 {
-	ShapeRadius = 60.f;//30
-	ShapeWidth = 36.0f;//18
+	ShapeRadius = 38.5f;//30
+	ShapeWidth = 18.0f;//18
 	bAffectedByHandbrake = true;
-	SteerAngle = 20.f;
+	SteerAngle = 0.f;
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

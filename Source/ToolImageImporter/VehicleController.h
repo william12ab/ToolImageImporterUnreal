@@ -70,6 +70,14 @@ protected:
 		class USceneComponent* InternalCameraBase;
 	FVector InternalCameraOrigin;
 
+
+	UPROPERTY(VisibleAnywhere)
+		UParticleSystemComponent* ParticleSystemRightWheel;
+	UPROPERTY(VisibleAnywhere)
+		UParticleSystemComponent* ParticleSystemLeftWheel;
+
+	TArray<UParticleSystemComponent*> particle_arr;
+
 	//array of cameras used for swapping
 	TArray<UCameraComponent*> cameras;
 

@@ -5,9 +5,9 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 UVehicleFrontWheel::UVehicleFrontWheel()
 {
-	ShapeRadius = 60.f;//30
-	ShapeWidth = 36.0f;//18
+	ShapeRadius = 38.5f;//30
+	ShapeWidth = 18.0f;//18
 	bAffectedByHandbrake = false;
-	SteerAngle = 45.f;
+	SteerAngle = 65.f;
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
