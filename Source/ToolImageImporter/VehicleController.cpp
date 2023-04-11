@@ -131,15 +131,15 @@ AVehicleController::AVehicleController(){
 	//particle system work
 	particle_arr.Add(ParticleSystemRightWheel);
 	particle_arr.Add(ParticleSystemLeftWheel);
-	FVector local_loc =FVector(-270.f,100.f,0.f);
+	FVector local_loc =FVector(-170.f,100.f,0.f);
 	for (int i = 0; i < 2; i++){
 		particle_arr[i]->AttachTo(GetMesh());
 		particle_arr[i]->bAutoActivate = false;
 		particle_arr[i]->SetRelativeLocation(local_loc);
 		local_loc.Y *= -1;
 	}
-
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("ParticleSystem'/Game/Effects/P_dirt_wheel_kickup.P_dirt_wheel_kickup'"));
+	
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("ParticleSystem'/Game/Effects/Effects/VehicleEffects/P_dirt_wheel_kickup.P_dirt_wheel_kickup'"));
 	if (ParticleAsset.Succeeded()){
 		particle_arr[0]->SetTemplate(ParticleAsset.Object);
 		particle_arr[1]->SetTemplate(ParticleAsset.Object);
@@ -159,7 +159,7 @@ void AVehicleController::Tick(float DeltaTime) {
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
 
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
-	if (KPH>20.f){
+	if (KPH>2.f){
 		if (ParticleSystemRightWheel != nullptr) {
 			ParticleSystemRightWheel->SetActive(true);
 			ParticleSystemLeftWheel->SetActive(true);
