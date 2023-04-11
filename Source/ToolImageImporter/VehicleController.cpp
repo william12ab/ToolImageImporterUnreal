@@ -63,17 +63,50 @@ AVehicleController::AVehicleController(){
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.70f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.60f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.90f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.70f);
 
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
-	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65;
+	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65f;
 
 	//gearbox
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
 	Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
 	
+
+	Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
+	Vehicle4W->TransmissionSetup.ForwardGears[0].Ratio = 3.083f;
+	//Vehicle4W->TransmissionSetup.ForwardGears[0].DownRatio= .5f;
+	//Vehicle4W->TransmissionSetup.ForwardGears[0].UpRatio= .55;
+
+	Vehicle4W->TransmissionSetup.ForwardGears[1].Ratio = 2.062f;
+	//Vehicle4W->TransmissionSetup.ForwardGears[1].DownRatio = .5f;
+	//Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = .55;
+
+	Vehicle4W->TransmissionSetup.ForwardGears[2].Ratio = 1.545f;
+//	Vehicle4W->TransmissionSetup.ForwardGears[2].DownRatio = .5f;
+//	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = .55;
+
+	Vehicle4W->TransmissionSetup.ForwardGears[3].Ratio = 1.151f;
+	//Vehicle4W->TransmissionSetup.ForwardGears[3].DownRatio = .5f;
+	//Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = .55;
+
+	Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 0.825f;
+//	Vehicle4W->TransmissionSetup.ForwardGears[4].DownRatio = .5f;
+//	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = .55;
+	
+
+
+	UPrimitiveComponent* UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
+	if (UpdatedPrimitive){
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(8.0f, 0.0f, 0.0f);
+		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
+	}
+
+	//Vehicle4W->InertiaTensorScale = FVector(1.0f, 1.333f, 1.f);
+
+
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
