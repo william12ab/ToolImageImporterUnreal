@@ -21,14 +21,12 @@
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 AVehicleController::AVehicleController(){
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/scale3/Subaru_Impreza_22B_STi_3scale.Subaru_Impreza_22B_STi_3scale'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/lowerwheels/Subaru_Impreza_22B_STi__1_.Subaru_Impreza_22B_STi__1_'"));
 	GetMesh()->SetSkeletalMesh(CarMesh.Object);
-	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/scale3/AnimBP"));
+	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/lowerwheels/Anim"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
 
-	//SkeletalMesh'/Game/VehicleVarietyPack/Skeletons/SK_Pickup.SK_Pickup'
-	//AnimBlueprint'/Game/Car/TEST2/TEST.TEST'
-	///Game/Anim_BP_PICKUP
+
 	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
 	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
 	Vehicle4W->WheelSetups[0].BoneName = FName("FL");//Wheel_Front_Left
@@ -53,11 +51,15 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
 	Vehicle4W->MaxNormalizedTireLoad = 2.0f;
 	Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
+	
 	//torque
-	Vehicle4W->MaxEngineRPM = 6000.f;
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 400.0f);
+	Vehicle4W->MaxEngineRPM = 6000.f;
+
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 500.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1890.0f, 500.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3590.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 400.0f);
 
 	//Streering
@@ -77,36 +79,17 @@ AVehicleController::AVehicleController(){
 
 	Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
 	Vehicle4W->TransmissionSetup.ForwardGears[0].Ratio = 3.083f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[0].DownRatio= .5f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[0].UpRatio= .55;
-
 	Vehicle4W->TransmissionSetup.ForwardGears[1].Ratio = 2.062f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[1].DownRatio = .5f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = .55;
-
 	Vehicle4W->TransmissionSetup.ForwardGears[2].Ratio = 1.545f;
-//	Vehicle4W->TransmissionSetup.ForwardGears[2].DownRatio = .5f;
-//	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = .55;
-
 	Vehicle4W->TransmissionSetup.ForwardGears[3].Ratio = 1.151f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[3].DownRatio = .5f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = .55;
-
 	Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 0.825f;
-//	Vehicle4W->TransmissionSetup.ForwardGears[4].DownRatio = .5f;
-//	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = .55;
 	
-
-
-	UPrimitiveComponent* UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
-	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(8.0f, 0.0f, 0.0f);
-		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
-	}
-
-	//Vehicle4W->InertiaTensorScale = FVector(1.0f, 1.333f, 1.f);
-
-
+	Vehicle4W->InertiaTensorScale = FVector(1.0f,5.0f,1.0f);
+	//UPrimitiveComponent* UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
+	//if (UpdatedPrimitive){
+	//	//UpdatedPrimitive->BodyInstance.COMNudge = FVector(8.0f, 0.0f, 0.0f);
+	//	UpdatedPrimitive->BodyInstance.UpdateMassProperties();
+	//}
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
