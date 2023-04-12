@@ -58,6 +58,9 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
 	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65f;
 	//torque
+
+	Vehicle4W->bDeprecatedSpringOffsetMode = true;
+
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->MaxEngineRPM = 6000.f;
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 500.0f);
@@ -82,13 +85,13 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[3].Ratio = 1.151f;
 	Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 0.825f;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
-	Vehicle4W->InertiaTensorScale = FVector(1.0f,5.0f,1.0f);
+	Vehicle4W->InertiaTensorScale = FVector(1.0f,3.0f,1.0f);
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 650.0f;
-	SpringArm->TargetOffset = FVector(0.f, 0.f, 200.f);
+	SpringArm->TargetArmLength = 725.0f;
+	SpringArm->TargetOffset = FVector(0.f, 0.f, 225.f);
 	SpringArm->bEnableCameraRotationLag = true;
 	SpringArm->CameraLagMaxDistance = 100.0f;
 	SpringArm->bUsePawnControlRotation = true;
@@ -139,10 +142,11 @@ AVehicleController::AVehicleController(){
 	//particle system work
 	particle_arr.Add(ParticleSystemRightWheel);
 	particle_arr.Add(ParticleSystemLeftWheel);
-	FVector local_loc =FVector(-170.f,100.f,55.f);
+	FVector local_loc =FVector(-170.f,100.f,42.f);
 	for (int i = 0; i < 2; i++){
 		particle_arr[i]->AttachTo(GetMesh());
 		particle_arr[i]->bAutoActivate = false;
+		particle_arr[i]->SetRelativeScale3D(FVector(0.8f, 0.7f, .5));
 		particle_arr[i]->SetRelativeLocation(local_loc);
 		local_loc.Y *= -1;
 	}
