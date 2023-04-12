@@ -15,6 +15,8 @@
 #include "GameFramework/Controller.h"
 #include "WheeledVehicleMovementComponent4W.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 #define LOCTEXT_NAMESPACE "VehiclePawn"
@@ -36,6 +38,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[1].BoneName = FName("FR");//Wheel_Front_Right
 	Vehicle4W->WheelSetups[1].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 
+	
 	Vehicle4W->WheelSetups[2].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[2].BoneName = FName("RR");//Wheel_Rear_Left
 	Vehicle4W->WheelSetups[2].AdditionalOffset = FVector(0.f, 0.f, 0.f);
@@ -44,52 +47,42 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");//Wheel_Rear_Right
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 	
-	
+	Vehicle4W->DragCoefficient = 0.0f;
 
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
 	Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
 	Vehicle4W->MaxNormalizedTireLoad = 2.0f;
 	Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
-	
+	//differential setup 
+	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
+	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65f;
 	//torque
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->MaxEngineRPM = 6000.f;
-
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1890.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3590.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 400.0f);
-
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.90f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.70f);
-
-	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
-	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65f;
-
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 1.0f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 95.0f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.90f);
 	//gearbox
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
 	Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
-	
-
 	Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
 	Vehicle4W->TransmissionSetup.ForwardGears[0].Ratio = 3.083f;
 	Vehicle4W->TransmissionSetup.ForwardGears[1].Ratio = 2.062f;
 	Vehicle4W->TransmissionSetup.ForwardGears[2].Ratio = 1.545f;
 	Vehicle4W->TransmissionSetup.ForwardGears[3].Ratio = 1.151f;
 	Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 0.825f;
-	
+	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.0f,5.0f,1.0f);
-	//UPrimitiveComponent* UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
-	//if (UpdatedPrimitive){
-	//	//UpdatedPrimitive->BodyInstance.COMNudge = FVector(8.0f, 0.0f, 0.0f);
-	//	UpdatedPrimitive->BodyInstance.UpdateMassProperties();
-	//}
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -143,11 +136,10 @@ AVehicleController::AVehicleController(){
 
 	ParticleSystemRightWheel = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particlesright"));
 	ParticleSystemLeftWheel = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particlesleft"));
-
 	//particle system work
 	particle_arr.Add(ParticleSystemRightWheel);
 	particle_arr.Add(ParticleSystemLeftWheel);
-	FVector local_loc =FVector(-170.f,100.f,0.f);
+	FVector local_loc =FVector(-170.f,100.f,55.f);
 	for (int i = 0; i < 2; i++){
 		particle_arr[i]->AttachTo(GetMesh());
 		particle_arr[i]->bAutoActivate = false;
@@ -161,19 +153,45 @@ AVehicleController::AVehicleController(){
 		particle_arr[1]->SetTemplate(ParticleAsset.Object);
 	}
 
+	
+	static ConstructorHelpers::FObjectFinder<USoundCue> EngineSoundCueObj(TEXT("SoundCue'/Game/Sound/Engine.Engine'"));
+	if (EngineSoundCueObj.Succeeded()){
+		EngineSoundCue = EngineSoundCueObj.Object;
+		EngineComp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
+		EngineComp->SetupAttachment(RootComponent);
+	}
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
 	Camera->Activate();
 	InternalCamera->Deactivate();
+	EngineComp->Activate(true);
+	EngineComp->SetSound(EngineSoundCue);
+	EngineComp->Play(0.f);
+	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600) {
+		EngineComp->SetFloatParameter(FName("RPM"), 600);
+	}
+	else {
+		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
+	}
 
+	GetVehicleMovement()->MaxEngineRPM = 6000.f;
+	GetVehicleMovementComponent()->MaxEngineRPM = 6000.f;
 }
 
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
+	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600){
+		EngineComp->SetFloatParameter(FName("RPM"), 600);
+	}
+	else{
+		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
+	}
 
+
+	//for parrticels
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	if (KPH>2.f){
 		if (ParticleSystemRightWheel != nullptr) {
@@ -259,6 +277,7 @@ void AVehicleController::CameraReverseView() {
 }
 void AVehicleController::Handbrake(){
 	GetVehicleMovementComponent()->SetHandbrakeInput(true);
+
 }
 void AVehicleController::HandbrakeRelease() {
 	GetVehicleMovementComponent()->SetHandbrakeInput(false);

@@ -11,6 +11,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* EngineSoundCue;
+
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
 		FText SpeedDisplayString;
 	/** The current gear as a string (R,N, 1,2 etc) */
@@ -77,6 +81,8 @@ protected:
 		UParticleSystemComponent* ParticleSystemLeftWheel;
 
 	TArray<UParticleSystemComponent*> particle_arr;
+
+	UAudioComponent* EngineComp;
 
 	//array of cameras used for swapping
 	TArray<UCameraComponent*> cameras;
