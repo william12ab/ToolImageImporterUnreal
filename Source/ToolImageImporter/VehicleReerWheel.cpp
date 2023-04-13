@@ -11,7 +11,7 @@ UVehicleReerWheel::UVehicleReerWheel()
 	ShapeWidth = 19.0f;
 	bAffectedByHandbrake = true;
 	SteerAngle = 0.f;
-	LongStiffValue=1000.0f;
+	LongStiffValue=3000.0f;
 	SuspensionMaxDrop = 20;
 	SuspensionMaxRaise = 20;
 	LatStiffMaxLoad = 15.f;
@@ -25,7 +25,6 @@ UVehicleReerWheel::UVehicleReerWheel()
 	static ConstructorHelpers::FObjectFinder<UTireConfig> TireConfigObj(TEXT("TireConfig'/Game/DA_tire_config.DA_tire_config'"));
 	if (TireConfigObj.Succeeded()) {
 		TireConfig = TireConfigObj.Object;
-		UE_LOG(LogTemp, Warning, TEXT("succ"));
 	}
 }
 

@@ -11,7 +11,7 @@ UVehicleFrontWheel::UVehicleFrontWheel()
 	ShapeWidth = 19.0f;
 	bAffectedByHandbrake = false;
 	SteerAngle = 70.f;
-	LongStiffValue = 1000.0f;//faster acc, higher top speed, default =1000
+	LongStiffValue = 3000.0f;//faster acc, higher top speed, default =1000
 	LatStiffMaxLoad = 15.f;//smaller harder turning, default = 2
 	LatStiffValue = 1000.f;//lower more sliding, default =17
 	SuspensionMaxDrop = 20;//higher for maxdrop and raise, wheels can go above and below natural resting point much more, default =10

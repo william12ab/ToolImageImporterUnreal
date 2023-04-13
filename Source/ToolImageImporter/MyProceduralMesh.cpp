@@ -14,6 +14,7 @@ AMyProceduralMesh::AMyProceduralMesh()
 	SetRootComponent(ScnComponent);
 	procedural_mesh_comp = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMesh"));
 	procedural_mesh_comp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	
 	width_ = 4;
 	height_ = 4;
 	spacing_ = 20.0f;
@@ -33,8 +34,7 @@ void AMyProceduralMesh::PostInitializeComponents()
 }
 
 
-void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_)
-{
+void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_){
 	for (int j = 0; j < (height_); j++){
 		for (int i = 0; i < (height_); i++){
 			int count_loc = 0;
@@ -142,8 +142,6 @@ void AMyProceduralMesh::ClearMeshData(){
 	m_vert_colors.Empty();
 	m_tangents.Empty();
 }
-
-
 
 void AMyProceduralMesh::GenerateVerts(){
 	float uv_spacing = 1.0f / FMath::Max(height_, width_);

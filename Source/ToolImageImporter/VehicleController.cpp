@@ -47,7 +47,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");//Wheel_Rear_Right
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 	
-	Vehicle4W->DragCoefficient = 0.0f;
+	Vehicle4W->DragCoefficient = 0.20f;
 
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
@@ -63,11 +63,13 @@ AVehicleController::AVehicleController(){
 
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->MaxEngineRPM = 6000.f;
+	
+	//change those values
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1890.0f, 500.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3590.0f, 500.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 400.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 500.0f);
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
@@ -78,15 +80,28 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
 	Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
+	Vehicle4W->TransmissionSetup.FinalRatio = 3.083f;
 	Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
 	Vehicle4W->TransmissionSetup.ForwardGears[0].Ratio = 3.083f;
+	Vehicle4W->TransmissionSetup.ForwardGears[0].DownRatio = 0.4;
+	Vehicle4W->TransmissionSetup.ForwardGears[0].UpRatio= 0.5;
 	Vehicle4W->TransmissionSetup.ForwardGears[1].Ratio = 2.062f;
+	Vehicle4W->TransmissionSetup.ForwardGears[1].DownRatio = 0.4;
+	Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = 0.5;
 	Vehicle4W->TransmissionSetup.ForwardGears[2].Ratio = 1.545f;
+	Vehicle4W->TransmissionSetup.ForwardGears[2].DownRatio = 0.4;
+	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = 0.5;
 	Vehicle4W->TransmissionSetup.ForwardGears[3].Ratio = 1.151f;
-	Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 0.825f;
+	Vehicle4W->TransmissionSetup.ForwardGears[3].DownRatio = 0.4;
+	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.5;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 1.111f;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].DownRatio = 0.4;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.5;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.0f,3.0f,1.0f);
 
+
+	
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -164,6 +179,8 @@ AVehicleController::AVehicleController(){
 		EngineComp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
 		EngineComp->SetupAttachment(RootComponent);
 	}
+
+	
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -181,6 +198,7 @@ void AVehicleController::BeginPlay() {
 
 	GetVehicleMovement()->MaxEngineRPM = 6000.f;
 	GetVehicleMovementComponent()->MaxEngineRPM = 6000.f;
+
 }
 
 void AVehicleController::Tick(float DeltaTime) {
@@ -193,8 +211,11 @@ void AVehicleController::Tick(float DeltaTime) {
 	else{
 		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
 	}
+	
 
-
+	
+	UE_LOG(LogTemp, Warning, TEXT("rpm:%f"), GetVehicleMovement()->GetEngineRotationSpeed());
+	//UE_LOG(LogTemp, Warning, TEXT("rpmcomp:%f"), GetVehicleMovementComponent()->MaxEngineRPM);
 	//for parrticels
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	if (KPH>2.f){

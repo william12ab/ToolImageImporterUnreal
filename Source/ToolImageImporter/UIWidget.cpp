@@ -16,7 +16,7 @@ void UUIWidget::NativeConstruct()
 	h_ = 4;
 	s_ = 20.0f;		//distance between verts in proc mesh
 	m_ = 7;			//division of height
-	scaling_down_ = 8.0f;		//scale factor of everything, so 8 times what it is now
+	scaling_down_ = 10.0f;		//scale factor of everything, so 8 times what it is now
 	Label->SetText(FText::FromString("Plane Generator"));
 
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
