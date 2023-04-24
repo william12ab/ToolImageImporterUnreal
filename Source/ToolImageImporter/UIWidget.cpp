@@ -290,7 +290,7 @@ void UUIWidget::CreateSpline(){
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());//changing height of mesh
 	p_mesh->ReplaceC(m_colors);//replacing heightmap to match new mesh, also normals and smoothing
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
-	track_spline->SetActorEnableCollision(true);
+	track_spline->SetActorEnableCollision(false);
 	if (point_type) {
 		for (size_t i = 0; i < temp_arr.Num(); i++) {
 			temp_arr[i].X /= s_;
@@ -316,6 +316,25 @@ void UUIWidget::FixScales(){
 	while (!vehicle_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f), false, false)) {
 		middle_point.Z += 1.f;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("size: %d"), track_spline->GetSEPoints().Num());
+	auto ss = track_spline->GetSEPoints().Num();
+	UE_LOG(LogTemp, Warning, TEXT("x: %f"), track_spline->GetSEPoints()[ss-2].X);
+	UE_LOG(LogTemp, Warning, TEXT("y: %f"), track_spline->GetSEPoints()[ss-2].Y);
+	UE_LOG(LogTemp, Warning, TEXT("z: %f"), track_spline->GetSEPoints()[ss-2].Z);
+
+
+	FActorSpawnParameters SpawnInfoDecal;
+	FRotator myRotD(0, 0, 0);
+	FVector myLocD = FVector(track_spline->GetSEPoints()[1]);
+	myLocD *= scaling_down_;
+	myLocD.Z -= 85.f;
+	start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+	myLocD = track_spline->GetSEPoints()[ss- 10];
+	myLocD *= scaling_down_;
+	myLocD.Z -= 85.f;
+	end_decal= GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+
+
 	track_spline->Destroy();
 }
 

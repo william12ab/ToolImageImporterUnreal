@@ -79,8 +79,7 @@ void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, con
 }
 
 
-void ATrackSpline::OnConstruction(const FTransform& Transform)
-{
+void ATrackSpline::OnConstruction(const FTransform& Transform){
 	Super::OnConstruction(Transform);
 	spline->ClearSplinePoints();
 	min_height = 1000000000000;

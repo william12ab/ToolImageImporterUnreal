@@ -217,9 +217,6 @@ void AVehicleController::Tick(float DeltaTime) {
 		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
 	}
 	
-	UE_LOG(LogTemp, Warning, TEXT("RPM : %f"), GetVehicleMovement()->GetEngineRotationSpeed());
-
-	
 	//for parrticels
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	if (KPH>2.f){

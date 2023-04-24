@@ -15,6 +15,7 @@
 #include "WaterMesh.h"
 #include "TrackSpline.h"
 #include "VehicleController.h"
+#include "StartDecalActor.h"
 #include "UIWidget.generated.h"
 
 
@@ -64,6 +65,8 @@ protected:
 	bool point_type; //used for reading the data from file and choosing what points to use in generation. true = t.p, false = c.p
 
 	AMyProceduralMesh* new_temp;//new mesh
+	AStartDecalActor* start_decal;
+	AStartDecalActor* end_decal;
 
 	TArray<float> m_colors;//heightmapcolours
 	UTexture* t_;//texutre obj for terrain 

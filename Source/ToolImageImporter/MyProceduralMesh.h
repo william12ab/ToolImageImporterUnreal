@@ -58,6 +58,8 @@ public:
 	void Save(TArray<FVector> &temp_, TArray<FLinearColor> &temp_colours);
 
 
+	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
