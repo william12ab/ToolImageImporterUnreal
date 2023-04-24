@@ -6,9 +6,7 @@
 #include <Runtime/Engine/Public/ImageUtils.h>
 
 // Sets default values
-AMyProceduralMesh::AMyProceduralMesh()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+AMyProceduralMesh::AMyProceduralMesh(){
 	PrimaryActorTick.bCanEverTick = false;
 	ScnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Main"));
 	SetRootComponent(ScnComponent);
@@ -19,17 +17,20 @@ AMyProceduralMesh::AMyProceduralMesh()
 	height_ = 4;
 	spacing_ = 20.0f;
 	count = 0;
+	auto PhysicalMaterialAsset = ConstructorHelpers::FObjectFinder<UObject>(TEXT("PhysicalMaterial'/Game/GroundPhysMat.GroundPhysMat'"));
+	if (PhysicalMaterialAsset.Object){
+		UE_LOG(LogTemp, Warning, TEXT("succ"));
+		procedural_mesh_comp->BodyInstance.SetPhysMaterialOverride((UPhysicalMaterial*)PhysicalMaterialAsset.Object);
+	}
 }
 
 // Called when the game starts or when spawned
-void AMyProceduralMesh::BeginPlay()
-{
+void AMyProceduralMesh::BeginPlay(){
 	Super::BeginPlay();
 }
 
 // Called every frame
-void AMyProceduralMesh::PostInitializeComponents()
-{
+void AMyProceduralMesh::PostInitializeComponents(){
 	Super::PostInitializeComponents();
 }
 
@@ -127,8 +128,7 @@ float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const F
 	return t;
 }
 
-void AMyProceduralMesh::SetMaterial(UTexture* t_)
-{
+void AMyProceduralMesh::SetMaterial(UTexture* t_){
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
 	material_instance->SetTextureParameterValue(FName("terr_text"), t_);		//this is reference also to the material obj in scene, have a look if you dont get it.

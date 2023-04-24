@@ -31,20 +31,20 @@ AVehicleController::AVehicleController(){
 
 	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
 	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
-	Vehicle4W->WheelSetups[0].BoneName = FName("FL");//Wheel_Front_Left
+	Vehicle4W->WheelSetups[0].BoneName = FName("FL");
 	Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 
 	Vehicle4W->WheelSetups[1].WheelClass = UVehicleFrontWheel::StaticClass();
-	Vehicle4W->WheelSetups[1].BoneName = FName("FR");//Wheel_Front_Right
+	Vehicle4W->WheelSetups[1].BoneName = FName("FR");
 	Vehicle4W->WheelSetups[1].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 
 	
 	Vehicle4W->WheelSetups[2].WheelClass = UVehicleReerWheel::StaticClass();
-	Vehicle4W->WheelSetups[2].BoneName = FName("RR");//Wheel_Rear_Left
+	Vehicle4W->WheelSetups[2].BoneName = FName("RR");
 	Vehicle4W->WheelSetups[2].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 
 	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
-	Vehicle4W->WheelSetups[3].BoneName = FName("RL");//Wheel_Rear_Right
+	Vehicle4W->WheelSetups[3].BoneName = FName("RL");
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 	
 	Vehicle4W->DragCoefficient = 0.20f;
@@ -59,17 +59,22 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65f;
 	//torque
 
-	Vehicle4W->bDeprecatedSpringOffsetMode = true;
 
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->MaxEngineRPM = 6000.f;
 	
-	//change those values
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 500.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 500.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1890.0f, 500.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3590.0f, 500.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 500.0f);
+	//change those values at 0 rpm we have 500 torque
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 40.f*8.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 80 * 8.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2000.0f, 110.0f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2500.0f, 160.0f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3000.0f, 220.f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 280.f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 340.f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 320.0f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 320.0f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 300.0f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 280.0f * 8);
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
@@ -99,8 +104,8 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.5;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.0f,3.0f,1.0f);
-
-
+	
+	
 	
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -179,8 +184,6 @@ AVehicleController::AVehicleController(){
 		EngineComp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
 		EngineComp->SetupAttachment(RootComponent);
 	}
-
-	
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -198,7 +201,6 @@ void AVehicleController::BeginPlay() {
 
 	GetVehicleMovement()->MaxEngineRPM = 6000.f;
 	GetVehicleMovementComponent()->MaxEngineRPM = 6000.f;
-
 }
 
 void AVehicleController::Tick(float DeltaTime) {
@@ -212,10 +214,8 @@ void AVehicleController::Tick(float DeltaTime) {
 		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
 	}
 	
-
 	
-	UE_LOG(LogTemp, Warning, TEXT("rpm:%f"), GetVehicleMovement()->GetEngineRotationSpeed());
-	//UE_LOG(LogTemp, Warning, TEXT("rpmcomp:%f"), GetVehicleMovementComponent()->MaxEngineRPM);
+	
 	//for parrticels
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	if (KPH>2.f){
