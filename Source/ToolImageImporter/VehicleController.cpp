@@ -49,6 +49,9 @@ AVehicleController::AVehicleController(){
 	
 	Vehicle4W->DragCoefficient = 0.20f;
 
+	Vehicle4W->Mass = 1200.f;
+	
+
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
 	Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
@@ -56,7 +59,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
 	//differential setup 
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
-	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.65f;
+	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.5f;
 	//torque
 
 
@@ -64,17 +67,17 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->MaxEngineRPM = 6000.f;
 	
 	//change those values at 0 rpm we have 500 torque
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 40.f*8.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 80 * 8.0f);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2000.0f, 110.0f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2500.0f, 160.0f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3000.0f, 220.f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 280.f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 340.f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 320.0f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 320.0f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 300.0f * 8);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 280.0f * 8);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 40.f*6.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 80 * 6.0f);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2000.0f, 110.0f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2500.0f, 130.0f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3000.0f, 150.f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 180.f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 180.f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 150.0f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 130.0f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 120.0f * 6);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 100.0f * 6);
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
@@ -214,7 +217,8 @@ void AVehicleController::Tick(float DeltaTime) {
 		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
 	}
 	
-	
+	UE_LOG(LogTemp, Warning, TEXT("RPM : %f"), GetVehicleMovement()->GetEngineRotationSpeed());
+
 	
 	//for parrticels
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
