@@ -194,7 +194,9 @@ AVehicleController::AVehicleController(){
 	is_stop = false;
 	is_start_countdown = false;
 	starting_counter = 0.0f;
-	is_begin_lap = true;
+	is_begin_lap = false;
+	lap_counter = 0.0f;
+	is_end = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -254,7 +256,11 @@ void AVehicleController::Tick(float DeltaTime) {
 		StartFunction(DeltaTime);
 	}
 
+	if (is_begin_lap&&!is_end){
+		lap_counter += DeltaTime;
+		UE_LOG(LogTemp, Warning, TEXT("timer lap: %f"), lap_counter);
 
+	}
 
 	UpdateHUDStrings();
 	//inside camera
@@ -436,17 +442,24 @@ float AVehicleController::GetVelocityFromComp() {
 
 void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	is_starting_ = true;
+	auto ss=OtherActor->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("name: %s"), *ss);
+
+	if (ss== "boxendtriggername"){
+		is_end = true;
+	}
 }
 
 
 void AVehicleController::StartFunction(const float& dt) {
 	if (is_start_countdown){
 		starting_counter += dt;
-		UE_LOG(LogTemp, Warning, TEXT("amount rocks: %f"), starting_counter);
+		UE_LOG(LogTemp, Warning, TEXT("timer start: %f"), starting_counter);
 
 		if (starting_counter>=5.0f){
 			is_starting_ = false;
 			is_begin_lap = true;
+			
 		}
 	}
 }

@@ -70,6 +70,7 @@ protected:
 	AStartDecalActor* start_decal;
 	AStartDecalActor* end_decal;
 	ATriggerBoxDecal* box_start;
+	ATriggerBoxDecal* box_end;
 
 	TArray<float> m_colors;//heightmapcolours
 	UTexture* t_;//texutre obj for terrain 
@@ -84,5 +85,4 @@ protected:
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
 
 
-	float timer_;
 };

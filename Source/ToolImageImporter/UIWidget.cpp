@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UIWidget.h"
@@ -26,7 +26,6 @@ void UUIWidget::NativeConstruct()
 	counter_ = 0.0f;
 	point_type = false;
 
-	timer_ = 0.0f;
 }
 
 bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
@@ -82,11 +81,6 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 			}
 		}
 	}
-
-	timer_ += InDeltaTime;
-	//UE_LOG(LogTemp, Warning, TEXT("t: %f"), timer_);
-
-
 }
 
 void UUIWidget::OnClickLoadNewTrack(){
@@ -327,24 +321,27 @@ void UUIWidget::FixScales(){
 
 
 	FActorSpawnParameters SpawnInfoDecal;
+	FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+
 	FRotator myRotD(0, 0, 0);
 	FVector myLocD = FVector(track_spline->GetSEPoints()[1]);
 	myLocD *= scaling_down_;
 	myLocD.Z += 85.f;
+	FName RightName = FName(TEXT("boxendtriggername"));
+	SpawnInfoBox.Name = RightName;
 	box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoDecal);
-	
 	myLocD.Z -= 85.f;
 	myLocD.Z -= 85.f;
 	start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
 	myLocD = track_spline->GetSEPoints()[ss- 10];
 	myLocD *= scaling_down_;
+	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
 	myLocD.Z -= 85.f;
 	end_decal= GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
 
 
 	track_spline->Destroy();
 }
-
 
 void UUIWidget::OnTest(){
 	TArray<FLinearColor> temp_color;

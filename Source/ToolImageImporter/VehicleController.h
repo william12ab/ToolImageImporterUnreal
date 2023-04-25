@@ -116,5 +116,9 @@ protected:
 	bool is_start_countdown;//used for starting countdown(when handbreak is pressed)
 	float starting_counter;//starting counter for beging
 	bool is_begin_lap;//used for resetting input.
+
+	//used for timer lap
+	float lap_counter;
+	bool is_end;
 };
 
