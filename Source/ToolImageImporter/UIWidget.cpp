@@ -25,6 +25,8 @@ void UUIWidget::NativeConstruct()
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	counter_ = 0.0f;
 	point_type = false;
+
+	timer_ = 0.0f;
 }
 
 bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
@@ -80,6 +82,11 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 			}
 		}
 	}
+
+	timer_ += InDeltaTime;
+	//UE_LOG(LogTemp, Warning, TEXT("t: %f"), timer_);
+
+
 }
 
 void UUIWidget::OnClickLoadNewTrack(){
@@ -316,17 +323,17 @@ void UUIWidget::FixScales(){
 	while (!vehicle_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f), false, false)) {
 		middle_point.Z += 1.f;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("size: %d"), track_spline->GetSEPoints().Num());
 	auto ss = track_spline->GetSEPoints().Num();
-	UE_LOG(LogTemp, Warning, TEXT("x: %f"), track_spline->GetSEPoints()[ss-2].X);
-	UE_LOG(LogTemp, Warning, TEXT("y: %f"), track_spline->GetSEPoints()[ss-2].Y);
-	UE_LOG(LogTemp, Warning, TEXT("z: %f"), track_spline->GetSEPoints()[ss-2].Z);
 
 
 	FActorSpawnParameters SpawnInfoDecal;
 	FRotator myRotD(0, 0, 0);
 	FVector myLocD = FVector(track_spline->GetSEPoints()[1]);
 	myLocD *= scaling_down_;
+	myLocD.Z += 85.f;
+	box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoDecal);
+	
+	myLocD.Z -= 85.f;
 	myLocD.Z -= 85.f;
 	start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
 	myLocD = track_spline->GetSEPoints()[ss- 10];

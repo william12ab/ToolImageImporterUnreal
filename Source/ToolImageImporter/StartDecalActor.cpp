@@ -6,6 +6,8 @@ AStartDecalActor::AStartDecalActor() {
 	material_interface = MatInter.Object;
 	SetDecalMaterial(material_interface);
 	SetActorScale3D(FVector(1.f, 3.f, 1.f));
+
+	
 }
 
 

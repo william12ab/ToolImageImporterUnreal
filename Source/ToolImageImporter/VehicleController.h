@@ -28,6 +28,9 @@ public:
 		FColor	GearDisplayReverseColor;
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly)
 		bool bInReverseGear;
+	UFUNCTION()
+		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 	void RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed);
 	void AngleCap(float& angle_);

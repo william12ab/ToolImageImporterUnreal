@@ -28,6 +28,7 @@ AVehicleController::AVehicleController(){
 	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/lowerwheels/Anim"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
 
+	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AVehicleController::OnOverlapBegin);
 
 	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
 	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
@@ -401,5 +402,15 @@ float AVehicleController::GetVelocityFromComp() {
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f; 
 	return KPH; 
 }
+
+
+
+void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+	auto name_ = OtherActor->GetName();
+	auto this_name=OverlappedComp->GetName();
+	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *name_);
+	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *this_name);
+}
+
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

@@ -16,7 +16,7 @@ UVehicleReerWheel::UVehicleReerWheel(){
 	LatStiffMaxLoad = 15.f;
 	LatStiffValue = 200.f;
 	SuspensionDampingRatio = .98f;
-	SuspensionNaturalFrequency = 6.2f;
+	SuspensionNaturalFrequency = 10.f;
 	MaxBrakeTorque = 4000.f;
 	MaxHandBrakeTorque = 6000.f;
 	static ConstructorHelpers::FObjectFinder<UTireConfig> TireConfigObj(TEXT("TireConfig'/Game/DA_tire_config.DA_tire_config'"));

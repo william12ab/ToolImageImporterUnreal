@@ -16,6 +16,8 @@
 #include "TrackSpline.h"
 #include "VehicleController.h"
 #include "StartDecalActor.h"
+#include "TriggerVolumeStartDecal.h"
+#include "TriggerBoxDecal.h"
 #include "UIWidget.generated.h"
 
 
@@ -67,6 +69,7 @@ protected:
 	AMyProceduralMesh* new_temp;//new mesh
 	AStartDecalActor* start_decal;
 	AStartDecalActor* end_decal;
+	ATriggerBoxDecal* box_start;
 
 	TArray<float> m_colors;//heightmapcolours
 	UTexture* t_;//texutre obj for terrain 
@@ -79,4 +82,7 @@ protected:
 	FVector last_point;//used for keeping track of last active point on car
 	float counter_;//time counter for reset
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
+
+
+	float timer_;
 };
