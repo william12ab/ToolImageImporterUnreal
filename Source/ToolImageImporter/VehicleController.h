@@ -103,5 +103,12 @@ protected:
 	FVector last_point;
 	bool pressed_;
 	float counter_;
+
+
+	//used for start
+	bool is_starting_;
+	bool is_stop;
+	float KPH_over;
+	int KPH_int_;
 };
 

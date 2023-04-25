@@ -63,7 +63,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.5f;
 	//torque
 
-
+	
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->MaxEngineRPM = 6000.f;
 	
@@ -188,6 +188,10 @@ AVehicleController::AVehicleController(){
 		EngineComp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
 		EngineComp->SetupAttachment(RootComponent);
 	}
+
+	//starting
+	is_starting_ = false;
+	is_stop = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -230,6 +234,23 @@ void AVehicleController::Tick(float DeltaTime) {
 		ParticleSystemRightWheel->SetActive(false);
 		ParticleSystemLeftWheel->SetActive(false);
 	}
+
+	//for start
+	KPH_over = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
+	KPH_int_ = FMath::FloorToInt(KPH_over);
+	if (is_starting_) {
+		if (KPH_int_ < 5) {
+			GetVehicleMovementComponent()->SetThrottleInput(0);
+			is_stop = true;
+		}
+		else {
+			if (!is_stop) {
+				GetVehicleMovementComponent()->SetThrottleInput(-1);
+			}
+		}
+	}
+
+
 
 	UpdateHUDStrings();
 	//inside camera
@@ -312,7 +333,9 @@ void AVehicleController::HandbrakeRelease() {
 void AVehicleController::Restart(){
 }
 void AVehicleController::MoveForward(float AxisValue){
-	GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
+	if (!is_starting_){
+		GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
+	}
 }
 void AVehicleController::MoveRight(float AxisValue){
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
@@ -408,8 +431,12 @@ float AVehicleController::GetVelocityFromComp() {
 void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	auto name_ = OtherActor->GetName();
 	auto this_name=OverlappedComp->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *name_);
-	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *this_name);
+	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *name_);//decal/box
+	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *this_name);//car
+	is_starting_ = true;
+
+	
+
 }
 
 

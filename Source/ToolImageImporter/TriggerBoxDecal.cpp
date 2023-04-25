@@ -13,7 +13,6 @@ ATriggerBoxDecal::ATriggerBoxDecal(){
 
 void ATriggerBoxDecal::BeginPlay(){
     Super::BeginPlay();
-    DrawDebugBox(GetWorld(), GetActorLocation(), GetComponentsBoundingBox().GetExtent(), FColor::Purple, true, -1, 0, 5);
 }
 
 void ATriggerBoxDecal::OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor){
