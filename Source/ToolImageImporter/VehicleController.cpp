@@ -192,6 +192,9 @@ AVehicleController::AVehicleController(){
 	//starting
 	is_starting_ = false;
 	is_stop = false;
+	is_start_countdown = false;
+	starting_counter = 0.0f;
+	is_begin_lap = true;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -248,6 +251,7 @@ void AVehicleController::Tick(float DeltaTime) {
 				GetVehicleMovementComponent()->SetThrottleInput(-1);
 			}
 		}
+		StartFunction(DeltaTime);
 	}
 
 
@@ -325,7 +329,9 @@ void AVehicleController::CameraReverseView() {
 }
 void AVehicleController::Handbrake(){
 	GetVehicleMovementComponent()->SetHandbrakeInput(true);
-
+	if (is_stop){
+		is_start_countdown = true;
+	}
 }
 void AVehicleController::HandbrakeRelease() {
 	GetVehicleMovementComponent()->SetHandbrakeInput(false);
@@ -429,15 +435,20 @@ float AVehicleController::GetVelocityFromComp() {
 
 
 void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
-	auto name_ = OtherActor->GetName();
-	auto this_name=OverlappedComp->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *name_);//decal/box
-	UE_LOG(LogTemp, Warning, TEXT("size: %s"), *this_name);//car
 	is_starting_ = true;
-
-	
-
 }
 
+
+void AVehicleController::StartFunction(const float& dt) {
+	if (is_start_countdown){
+		starting_counter += dt;
+		UE_LOG(LogTemp, Warning, TEXT("amount rocks: %f"), starting_counter);
+
+		if (starting_counter>=5.0f){
+			is_starting_ = false;
+			is_begin_lap = true;
+		}
+	}
+}
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

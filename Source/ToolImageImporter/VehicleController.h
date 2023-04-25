@@ -62,6 +62,9 @@ public:
 	bool GetPressed() { return pressed_; }
 	float GetCounter() { return counter_; }
 	float GetVelocityFromComp();
+
+
+	void StartFunction(const float& dt);
 protected:
 
 	virtual void BeginPlay() override;
@@ -106,9 +109,12 @@ protected:
 
 
 	//used for start
-	bool is_starting_;
-	bool is_stop;
-	float KPH_over;
-	int KPH_int_;
+	bool is_starting_;//used for checking if car is on the line
+	bool is_stop;//used for checking if car is at a stop
+	float KPH_over;//speed
+	int KPH_int_;//speed
+	bool is_start_countdown;//used for starting countdown(when handbreak is pressed)
+	float starting_counter;//starting counter for beging
+	bool is_begin_lap;//used for resetting input.
 };
 
