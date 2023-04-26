@@ -7,6 +7,7 @@
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "DesktopPlatform/Public/IDesktopPlatform.h"
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
 FileLoader::FileLoader()
 {
@@ -45,6 +46,7 @@ void FileLoader::OpenApplication() {
 		if (Proc.IsValid()){
 			FPlatformProcess::CloseProc(Proc);
 		}
+	
 	}
 	
 	//C:/Users/willu/Desktop/SFML_RBS/Executable/final.png
