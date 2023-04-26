@@ -39,7 +39,7 @@ void FileLoader::OpenApplication() {
 	if (ReadFileInfoApp(dialog_name, return_name)) {
 		name_ = return_name;
 		const TCHAR* name_char_ = *name_;
-		FPlatformProcess::CreateProc(name_char_, nullptr, true, false, false, nullptr, 0, nullptr, nullptr);
+		FPlatformProcess::CreateProc(name_char_, nullptr, true, false, false, nullptr, 0, *FPaths::GetPath(name_), nullptr);
 	}
 }
 
