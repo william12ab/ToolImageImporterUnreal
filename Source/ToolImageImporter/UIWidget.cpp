@@ -25,7 +25,13 @@ void UUIWidget::NativeConstruct()
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	counter_ = 0.0f;
 	point_type = false;
+	is_level_spawnned = false;
 
+	images_.Add(image_slot_1);
+	images_.Add(image_slot_2);
+	images_.Add(image_slot_3);
+	images_.Add(image_slot_4);
+	images_.Add(image_slot_5);
 }
 
 bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
@@ -47,10 +53,14 @@ bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
-	// Make sure to call the base class's NativeTick function
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	// Do your custom tick stuff here
 	
+
+	//UI FUNCS
+	StartTextFunction();
+	HandBreakTextFunction();
+	CountdownImageFunction(InDeltaTime);
+
 	//collisons for restarting position
 	auto l = vehicle_pawn->GetActorLocation();
 	l /= s_;
@@ -341,6 +351,7 @@ void UUIWidget::FixScales(){
 
 
 	track_spline->Destroy();
+	is_level_spawnned = true;
 }
 
 void UUIWidget::OnTest(){
@@ -352,4 +363,40 @@ void UUIWidget::OnTest(){
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	new_temp->Resize(temp_vec,2, temp_color);
 	new_temp->SetActorScale3D(FVector(4, 4, 8));//scaling*(s/2)(8*10) =80
+}
+
+void UUIWidget::StartTextFunction() {
+	if (vehicle_pawn) {
+		if (vehicle_pawn->GetBoolStartText() == false && is_level_spawnned) {
+			start_instruction_text->SetText(FText::FromString("Drive to the Start Line"));
+		}
+		else {
+			start_instruction_text->SetText(FText::FromString(""));
+		}
+	}
+}
+
+void UUIWidget::HandBreakTextFunction() {
+	if (vehicle_pawn->GetBoolStartText()){
+		start_instruction_text->SetText(FText::FromString("Hold Down Handbreak to Start"));
+	}
+	if (vehicle_pawn->GetBoolCountdown()){
+		start_instruction_text->SetText(FText::FromString(""));
+	}
+}
+
+void UUIWidget::CountdownImageFunction(const float &dt) {
+	static float counter_countdown = 0.0f;
+	static int index_image = 0;
+	if (vehicle_pawn->GetBoolCountdown()&&vehicle_pawn->GetBoolBeginLap()==false){
+		counter_countdown += dt;
+		if (counter_countdown>1.f){
+			counter_countdown = 0.0f;
+			images_[index_image]->SetVisibility(ESlateVisibility::Visible);
+			index_image++;
+		}
+	}
+	if (vehicle_pawn->GetBoolBeginLap()){
+		images_[index_image]->SetVisibility(ESlateVisibility::Visible);
+	}
 }

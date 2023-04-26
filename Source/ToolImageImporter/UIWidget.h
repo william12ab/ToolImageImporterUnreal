@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 #include "Components/EditableTextBox.h"
 #include "Components/Slider.h"
 #include "MyProceduralMesh.h"
@@ -37,11 +38,15 @@ protected:
 	void FixScales();//does scale of everything
 	void FillInGaps();//creates end and start
 	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function
-
+	void StartTextFunction();//ui func
+	void HandBreakTextFunction();//ui func
+	void CountdownImageFunction(const float& dt);
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	//ui 
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* start_instruction_text;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
@@ -50,13 +55,25 @@ protected:
 		class UTextBlock* Label;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* test_button;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* image_slot_1;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* image_slot_2;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* image_slot_3;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* image_slot_4;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* image_slot_5;
 	UFUNCTION()
 		void OnClickLoadNewTrack();		//on click load button
 	UFUNCTION()
 		void OnClickDelete();		//calls delete
 	UFUNCTION()
 		void OnTest();//new heightmap with more verts merge this
-		
+
+	TArray<UImage*> images_;
+
 	AWaterMesh* w_mesh;//water
 	AMyProceduralMesh* p_mesh;		//obj
 	ABasicTree* tree_instance;//trees
@@ -84,5 +101,7 @@ protected:
 	float counter_;//time counter for reset
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
 
+
+	bool is_level_spawnned;
 
 };

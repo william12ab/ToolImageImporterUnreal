@@ -62,9 +62,11 @@ public:
 	bool GetPressed() { return pressed_; }
 	float GetCounter() { return counter_; }
 	float GetVelocityFromComp();
-
-
+	bool GetBoolStartText() {return is_stop_display_start_text;}
+	bool GetBoolCountdown() {return is_start_countdown;}
 	void StartFunction(const float& dt);
+	float GetCountdown() { return starting_counter; }
+	bool GetBoolBeginLap() { return is_begin_lap; }
 protected:
 
 	virtual void BeginPlay() override;
@@ -116,6 +118,8 @@ protected:
 	bool is_start_countdown;//used for starting countdown(when handbreak is pressed)
 	float starting_counter;//starting counter for beging
 	bool is_begin_lap;//used for resetting input.
+	bool is_stop_display_start_text;
+
 
 	//used for timer lap
 	float lap_counter;

@@ -197,6 +197,7 @@ AVehicleController::AVehicleController(){
 	is_begin_lap = false;
 	lap_counter = 0.0f;
 	is_end = false;
+	is_stop_display_start_text = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -247,6 +248,7 @@ void AVehicleController::Tick(float DeltaTime) {
 		if (KPH_int_ < 5) {
 			GetVehicleMovementComponent()->SetThrottleInput(0);
 			is_stop = true;
+			is_stop_display_start_text = true;
 		}
 		else {
 			if (!is_stop) {
