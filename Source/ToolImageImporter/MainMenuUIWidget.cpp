@@ -13,6 +13,7 @@ void UMainMenuUIWidget::NativeConstruct(){
 }
 void UMainMenuUIWidget::OnClickPlay() {
 	UE_LOG(LogTemp, Warning, TEXT("play"));
+	file_opener.OpenApplication();
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {

@@ -2,6 +2,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "FileLoader.h"
 #include "MainMenuUIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UMainMenuUIWidget : public UUserWidget
@@ -37,4 +38,7 @@ protected:
 		void OnClickOptions();
 	UFUNCTION()
 		void OnClickQuit();
+
+	//accessers
+	FileLoader file_opener;
 };
