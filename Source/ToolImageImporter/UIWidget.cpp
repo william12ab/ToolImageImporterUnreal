@@ -120,7 +120,6 @@ void UUIWidget::OnClickDelete(){
 }
 
 void UUIWidget::DeletePlane(){
-	UE_LOG(LogTemp, Warning, TEXT("play"));
 
 	if (p_mesh){
 		p_mesh->Destroy();
