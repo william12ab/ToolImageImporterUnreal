@@ -19,7 +19,6 @@ AMyProceduralMesh::AMyProceduralMesh(){
 	count = 0;
 	auto PhysicalMaterialAsset = ConstructorHelpers::FObjectFinder<UObject>(TEXT("PhysicalMaterial'/Game/GroundPhysMat.GroundPhysMat'"));
 	if (PhysicalMaterialAsset.Object){
-		UE_LOG(LogTemp, Warning, TEXT("succ"));
 		procedural_mesh_comp->BodyInstance.SetPhysMaterialOverride((UPhysicalMaterial*)PhysicalMaterialAsset.Object);
 	}
 }

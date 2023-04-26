@@ -17,7 +17,6 @@
 #include "TrackSpline.h"
 #include "VehicleController.h"
 #include "StartDecalActor.h"
-#include "TriggerVolumeStartDecal.h"
 #include "TriggerBoxDecal.h"
 #include "UIWidget.generated.h"
 
@@ -41,12 +40,15 @@ protected:
 	void StartTextFunction();//ui func
 	void HandBreakTextFunction();//ui func
 	void CountdownImageFunction(const float& dt);
+	void LapTimerFunction(const float& dt);
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* start_instruction_text;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* lap_timer_text;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* delete_button;
 	UPROPERTY(meta = (BindWidget))
@@ -103,5 +105,10 @@ protected:
 
 
 	bool is_level_spawnned;
+
+	//for UI
+	int minutes;
+	int seconds;
+	float point_seconds;
 
 };

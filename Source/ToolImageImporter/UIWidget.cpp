@@ -32,6 +32,10 @@ void UUIWidget::NativeConstruct()
 	images_.Add(image_slot_3);
 	images_.Add(image_slot_4);
 	images_.Add(image_slot_5);
+
+	minutes=0;
+	seconds=0;
+	point_seconds=0.0f;
 }
 
 bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
@@ -60,6 +64,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	StartTextFunction();
 	HandBreakTextFunction();
 	CountdownImageFunction(InDeltaTime);
+	LapTimerFunction(InDeltaTime);
 
 	//collisons for restarting position
 	auto l = vehicle_pawn->GetActorLocation();
@@ -398,5 +403,35 @@ void UUIWidget::CountdownImageFunction(const float &dt) {
 	}
 	if (vehicle_pawn->GetBoolBeginLap()){
 		images_[index_image]->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UUIWidget::LapTimerFunction(const float& dt) {
+	if (vehicle_pawn->GetBoolBeginLap()) {
+		float lap_time = vehicle_pawn->GetLapTimer();
+
+		if (lap_time>60){
+			minutes++;
+			lap_time -=60;
+			seconds = (int)lap_time;
+			lap_time -= seconds;
+			point_seconds = lap_time;
+		}
+		else{
+			seconds = (int)lap_time;
+			lap_time -= seconds;
+			point_seconds = lap_time;
+		}
+		FString timer_string = FString::FromInt(minutes);
+		timer_string += ":";
+		timer_string += FString::FromInt(seconds);
+		timer_string += ":";
+		timer_string += FString::SanitizeFloat(point_seconds);
+		lap_timer_text->SetText(FText::FromString(timer_string));
+		if (lap_time>3.0f){
+			for(int i=0;i<images_.Num();i++){
+				images_[i]->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
 	}
 }

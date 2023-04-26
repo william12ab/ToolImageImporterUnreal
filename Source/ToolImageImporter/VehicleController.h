@@ -66,6 +66,8 @@ public:
 	bool GetBoolCountdown() {return is_start_countdown;}
 	void StartFunction(const float& dt);
 	float GetCountdown() { return starting_counter; }
+	float GetLapTimer() { return lap_counter; }
+	bool GetBoolEnd() { return is_end; }
 	bool GetBoolBeginLap() { return is_begin_lap; }
 protected:
 
