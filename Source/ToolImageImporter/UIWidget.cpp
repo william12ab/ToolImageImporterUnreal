@@ -38,8 +38,7 @@ void UUIWidget::NativeConstruct()
 	point_seconds=0.0f;
 }
 
-bool ReadFileInfoA(const FString& dialog_name_, FString &file_name)
-{
+bool ReadFileInfoA(const FString& dialog_name_, FString &file_name){
 	FString default_path = "";
 	FString dialog_name = dialog_name_;
 	FString default_file = "";
@@ -121,6 +120,8 @@ void UUIWidget::OnClickDelete(){
 }
 
 void UUIWidget::DeletePlane(){
+	UE_LOG(LogTemp, Warning, TEXT("play"));
+
 	if (p_mesh){
 		p_mesh->Destroy();
 	}
