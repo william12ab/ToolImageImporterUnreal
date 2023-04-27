@@ -3,9 +3,7 @@
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 void UMainMenuUIWidget::NativeConstruct(){
-
 	Super::NativeConstruct();
-
 	play_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickPlay);
 	test_arena_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickTestArena);
 	options_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickOptions);
@@ -14,7 +12,9 @@ void UMainMenuUIWidget::NativeConstruct(){
 void UMainMenuUIWidget::OnClickPlay() {
 	UE_LOG(LogTemp, Warning, TEXT("play"));
 	file_opener.OpenApplication();
-	UGameplayStatics::OpenLevel(GetWorld(), "Main");
+	if (file_opener.GetIsOpened()){
+		UGameplayStatics::OpenLevel(GetWorld(), "Main");
+	}
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {

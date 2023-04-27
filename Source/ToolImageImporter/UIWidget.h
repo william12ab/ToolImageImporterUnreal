@@ -85,6 +85,8 @@ protected:
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
 
 	HeightmapHandler level_loader;
+	
+
 
 	bool is_level_spawnned;//singalling if everything is generated
 

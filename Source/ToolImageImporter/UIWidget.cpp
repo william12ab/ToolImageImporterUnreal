@@ -19,9 +19,9 @@ void UUIWidget::NativeConstruct(){
 	point_type = false;
 	FString heightmap_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/noise_layer.png";
 	FString track_points_file_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/track_points.txt";
-	m_colors= level_loader.ReadFileInfo(heightmap_name, h_, w_);
+	m_colors= level_loader.ReadFileInfo(h_, w_);
 	GeneratePlane();
-	point_type = level_loader.ReadTrackPoints(track_points_file_name,track_points,control_points);
+	point_type = level_loader.ReadTrackPoints(track_points,control_points);
 	CreateTrack();
 
 	counter_ = 0.0f;//for resetting postion

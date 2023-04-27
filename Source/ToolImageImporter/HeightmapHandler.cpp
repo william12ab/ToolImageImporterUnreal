@@ -2,16 +2,25 @@
 #include <Runtime/Engine/Public/ImageUtils.h>
 
 HeightmapHandler::HeightmapHandler(){
+	auto fil_name = f_l.GetFileName();
+	FString exe_name = "SFML_RuleBasedSystem.exe";
+	auto n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	fil_name.RemoveAt(n, exe_name.Len());
+	track_points_name = fil_name += "track_points.txt";
+	fil_name = f_l.GetFileName();
+	exe_name = "SFML_RuleBasedSystem.exe";
+	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	fil_name.RemoveAt(n, exe_name.Len());
+	heightmap_name = fil_name += "final.png";
 }
 HeightmapHandler::~HeightmapHandler(){
 }
 
-TArray<float> HeightmapHandler::ReadFileInfo(const FString& name_, int& height_, int& width_) {
-	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(name_);
+TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_) {
+	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(heightmap_name);
 	texture_->AddToRoot();
 
 	TArray<float> temp_arr;
-
 	//since grey scale already. each rgb component should be greyscale value. therefore no need to add up and divide by 3.
 	//rgb comp is uint8 value. so, use this as the height and modifiy the height of terrain.
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
@@ -32,12 +41,13 @@ TArray<float> HeightmapHandler::ReadFileInfo(const FString& name_, int& height_,
 }
 
 
-bool HeightmapHandler::ReadTrackPoints(const FString& name_, TArray<FVector2D>& track_points, TArray<FVector2D>& control_points) {
+bool HeightmapHandler::ReadTrackPoints(TArray<FVector2D>& track_points, TArray<FVector2D>& control_points) {
 	bool point_type;
 	IPlatformFile& file_manager = FPlatformFileManager::Get().GetPlatformFile();
 	TArray<FString> array_;
-	if (file_manager.FileExists(*name_)) {
-		if (FFileHelper::LoadFileToStringArray(array_, *name_)) {
+
+	if (file_manager.FileExists(*track_points_name)) {
+		if (FFileHelper::LoadFileToStringArray(array_, *track_points_name)) {
 		}
 		else {
 		}
@@ -68,6 +78,5 @@ bool HeightmapHandler::ReadTrackPoints(const FString& name_, TArray<FVector2D>& 
 			}
 		}
 	}
-
 	return point_type;
 }

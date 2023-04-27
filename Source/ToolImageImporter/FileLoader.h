@@ -6,7 +6,11 @@ public:
 	~FileLoader();
 
 	void OpenApplication();
-
+	
+	FString &GetFileName() { return name_; }
+	bool GetIsOpened() { return is_opened_;}
 protected:
-	FString name_;
+	static FString name_;
+	bool is_opened_;
+
 };

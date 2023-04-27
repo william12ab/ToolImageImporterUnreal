@@ -1,16 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #pragma once
+#include "FileLoader.h"
 class TOOLIMAGEIMPORTER_API HeightmapHandler
 {
 public:
 	HeightmapHandler();
 	~HeightmapHandler();
 
-	TArray<float> ReadFileInfo(const FString& name_, int &height_, int &width_);		//reads file for height map also calls generate plane and modi verts.
+	TArray<float> ReadFileInfo(int &height_, int &width_);//reads file for height map returns array of float of colours
+	bool ReadTrackPoints(TArray<FVector2D>&track_points,TArray<FVector2D> &control_points);//returns filled arrays and bool of what type track(used in construction)
 
-	bool ReadTrackPoints(const FString& name_, TArray<FVector2D>&track_points,TArray<FVector2D> &control_points);
+	FileLoader f_l;
 
 protected:
-	int h_;
+	int h_;//height,width
 	int w_;
+	FString heightmap_name;//filenames of heightmap and trackpoints:)
+	FString track_points_name;
 };

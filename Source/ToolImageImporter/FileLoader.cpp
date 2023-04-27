@@ -9,7 +9,9 @@
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
+FString FileLoader::name_("");
 FileLoader::FileLoader(){
+	is_opened_ = false;
 }
 
 FileLoader::~FileLoader(){
@@ -20,7 +22,7 @@ bool ReadFileInfoApp(const FString& dialog_name_, FString& file_name) {
 	FString dialog_name = dialog_name_;
 	FString default_file = "";
 	FString file_types = "";
-	TArray<FString> outfile_names;			//stores the file
+	TArray<FString> outfile_names;//stores the file
 	uint32 flags_ = 1;
 	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
 	if (fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names)) {
@@ -35,6 +37,7 @@ void FileLoader::OpenApplication() {
 	FString dialog_name = "Open Application";
 	FString return_name;
 	if (ReadFileInfoApp(dialog_name, return_name)) {
+		is_opened_ = true;
 		name_ = return_name;
 		const TCHAR* name_char_ = *name_;
 		FProcHandle Proc = FPlatformProcess::CreateProc(name_char_, nullptr, true, false, false, nullptr, 0, *FPaths::GetPath(name_), nullptr);
@@ -43,5 +46,5 @@ void FileLoader::OpenApplication() {
 			FPlatformProcess::CloseProc(Proc);
 		}
 	}
+	FString* address = &name_;
 }
-
