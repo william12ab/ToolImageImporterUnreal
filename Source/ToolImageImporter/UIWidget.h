@@ -41,8 +41,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* lap_timer_text;
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* Label;
-	UPROPERTY(meta = (BindWidget))
 		class UButton* test_button;
 	UPROPERTY(meta = (BindWidget))
 		class UImage* image_slot_1;
@@ -94,5 +92,5 @@ protected:
 	int minutes;
 	int seconds;
 	float point_seconds;
-
+	int point_sec_int;
 };

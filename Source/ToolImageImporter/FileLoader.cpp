@@ -43,6 +43,5 @@ void FileLoader::OpenApplication() {
 			FPlatformProcess::CloseProc(Proc);
 		}
 	}
-	//C:/Users/willu/Desktop/SFML_RBS/Executable/final.png
 }
 

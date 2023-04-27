@@ -13,7 +13,6 @@ void UUIWidget::NativeConstruct(){
 	s_ = 20.0f;		//distance between verts in proc mesh
 	m_ = 7;			//division of height
 	scaling_down_ = 10.0f;		//scale factor of everything, so 8 times what it is now
-	Label->SetText(FText::FromString("Plane Generator"));
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
@@ -129,7 +128,6 @@ void UUIWidget::CreateFoilage(){
 	}
 	CreateSpline();
 	FillInGaps();
-
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
@@ -301,8 +299,8 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 		float lap_time = vehicle_pawn->GetLapTimer();
 
 		if (lap_time>60){
-			minutes++;
-			lap_time -=60;
+			minutes = ((int)lap_time / 60);
+			lap_time -=(60*minutes);
 			seconds = (int)lap_time;
 			lap_time -= seconds;
 			point_seconds = lap_time;
@@ -311,12 +309,14 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 			seconds = (int)lap_time;
 			lap_time -= seconds;
 			point_seconds = lap_time;
+			point_seconds *= 1000;
+			point_sec_int = (int)point_seconds;
 		}
 		FString timer_string = FString::FromInt(minutes);
 		timer_string += ":";
 		timer_string += FString::FromInt(seconds);
 		timer_string += ":";
-		timer_string += FString::SanitizeFloat(point_seconds);
+		timer_string += FString::FromInt(point_sec_int);
 		lap_timer_text->SetText(FText::FromString(timer_string));
 		if (lap_time>3.0f){
 			for(int i=0;i<images_.Num();i++){
