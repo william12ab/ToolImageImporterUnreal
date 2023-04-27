@@ -34,16 +34,12 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
 	Vehicle4W->WheelSetups[0].BoneName = FName("FL");
 	Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-
 	Vehicle4W->WheelSetups[1].WheelClass = UVehicleFrontWheel::StaticClass();
 	Vehicle4W->WheelSetups[1].BoneName = FName("FR");
 	Vehicle4W->WheelSetups[1].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-
-	
 	Vehicle4W->WheelSetups[2].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[2].BoneName = FName("RR");
 	Vehicle4W->WheelSetups[2].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-
 	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);

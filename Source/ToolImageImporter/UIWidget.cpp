@@ -9,8 +9,7 @@
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
 
-void UUIWidget::NativeConstruct()
-{
+void UUIWidget::NativeConstruct(){
 	Super::NativeConstruct();
 	w_ = 4;
 	h_ = 4;
@@ -22,18 +21,18 @@ void UUIWidget::NativeConstruct()
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
+	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
 	point_type = false;//remove this
 	FString heightmap_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/noise_layer.png";
 	FString track_points_file_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/track_points.txt";
-	level_loader.ReadFileInfo(heightmap_name, h_, w_);
+	m_colors= level_loader.ReadFileInfo(heightmap_name, h_, w_);
 	GeneratePlane();
 	point_type = level_loader.ReadTrackPoints(track_points_file_name,track_points,control_points);
 	CreateTrack();
 
-	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 	counter_ = 0.0f;//for resetting postion
-	is_level_spawnned = false;//see .h
+	is_level_spawnned = true;//see .h
 
 	//ui images
 	images_.Add(image_slot_1);
