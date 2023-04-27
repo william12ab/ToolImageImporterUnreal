@@ -22,17 +22,26 @@ void UUIWidget::NativeConstruct()
 	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
 	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
-	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	counter_ = 0.0f;
-	point_type = false;
-	is_level_spawnned = false;
 
+	point_type = false;//remove this
+	FString heightmap_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/noise_layer.png";
+	FString track_points_file_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/track_points.txt";
+	level_loader.ReadFileInfo(heightmap_name, h_, w_);
+	GeneratePlane();
+	point_type = level_loader.ReadTrackPoints(track_points_file_name,track_points,control_points);
+	CreateTrack();
+
+	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
+	counter_ = 0.0f;//for resetting postion
+	is_level_spawnned = false;//see .h
+
+	//ui images
 	images_.Add(image_slot_1);
 	images_.Add(image_slot_2);
 	images_.Add(image_slot_3);
 	images_.Add(image_slot_4);
 	images_.Add(image_slot_5);
-
+	//for timer
 	minutes=0;
 	seconds=0;
 	point_seconds=0.0f;
@@ -134,8 +143,7 @@ void UUIWidget::OnClickHeightmapButton(){
 	ReadFileInfo(name_);
 }
 
-void UUIWidget::LoadTrackPointsIn()
-{
+void UUIWidget::LoadTrackPointsIn(){
 	FString n = "Open New Track.";
 	FString outfile_names;
 	auto b= ReadFileInfoA(n, outfile_names);
@@ -181,8 +189,7 @@ void UUIWidget::CreateTrack(){
 	CreateFoilage();
 }
 
-void UUIWidget::ReadFileInfo(const FString& name__)
-{
+void UUIWidget::ReadFileInfo(const FString& name__){
 	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(name__);
 	texture_->AddToRoot();
 	

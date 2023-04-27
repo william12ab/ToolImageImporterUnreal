@@ -14,6 +14,7 @@
 #include "VehicleController.h"
 #include "StartDecalActor.h"
 #include "TriggerBoxDecal.h"
+#include "HeightmapHandler.h"
 #include "UIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
@@ -76,14 +77,14 @@ protected:
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
 	float scaling_down_;//scaling factor, so multiples everything so set scale
-	FString name_;
+	FString name_;//name of file
 	bool point_type; //used for reading the data from file and choosing what points to use in generation. true = t.p, false = c.p
 
 	AMyProceduralMesh* new_temp;//new mesh
-	AStartDecalActor* start_decal;
-	AStartDecalActor* end_decal;
-	ATriggerBoxDecal* box_start;
-	ATriggerBoxDecal* box_end;
+	AStartDecalActor* start_decal;//decal start
+	AStartDecalActor* end_decal;//decal end
+	ATriggerBoxDecal* box_start;//trigger box 
+	ATriggerBoxDecal* box_end;//trigger box
 
 	TArray<float> m_colors;//heightmapcolours
 	UTexture* t_;//texutre obj for terrain 
@@ -97,8 +98,9 @@ protected:
 	float counter_;//time counter for reset
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
 
+	HeightmapHandler level_loader;
 
-	bool is_level_spawnned;
+	bool is_level_spawnned;//singalling if everything is generated
 
 	//for UI
 	int minutes;
