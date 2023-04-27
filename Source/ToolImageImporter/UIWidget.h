@@ -21,11 +21,7 @@ class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
 {
 	GENERATED_BODY()
 protected:
-	void LoadTrackPointsIn();		//lodas in the text file and parses the data into a vector2d
-	void OnClickHeightmapButton();		//calls readfile info onn button heightmap set
 	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
-	void DeletePlane();			//deletes the plane
-	void ReadFileInfo(const FString& name_);		//reads file for height map also calls generate plane and modi verts.
 	void CreateTrack();//creates track
 	void CreateFoilage();//creates foilage
 	void CreateSpline();//spine
@@ -45,10 +41,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* lap_timer_text;
 	UPROPERTY(meta = (BindWidget))
-		class UButton* delete_button;
-	UPROPERTY(meta = (BindWidget))
-		class UButton* file_button;
-	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* Label;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* test_button;
@@ -62,10 +54,6 @@ protected:
 		class UImage* image_slot_4;
 	UPROPERTY(meta = (BindWidget))
 		class UImage* image_slot_5;
-	UFUNCTION()
-		void OnClickLoadNewTrack();		//on click load button
-	UFUNCTION()
-		void OnClickDelete();		//calls delete
 	UFUNCTION()
 		void OnTest();//new heightmap with more verts merge this
 

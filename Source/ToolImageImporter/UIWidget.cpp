@@ -1,6 +1,3 @@
- // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "UIWidget.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
@@ -17,13 +14,10 @@ void UUIWidget::NativeConstruct(){
 	m_ = 7;			//division of height
 	scaling_down_ = 10.0f;		//scale factor of everything, so 8 times what it is now
 	Label->SetText(FText::FromString("Plane Generator"));
-
-	delete_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickDelete);
-	file_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnClickLoadNewTrack);
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
-	point_type = false;//remove this
+	point_type = false;
 	FString heightmap_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/noise_layer.png";
 	FString track_points_file_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/track_points.txt";
 	m_colors= level_loader.ReadFileInfo(heightmap_name, h_, w_);
@@ -46,27 +40,9 @@ void UUIWidget::NativeConstruct(){
 	point_seconds=0.0f;
 }
 
-bool ReadFileInfoA(const FString& dialog_name_, FString &file_name){
-	FString default_path = "";
-	FString dialog_name = dialog_name_;
-	FString default_file = "";
-	FString file_types = "";
-	TArray<FString> outfile_names;			//stores the file
-	uint32 flags_ = 1;
-	IDesktopPlatform* fpl = FDesktopPlatformModule::Get();
-	if (fpl->OpenFileDialog(0, dialog_name, default_path, default_file, file_types, flags_, outfile_names)) {
-		file_name = outfile_names[0];
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	
-
 	//UI FUNCS
 	StartTextFunction();
 	HandBreakTextFunction();
@@ -84,7 +60,6 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 			index_recorder = i;
 		}
 	}
-	
 	//if pressed, start timer, if held for 1.5sec, and v <5, put back to correct place.
 	if (vehicle_pawn->GetPressed()) {
 		counter_ += InDeltaTime;
@@ -105,16 +80,6 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	}
 }
 
-void UUIWidget::OnClickLoadNewTrack(){
-	FString dialog_name = "Open Heightmap";
-	FString return_name;
-	if (ReadFileInfoA(dialog_name, return_name)){
-		name_ = return_name;
-		OnClickHeightmapButton();
-			LoadTrackPointsIn();
-	}
-}
-
 void UUIWidget::GeneratePlane(){
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
@@ -123,90 +88,9 @@ void UUIWidget::GeneratePlane(){
 	p_mesh->CreateMesh(h_,w_,s_);
 }
 
-void UUIWidget::OnClickDelete(){
-	DeletePlane();
-}
-
-void UUIWidget::DeletePlane(){
-
-	if (p_mesh){
-		p_mesh->Destroy();
-	}
-	name_.Empty();
-	m_colors.Empty();
-	track_points.Empty();
-}
-
-
-void UUIWidget::OnClickHeightmapButton(){
-	ReadFileInfo(name_);
-}
-
-void UUIWidget::LoadTrackPointsIn(){
-	FString n = "Open New Track.";
-	FString outfile_names;
-	auto b= ReadFileInfoA(n, outfile_names);
-	IPlatformFile& file_manager= FPlatformFileManager::Get().GetPlatformFile();
-	TArray<FString> array_;
-	if (file_manager.FileExists(*outfile_names)){
-		if (FFileHelper::LoadFileToStringArray(array_, *outfile_names)){
-		}
-		else{
-		}
-	}
-	bool found_ = false;
-	for (int i = 0; i < array_.Num(); i++){
-		if (i > 0) {
-			if (array_[i].Contains(FString("end"))) {
-				found_ = true;
-			}
-			else {
-				if (!found_) {
-					auto index_ = array_[1].Find(" ");
-					control_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
-				}
-				else {
-					auto index_ = array_[1].Find(" ");
-					track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
-				}
-			}
-		}
-		else{
-			if (array_[0] == "t.p") {
-				point_type = true;
-			}
-			else {
-				point_type = false;
-			}
-		}
-	}
-	CreateTrack();
-}
-
 void UUIWidget::CreateTrack(){
 	p_mesh->ModiVerts(m_colors, m_);
 	CreateFoilage();
-}
-
-void UUIWidget::ReadFileInfo(const FString& name__){
-	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(name__);
-	texture_->AddToRoot();
-	
-	//since grey scale already. each rgb component should be greyscale value. therefore no need to add up and divide by 3.
-	//rgb comp is uint8 value. so, use this as the height and modifiy the height of terrain.
-	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
-	h_ = texture_->PlatformData->Mips[0].SizeY;
-	w_ = texture_->PlatformData->Mips[0].SizeX;
-	for (int32 y_ = 0; y_ < h_; y_++) {
-		for (int32 x_ = 0; x_ < w_; x_++) {
-			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
-			float pixel_colour_float = pixel_color.R;
-			m_colors.Add(pixel_colour_float);
-		}
-	}
-	texture_->PlatformData->Mips[0].BulkData.Unlock();
-	texture_->UpdateResource();
-	GeneratePlane();
 }
 
 void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_saftey_p, const int& index_t_p){
