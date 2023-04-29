@@ -21,4 +21,8 @@ public:
 	// Begin AHUD interface
 	virtual void DrawHUD() override;
 	// End AHUD interface
+
+protected:
+	class UTexture2D* pause_background_tex;
+
 };
