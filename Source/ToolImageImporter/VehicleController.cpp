@@ -1,4 +1,3 @@
-
 #include "VehicleController.h"
 #include "VehicleFrontWheel.h"
 #include "VehicleReerWheel.h"
@@ -18,7 +17,6 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
-
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
@@ -43,12 +41,8 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-	
 	Vehicle4W->DragCoefficient = 0.20f;
-
 	Vehicle4W->Mass = 1200.f;
-	
-
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
 	Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
@@ -58,11 +52,8 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
 	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.5f;
 	//torque
-
-	
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->MaxEngineRPM = 6000.f;
-	
 	//change those values at 0 rpm we have 500 torque
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 40.f*6.0f);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 80 * 6.0f);
@@ -104,9 +95,6 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.5;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.0f,3.0f,1.0f);
-	
-	
-	
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -120,7 +108,6 @@ AVehicleController::AVehicleController(){
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = true;
 	Camera->FieldOfView = 90.f;
-	
 	//inside
 	InternalCameraOrigin = FVector(-45.0f, 35.0f, 120.0f);
 	InternalCameraBase = CreateDefaultSubobject<USceneComponent>(TEXT("InternalCameraBase"));
@@ -130,10 +117,8 @@ AVehicleController::AVehicleController(){
 	InternalCamera->bUsePawnControlRotation = false;
 	InternalCamera->FieldOfView = 90.f;
 	InternalCamera->SetupAttachment(InternalCameraBase);
-
 	cameras.Add(Camera);
 	cameras.Add(InternalCamera);
-
 	//defaults
 	left_=0.0f, right_=0.0f, vertical_=0.0f;
 	yaw_ = 0.0f;
@@ -145,11 +130,9 @@ AVehicleController::AVehicleController(){
 	InternalCamera->Deactivate();
 	reverse_p = false;
 	max_camera_rot = 80.f;
-
 	//hud
 	GearDisplayReverseColor = FColor(255, 0, 0, 255);
 	GearDisplayColor = FColor(255, 255, 255, 255);
-
 	// Colors for the in-car gear display. One for normal one for reverse
 	GearDisplayReverseColor = FColor(255, 0, 0, 255);
 	GearDisplayColor = FColor(255, 255, 255, 255);
@@ -170,21 +153,17 @@ AVehicleController::AVehicleController(){
 		particle_arr[i]->SetRelativeLocation(local_loc);
 		local_loc.Y *= -1;
 	}
-	
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("ParticleSystem'/Game/Effects/Effects/VehicleEffects/P_dirt_wheel_kickup.P_dirt_wheel_kickup'"));
 	if (ParticleAsset.Succeeded()){
 		particle_arr[0]->SetTemplate(ParticleAsset.Object);
 		particle_arr[1]->SetTemplate(ParticleAsset.Object);
 	}
-
-	
 	static ConstructorHelpers::FObjectFinder<USoundCue> EngineSoundCueObj(TEXT("SoundCue'/Game/Sound/Engine.Engine'"));
 	if (EngineSoundCueObj.Succeeded()){
 		EngineSoundCue = EngineSoundCueObj.Object;
 		EngineComp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
 		EngineComp->SetupAttachment(RootComponent);
 	}
-
 	//starting
 	is_starting_ = false;
 	is_stop = false;
@@ -208,7 +187,6 @@ void AVehicleController::BeginPlay() {
 	else {
 		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
 	}
-
 	GetVehicleMovement()->MaxEngineRPM = 6000.f;
 	GetVehicleMovementComponent()->MaxEngineRPM = 6000.f;
 }
@@ -223,7 +201,6 @@ void AVehicleController::Tick(float DeltaTime) {
 	else{
 		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
 	}
-	
 	//for parrticels
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	if (KPH>2.f){
@@ -236,7 +213,6 @@ void AVehicleController::Tick(float DeltaTime) {
 		ParticleSystemRightWheel->SetActive(false);
 		ParticleSystemLeftWheel->SetActive(false);
 	}
-
 	//for start
 	KPH_over = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	KPH_int_ = FMath::FloorToInt(KPH_over);
@@ -433,9 +409,6 @@ float AVehicleController::GetVelocityFromComp() {
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f; 
 	return KPH; 
 }
-
-
-
 void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	is_starting_ = true;
 	auto ss=OtherActor->GetName();
@@ -443,8 +416,6 @@ void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 		is_end = true;
 	}
 }
-
-
 void AVehicleController::StartFunction(const float& dt) {
 	if (is_start_countdown){
 		starting_counter += dt;
@@ -454,5 +425,4 @@ void AVehicleController::StartFunction(const float& dt) {
 		}
 	}
 }
-
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

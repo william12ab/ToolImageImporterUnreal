@@ -69,6 +69,9 @@ public:
 	float GetLapTimer() { return lap_counter; }
 	bool GetBoolEnd() { return is_end; }
 	bool GetBoolBeginLap() { return is_begin_lap; }
+
+
+	void OnPause();
 protected:
 
 	virtual void BeginPlay() override;
@@ -91,12 +94,9 @@ protected:
 		UParticleSystemComponent* ParticleSystemLeftWheel;
 
 	TArray<UParticleSystemComponent*> particle_arr;
-
 	UAudioComponent* EngineComp;
-
 	//array of cameras used for swapping
 	TArray<UCameraComponent*> cameras;
-
 	//defaults these control camera stuff
 	float pitch_;
 	float yaw_;
@@ -104,14 +104,11 @@ protected:
 	float left_, right_, vertical_;
 	float max_camera_rot;
 	bool reverse_p;//used for keeping track of if camera is in resever or not
-
 	//used for resetting position
 	int index_recorder;
 	FVector last_point;
 	bool pressed_;
 	float counter_;
-
-
 	//used for start
 	bool is_starting_;//used for checking if car is on the line
 	bool is_stop;//used for checking if car is at a stop
@@ -121,8 +118,6 @@ protected:
 	float starting_counter;//starting counter for beging
 	bool is_begin_lap;//used for resetting input.
 	bool is_stop_display_start_text;
-
-
 	//used for timer lap
 	float lap_counter;
 	bool is_end;

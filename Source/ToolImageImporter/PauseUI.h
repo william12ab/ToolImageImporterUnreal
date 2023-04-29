@@ -10,7 +10,6 @@ class TOOLIMAGEIMPORTER_API UPauseUI : public UUserWidget
 protected:
 	//functions
 	void NativeConstruct() override;
-
 	//ui properties
 	UPROPERTY(meta = (BindWidget))
 		class UImage* background_;
