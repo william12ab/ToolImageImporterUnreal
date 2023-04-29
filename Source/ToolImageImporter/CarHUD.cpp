@@ -32,7 +32,7 @@ void ACarHUD::DrawHUD(){
 	AVehicleController* Vehicle = Cast<AVehicleController>(GetOwningPawn());
 	if ((Vehicle != nullptr) ){
 		FVector2D ScaleVec(HUDYRatio * 1.4f, HUDYRatio * 1.4f);
-		DrawPauseMenu(ScaleVec);
+		//DrawPauseMenu(ScaleVec);
 		// Speed
 		FCanvasTextItem SpeedTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 455), Vehicle->SpeedDisplayString, HUDFont, FLinearColor::White);
 		SpeedTextItem.Scale = ScaleVec;

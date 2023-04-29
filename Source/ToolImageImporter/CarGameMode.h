@@ -2,6 +2,7 @@
 
 #pragma once
 #include "GameFramework/GameMode.h"
+#include "PauseUI.h"
 #include "CarGameMode.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API ACarGameMode : public AGameMode
@@ -10,9 +11,10 @@ class TOOLIMAGEIMPORTER_API ACarGameMode : public AGameMode
 public:
 	ACarGameMode();
 
-protected:
-	UPROPERTY(EditAnywhere, Category = "Class Types")
-		TSubclassOf<UUserWidget> WidgetClass;
+protected:    
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+		TSubclassOf<UPauseUI> SomeWidgetClass = nullptr;
+
 	UPROPERTY(VisibleInstanceOnly, Category = "Runtime")
 		class UPauseUI*pause_ui;
 
