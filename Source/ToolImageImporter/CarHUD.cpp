@@ -24,7 +24,7 @@ void ACarHUD::DrawHUD(){
 	// Calculate ratio from 720p
 	const float HUDXRatio = Canvas->SizeX / 1280.f;
 	const float HUDYRatio = Canvas->SizeY / 720.f;
-		// Get our vehicle so we can check if we are in car. If we are we don't want onscreen HUD
+	// Get our vehicle so we can check if we are in car. If we are we don't want onscreen HUD
 	AVehicleController* Vehicle = Cast<AVehicleController>(GetOwningPawn());
 	if ((Vehicle != nullptr) )
 	{
@@ -39,5 +39,11 @@ void ACarHUD::DrawHUD(){
 		FCanvasTextItem GearTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 500.f), Vehicle->GearDisplayString, HUDFont, Vehicle->bInReverseGear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
 		GearTextItem.Scale = ScaleVec;
 		Canvas->DrawItem(GearTextItem);
+		//DrawPauseMenu(ScaleVec);
 	}
 }
+
+void ACarHUD::DrawPauseMenu(const FVector2D& scale_vec) {	
+}
+
+

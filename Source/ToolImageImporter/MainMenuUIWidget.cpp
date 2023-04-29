@@ -19,6 +19,7 @@ void UMainMenuUIWidget::OnClickPlay() {
 
 void UMainMenuUIWidget::OnClickTestArena() {
 	UE_LOG(LogTemp, Warning, TEXT("test a"));
+	UGameplayStatics::OpenLevel(GetWorld(), "TestArenaLevel");
 }
 
 void UMainMenuUIWidget::OnClickOptions() {
