@@ -272,6 +272,7 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("CameraReverse", IE_Released, this, &AVehicleController::CameraReverseViewRelease);
 	PlayerInputComponent->BindAction("GearUp", IE_Pressed, this, &AVehicleController::GearUp);
 	PlayerInputComponent->BindAction("GearDown", IE_Pressed, this, &AVehicleController::GearDown);
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AVehicleController::OnPause);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
@@ -334,6 +335,10 @@ void AVehicleController::LookLeft(float AxisValue){
 void AVehicleController::LookRight(float AxisValue){
 		right_ = AxisValue;
 }
+void AVehicleController::OnPause(){
+	UE_LOG(LogTemp, Warning, TEXT("pause"));
+
+}
 void AVehicleController::GearUp() {
 	GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear()+1, true);
 }
@@ -382,7 +387,6 @@ void AVehicleController::RotatarFinder(const float& d_one, const float& d_two, f
 void AVehicleController::RestartPosition() {
 	pressed_ = true;
 }
-
 void AVehicleController::Release() {
 	pressed_ = false;
 	counter_ = 0.0f;
