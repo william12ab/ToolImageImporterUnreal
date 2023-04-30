@@ -16,6 +16,8 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	UFUNCTION()
 		void ReturnToMenu();
+	UFUNCTION()
+		void ReturnToGame();
 	void RenderPauseDisplay();
 	//ui properties
 	UPROPERTY(BlueprintReadWrite,meta = (BindWidget))
@@ -24,6 +26,10 @@ protected:
 		class UTextBlock* return_to_menu_text;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* return_to_menu_button;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		class UTextBlock* return_to_game_text;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		class UButton* return_to_game_button;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UCanvasPanel* wrapper_;
 

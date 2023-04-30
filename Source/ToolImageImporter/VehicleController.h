@@ -70,7 +70,7 @@ public:
 	bool GetBoolEnd() { return is_end; }
 	bool GetBoolBeginLap() { return is_begin_lap; }
 	const bool GetIsPaused() { return is_paused; }
-
+	void SetPause(bool p_) { is_paused = p_; }
 	void OnPause();
 	void UnPause();
 protected:

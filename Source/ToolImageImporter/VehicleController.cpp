@@ -337,7 +337,6 @@ void AVehicleController::LookRight(float AxisValue){
 		right_ = AxisValue;
 }
 void AVehicleController::OnPause(){
-	//is_paused = true;
 	if (is_paused){
 		is_paused = false;
 	}
