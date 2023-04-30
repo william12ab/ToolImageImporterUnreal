@@ -173,6 +173,7 @@ AVehicleController::AVehicleController(){
 	lap_counter = 0.0f;
 	is_end = false;
 	is_stop_display_start_text = false;
+	is_paused = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -336,8 +337,16 @@ void AVehicleController::LookRight(float AxisValue){
 		right_ = AxisValue;
 }
 void AVehicleController::OnPause(){
-	UE_LOG(LogTemp, Warning, TEXT("pause"));
-
+	//is_paused = true;
+	if (is_paused){
+		is_paused = false;
+	}
+	else {
+		is_paused = true;
+	}
+}
+void AVehicleController::UnPause() {
+	is_paused = false;
 }
 void AVehicleController::GearUp() {
 	GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear()+1, true);

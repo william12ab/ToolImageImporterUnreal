@@ -6,14 +6,12 @@
 ACarGameMode::ACarGameMode(){
 	DefaultPawnClass = AVehicleController::StaticClass();
 	HUDClass = ACarHUD::StaticClass();
-
-	
 	ConstructorHelpers::FClassFinder<UUserWidget> WidgetClassFinder(TEXT("/Game/PauseBP"));
 	if (WidgetClassFinder.Succeeded()){
 		SomeWidgetClass = WidgetClassFinder.Class;
 	}
 	if (SomeWidgetClass == NULL) {
-		UE_LOG(LogTemp, Warning, TEXT("faiu"));
+		UE_LOG(LogTemp, Warning, TEXT("failed"));
 	}
 }
 

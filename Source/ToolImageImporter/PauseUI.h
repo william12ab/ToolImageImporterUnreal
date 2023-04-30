@@ -2,6 +2,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
+#include "Components/CanvasPanel.h"
+#include "VehicleController.h"
 #include "PauseUI.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UPauseUI : public UUserWidget
@@ -11,8 +13,10 @@ class TOOLIMAGEIMPORTER_API UPauseUI : public UUserWidget
 protected:
 	//functions
 	void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	UFUNCTION()
 		void ReturnToMenu();
+	void RenderPauseDisplay();
 	//ui properties
 	UPROPERTY(BlueprintReadWrite,meta = (BindWidget))
 		class UImage* background_;
@@ -20,5 +24,8 @@ protected:
 		class UTextBlock* return_to_menu_text;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* return_to_menu_button;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		class UCanvasPanel* wrapper_;
 
+	AVehicleController* vehicle_pawn;//ref for pause
 };

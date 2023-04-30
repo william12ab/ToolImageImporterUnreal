@@ -69,9 +69,10 @@ public:
 	float GetLapTimer() { return lap_counter; }
 	bool GetBoolEnd() { return is_end; }
 	bool GetBoolBeginLap() { return is_begin_lap; }
-
+	const bool GetIsPaused() { return is_paused; }
 
 	void OnPause();
+	void UnPause();
 protected:
 
 	virtual void BeginPlay() override;
@@ -121,5 +122,7 @@ protected:
 	//used for timer lap
 	float lap_counter;
 	bool is_end;
+	//used for pause
+	bool is_paused;
 };
 
