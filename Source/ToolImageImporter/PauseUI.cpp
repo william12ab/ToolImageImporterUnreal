@@ -4,6 +4,7 @@ void UPauseUI::NativeConstruct() {
 	Super::NativeConstruct();
 	return_to_menu_button->OnClicked.AddUniqueDynamic(this, &UPauseUI::ReturnToMenu);
 	return_to_game_button->OnClicked.AddUniqueDynamic(this, &UPauseUI::ReturnToGame);
+	restart_game_button->OnClicked.AddUniqueDynamic(this, &UPauseUI::RestartFunction);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 }
 void UPauseUI::ReturnToMenu() {
@@ -26,4 +27,15 @@ void UPauseUI::RenderPauseDisplay() {
 void UPauseUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	RenderPauseDisplay();
+}
+
+void UPauseUI::RestartFunction() {
+	FString temp_level_name = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
+	UE_LOG(LogTemp, Warning, TEXT("na: %s"), *temp_level_name);
+	if (temp_level_name =="Main"){
+		
+	}
+	else if (temp_level_name=="TestArenaLevel"){
+
+	}
 }
