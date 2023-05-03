@@ -1,4 +1,5 @@
 #include "PauseUI.h"
+#include "GameFramework/PlayerStart.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 void UPauseUI::NativeConstruct() {
 	Super::NativeConstruct();
@@ -36,6 +37,11 @@ void UPauseUI::RestartFunction() {
 		
 	}
 	else if (temp_level_name=="TestArenaLevel"){
-
+		TArray<AActor*> temp_player_start;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), temp_player_start);
+		auto f= temp_player_start[0]->GetActorLocation();
+		vehicle_pawn->TeleportTo(f, FRotator(0.0f, 0.f, 0.0f), false, false);
+		vehicle_pawn->SetPause(false);
+		vehicle_pawn->;
 	}
 }
