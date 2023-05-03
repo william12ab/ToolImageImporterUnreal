@@ -26,6 +26,5 @@ void UPauseUI::RenderPauseDisplay() {
 void UPauseUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 	RenderPauseDisplay();
-	ListenForInputAction("Pause", IE_Pressed, true, FOnInputAction::BindUFunction(this, &UPauseUI::ReturnToGame));
 	
 }

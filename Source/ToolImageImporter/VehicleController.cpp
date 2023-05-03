@@ -273,7 +273,7 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("CameraReverse", IE_Released, this, &AVehicleController::CameraReverseViewRelease);
 	PlayerInputComponent->BindAction("GearUp", IE_Pressed, this, &AVehicleController::GearUp);
 	PlayerInputComponent->BindAction("GearDown", IE_Pressed, this, &AVehicleController::GearDown);
-	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AVehicleController::OnPause);
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AVehicleController::OnPause).bExecuteWhenPaused=true;
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
