@@ -10,19 +10,13 @@ ACarGameMode::ACarGameMode(){
 	if (WidgetClassFinder.Succeeded()){
 		SomeWidgetClass = WidgetClassFinder.Class;
 	}
-	if (SomeWidgetClass == NULL) {
-		UE_LOG(LogTemp, Warning, TEXT("failed"));
-	}
 }
-
-
 void ACarGameMode::BeginPlay() {
 	Super::BeginPlay();
 	if (IsValid(SomeWidgetClass)) {
 		pause_ui = CreateWidget<UPauseUI>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SomeWidgetClass);
 		if (pause_ui) {
 			pause_ui->AddToViewport();
-			UE_LOG(LogTemp, Warning, TEXT("valid"));
 		}
 	}
 }

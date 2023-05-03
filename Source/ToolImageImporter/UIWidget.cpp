@@ -297,7 +297,11 @@ void UUIWidget::CountdownImageFunction(const float &dt) {
 void UUIWidget::LapTimerFunction(const float& dt) {
 	if (vehicle_pawn->GetBoolBeginLap()) {
 		float lap_time = vehicle_pawn->GetLapTimer();
-
+		if (lap_time > 3.0f) {
+			for (int i = 0; i < images_.Num(); i++) {
+				images_[i]->SetVisibility(ESlateVisibility::Collapsed);
+			}
+		}
 		if (lap_time>60){
 			minutes = ((int)lap_time / 60);
 			lap_time -=(60*minutes);
@@ -318,10 +322,5 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 		timer_string += ":";
 		timer_string += FString::FromInt(point_sec_int);
 		lap_timer_text->SetText(FText::FromString(timer_string));
-		if (lap_time>3.0f){
-			for(int i=0;i<images_.Num();i++){
-				images_[i]->SetVisibility(ESlateVisibility::Collapsed);
-			}
-		}
 	}
 }
