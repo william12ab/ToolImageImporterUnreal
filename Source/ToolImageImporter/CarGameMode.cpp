@@ -16,7 +16,7 @@ void ACarGameMode::BeginPlay() {
 	if (IsValid(SomeWidgetClass)) {
 		pause_ui = CreateWidget<UPauseUI>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SomeWidgetClass);
 		if (pause_ui) {
-			pause_ui->AddToViewport();
+			pause_ui->AddToViewport(9990);
 		}
 	}
 }
