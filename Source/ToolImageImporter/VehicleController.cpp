@@ -316,7 +316,9 @@ void AVehicleController::Handbrake(){
 void AVehicleController::HandbrakeRelease() {
 	GetVehicleMovementComponent()->SetHandbrakeInput(false);
 }
-void AVehicleController::Restart(){
+void AVehicleController::Restart() {
+	
+	
 }
 void AVehicleController::MoveForward(float AxisValue){
 	if (!is_starting_){

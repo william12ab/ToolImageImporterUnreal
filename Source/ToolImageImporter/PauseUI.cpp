@@ -32,7 +32,6 @@ void UPauseUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 
 void UPauseUI::RestartFunction() {
 	FString temp_level_name = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
-	UE_LOG(LogTemp, Warning, TEXT("na: %s"), *temp_level_name);
 	if (temp_level_name =="Main"){
 		
 	}
@@ -42,6 +41,6 @@ void UPauseUI::RestartFunction() {
 		auto f= temp_player_start[0]->GetActorLocation();
 		vehicle_pawn->TeleportTo(f, FRotator(0.0f, 0.f, 0.0f), false, false);
 		vehicle_pawn->SetPause(false);
-		vehicle_pawn->;
+		vehicle_pawn->Restart();
 	}
 }
