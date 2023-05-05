@@ -6,8 +6,8 @@
 #include "UObject/ConstructorHelpers.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 UVehicleReerWheel::UVehicleReerWheel(){
-	ShapeRadius = 39.f;
-	ShapeWidth = 19.0f;
+	ShapeRadius = 32.f;
+	ShapeWidth = 12.50f;
 	bAffectedByHandbrake = true;
 	SteerAngle = 0.f;
 	LongStiffValue=3000.0f;

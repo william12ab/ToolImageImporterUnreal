@@ -21,9 +21,10 @@
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 AVehicleController::AVehicleController(){
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/lowerwheels/Subaru_Impreza_22B_STi__1_.Subaru_Impreza_22B_STi__1_'"));
+	//SkeletalMesh'/Game/Car/correct_size/Subaru_Impreza_22B_STi__CORRECT_SIZE_.Subaru_Impreza_22B_STi__CORRECT_SIZE_'
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/correct_size/Subaru_Impreza_22B_STi__CORRECT_SIZE_.Subaru_Impreza_22B_STi__CORRECT_SIZE_'"));
 	GetMesh()->SetSkeletalMesh(CarMesh.Object);
-	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/lowerwheels/Anim"));
+	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/correct_size/AMINBP"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
 
 	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AVehicleController::OnOverlapBegin);
