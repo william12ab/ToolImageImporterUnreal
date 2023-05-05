@@ -33,14 +33,22 @@ void UPauseUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 void UPauseUI::RestartFunction() {
 	FString temp_level_name = UGameplayStatics::GetCurrentLevelName(GetWorld(), true);
 	if (temp_level_name =="Main"){
-		
+		vehicle_pawn->RestartMainLevel();
+		vehicle_pawn->SetPause(false);
 	}
 	else if (temp_level_name=="TestArenaLevel"){
 		TArray<AActor*> temp_player_start;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), temp_player_start);
 		auto f= temp_player_start[0]->GetActorLocation();
+		
 		vehicle_pawn->TeleportTo(f, FRotator(0.0f, 0.f, 0.0f), false, false);
-		vehicle_pawn->SetPause(false);
 		vehicle_pawn->Restart();
+		vehicle_pawn->SetPause(false);
+		//disable - works but no way to enable, addactorworldoffset - doesnt work.
+		//vehicle_pawn->DisableComponentsSimulatePhysics();
+		//vehicle_pawn->GetComponents();*/
+		//vehicle_pawn->AddActorWorldOffset(f,false,nullptr,ETeleportType::ResetPhysics);
+		//vehicle_pawn->Reset();
+		
 	}
 }

@@ -10,11 +10,11 @@ public:
 	AVehicleController();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
-
+	//sound
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* EngineSoundCue;
 
+	//hud
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
 		FText SpeedDisplayString;
 	/** The current gear as a string (R,N, 1,2 etc) */
@@ -34,13 +34,14 @@ public:
 
 	void RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed);
 	void AngleCap(float& angle_);
-
+	void StartFunction(const float& dt);
 	void UpdateHUDStrings();
 
 	//action maps
 	void Handbrake();
 	void HandbrakeRelease();
 	void Restart();
+	void RestartMainLevel();
 	void SwitchCamera();
 	void ActiveCamera();
 	void RestartPosition();
@@ -55,22 +56,24 @@ public:
 	void LookUp(float AxisValue);
 	void LookLeft(float AxisValue);
 	void LookRight(float AxisValue);
-
+	//setter
 	void SetPressed(bool b_) { pressed_ = b_; }
 	void SetCounter(float c_) { counter_ = c_; }
-
+	void SetIsRestartLevel() { is_restart_level = false; }
+	void SetPause(bool p_) { is_paused = p_; }
+	//getter
 	bool GetPressed() { return pressed_; }
 	float GetCounter() { return counter_; }
 	float GetVelocityFromComp();
 	bool GetBoolStartText() {return is_stop_display_start_text;}
 	bool GetBoolCountdown() {return is_start_countdown;}
-	void StartFunction(const float& dt);
 	float GetCountdown() { return starting_counter; }
 	float GetLapTimer() { return lap_counter; }
 	bool GetBoolEnd() { return is_end; }
 	bool GetBoolBeginLap() { return is_begin_lap; }
 	const bool GetIsPaused() { return is_paused; }
-	void SetPause(bool p_) { is_paused = p_; }
+	const bool GetIsRestartLevel() {return is_restart_level;}
+	//pause
 	void OnPause();
 	void UnPause();
 protected:
@@ -124,5 +127,6 @@ protected:
 	bool is_end;
 	//used for pause
 	bool is_paused;
+	bool is_restart_level;
 };
 

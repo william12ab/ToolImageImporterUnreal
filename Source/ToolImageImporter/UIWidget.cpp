@@ -37,6 +37,8 @@ void UUIWidget::NativeConstruct(){
 	minutes=0;
 	seconds=0;
 	point_seconds=0.0f;
+	counter_countdown=0.0f;
+	index_image=0;
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
@@ -47,6 +49,9 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	HandBreakTextFunction();
 	CountdownImageFunction(InDeltaTime);
 	LapTimerFunction(InDeltaTime);
+
+	//RESTARTING lap
+	RestartLap();
 
 	//collisons for restarting position
 	auto l = vehicle_pawn->GetActorLocation();
@@ -208,6 +213,7 @@ void UUIWidget::CreateSpline(){
 }
 
 void UUIWidget::FixScales(){
+	//setting scales of terrain, spline, water.
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	w_mesh->SetActorScale3D(FVector(30* scaling_down_, 30* scaling_down_, 30* scaling_down_));
@@ -217,15 +223,17 @@ void UUIWidget::FixScales(){
 	auto middle_point = FMath::Lerp(track_spline->GetSEPoints()[0], track_spline->GetSEPoints()[1], 0.5f);
 	middle_point *= scaling_down_;
 	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
-	while (!vehicle_pawn->TeleportTo(middle_point, FRotator(0.0f, angle, 0.0f), false, false)) {
+	starting_position = middle_point;
+	starting_angle = FRotator(0.f, angle, 0.f);
+	while (!vehicle_pawn->TeleportTo(middle_point, starting_angle, false, false)) {
 		middle_point.Z += 1.f;
 	}
+
+
+	//trigger boxes used for end and start of the lap. - for starting and stopping timer etc...
 	auto ss = track_spline->GetSEPoints().Num();
-
-
 	FActorSpawnParameters SpawnInfoDecal;
 	FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-
 	FRotator myRotD(0, 0, 0);
 	FVector myLocD = FVector(track_spline->GetSEPoints()[1]);
 	myLocD *= scaling_down_;
@@ -241,8 +249,7 @@ void UUIWidget::FixScales(){
 	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
 	myLocD.Z -= 85.f;
 	end_decal= GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-
-
+	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
 	is_level_spawnned = true;
 }
@@ -279,8 +286,6 @@ void UUIWidget::HandBreakTextFunction() {
 }
 
 void UUIWidget::CountdownImageFunction(const float &dt) {
-	static float counter_countdown = 0.0f;
-	static int index_image = 0;
 	if (vehicle_pawn->GetBoolCountdown()&&vehicle_pawn->GetBoolBeginLap()==false){
 		counter_countdown += dt;
 		if (counter_countdown>1.f){
@@ -322,5 +327,26 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 		timer_string += ":";
 		timer_string += FString::FromInt(point_sec_int);
 		lap_timer_text->SetText(FText::FromString(timer_string));
+	}
+}
+void UUIWidget::RestartLap() {
+	if (vehicle_pawn->GetIsRestartLevel()){
+		//move pos back to start
+		auto temp_start = starting_position;
+		while (!vehicle_pawn->TeleportTo(temp_start, starting_angle, false, false)) {
+			temp_start.Z += 1.f;
+		}
+		vehicle_pawn->SetIsRestartLevel(); 
+		FString timer_string = FString::FromInt(00);
+		timer_string += ":";
+		timer_string += FString::FromInt(00);
+		timer_string += ":";
+		timer_string += FString::FromInt(00);
+		lap_timer_text->SetText(FText::FromString(timer_string));
+		for (int i = 0; i < images_.Num(); i++) {
+			images_[i]->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		counter_countdown = 0.0f;
+		index_image = 0;
 	}
 }

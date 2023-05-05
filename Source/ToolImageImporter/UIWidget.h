@@ -30,8 +30,9 @@ protected:
 	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function
 	void StartTextFunction();//ui func
 	void HandBreakTextFunction();//ui func
-	void CountdownImageFunction(const float& dt);
-	void LapTimerFunction(const float& dt);
+	void CountdownImageFunction(const float& dt);//displays the traffic light starting images
+	void LapTimerFunction(const float& dt);//for the timer display
+	void RestartLap();//restating
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
@@ -54,8 +55,7 @@ protected:
 		class UImage* image_slot_5;
 	UFUNCTION()
 		void OnTest();//new heightmap with more verts merge this
-
-	TArray<UImage*> images_;
+	TArray<UImage*> images_;//has UI images - the starting countdown set
 
 	AWaterMesh* w_mesh;//water
 	AMyProceduralMesh* p_mesh;		//obj
@@ -65,16 +65,13 @@ protected:
 	float scaling_down_;//scaling factor, so multiples everything so set scale
 	FString name_;//name of file
 	bool point_type; //used for reading the data from file and choosing what points to use in generation. true = t.p, false = c.p
-
 	AMyProceduralMesh* new_temp;//new mesh
 	AStartDecalActor* start_decal;//decal start
 	AStartDecalActor* end_decal;//decal end
 	ATriggerBoxDecal* box_start;//trigger box 
 	ATriggerBoxDecal* box_end;//trigger box
-
 	TArray<float> m_colors;//heightmapcolours
 	UTexture* t_;//texutre obj for terrain 
-
 	TArray<FVector2D> control_points;//control points
 	TArray<FVector2D> track_points;
 	AVehicleController* vehicle_pawn;
@@ -83,10 +80,9 @@ protected:
 	FVector last_point;//used for keeping track of last active point on car
 	float counter_;//time counter for reset
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
-
-	HeightmapHandler level_loader;
-	
-
+	HeightmapHandler level_loader;//for loading map
+	FVector starting_position;//starting position
+	FRotator starting_angle;//starting angle
 
 	bool is_level_spawnned;//singalling if everything is generated
 
@@ -95,4 +91,6 @@ protected:
 	int seconds;
 	float point_seconds;
 	int point_sec_int;
+	float counter_countdown;
+	int index_image;
 };

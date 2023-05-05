@@ -174,6 +174,8 @@ AVehicleController::AVehicleController(){
 	is_end = false;
 	is_stop_display_start_text = false;
 	is_paused = false;
+	//restarting
+	is_restart_level = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -194,7 +196,6 @@ void AVehicleController::BeginPlay() {
 
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
 	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600){
 		EngineComp->SetFloatParameter(FName("RPM"), 600);
@@ -317,8 +318,22 @@ void AVehicleController::HandbrakeRelease() {
 	GetVehicleMovementComponent()->SetHandbrakeInput(false);
 }
 void AVehicleController::Restart() {
-	
-	
+	GetVehicleMovement()->DestroyPhysicsState();
+	GetVehicleMovement()->RecreatePhysicsState();
+	GetVehicleMovementComponent()->DestroyPhysicsState();
+	GetVehicleMovementComponent()->RecreatePhysicsState();
+}
+void AVehicleController::RestartMainLevel() {
+	Restart();
+	is_starting_ = false;
+	is_stop = false;
+	is_start_countdown = false;
+	starting_counter = 0.0f;
+	is_begin_lap = false;
+	lap_counter = 0.0f;
+	is_end = false;
+	is_stop_display_start_text = false;
+	is_restart_level = true;
 }
 void AVehicleController::MoveForward(float AxisValue){
 	if (!is_starting_){
