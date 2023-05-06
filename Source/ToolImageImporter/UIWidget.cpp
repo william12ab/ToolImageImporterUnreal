@@ -311,6 +311,8 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 			seconds = (int)lap_time;
 			lap_time -= seconds;
 			point_seconds = lap_time;
+			point_seconds *= 1000;
+			point_sec_int = (int)point_seconds;
 		}
 		else{
 			seconds = (int)lap_time;

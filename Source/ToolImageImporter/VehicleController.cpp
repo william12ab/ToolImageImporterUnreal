@@ -179,6 +179,9 @@ AVehicleController::AVehicleController(){
 	is_restart_level = false;
 	is_car_stationary = true;
 	is_in_reverse = false;
+
+	//test code
+	speed_timer = 0.0f;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -197,6 +200,8 @@ void AVehicleController::BeginPlay() {
 
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+	//test func
+	SpeedTest(DeltaTime);
 
 	ChangeBrakeSystem();
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
@@ -278,6 +283,7 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("GearUp", IE_Pressed, this, &AVehicleController::GearUp);
 	PlayerInputComponent->BindAction("GearDown", IE_Pressed, this, &AVehicleController::GearDown);
 	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AVehicleController::OnPause).bExecuteWhenPaused=true;
+	PlayerInputComponent->BindAction("RestartTimer", IE_Pressed, this, &AVehicleController::SetTrue);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
 	PlayerInputComponent->BindAxis("Brake", this, &AVehicleController::Brake);
@@ -373,8 +379,8 @@ void AVehicleController::ChangeBrakeSystem() {
 			is_car_stationary = false;
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("station: %s"), (is_car_stationary ? TEXT("true") : TEXT("false")));
-	UE_LOG(LogTemp, Warning, TEXT("reverse: %s"), (is_in_reverse ? TEXT("true") : TEXT("false")));
+	//UE_LOG(LogTemp, Warning, TEXT("station: %s"), (is_car_stationary ? TEXT("true") : TEXT("false")));
+	//UE_LOG(LogTemp, Warning, TEXT("reverse: %s"), (is_in_reverse ? TEXT("true") : TEXT("false")));
 }
 void AVehicleController::MoveRight(float AxisValue){
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
@@ -485,6 +491,21 @@ void AVehicleController::StartFunction(const float& dt) {
 			is_begin_lap = true;
 		}
 	}
+}
+
+void AVehicleController::SpeedTest(const float &dt) {
+	if (GetVelocityFromComp()>0.1f&& GetVelocityFromComp()<60.f){
+		speed_timer += dt;
+	}
+	else{
+		UE_LOG(LogTemp, Warning, TEXT("time: %f"), speed_timer);
+	}
+	
+}
+
+void AVehicleController::SetTrue() {
+	speed_timer = 0.0f;
+	UE_LOG(LogTemp, Warning, TEXT("test"));
 }
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
