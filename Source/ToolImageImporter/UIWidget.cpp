@@ -17,8 +17,6 @@ void UUIWidget::NativeConstruct(){
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
 	point_type = false;
-	FString heightmap_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/noise_layer.png";
-	FString track_points_file_name = "C:/Users/willu/Desktop/SFML_RBS/SFML_RuleBasedSystem/track_points.txt";
 	m_colors= level_loader.ReadFileInfo(h_, w_);
 	GeneratePlane();
 	point_type = level_loader.ReadTrackPoints(track_points,control_points);

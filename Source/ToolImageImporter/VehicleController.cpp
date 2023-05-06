@@ -229,7 +229,7 @@ void AVehicleController::Tick(float DeltaTime) {
 		}
 		else {
 			if (!is_stop) {
-				GetVehicleMovementComponent()->SetThrottleInput(-1);
+				GetVehicleMovementComponent()->SetBrakeInput(1);
 			}
 		}
 		StartFunction(DeltaTime);
