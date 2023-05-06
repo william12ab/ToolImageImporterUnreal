@@ -23,6 +23,8 @@ UVehicleReerWheel::UVehicleReerWheel(){
 	if (TireConfigObj.Succeeded()) {
 		TireConfig = TireConfigObj.Object;
 	}
+	
+	Mass = 9.f;
 }
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
