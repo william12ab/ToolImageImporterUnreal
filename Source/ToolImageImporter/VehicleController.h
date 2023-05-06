@@ -129,5 +129,8 @@ protected:
 	//used for pause
 	bool is_paused;
 	bool is_restart_level;
+	//used for brake system
+	bool is_car_stationary;
+	bool is_in_reverse;
 };
 

@@ -177,6 +177,8 @@ AVehicleController::AVehicleController(){
 	is_paused = false;
 	//restarting
 	is_restart_level = false;
+	is_car_stationary = true;
+	is_in_reverse = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -196,8 +198,7 @@ void AVehicleController::BeginPlay() {
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-
-	
+	ChangeBrakeSystem();
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
 	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600){
 		EngineComp->SetFloatParameter(FName("RPM"), 600);
@@ -341,12 +342,39 @@ void AVehicleController::RestartMainLevel() {
 void AVehicleController::MoveForward(float AxisValue){
 	if (!is_starting_){
 		GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
+		if (AxisValue > 0.01f) {
+			if (bInReverseGear){
+				GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear() + 2, true);
+			}
+			is_in_reverse = false;
+			is_car_stationary = false;
+		}
 	}
 }
 void AVehicleController::Brake(float AxisValue) {
 	if (!is_starting_){
-		GetVehicleMovementComponent()->SetBrakeInput(AxisValue);
+		if (is_car_stationary){
+			GetVehicleMovementComponent()->SetThrottleInput(-AxisValue);
+				is_in_reverse = true;
+		}
+		else {
+			GetVehicleMovementComponent()->SetBrakeInput(AxisValue);
+		}
 	}
+}
+void AVehicleController::ChangeBrakeSystem() {
+	if ((int)GetVelocityFromComp() == 0) {
+		GetVehicleMovement()->bReverseAsBrake = true;
+		is_car_stationary = true;
+	}
+	else {
+		if (!is_in_reverse) {
+			GetVehicleMovement()->bReverseAsBrake = false;
+			is_car_stationary = false;
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("station: %s"), (is_car_stationary ? TEXT("true") : TEXT("false")));
+	UE_LOG(LogTemp, Warning, TEXT("reverse: %s"), (is_in_reverse ? TEXT("true") : TEXT("false")));
 }
 void AVehicleController::MoveRight(float AxisValue){
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
@@ -458,9 +486,5 @@ void AVehicleController::StartFunction(const float& dt) {
 		}
 	}
 }
-void AVehicleController::ChangeBrakeSystem() {
-	if ((int)GetVelocityFromComp()==0){
-		
-	}
-}
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
