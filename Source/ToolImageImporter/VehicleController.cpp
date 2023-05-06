@@ -50,11 +50,10 @@ AVehicleController::AVehicleController(){
 	//differential setup 
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
 	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.5f;
+	Vehicle4W->bReverseAsBrake = false;
 	//torque
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
-	Vehicle4W->MaxEngineRPM = 6000.f;
 	Vehicle4W->EngineSetup.MaxRPM = 8000.f;
-	
 	//change those values at 0 rpm we have 500 torque
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 500);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(500.0f, 550);
@@ -68,15 +67,12 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 550);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 500);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 480);
-
-
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f*1.2f);
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 1.0f*1.2f);
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 1.f);
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 1.f);
-	
 	//gearbox
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
@@ -283,6 +279,7 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AVehicleController::OnPause).bExecuteWhenPaused=true;
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
+	PlayerInputComponent->BindAxis("Brake", this, &AVehicleController::Brake);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &AVehicleController::LookUp);
 	PlayerInputComponent->BindAxis("LookLeft", this, &AVehicleController::LookLeft);
@@ -346,6 +343,11 @@ void AVehicleController::MoveForward(float AxisValue){
 		GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
 	}
 }
+void AVehicleController::Brake(float AxisValue) {
+	if (!is_starting_){
+		GetVehicleMovementComponent()->SetBrakeInput(AxisValue);
+	}
+}
 void AVehicleController::MoveRight(float AxisValue){
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
 }
@@ -381,11 +383,9 @@ void AVehicleController::SwitchCamera() {
 	cameras[0]->Activate();
 	cameras[1]->Deactivate();
 }
-
 void AVehicleController::ActiveCamera() {
 	cameras.Swap(0, 1);
 }
-
 void AVehicleController::AngleCap(float& angle_) {
 	if (angle_ < -max_camera_rot) {
 		angle_ = -max_camera_rot;
@@ -394,7 +394,6 @@ void AVehicleController::AngleCap(float& angle_) {
 		angle_ = max_camera_rot;
 	}
 }
-
 void AVehicleController::RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed){
 	if (d_one == -1.0f) {
 		angle_ -= rot_speed * d_t;
@@ -439,7 +438,6 @@ void AVehicleController::UpdateHUDStrings(){
 		GearDisplayString = (Gear == 0) ? LOCTEXT("N", "N") : FText::AsNumber(Gear);
 	}
 }
-
 float AVehicleController::GetVelocityFromComp() {
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f; 
 	return KPH; 
@@ -458,6 +456,11 @@ void AVehicleController::StartFunction(const float& dt) {
 			is_starting_ = false;
 			is_begin_lap = true;
 		}
+	}
+}
+void AVehicleController::ChangeBrakeSystem() {
+	if ((int)GetVelocityFromComp()==0){
+		
 	}
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

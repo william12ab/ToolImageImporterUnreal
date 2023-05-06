@@ -36,7 +36,7 @@ public:
 	void AngleCap(float& angle_);
 	void StartFunction(const float& dt);
 	void UpdateHUDStrings();
-
+	void ChangeBrakeSystem();
 	//action maps
 	void Handbrake();
 	void HandbrakeRelease();
@@ -52,6 +52,7 @@ public:
 	void GearDown();
 	//axis maps
 	void MoveForward(float AxisValue);
+	void Brake(float AxisValue);
 	void MoveRight(float AxisValue);
 	void LookUp(float AxisValue);
 	void LookLeft(float AxisValue);
