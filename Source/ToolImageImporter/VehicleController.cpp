@@ -283,8 +283,6 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction("GearUp", IE_Pressed, this, &AVehicleController::GearUp);
 	PlayerInputComponent->BindAction("GearDown", IE_Pressed, this, &AVehicleController::GearDown);
 	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &AVehicleController::OnPause).bExecuteWhenPaused=true;
-	PlayerInputComponent->BindAction("RestartTimer", IE_Pressed, this, &AVehicleController::SetTrue);
-
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVehicleController::MoveForward);
 	PlayerInputComponent->BindAxis("Brake", this, &AVehicleController::Brake);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVehicleController::MoveRight);
@@ -492,20 +490,4 @@ void AVehicleController::StartFunction(const float& dt) {
 		}
 	}
 }
-
-void AVehicleController::SpeedTest(const float &dt) {
-	if (GetVelocityFromComp()>0.1f&& GetVelocityFromComp()<60.f){
-		speed_timer += dt;
-	}
-	else{
-		UE_LOG(LogTemp, Warning, TEXT("time: %f"), speed_timer);
-	}
-	
-}
-
-void AVehicleController::SetTrue() {
-	speed_timer = 0.0f;
-	UE_LOG(LogTemp, Warning, TEXT("test"));
-}
-
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

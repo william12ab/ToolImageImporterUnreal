@@ -31,10 +31,6 @@ public:
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	//test func
-	void SpeedTest(const float& dt);
-	void SetTrue();
-
 	void RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed);
 	void AngleCap(float& angle_);
 	void StartFunction(const float& dt);
@@ -136,8 +132,5 @@ protected:
 	//used for brake system
 	bool is_car_stationary;
 	bool is_in_reverse;
-
-	//TEST CODE
-	float speed_timer;
 };
 
