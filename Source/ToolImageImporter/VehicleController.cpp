@@ -42,7 +42,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-	Vehicle4W->DragCoefficient = 0.20f;
+	Vehicle4W->DragCoefficient = 0.3f;
 	Vehicle4W->Mass = 1200.f;
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
@@ -51,7 +51,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
 	//differential setup 
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
-	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.5f;
+	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.58f;
 	Vehicle4W->bReverseAsBrake = false;
 	//torque
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
@@ -64,17 +64,18 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2500.0f, 650);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3000.0f, 680);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 680);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 600);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 600);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 550);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 500);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 480);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 650);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 650);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 600);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 600);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 600);
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f*1.2f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 1.0f*1.2f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 1.f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 1.f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 1.0f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 0.9f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(100.0f, 0.8f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(150.0f, 0.7f);
 	//gearbox
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
@@ -102,7 +103,9 @@ AVehicleController::AVehicleController(){
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(28.4f, 0.0f, -20.0f);
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(0, 0, -40.0f);
+		//28.4f
+
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}
 	
@@ -211,12 +214,18 @@ void AVehicleController::BeginPlay() {
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
-	auto pos = UpdatedPrimitive->BodyInstance.GetCOMPosition();
-	FVector com_pos = FVector(220.5f, 93.f, 74.f);//original
-	FVector updated = FVector(28.4, 0, 54.f);//original
+	//auto pos = UpdatedPrimitive->BodyInstance.GetCOMPosition();
+	//FVector com_pos = FVector(-16.5, -7.f, 74.f);//original
+	//FVector veh_pos = GetActorLocation();
+	//FVector zero_zero= FVector(0, 0, 0);//original
+	////UpdatedPrimitive->BodyInstance.COMNudge = FVector(28.4f, 0.0f, -20.0f);
+	////FVector car_centre = FVector(220.5f,93,);
+	//FVector updated = FVector(28.4f, -7.f, 54.f);//original
+	//DrawDebugSphere(GetWorld(), updated, 5.f, 32, FColor::Yellow);
+	//DrawDebugSphere(GetWorld(), com_pos, 5.f, 32, FColor::Cyan);
 
-	DrawDebugSphere(GetWorld(), updated, 10.f, 32, FColor::Yellow);
 	
+	SpeedTest(DeltaTime);
 	ChangeBrakeSystem();
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
 	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600){
@@ -473,9 +482,11 @@ void AVehicleController::UpdateHUDStrings(){
 	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	int32 KPH_int = FMath::FloorToInt(KPH);
 
+	float RPM = GetVehicleMovement()->GetEngineRotationSpeed();
+	int32 RPM_int = FMath::FloorToInt(RPM);
 	// Using FText because this is display text that should be localizable
 	SpeedDisplayString = FText::Format(LOCTEXT("SpeedFormat", "{0} km/h"), FText::AsNumber(KPH_int));
-
+	RPMDisplayString = FText::Format(LOCTEXT("RPMFormat", "{0} RPM"), FText::AsNumber(RPM_int));
 	if (bInReverseGear == true){
 		GearDisplayString = FText(LOCTEXT("ReverseGear", "R"));
 	}

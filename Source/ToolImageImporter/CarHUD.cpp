@@ -41,6 +41,10 @@ void ACarHUD::DrawHUD(){
 		FCanvasTextItem GearTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 500.f), Vehicle->GearDisplayString, HUDFont, Vehicle->bInReverseGear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
 		GearTextItem.Scale = ScaleVec;
 		Canvas->DrawItem(GearTextItem);
+
+		FCanvasTextItem RPMTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 550.f), Vehicle->RPMDisplayString, HUDFont, FLinearColor::Red);
+		RPMTextItem.Scale = ScaleVec;
+		Canvas->DrawItem(RPMTextItem);
 	}
 }
 

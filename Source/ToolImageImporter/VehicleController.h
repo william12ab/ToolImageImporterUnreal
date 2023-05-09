@@ -21,6 +21,8 @@ public:
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
 		FText GearDisplayString;
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
+		FText RPMDisplayString;
+	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
 		/** The color of the incar gear text in forward gears */
 		FColor	GearDisplayColor;
 	/** The color of the incar gear text when in reverse */
