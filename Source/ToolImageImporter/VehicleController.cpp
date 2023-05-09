@@ -190,6 +190,8 @@ AVehicleController::AVehicleController(){
 	is_restart_level = false;
 	is_car_stationary = true;
 	is_in_reverse = false;
+
+	speed_timer = 0.0f;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -501,5 +503,15 @@ void AVehicleController::StartFunction(const float& dt) {
 			is_begin_lap = true;
 		}
 	}
+}
+
+void AVehicleController::SpeedTest(const float& dt) {
+	if (GetVelocityFromComp() > 0.1f && GetVelocityFromComp() < 60.f) {
+		speed_timer += dt;
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("time: %f"), speed_timer);
+	}
+
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

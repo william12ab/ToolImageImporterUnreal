@@ -77,6 +77,8 @@ public:
 	//pause
 	void OnPause();
 	void UnPause();
+
+	void SpeedTest(const float& dt);
 protected:
 
 	virtual void BeginPlay() override;
@@ -135,5 +137,6 @@ protected:
 
 	//testing 
 	UPrimitiveComponent* UpdatedPrimitive;
+	float speed_timer;
 };
 
