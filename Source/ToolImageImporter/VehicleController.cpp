@@ -17,6 +17,8 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
+#include <Runtime/Engine/Public/DrawDebugHelpers.h>
+#include "ToolContextInterfaces.h"
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
@@ -96,6 +98,15 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.85;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.0f,3.0f,1.0f);
+
+	//com
+	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
+	if (UpdatedPrimitive){
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(28.4f, 0.0f, -20.0f);
+		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
+	}
+	
+
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -179,9 +190,6 @@ AVehicleController::AVehicleController(){
 	is_restart_level = false;
 	is_car_stationary = true;
 	is_in_reverse = false;
-
-	//test code
-	speed_timer = 0.0f;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -200,9 +208,13 @@ void AVehicleController::BeginPlay() {
 
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-	//test func
-	SpeedTest(DeltaTime);
 
+	auto pos = UpdatedPrimitive->BodyInstance.GetCOMPosition();
+	FVector com_pos = FVector(220.5f, 93.f, 74.f);//original
+	FVector updated = FVector(28.4, 0, 54.f);//original
+
+	DrawDebugSphere(GetWorld(), updated, 10.f, 32, FColor::Yellow);
+	
 	ChangeBrakeSystem();
 	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
 	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600){

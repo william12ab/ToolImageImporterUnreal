@@ -132,5 +132,8 @@ protected:
 	//used for brake system
 	bool is_car_stationary;
 	bool is_in_reverse;
+
+	//testing 
+	UPrimitiveComponent* UpdatedPrimitive;
 };
 
