@@ -13,6 +13,9 @@ void UPauseUI::ReturnToMenu() {
 }
 void UPauseUI::ReturnToGame() {
 	vehicle_pawn->SetPause(false);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
 }
 void UPauseUI::RenderPauseDisplay() {
 	if (vehicle_pawn->GetIsPaused()) {
@@ -35,6 +38,9 @@ void UPauseUI::RestartFunction() {
 	if (temp_level_name =="Main"){
 		vehicle_pawn->RestartMainLevel();
 		vehicle_pawn->SetPause(false);
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
 	}
 	else if (temp_level_name=="TestArenaLevel"){
 		TArray<AActor*> temp_player_start;
@@ -44,11 +50,8 @@ void UPauseUI::RestartFunction() {
 		vehicle_pawn->TeleportTo(f, FRotator(0.0f, 0.f, 0.0f), false, false);
 		vehicle_pawn->Restart();
 		vehicle_pawn->SetPause(false);
-		//disable - works but no way to enable, addactorworldoffset - doesnt work.
-		//vehicle_pawn->DisableComponentsSimulatePhysics();
-		//vehicle_pawn->GetComponents();*/
-		//vehicle_pawn->AddActorWorldOffset(f,false,nullptr,ETeleportType::ResetPhysics);
-		//vehicle_pawn->Reset();
-		
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
 	}
 }

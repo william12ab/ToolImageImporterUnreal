@@ -14,12 +14,18 @@ void UMainMenuUIWidget::OnClickPlay() {
 	file_opener.OpenApplication();
 	if (file_opener.GetIsOpened()){
 		UGameplayStatics::OpenLevel(GetWorld(), "Main");
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
 	}
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {
 	UE_LOG(LogTemp, Warning, TEXT("test a"));
 	UGameplayStatics::OpenLevel(GetWorld(), "TestArenaLevel");
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
 }
 
 void UMainMenuUIWidget::OnClickOptions() {

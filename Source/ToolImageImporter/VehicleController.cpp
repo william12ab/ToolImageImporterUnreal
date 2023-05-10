@@ -415,6 +415,12 @@ void AVehicleController::OnPause(){
 	}
 	else {
 		is_paused = true;
+
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = true;
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(true);
+		FVector2D size_;
+		GEngine->GameViewport->GetViewportSize(size_);
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
 	}
 }
 void AVehicleController::UnPause() {
