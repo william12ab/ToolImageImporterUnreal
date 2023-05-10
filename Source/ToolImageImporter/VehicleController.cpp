@@ -30,6 +30,9 @@ AVehicleController::AVehicleController(){
 	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AVehicleController::OnOverlapBegin);
 
 	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
+
+	
+	
 	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
 	Vehicle4W->WheelSetups[0].BoneName = FName("FL");
 	Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
@@ -38,11 +41,13 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[1].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 	Vehicle4W->WheelSetups[2].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[2].BoneName = FName("RR");
+	Vehicle4W->WheelSetups[2].bDisableSteering = true;
 	Vehicle4W->WheelSetups[2].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
 	Vehicle4W->WheelSetups[3].BoneName = FName("RL");
+	Vehicle4W->WheelSetups[2].bDisableSteering = true;
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-	Vehicle4W->DragCoefficient = 0.3f;
+	Vehicle4W->DragCoefficient = 0.33f;
 	Vehicle4W->Mass = 1200.f;
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
@@ -56,19 +61,19 @@ AVehicleController::AVehicleController(){
 	//torque
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->EngineSetup.MaxRPM = 8000.f;
-	//change those values at 0 rpm we have 500 torque
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 500);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(500.0f, 550);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 550);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(500.0f, 580);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 590);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2000.0f, 600);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2000.0f, 620);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2500.0f, 650);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3000.0f, 680);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 680);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 650);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 650);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 600);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 600);
-	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 600);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 670);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 660);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 650);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 640);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 630);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(8500.0f, 590);
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
@@ -93,19 +98,19 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[2].DownRatio = 0.5;
 	Vehicle4W->TransmissionSetup.ForwardGears[4].DownRatio = 0.4;
 	Vehicle4W->TransmissionSetup.ForwardGears[0].UpRatio= 0.95;
-	Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = 0.85;
-	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = 0.85;
-	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.85;
-	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.85;
+	Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.0f,3.0f,1.0f);
 
+	
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(0, 0, -40.0f);
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(20, 0, -40.0f);
 		//28.4f
-
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}
 	
@@ -203,6 +208,10 @@ void AVehicleController::BeginPlay() {
 	EngineComp->Activate(true);
 	EngineComp->SetSound(EngineSoundCue);
 	EngineComp->Play(0.f);
+	
+	
+	
+
 	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600) {
 		EngineComp->SetFloatParameter(FName("RPM"), 600);
 	}
@@ -213,16 +222,6 @@ void AVehicleController::BeginPlay() {
 
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
-
-	//auto pos = UpdatedPrimitive->BodyInstance.GetCOMPosition();
-	//FVector com_pos = FVector(-16.5, -7.f, 74.f);//original
-	//FVector veh_pos = GetActorLocation();
-	//FVector zero_zero= FVector(0, 0, 0);//original
-	////UpdatedPrimitive->BodyInstance.COMNudge = FVector(28.4f, 0.0f, -20.0f);
-	////FVector car_centre = FVector(220.5f,93,);
-	//FVector updated = FVector(28.4f, -7.f, 54.f);//original
-	//DrawDebugSphere(GetWorld(), updated, 5.f, 32, FColor::Yellow);
-	//DrawDebugSphere(GetWorld(), com_pos, 5.f, 32, FColor::Cyan);
 
 	
 	SpeedTest(DeltaTime);

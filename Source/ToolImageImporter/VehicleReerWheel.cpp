@@ -10,13 +10,13 @@ UVehicleReerWheel::UVehicleReerWheel(){
 	ShapeWidth = 12.50f;
 	bAffectedByHandbrake = true;
 	SteerAngle = 0.f;
-	LongStiffValue=3000.0f;
+	LongStiffValue=4000.0f;
 	SuspensionMaxDrop = 15;
 	SuspensionMaxRaise = 15;
 	LatStiffMaxLoad = 15.f;
 	LatStiffValue = 200.f;
 	SuspensionDampingRatio = .98f;
-	SuspensionNaturalFrequency = 10.f;
+	SuspensionNaturalFrequency = 5.f;
 	MaxBrakeTorque = 4000.f;
 	MaxHandBrakeTorque = 6000.f;
 	static ConstructorHelpers::FObjectFinder<UTireConfig> TireConfigObj(TEXT("TireConfig'/Game/DA_tire_config.DA_tire_config'"));
