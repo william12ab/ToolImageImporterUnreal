@@ -8,37 +8,29 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/Engine.h"
 // Sets default values
-ATrackSpline::ATrackSpline()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ATrackSpline::ATrackSpline(){
 	PrimaryActorTick.bCanEverTick = true;
-
     spline = CreateDefaultSubobject<USplineComponent>("Spline",true);
     if (spline){
-
         SetRootComponent(spline);
     }
 	spacing_ = 20;
 	division_ = 5.0f;
+	amount_added_to_z=5.f;
 }
 
 // Called when the game starts or when spawned
-void ATrackSpline::BeginPlay()
-{
+void ATrackSpline::BeginPlay(){
 	Super::BeginPlay();
-	spline->SetGenerateOverlapEvents(true);
-	
+	spline->SetGenerateOverlapEvents(false);
 	spline->SetNotifyRigidBodyCollision(true);
 }
 
-void ATrackSpline::Tick(float DeltaTime)
-{
+void ATrackSpline::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
-
 }
 
-FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosition, USplineMeshComponent* SplineMeshComponent)
-{
+FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosition, USplineMeshComponent* SplineMeshComponent){
 	const float VertexPositionAlongSpline = StaticMeshVertexPosition[SplineMeshComponent->ForwardAxis];
 	const FTransform StaticMeshToSplineMeshTransform = SplineMeshComponent->CalcSliceTransform(VertexPositionAlongSpline);
 	FVector SlicePos = StaticMeshVertexPosition;
@@ -48,8 +40,7 @@ FVector StaticMeshToSplineMeshVertexPosition(const FVector& StaticMeshVertexPosi
 	return SplineMeshSpaceVector;
 }
 
-FVector2D ATrackSpline::LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t)
-{
+FVector2D ATrackSpline::LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t){
 	auto a = p2 - p1;
 	auto b = FVector2D(a.X * t, a.Y * t);
 	auto c = p1 + b;
@@ -68,12 +59,13 @@ void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, con
 	FVector2D safe_point;
 	safe_point = LerpV2D(control_points[index_zero], control_points[index_one], t_value);
 	if (t_value>0.0f){
-		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * spacing_) / division_));
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * spacing_) / division_));
+		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
+		
 	}
 	else	{
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, (height_z[y * 400 + (x)] * spacing_) / division_));
-		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, (height_z[y * 400 + (x)] * spacing_) / division_));
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
+		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
 	}	
 	saftey_points.Add(safe_point);
 }
@@ -96,8 +88,11 @@ void ATrackSpline::OnConstruction(const FTransform& Transform){
 			if ((float)((height_z[y * 400 + x] * spacing_) / division_<min_height)){
 				min_height = (float)((height_z[y * 400 + x] * spacing_) / division_);
 			}
-			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, (float)((height_z[y * 400 + x] * spacing_) / division_)));
+			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, ((float)((height_z[y * 400 + x] * spacing_) / division_))+amount_added_to_z));
 		}
+	}
+	for (size_t i = 0; i < spline->GetNumberOfSplinePoints(); i++){
+		spline->SetSplinePointType(i, ESplinePointType::CurveCustomTangent, true);
 	}
 	if (spline)	{
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
@@ -105,6 +100,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform){
 		{
 			USplineMeshComponent* spline_mesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 			UStaticMesh* static_mesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'")));
+
 			UMaterialInterface* Material = nullptr;
 			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
 			// update mesh details
@@ -117,7 +113,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform){
 
 			spline_mesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 			spline_mesh->SetMobility(EComponentMobility::Movable);
-			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
 			spline_mesh->AttachToComponent(spline, FAttachmentTransformRules::KeepRelativeTransform);
 
 			// define the positions of the points and tangents
@@ -132,14 +128,11 @@ void ATrackSpline::OnConstruction(const FTransform& Transform){
 			
 			// query physics
 			//getting vertices of spline
-			if (spline_mesh->GetStaticMesh()->RenderData->LODResources.Num() > 0)
-			{
+			if (spline_mesh->GetStaticMesh()->RenderData->LODResources.Num() > 0){
 				FPositionVertexBuffer* vertex_buffer = &spline_mesh->GetStaticMesh()->RenderData->LODResources[0].VertexBuffers.PositionVertexBuffer;
-				if (vertex_buffer)
-				{
+				if (vertex_buffer){
 					const int32 vertex_count= vertex_buffer->GetNumVertices();
-					for (int32 index_ = 0; index_ < vertex_count; index_++)
-					{
+					for (int32 index_ = 0; index_ < vertex_count; index_++){
 						//This is in the Static Mesh Actor Class, so it is location and tranform of the SMActor
 						
 						const FVector StaticMeshSpacePosition = vertex_buffer->VertexPosition(index_);

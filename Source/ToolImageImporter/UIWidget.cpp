@@ -196,7 +196,7 @@ void UUIWidget::CreateSpline(){
 	track_spline->OnConstruction(t_transform_);//consttruction
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());//changing height of mesh
 	p_mesh->ReplaceC(m_colors);//replacing heightmap to match new mesh, also normals and smoothing
-	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z + 27.f));
+	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z ));
 	track_spline->SetActorEnableCollision(false);
 	if (point_type) {
 		for (size_t i = 0; i < temp_arr.Num(); i++) {

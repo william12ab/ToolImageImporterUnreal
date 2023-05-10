@@ -53,4 +53,5 @@ private:
 	float division_;
 	TArray<FVector> start_end_points;
 	float min_height;
+	float amount_added_to_z;
 };

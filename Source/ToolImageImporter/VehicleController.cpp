@@ -223,7 +223,7 @@ void AVehicleController::Tick(float DeltaTime) {
 	is_in_reverse_gear = current_gear < 0;
 	//
 
-	SpeedTest(DeltaTime);
+	//SpeedTest(DeltaTime);
 	ChangeBrakeSystem();
 
 	if (current_RPM < 600){
