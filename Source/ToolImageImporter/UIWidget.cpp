@@ -331,7 +331,6 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 }
 void UUIWidget::RestartLap() {
 	if (vehicle_pawn->GetIsRestartLevel()){
-		//move pos back to start
 		auto temp_start = starting_position;
 		while (!vehicle_pawn->TeleportTo(temp_start, starting_angle, false, false)) {
 			temp_start.Z += 1.f;

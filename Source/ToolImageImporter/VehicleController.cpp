@@ -160,12 +160,12 @@ AVehicleController::AVehicleController(){
 	//particle system work
 	particle_arr.Add(ParticleSystemRightWheel);
 	particle_arr.Add(ParticleSystemLeftWheel);
-	FVector local_loc =FVector(-170.f,100.f,42.f);
+	FVector local_loc =FVector(-170.f,80.f,53.f);
 	for (int i = 0; i < 2; i++){
 		particle_arr[i]->AttachTo(GetMesh());
 		particle_arr[i]->bAutoActivate = false;
 		particle_arr[i]->SetRelativeScale3D(FVector(0.8f, 0.7f, .5));
-		particle_arr[i]->SetRelativeLocation(local_loc);
+		particle_arr[i]->SetWorldLocation(local_loc);
 		local_loc.Y *= -1;
 	}
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("ParticleSystem'/Game/Effects/Effects/VehicleEffects/P_dirt_wheel_kickup.P_dirt_wheel_kickup'"));
@@ -246,9 +246,9 @@ void AVehicleController::Tick(float DeltaTime) {
 	KPH_int_ = FMath::FloorToInt(current_KPH);
 	if (is_starting_) {
 		if (KPH_int_ < 5) {
-			GetVehicleMovementComponent()->SetThrottleInput(0);
 			is_stop = true;
 			is_stop_display_start_text = true;
+			GetVehicleMovementComponent()->SetThrottleInput(0);
 		}
 		else {
 			if (!is_stop) {
@@ -377,7 +377,7 @@ void AVehicleController::Brake(float AxisValue) {
 	if (!is_starting_){
 		if (is_car_stationary){
 			GetVehicleMovementComponent()->SetThrottleInput(-AxisValue);
-				is_in_reverse = true;
+			is_in_reverse = true;
 		}
 		else {
 			GetVehicleMovementComponent()->SetBrakeInput(AxisValue);

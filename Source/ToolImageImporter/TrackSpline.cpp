@@ -16,7 +16,7 @@ ATrackSpline::ATrackSpline(){
     }
 	spacing_ = 20;
 	division_ = 5.0f;
-	amount_added_to_z=5.f;
+	amount_added_to_z=-10.f;
 }
 
 // Called when the game starts or when spawned
