@@ -29,7 +29,7 @@ public:
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
 		FColor	GearDisplayReverseColor;
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly)
-		bool bInReverseGear;
+		bool is_in_reverse_gear;
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -136,6 +136,9 @@ protected:
 	//used for brake system
 	bool is_car_stationary;
 	bool is_in_reverse;
+	int32 current_gear;//gives current info
+	float current_RPM;
+	float current_KPH;
 
 	//testing 
 	UPrimitiveComponent* UpdatedPrimitive;

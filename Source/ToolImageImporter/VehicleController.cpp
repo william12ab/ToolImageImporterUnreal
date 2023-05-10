@@ -30,9 +30,6 @@ AVehicleController::AVehicleController(){
 	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AVehicleController::OnOverlapBegin);
 
 	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
-
-	
-	
 	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
 	Vehicle4W->WheelSetups[0].BoneName = FName("FL");
 	Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
@@ -77,10 +74,10 @@ AVehicleController::AVehicleController(){
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 1.0f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 0.9f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(100.0f, 0.8f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(150.0f, 0.7f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.90f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 0.85f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(100.0f, 0.7f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.65f);
 	//gearbox
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
@@ -103,13 +100,11 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.75;
 	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
-	Vehicle4W->InertiaTensorScale = FVector(1.0f,3.0f,1.0f);
-
-	
+	Vehicle4W->InertiaTensorScale = FVector(0.80f,3.0f,0.80f);
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(20, 0, -40.0f);
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(5, 0, -20.0f);
 		//28.4f
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}
@@ -156,7 +151,7 @@ AVehicleController::AVehicleController(){
 	// Colors for the in-car gear display. One for normal one for reverse
 	GearDisplayReverseColor = FColor(255, 0, 0, 255);
 	GearDisplayColor = FColor(255, 255, 255, 255);
-	bInReverseGear = false;
+	is_in_reverse_gear = false;
 	static ConstructorHelpers::FObjectFinder<UMaterial> TextMaterial(TEXT("Material'/Engine/EngineMaterials/AntiAliasedTextMaterialTranslucent.AntiAliasedTextMaterialTranslucent'"));
 	UMaterialInterface* Material = TextMaterial.Object;
 
@@ -198,7 +193,9 @@ AVehicleController::AVehicleController(){
 	is_restart_level = false;
 	is_car_stationary = true;
 	is_in_reverse = false;
-
+	current_gear = 0;
+	current_RPM = 0.f;
+	current_KPH = 0.0f;
 	speed_timer = 0.0f;
 }
 void AVehicleController::BeginPlay() {
@@ -209,9 +206,6 @@ void AVehicleController::BeginPlay() {
 	EngineComp->SetSound(EngineSoundCue);
 	EngineComp->Play(0.f);
 	
-	
-	
-
 	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600) {
 		EngineComp->SetFloatParameter(FName("RPM"), 600);
 	}
@@ -222,20 +216,24 @@ void AVehicleController::BeginPlay() {
 
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+	//current values
+	current_RPM=GetVehicleMovement()->GetEngineRotationSpeed();
+	current_gear = GetVehicleMovement()->GetCurrentGear();
+	current_KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
+	is_in_reverse_gear = current_gear < 0;
+	//
 
-	
 	SpeedTest(DeltaTime);
 	ChangeBrakeSystem();
-	bInReverseGear = GetVehicleMovement()->GetCurrentGear() < 0;
-	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600){
+
+	if (current_RPM < 600){
 		EngineComp->SetFloatParameter(FName("RPM"), 600);
 	}
 	else{
-		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
+		EngineComp->SetFloatParameter(FName("RPM"), current_RPM);
 	}
 	//for parrticels
-	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
-	if (KPH>2.f){
+	if (current_KPH >2.f){
 		if (ParticleSystemRightWheel != nullptr) {
 			ParticleSystemRightWheel->SetActive(true);
 			ParticleSystemLeftWheel->SetActive(true);
@@ -245,9 +243,7 @@ void AVehicleController::Tick(float DeltaTime) {
 		ParticleSystemRightWheel->SetActive(false);
 		ParticleSystemLeftWheel->SetActive(false);
 	}
-	//for start
-	KPH_over = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
-	KPH_int_ = FMath::FloorToInt(KPH_over);
+	KPH_int_ = FMath::FloorToInt(current_KPH);
 	if (is_starting_) {
 		if (KPH_int_ < 5) {
 			GetVehicleMovementComponent()->SetThrottleInput(0);
@@ -369,8 +365,8 @@ void AVehicleController::MoveForward(float AxisValue){
 	if (!is_starting_){
 		GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
 		if (AxisValue > 0.01f) {
-			if (bInReverseGear){
-				GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear() + 2, true);
+			if (is_in_reverse_gear){
+				GetVehicleMovementComponent()->SetTargetGear(current_gear + 2, true);
 			}
 			is_in_reverse = false;
 			is_car_stationary = false;
@@ -399,8 +395,6 @@ void AVehicleController::ChangeBrakeSystem() {
 			is_car_stationary = false;
 		}
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("station: %s"), (is_car_stationary ? TEXT("true") : TEXT("false")));
-	//UE_LOG(LogTemp, Warning, TEXT("reverse: %s"), (is_in_reverse ? TEXT("true") : TEXT("false")));
 }
 void AVehicleController::MoveRight(float AxisValue){
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
@@ -427,10 +421,10 @@ void AVehicleController::UnPause() {
 	is_paused = false;
 }
 void AVehicleController::GearUp() {
-	GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear()+1, true);
+	GetVehicleMovementComponent()->SetTargetGear(current_gear+1, true);
 }
 void AVehicleController::GearDown() {
-	GetVehicleMovementComponent()->SetTargetGear(GetVehicleMovementComponent()->GetCurrentGear() - 1, true);
+	GetVehicleMovementComponent()->SetTargetGear(current_gear - 1, true);
 }
 void AVehicleController::SwitchCamera() {
 	ActiveCamera();
@@ -478,25 +472,19 @@ void AVehicleController::Release() {
 }
 
 void AVehicleController::UpdateHUDStrings(){
-	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
-	int32 KPH_int = FMath::FloorToInt(KPH);
-
-	float RPM = GetVehicleMovement()->GetEngineRotationSpeed();
-	int32 RPM_int = FMath::FloorToInt(RPM);
-	// Using FText because this is display text that should be localizable
+	int32 KPH_int = FMath::FloorToInt(current_KPH);
+	int32 RPM_int = FMath::FloorToInt(current_RPM);
 	SpeedDisplayString = FText::Format(LOCTEXT("SpeedFormat", "{0} km/h"), FText::AsNumber(KPH_int));
 	RPMDisplayString = FText::Format(LOCTEXT("RPMFormat", "{0} RPM"), FText::AsNumber(RPM_int));
-	if (bInReverseGear == true){
+	if (is_in_reverse_gear == true){
 		GearDisplayString = FText(LOCTEXT("ReverseGear", "R"));
 	}
 	else{
-		int32 Gear = GetVehicleMovement()->GetCurrentGear();
-		GearDisplayString = (Gear == 0) ? LOCTEXT("N", "N") : FText::AsNumber(Gear);
+		GearDisplayString = (current_gear == 0) ? LOCTEXT("N", "N") : FText::AsNumber(current_gear);
 	}
 }
 float AVehicleController::GetVelocityFromComp() {
-	float KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f; 
-	return KPH; 
+	return current_KPH;
 }
 void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
 	is_starting_ = true;

@@ -38,7 +38,7 @@ void ACarHUD::DrawHUD(){
 		SpeedTextItem.Scale = ScaleVec;
 		Canvas->DrawItem(SpeedTextItem);
 		// Gear
-		FCanvasTextItem GearTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 500.f), Vehicle->GearDisplayString, HUDFont, Vehicle->bInReverseGear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
+		FCanvasTextItem GearTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 500.f), Vehicle->GearDisplayString, HUDFont, Vehicle->is_in_reverse_gear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
 		GearTextItem.Scale = ScaleVec;
 		Canvas->DrawItem(GearTextItem);
 
