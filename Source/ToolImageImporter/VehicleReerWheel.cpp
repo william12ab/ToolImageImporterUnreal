@@ -10,7 +10,7 @@ UVehicleReerWheel::UVehicleReerWheel(){
 	ShapeWidth = 12.50f;
 	bAffectedByHandbrake = true;
 	SteerAngle = 0.f;
-	LongStiffValue=6000.0f;
+	LongStiffValue=4000.0f;
 	SuspensionMaxDrop = 15;
 	SuspensionMaxRaise = 15;
 	LatStiffMaxLoad = 15.f;

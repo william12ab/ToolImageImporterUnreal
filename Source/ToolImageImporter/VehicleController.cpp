@@ -56,6 +56,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.58f;
 	Vehicle4W->bReverseAsBrake = false;
 	//torque
+	
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->EngineSetup.MaxRPM = 8000.f;
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 550);
@@ -104,11 +105,12 @@ AVehicleController::AVehicleController(){
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(5, 0, -20.0f);
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(3, 0, -20.0f);
 		//28.4f
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}
-	
+	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchEngaged = 0.5;
+	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchDisengaged = 0.15;
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));

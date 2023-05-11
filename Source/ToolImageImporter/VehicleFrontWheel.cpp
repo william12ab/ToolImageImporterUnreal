@@ -8,7 +8,7 @@ UVehicleFrontWheel::UVehicleFrontWheel(){
 	ShapeWidth = 12.50f;
 	bAffectedByHandbrake = false;
 	SteerAngle = 70.f;
-	LongStiffValue = 6000.0f;//fast	er acc, higher top speed, default =1000
+	LongStiffValue = 4000.0f;//fast	er acc, higher top speed, default =1000
 	LatStiffMaxLoad = 15.f;//smaller harder turning, default = 2
 	LatStiffValue = 1000.f;//lower more sliding, default =17
 	SuspensionMaxDrop = 15;//higher for maxdrop and raise, wheels can go above and below natural resting point much more, default =10
@@ -22,5 +22,6 @@ UVehicleFrontWheel::UVehicleFrontWheel(){
 		TireConfig = TireConfigObj.Object;
 	}
 	Mass = 9.f;
+	
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
