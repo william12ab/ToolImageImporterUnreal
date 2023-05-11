@@ -52,6 +52,25 @@ void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter){
 }
 
 bool ABasicTree::CheckTrackTree(int& point_x, int& point_y){
+	int pos_ = 1;
+	for (int i = 0; i < track_tree_points.Num(); i++) {
+		if ((int)point_x != (int)track_tree_points[i].X && (int)point_y != (int)track_tree_points[i].Y) {
+			//if not on track point, do nothing and continue to see if it is on a track point.
+		}
+		else {
+			for (size_t switcher_ = 0; switcher_ < 2; switcher_++) {
+				for (size_t x = 0; x < 5; x++) {
+					for (size_t y = 0; y < 5; y++) {
+						if ((int)point_x == (int)track_tree_points[i].X + x * pos_ && (int)point_y == (int)track_tree_points[i].Y + y * pos_) {
+							return false;
+						}
+					}
+				}
+				pos_ *= -1;//if equals point, or right, left, up, down 
+			}
+		}
+	}
+	return true;
 }
 
 void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos, UStaticMesh& mesh_) {
@@ -110,6 +129,7 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 						pos_y = track_point[rand_point].Y;
 						pos_x = track_point[rand_point].X;
 					}
+					z_pos = m_verts[pos_y * 400 + pos_x].Z;
 				}
 			}
 			else {
@@ -239,8 +259,7 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 			//if not on track point, do nothing and continue to see if it is on a track point.
 		}
 		else {
-			for (size_t switcher_ = 0; switcher_ < 2; switcher_++)
-			{
+			for (size_t switcher_ = 0; switcher_ < 2; switcher_++){
 			for (size_t x = 0; x < 5; x++){
 				for (size_t y = 0; y < 5; y++){
 					if ((int)point_x == (int)track_point[i].X + x*pos_ && (int)point_y == (int)track_point[i].Y + y*pos_) {
@@ -268,7 +287,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 		int pos_x = track_point[rand_point].X;
 		bool is_found = false;
 		while (!is_found){
-			if (CheckBounds(track_point, pos_x, pos_y)) {
+			if (CheckBounds(track_point, pos_x, pos_y)&& CheckTrackTree(pos_x,pos_y)) {
 				is_found = true;
 				float z_pos = m_verts[pos_y * 400 + pos_x].Z;
 				float rand_scale = FMath::RandRange(0.01f, 0.2f);
@@ -283,6 +302,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				instanced_basic_tree->AddInstance(A);
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
+				
 			}
 			else {
 				pos_x += FMath::RandRange(-4, 8);

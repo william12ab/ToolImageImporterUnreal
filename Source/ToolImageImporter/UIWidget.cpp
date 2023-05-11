@@ -152,6 +152,7 @@ void UUIWidget::CreateFoilage(){
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, true);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
+
 	for (int i = 0; i < 1; i++) {//rocks
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
