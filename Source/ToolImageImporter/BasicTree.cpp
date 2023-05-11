@@ -15,7 +15,6 @@ ABasicTree::ABasicTree(){
 // Called when the game starts or when spawned
 void ABasicTree::BeginPlay(){
 	Super::BeginPlay();
-
 }
 
 void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select){
@@ -52,6 +51,9 @@ void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter){
 	}
 }
 
+bool ABasicTree::CheckTrackTree(int& point_x, int& point_y){
+}
+
 void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos, UStaticMesh& mesh_) {
 	for (int i = 0; i < track_point_arr.Num(); i++){
 		auto dist = FVector2D::Distance(track_point_arr[i], FVector2D(x_pos, y_pos));
@@ -61,6 +63,61 @@ void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const i
 		}
 		else {
 			mesh_.BodySetup->CollisionTraceFlag = ECollisionTraceFlag::CTF_UseSimpleAsComplex;
+		}
+	}
+}
+
+void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_) {
+	float yaw_rot = 0.0f;//gives random yaw
+	FString mesh_name;
+	int loop_range = FMath::RandRange(50, 140);
+	int tree_select = 0;
+	int pos_y = 0;
+	int pos_x = 0;
+	float z_pos = 0.f;
+	float max_m = max_;
+	float min_m = min_;//min and max terrain mesh points
+	float min_height_modi = 0.3f;//for the height check, different for trees and bushes
+	float max_height_modi = 0.15f; //same above
+	NameChoiceTree(mesh_name, tree_select);
+	yaw_rot = FMath::RandRange(-360, 360);
+	for (int i = 0; i < loop_range; i++) {
+		int rand_point = FMath::RandRange(0, track_point.Num() - 1);
+		pos_y = track_point[rand_point].Y;
+		pos_x = track_point[rand_point].X;
+		z_pos = m_verts[pos_y * 400 + pos_x].Z;
+		bool is_found = false;
+		while (!is_found) {
+			if (z_pos<(max_m - (max_m * min_height_modi)) && z_pos>(min_m + (max_m * max_height_modi))) {
+				if (CheckBounds(track_point, pos_x, pos_y)) {
+					is_found = true;
+					float rand_scale = FMath::RandRange(0.01f, 0.2f);
+					float rand_yaw = FMath::RandRange(0.0f, 180.f);
+					FTransform A{
+					   FRotator{0,yaw_rot,0},
+					   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
+					   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
+					AddBasicTree(A, tree_select, mesh_name, track_point, pos_x, pos_y);
+					instanced_basic_tree->SetMobility(EComponentMobility::Static);
+					instanced_basic_tree->bCastDynamicShadow = true;
+					instanced_basic_tree->CastShadow = true;
+					track_tree_points.Add(FVector2D(pos_x, pos_y));
+				}
+				else {
+					pos_x += FMath::RandRange(-4, 8);
+					pos_y += FMath::RandRange(-8, 8);
+					if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
+						pos_y = track_point[rand_point].Y;
+						pos_x = track_point[rand_point].X;
+					}
+				}
+			}
+			else {
+				rand_point = FMath::RandRange(0, track_point.Num() - 1);
+				pos_y = track_point[rand_point].Y;
+				pos_x = track_point[rand_point].X;
+				z_pos = m_verts[pos_y * 400 + pos_x].Z;
+			}
 		}
 	}
 }
@@ -79,11 +136,10 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	float max_height_modi =0.15f; //same above
 	max_height_modi = FMath::RandRange(0.1f,0.2f);
 	if (is_foilage){
-		loop_range =  4000;
+		loop_range =  500;
 		NameChoicePlant(mesh_name,z_alter);
 		//yaw_rot = 270.0f;
 		yaw_rot = FMath::RandRange(-360, 360);
-
 		max_height_modi = 0.05f;
 	}
 	else{
@@ -99,11 +155,21 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 			if (z_pos<(max_m - (max_m * min_height_modi)) && z_pos>(min_m + (max_m * max_height_modi))){
 				if (CheckBounds(track_point, pos_x, pos_y)) {
 					is_found = true;
-					FTransform A{
+					if (is_foilage){
+						FTransform A{
 						FRotator{0,yaw_rot,0},
 						FVector{pos_x * spacing_, pos_y * spacing_, (z_pos - z_alter) },
-						FVector{0.250f, 0.250f, 0.250f} };	//Scale
-					AddBasicTree(A, tree_select, mesh_name,track_point,pos_x,pos_y);
+						FVector{0.150f, 0.150f, 0.150f} };	//Scale
+						AddBasicTree(A, tree_select, mesh_name, track_point, pos_x, pos_y);
+					}
+					else{
+						FTransform A{
+					   FRotator{0,yaw_rot,0},
+					   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos - z_alter) },
+					   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
+						AddBasicTree(A, tree_select, mesh_name,track_point,pos_x,pos_y);
+					}
+					instanced_basic_tree->bCastDynamicShadow = false;
 					instanced_basic_tree->SetMobility(EComponentMobility::Static);
 					if (is_foilage) {
 						instanced_basic_tree->bCastDynamicShadow = false;
@@ -194,10 +260,8 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 	float rand_percent = FMath::RandRange(0.0f, spacing_);
 	float rocks_to_spawn_float = d * (rand_percent/100.0f);
 	int rocks_to_spawn = round(rocks_to_spawn_float);
-	rocks_to_spawn *= 2;
+	rocks_to_spawn *= 4;
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
-	UE_LOG(LogTemp, Warning, TEXT("amount rocks: %d"), rocks_to_spawn);
-
 	for (int i = 0; i < rocks_to_spawn; i++){
 		int rand_point = FMath::RandRange(0, track_point.Num()-1);
 		int pos_y = track_point[rand_point].Y;
@@ -234,7 +298,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float&max, const float&min){
 	float max_m = max;
 	float min_m = min;
-	for (int i = 0; i < 30000; i++) {
+	for (int i = 0; i < 1000; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
@@ -251,8 +315,8 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 				TArray<FVector2D>a;
 				AddBasicTree(A, 0, "SM_Grass",a,0,0);
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
-				instanced_basic_tree->bCastDynamicShadow = false;
-				instanced_basic_tree->CastShadow = false;
+				instanced_basic_tree->bCastDynamicShadow = true;
+				instanced_basic_tree->CastShadow = true;
 				instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
 				instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}

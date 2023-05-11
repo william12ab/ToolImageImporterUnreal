@@ -134,7 +134,13 @@ void UUIWidget::CreateFoilage(){
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
-	for (int i = 0; i < 4; i++) {//tree
+	for (int i = 0; i < 4; i++) {//tree near track
+		ABasicTree* tree_instancea;
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddTreeNearTrack(track_points, p_mesh->m_verts,max,min);
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	}
+	for (int i = 0; i < 4; i++) {//tree in general
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, false);
@@ -163,7 +169,7 @@ void UUIWidget::CreateFoilage(){
 	if (water_height>=track_spline->GetMinHeight()){
 		water_height = track_spline->GetMinHeight() ;
 	}
-	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, water_height);
+	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, water_height+track_spline->GetHeightChange());
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 	FixScales();

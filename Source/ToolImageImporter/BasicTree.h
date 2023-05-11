@@ -23,6 +23,7 @@ public:
 	void AddClusterTrees(const TArray<FVector> &m_verts, const int& max_, const int& min_, const TArray<FVector2D>& track_point, const bool& is_foliage);
 	void AddName(const FString& name_attachment_, const int& tree_, FString& name_);
 	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
+	void AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_);
 	void AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts);
 	void AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float& max, const float& min);
 	void NameChoiceTree(FString& mesh_name, int& tree_select);
@@ -31,7 +32,7 @@ public:
 	void SetDivision(float d_) { division_ = d_; }
 
 	void CheckDistance(const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos, UStaticMesh& mesh_);
-
+	bool CheckTrackTree(int& point_x, int& point_y);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,4 +40,6 @@ protected:
 private:
 	float spacing_;
 	float division_;
+
+	TArray<FVector2D> track_tree_points;
 };

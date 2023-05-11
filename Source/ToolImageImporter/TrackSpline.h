@@ -13,8 +13,8 @@ UCLASS()
 class TOOLIMAGEIMPORTER_API ATrackSpline : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ATrackSpline();
 	virtual void Tick(float DeltaTime) override;
@@ -33,12 +33,13 @@ public:
 	TArray<FVector> GetVerts() { return m_verts; }
 	TArray<FVector> GetSEPoints() { return start_end_points; }
 	TArray<FVector2D> GetSafetyPoints() { return saftey_points; }
-	float GetMinHeight() { return min_height;}
+	float GetMinHeight() { return min_height; }
 
 	FVector2D LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t);
 
 	void SetSpacing(int32 s_) { spacing_ = s_; }
 	void SetDivision(float d_) { division_ = d_; }
+	float GetHeightChange() { return amount_added_to_z; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
