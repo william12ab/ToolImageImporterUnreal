@@ -26,6 +26,7 @@ void UUIWidget::NativeConstruct(){
 	is_level_spawnned = true;//see .h
 
 	//ui images
+	images_.Empty();
 	images_.Add(image_slot_1);
 	images_.Add(image_slot_2);
 	images_.Add(image_slot_3);
