@@ -13,8 +13,8 @@ public:
 	FileLoader f_l;
 
 protected:
-	int h_;//height,width
-	int w_;
+	int heightmap_h_;//height,width
+	int heightmap_w_;
 	FString heightmap_name;//filenames of heightmap and trackpoints:)
 	FString track_points_name;
 };

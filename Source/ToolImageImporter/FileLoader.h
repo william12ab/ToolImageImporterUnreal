@@ -7,10 +7,10 @@ public:
 
 	void OpenApplication();
 	
-	FString &GetFileName() { return name_; }
+	FString &GetFileName() { return application_name_; }
 	bool GetIsOpened() { return is_opened_;}
 protected:
-	static FString name_;
+	static FString application_name_;
 	bool is_opened_;
 
 };

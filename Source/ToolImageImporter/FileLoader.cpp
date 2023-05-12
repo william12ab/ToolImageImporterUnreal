@@ -9,7 +9,7 @@
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
-FString FileLoader::name_("");
+FString FileLoader::application_name_("");
 FileLoader::FileLoader(){
 	is_opened_ = false;
 }
@@ -38,13 +38,13 @@ void FileLoader::OpenApplication() {
 	FString return_name;
 	if (ReadFileInfoApp(dialog_name, return_name)) {
 		is_opened_ = true;
-		name_ = return_name;
-		const TCHAR* name_char_ = *name_;
-		FProcHandle Proc = FPlatformProcess::CreateProc(name_char_, nullptr, true, false, false, nullptr, 0, *FPaths::GetPath(name_), nullptr);
+		application_name_ = return_name;
+		const TCHAR* name_char_ = *application_name_;
+		FProcHandle Proc = FPlatformProcess::CreateProc(name_char_, nullptr, true, false, false, nullptr, 0, *FPaths::GetPath(application_name_), nullptr);
 		FPlatformProcess::WaitForProc(Proc);
 		if (Proc.IsValid()){
 			FPlatformProcess::CloseProc(Proc);
 		}
 	}
-	FString* address = &name_;
+	FString* address = &application_name_;
 }

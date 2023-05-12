@@ -3,8 +3,6 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
-#include "Components/EditableTextBox.h"
-#include "Components/Slider.h"
 #include "MyProceduralMesh.h"
 #include "TrackMesh.h"
 #include "TrackInstance.h"
