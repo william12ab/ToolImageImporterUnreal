@@ -14,13 +14,13 @@ protected:
 	void NativeConstruct() override;
 	//ui
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* play_text;
+		class UImage* play_image;
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* test_arena_text;
+		class UImage* test_arena_image;
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* options_text;
+		class UImage* options_image;
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* quit_text;
+		class UImage* quit_image;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* play_button;
 	UPROPERTY(meta = (BindWidget))
