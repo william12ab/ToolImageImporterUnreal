@@ -36,7 +36,9 @@ protected:
 	
 	//ui 
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* start_instruction_text;
+		class UImage* start_image;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* instruction_image;
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* lap_timer_text;
 	UPROPERTY(meta = (BindWidget))

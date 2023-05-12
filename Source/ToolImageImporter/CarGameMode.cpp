@@ -10,6 +10,7 @@ ACarGameMode::ACarGameMode(){
 	if (WidgetClassFinder.Succeeded()){
 		SomeWidgetClass = WidgetClassFinder.Class;
 	}
+
 }
 void ACarGameMode::BeginPlay() {
 	Super::BeginPlay();
@@ -19,5 +20,7 @@ void ACarGameMode::BeginPlay() {
 			pause_ui->AddToViewport(9990);
 		}
 	}
+	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->ConsoleCommand("fullscreen");
+
 }
 

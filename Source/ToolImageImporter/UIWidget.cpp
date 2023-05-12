@@ -276,24 +276,24 @@ void UUIWidget::OnTest(){
 void UUIWidget::StartTextFunction() {
 	if (vehicle_pawn) {
 		if (vehicle_pawn->GetBoolStartText() == false && is_level_spawnned) {
-			start_instruction_text->SetText(FText::FromString("Drive to the Start Line"));
+			start_image->SetVisibility(ESlateVisibility::Visible);
 		}
 		else {
-			start_instruction_text->SetText(FText::FromString(""));
+			start_image->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }
 
 void UUIWidget::HandBreakTextFunction() {
 	if (vehicle_pawn->GetBoolStartText()){
-		start_instruction_text->SetText(FText::FromString("Hold Down Handbreak to Start"));
+		instruction_image->SetVisibility(ESlateVisibility::Visible);
 		if (!is_system_on) {
 			light_system->SetVisibility(ESlateVisibility::Visible);
 			is_system_on = true;
 		}
 	}
 	if (vehicle_pawn->GetBoolCountdown()){
-		start_instruction_text->SetText(FText::FromString(""));
+		instruction_image->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -317,9 +317,9 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 		if (!is_images_off) {
 			if (lap_time > 3.0f) {
 				for (int i = 0; i < images_.Num(); i++) {
-					images_[i]->SetVisibility(ESlateVisibility::Collapsed);
+					images_[i]->SetVisibility(ESlateVisibility::Hidden);
 				}
-				SetVisibility(ESlateVisibility::Collapsed);
+				SetVisibility(ESlateVisibility::Hidden);
 				is_images_off = true;
 			}
 		}
@@ -361,7 +361,7 @@ void UUIWidget::RestartLap() {
 		timer_string += FString::FromInt(00);
 		lap_timer_text->SetText(FText::FromString(timer_string));
 		for (int i = 0; i < images_.Num(); i++) {
-			images_[i]->SetVisibility(ESlateVisibility::Collapsed);
+			images_[i]->SetVisibility(ESlateVisibility::Hidden);
 		}
 		counter_countdown = 0.0f;
 		index_image = 0;

@@ -39,4 +39,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UTextBlock* restart_text;
 	AVehicleController* vehicle_pawn;//ref for pause
+
+
 };

@@ -23,7 +23,7 @@ void UPauseUI::RenderPauseDisplay() {
 		UGameplayStatics::SetGamePaused(UGameplayStatics::GetPlayerPawn(GetWorld(), 0), true);
 	}
 	else {
-		wrapper_->SetVisibility(ESlateVisibility::Collapsed);
+		wrapper_->SetVisibility(ESlateVisibility::Hidden);
 		UGameplayStatics::SetGamePaused(UGameplayStatics::GetPlayerPawn(GetWorld(), 0), false);
 	}
 }
