@@ -25,11 +25,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite,meta = (BindWidget))
 		class UImage* background_;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UTextBlock* return_to_menu_text;
+		class UImage* return_to_menu_image;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* return_to_menu_button;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UTextBlock* return_to_game_text;
+		class UImage* return_to_game_image;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* return_to_game_button;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -37,7 +37,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* restart_game_button;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-		class UTextBlock* restart_text;
+		class UImage* restart_image;
 	AVehicleController* vehicle_pawn;//ref for pause
 
 
