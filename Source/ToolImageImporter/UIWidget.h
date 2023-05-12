@@ -53,6 +53,8 @@ protected:
 		class UImage* image_slot_4;
 	UPROPERTY(meta = (BindWidget))
 		class UImage* image_slot_5;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* light_system;
 	UFUNCTION()
 		void OnTest();//new heightmap with more verts merge this
 	TArray<UImage*> images_;//has UI images - the starting countdown set
@@ -91,6 +93,8 @@ protected:
 	int seconds;
 	float point_seconds;
 	int point_sec_int;
-	float counter_countdown;
-	int index_image;
+	float counter_countdown;//countdown for the start
+	int index_image;//index of the images when dispplaying them
+	bool is_images_off;//to stop changing visibility or checking constantly
+	bool is_system_on;//for same above
 };

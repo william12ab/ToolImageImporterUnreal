@@ -417,7 +417,6 @@ void AVehicleController::OnPause(){
 	}
 	else {
 		is_paused = true;
-
 		UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = true;
 		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(true);
 		FVector2D size_;

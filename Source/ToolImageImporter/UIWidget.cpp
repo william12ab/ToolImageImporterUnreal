@@ -37,6 +37,8 @@ void UUIWidget::NativeConstruct(){
 	point_seconds=0.0f;
 	counter_countdown=0.0f;
 	index_image=0;
+	is_images_off = false;
+	is_system_on = false;
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
@@ -284,6 +286,10 @@ void UUIWidget::StartTextFunction() {
 void UUIWidget::HandBreakTextFunction() {
 	if (vehicle_pawn->GetBoolStartText()){
 		start_instruction_text->SetText(FText::FromString("Hold Down Handbreak to Start"));
+		if (!is_system_on) {
+			light_system->SetVisibility(ESlateVisibility::Visible);
+			is_system_on = true;
+		}
 	}
 	if (vehicle_pawn->GetBoolCountdown()){
 		start_instruction_text->SetText(FText::FromString(""));
@@ -307,9 +313,13 @@ void UUIWidget::CountdownImageFunction(const float &dt) {
 void UUIWidget::LapTimerFunction(const float& dt) {
 	if (vehicle_pawn->GetBoolBeginLap()) {
 		float lap_time = vehicle_pawn->GetLapTimer();
-		if (lap_time > 3.0f) {
-			for (int i = 0; i < images_.Num(); i++) {
-				images_[i]->SetVisibility(ESlateVisibility::Collapsed);
+		if (!is_images_off) {
+			if (lap_time > 3.0f) {
+				for (int i = 0; i < images_.Num(); i++) {
+					images_[i]->SetVisibility(ESlateVisibility::Collapsed);
+				}
+				SetVisibility(ESlateVisibility::Collapsed);
+				is_images_off = true;
 			}
 		}
 		if (lap_time>60){
@@ -354,5 +364,7 @@ void UUIWidget::RestartLap() {
 		}
 		counter_countdown = 0.0f;
 		index_image = 0;
+		is_images_off=false;
+		is_system_on = false;
 	}
 }

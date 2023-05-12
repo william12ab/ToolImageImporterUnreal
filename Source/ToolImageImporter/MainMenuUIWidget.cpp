@@ -8,6 +8,9 @@ void UMainMenuUIWidget::NativeConstruct(){
 	test_arena_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickTestArena);
 	options_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickOptions);
 	quit_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickQuit);
+	FVector2D size_;
+	GEngine->GameViewport->GetViewportSize(size_);
+	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
 }
 void UMainMenuUIWidget::OnClickPlay() {
 	UE_LOG(LogTemp, Warning, TEXT("play"));
