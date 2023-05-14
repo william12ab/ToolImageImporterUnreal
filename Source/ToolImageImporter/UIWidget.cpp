@@ -307,7 +307,7 @@ void UUIWidget::CountdownImageFunction(const float &dt) {
 		}
 	}
 	if (vehicle_pawn->GetBoolBeginLap()){
-		images_[index_image]->SetVisibility(ESlateVisibility::Visible);
+		//images_[index_image]->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
@@ -315,11 +315,12 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 	if (vehicle_pawn->GetBoolBeginLap()) {
 		float lap_time = vehicle_pawn->GetLapTimer();
 		if (!is_images_off) {
+			images_[index_image]->SetVisibility(ESlateVisibility::Visible);
 			if (lap_time > 3.0f) {
 				for (int i = 0; i < images_.Num(); i++) {
 					images_[i]->SetVisibility(ESlateVisibility::Hidden);
 				}
-				SetVisibility(ESlateVisibility::Hidden);
+				light_system->SetVisibility(ESlateVisibility::Hidden);
 				is_images_off = true;
 			}
 		}
