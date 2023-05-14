@@ -250,11 +250,17 @@ void AVehicleController::Tick(float DeltaTime) {
 		if (KPH_int_ < 5) {
 			is_stop = true;
 			is_stop_display_start_text = true;
-			GetVehicleMovementComponent()->SetThrottleInput(0);
+			if (!is_start_countdown){
+				GetVehicleMovementComponent()->SetThrottleInput(0);
+				UE_LOG(LogTemp, Warning, TEXT("ub yep"));
+
+			}
+			
 		}
 		else {
 			if (!is_stop) {
 				GetVehicleMovementComponent()->SetBrakeInput(1);
+				UE_LOG(LogTemp, Warning, TEXT("ub else"));
 			}
 		}
 		StartFunction(DeltaTime);
@@ -364,7 +370,7 @@ void AVehicleController::RestartMainLevel() {
 	is_restart_level = true;
 }
 void AVehicleController::MoveForward(float AxisValue){
-	if (!is_starting_){
+	//if (!is_starting_){
 		GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
 		if (AxisValue > 0.01f) {
 			if (is_in_reverse_gear){
@@ -373,7 +379,7 @@ void AVehicleController::MoveForward(float AxisValue){
 			is_in_reverse = false;
 			is_car_stationary = false;
 		}
-	}
+	//}
 }
 void AVehicleController::Brake(float AxisValue) {
 	if (!is_starting_){
