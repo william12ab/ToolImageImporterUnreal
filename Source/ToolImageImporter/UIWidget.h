@@ -87,6 +87,7 @@ protected:
 	FRotator starting_angle;//starting angle
 
 	bool is_level_spawnned;//singalling if everything is generated
+	bool give_time_penalty;//for false start
 
 	//for UI
 	int minutes;

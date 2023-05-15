@@ -40,6 +40,7 @@ void UUIWidget::NativeConstruct(){
 	index_image=0;
 	is_images_off = false;
 	is_system_on = false;
+	give_time_penalty = false;
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
@@ -315,6 +316,9 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 	if (vehicle_pawn->GetBoolBeginLap()|| vehicle_pawn->GetIsUnorthadox()) {
 		SkipCountdown();
 		float lap_time = vehicle_pawn->GetLapTimer();
+		if (vehicle_pawn->GetIsUnorthadox()){
+			lap_time += 10.f;
+		}
 		if (!is_images_off&&!vehicle_pawn->GetIsUnorthadox()) {
 			images_[index_image]->SetVisibility(ESlateVisibility::Visible);
 			if (lap_time > 3.0f) {
@@ -377,5 +381,6 @@ void UUIWidget::SkipCountdown() {
 			images_[i]->SetVisibility(ESlateVisibility::Hidden);
 		}
 		light_system->SetVisibility(ESlateVisibility::Hidden);
+		give_time_penalty = true;
 	}
 }
