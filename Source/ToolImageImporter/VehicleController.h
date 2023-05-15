@@ -38,6 +38,7 @@ public:
 	void StartFunction(const float& dt);
 	void UpdateHUDStrings();
 	void ChangeBrakeSystem();
+	void CheckForStart();
 
 	//action maps
 	void Handbrake();
@@ -76,6 +77,7 @@ public:
 	bool GetBoolBeginLap() { return is_begin_lap; }
 	const bool GetIsPaused() { return is_paused; }
 	const bool GetIsRestartLevel() {return is_restart_level;}
+	bool GetIsUnorthadox() { return is_unorthadox_start; }
 	//pause
 	void OnPause();
 	void UnPause();
@@ -116,8 +118,8 @@ protected:
 	//used for resetting position
 	int index_recorder;
 	FVector last_point;
-	bool pressed_;
-	float counter_;
+	bool pressed_;//is restart position key(triangle) pressed
+	float counter_;//counter for above
 	//used for start
 	bool is_starting_;//used for checking if car is on the line
 	bool is_stop;//used for checking if car is at a stop
@@ -129,16 +131,17 @@ protected:
 	bool is_stop_display_start_text;
 	//used for timer lap
 	float lap_counter;
-	bool is_end;
+	bool is_end;//for detecting if user completed lap
 	//used for pause
-	bool is_paused;
-	bool is_restart_level;
+	bool is_paused;//is game paused
+	bool is_restart_level;//is game restarting
 	//used for brake system
-	bool is_car_stationary;
-	bool is_in_reverse;
+	bool is_car_stationary;//is stationary
+	bool is_in_reverse;//reversing
 	int32 current_gear;//gives current info
 	float current_RPM;
 	float current_KPH;
+	bool is_unorthadox_start;//used when user drives off before start
 
 	//testing 
 	UPrimitiveComponent* UpdatedPrimitive;

@@ -199,6 +199,7 @@ AVehicleController::AVehicleController(){
 	current_RPM = 0.f;
 	current_KPH = 0.0f;
 	speed_timer = 0.0f;
+	is_unorthadox_start = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -227,7 +228,7 @@ void AVehicleController::Tick(float DeltaTime) {
 
 	//SpeedTest(DeltaTime);
 	ChangeBrakeSystem();
-
+	//sound
 	if (current_RPM < 600){
 		EngineComp->SetFloatParameter(FName("RPM"), 600);
 	}
@@ -252,18 +253,16 @@ void AVehicleController::Tick(float DeltaTime) {
 			is_stop_display_start_text = true;
 			if (!is_start_countdown){
 				GetVehicleMovementComponent()->SetThrottleInput(0);
-				UE_LOG(LogTemp, Warning, TEXT("ub yep"));
-
 			}
 			
 		}
 		else {
 			if (!is_stop) {
 				GetVehicleMovementComponent()->SetBrakeInput(1);
-				UE_LOG(LogTemp, Warning, TEXT("ub else"));
 			}
 		}
 		StartFunction(DeltaTime);
+		CheckForStart();
 	}
 
 	if (is_begin_lap&&!is_end){
@@ -517,12 +516,23 @@ void AVehicleController::StartFunction(const float& dt) {
 }
 
 void AVehicleController::SpeedTest(const float& dt) {
-	if (GetVelocityFromComp() > 0.1f && GetVelocityFromComp() < 60.f) {
+	if (current_KPH> 0.1f && current_KPH < 60.f) {
 		speed_timer += dt;
 	}
 	else {
 		UE_LOG(LogTemp, Warning, TEXT("time: %f"), speed_timer);
 	}
+}
 
+void AVehicleController::CheckForStart() {
+	if (is_start_countdown) {
+		if (current_KPH > 1.f) {
+			is_unorthadox_start = true;
+			is_starting_ = false;
+			is_begin_lap = true;
+			//start timer
+			//remove UI
+		}
+	}
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

@@ -33,7 +33,7 @@ protected:
 	void RestartLap();//restating
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	
+	void SkipCountdown();
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
