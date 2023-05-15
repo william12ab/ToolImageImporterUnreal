@@ -14,35 +14,37 @@
 #include "Engine/Engine.h"
 
 ACarHUD::ACarHUD(){
-	static ConstructorHelpers::FObjectFinder<UFont> Font(TEXT("/Engine/EngineFonts/RobotoDistanceField"));
+	static ConstructorHelpers::FObjectFinder<UFont> Font(TEXT("/Game/ui_font"));
 	HUDFont = Font.Object;
-
+	
 	static ConstructorHelpers::FObjectFinder<UTexture2D> puase_back_obj(TEXT("Texture2D'/Game/Textures/pausedbg.pausedbg'"));
 	pause_background_tex = puase_back_obj.Object;
+	//float XL = 1980.f;
+	//float YL = 1080.f;
+	//FString ScoreString = FString::FromInt(2);
+	//Canvas->TextSize(HUDFont, ScoreString, XL, YL);
 	
 }
 
 void ACarHUD::DrawHUD(){
 	Super::DrawHUD();
 
-	// Calculate ratio from 720p
-	const float HUDXRatio = Canvas->SizeX / 1280.f;
-	const float HUDYRatio = Canvas->SizeY / 720.f;
+	FVector2D size_;
+	GEngine->GameViewport->GetViewportSize(size_);
 	// Get our vehicle so we can check if we are in car. If we are we don't want onscreen HUD
 	AVehicleController* Vehicle = Cast<AVehicleController>(GetOwningPawn());
 	if ((Vehicle != nullptr) ){
-		FVector2D ScaleVec(HUDYRatio * 1.4f, HUDYRatio * 1.4f);
-		//DrawPauseMenu(ScaleVec);
+
+		FVector2D ScaleVec(1, 1);
+		// Gear
+		FCanvasTextItem GearTextItem(FVector2D(size_.X * .95f, size_.Y * .8f), Vehicle->GearDisplayString, HUDFont, Vehicle->is_in_reverse_gear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
+		Canvas->DrawItem(GearTextItem);
 		// Speed
-		FCanvasTextItem SpeedTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 455), Vehicle->SpeedDisplayString, HUDFont, FLinearColor::White);
+		FCanvasTextItem SpeedTextItem(FVector2D(size_.X * .95f, size_.Y * .85f), Vehicle->SpeedDisplayString, HUDFont, FLinearColor::White);
 		SpeedTextItem.Scale = ScaleVec;
 		Canvas->DrawItem(SpeedTextItem);
-		// Gear
-		FCanvasTextItem GearTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 500.f), Vehicle->GearDisplayString, HUDFont, Vehicle->is_in_reverse_gear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
-		GearTextItem.Scale = ScaleVec;
-		Canvas->DrawItem(GearTextItem);
-
-		FCanvasTextItem RPMTextItem(FVector2D(HUDXRatio * 805.f, HUDYRatio * 550.f), Vehicle->RPMDisplayString, HUDFont, FLinearColor::Red);
+		//rpm
+		FCanvasTextItem RPMTextItem(FVector2D(size_.X * .95f, size_.Y * .90f), Vehicle->RPMDisplayString, HUDFont, FLinearColor::Red);
 		RPMTextItem.Scale = ScaleVec;
 		Canvas->DrawItem(RPMTextItem);
 	}
