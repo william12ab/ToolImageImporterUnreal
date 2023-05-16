@@ -25,4 +25,8 @@ public:
 protected:
 	class UTexture2D* pause_background_tex;
 
+	FColor white_;
+	FColor red_;
+	FText r_unit;
+	FText v_unit;
 };

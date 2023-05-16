@@ -148,11 +148,8 @@ AVehicleController::AVehicleController(){
 	reverse_p = false;
 	max_camera_rot = 80.f;
 	//hud
-	GearDisplayReverseColor = FColor(255, 0, 0, 255);
-	GearDisplayColor = FColor(255, 255, 255, 255);
-	// Colors for the in-car gear display. One for normal one for reverse
-	GearDisplayReverseColor = FColor(255, 0, 0, 255);
-	GearDisplayColor = FColor(255, 255, 255, 255);
+	GearDisplayReverseColor = FColor(208, 34, 65, 255);
+	GearDisplayColor = FColor(255, 250, 239, 255);
 	is_in_reverse_gear = false;
 	static ConstructorHelpers::FObjectFinder<UMaterial> TextMaterial(TEXT("Material'/Engine/EngineMaterials/AntiAliasedTextMaterialTranslucent.AntiAliasedTextMaterialTranslucent'"));
 	UMaterialInterface* Material = TextMaterial.Object;
@@ -486,8 +483,8 @@ void AVehicleController::Release() {
 void AVehicleController::UpdateHUDStrings(){
 	int32 KPH_int = FMath::FloorToInt(current_KPH);
 	int32 RPM_int = FMath::FloorToInt(current_RPM);
-	SpeedDisplayString = FText::Format(LOCTEXT("SpeedFormat", "{0} km/h"), FText::AsNumber(KPH_int));
-	RPMDisplayString = FText::Format(LOCTEXT("RPMFormat", "{0} RPM"), FText::AsNumber(RPM_int));
+	SpeedDisplayString = FText::Format(LOCTEXT("SpeedFormat", "{0} "), FText::AsNumber(KPH_int));
+	RPMDisplayString = FText::Format(LOCTEXT("RPMFormat", "{0} "), FText::AsNumber(RPM_int));
 	if (is_in_reverse_gear == true){
 		GearDisplayString = FText(LOCTEXT("ReverseGear", "R"));
 	}
