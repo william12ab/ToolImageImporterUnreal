@@ -174,9 +174,15 @@ AVehicleController::AVehicleController(){
 	}
 	static ConstructorHelpers::FObjectFinder<USoundCue> EngineSoundCueObj(TEXT("SoundCue'/Game/Sound/Engine.Engine'"));
 	if (EngineSoundCueObj.Succeeded()){
-		EngineSoundCue = EngineSoundCueObj.Object;
-		EngineComp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
-		EngineComp->SetupAttachment(RootComponent);
+		engine_sound_cue = EngineSoundCueObj.Object;
+		engine_comp= CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
+		engine_comp->SetupAttachment(RootComponent);
+	}
+	static ConstructorHelpers::FObjectFinder<USoundCue> CountdownObj(TEXT("SoundCue'/Game/Sound/countdown_cue.countdown_cue'"));
+	if (CountdownObj.Succeeded()) {
+		countdown_sound_cue = CountdownObj.Object;
+		countdown_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("CountdownComp"));
+		countdown_comp->SetupAttachment(RootComponent);
 	}
 	//starting
 	is_starting_ = false;
@@ -197,20 +203,21 @@ AVehicleController::AVehicleController(){
 	current_KPH = 0.0f;
 	speed_timer = 0.0f;
 	is_unorthadox_start = false;
+	is_countdown_set = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
 	Camera->Activate();
 	InternalCamera->Deactivate();
-	EngineComp->Activate(true);
-	EngineComp->SetSound(EngineSoundCue);
-	EngineComp->Play(0.f);
+	engine_comp->Activate(true);
+	engine_comp->SetSound(engine_sound_cue);
+	engine_comp->Play(0.f);
 	
 	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600) {
-		EngineComp->SetFloatParameter(FName("RPM"), 600);
+		engine_comp->SetFloatParameter(FName("RPM"), 600);
 	}
 	else {
-		EngineComp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
+		engine_comp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
 	}
 }
 
@@ -227,10 +234,10 @@ void AVehicleController::Tick(float DeltaTime) {
 	ChangeBrakeSystem();
 	//sound
 	if (current_RPM < 600){
-		EngineComp->SetFloatParameter(FName("RPM"), 600);
+		engine_comp->SetFloatParameter(FName("RPM"), 600);
 	}
 	else{
-		EngineComp->SetFloatParameter(FName("RPM"), current_RPM);
+		engine_comp->SetFloatParameter(FName("RPM"), current_RPM);
 	}
 	//for parrticels
 	if (current_KPH >2.f){
@@ -366,7 +373,6 @@ void AVehicleController::RestartMainLevel() {
 	is_restart_level = true;
 }
 void AVehicleController::MoveForward(float AxisValue){
-	//if (!is_starting_){
 		GetVehicleMovementComponent()->SetThrottleInput(AxisValue);
 		if (AxisValue > 0.01f) {
 			if (is_in_reverse_gear){
@@ -375,7 +381,6 @@ void AVehicleController::MoveForward(float AxisValue){
 			is_in_reverse = false;
 			is_car_stationary = false;
 		}
-	//}
 }
 void AVehicleController::Brake(float AxisValue) {
 	if (!is_starting_){
@@ -505,6 +510,14 @@ void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 void AVehicleController::StartFunction(const float& dt) {
 	if (is_start_countdown){
 		starting_counter += dt;
+		if (starting_counter>=3.0f){
+			if (!is_countdown_set) {
+				countdown_comp->Activate(true);
+				countdown_comp->SetSound(countdown_sound_cue);
+				countdown_comp->Play(0.f);
+				is_countdown_set = true;
+			}
+		}
 		if (starting_counter>=5.0f){
 			is_starting_ = false;
 			is_begin_lap = true;
@@ -524,6 +537,7 @@ void AVehicleController::SpeedTest(const float& dt) {
 void AVehicleController::CheckForStart() {
 	if (is_start_countdown) {
 		if (current_KPH > 1.f) {
+			countdown_comp->Activate(false);
 			is_unorthadox_start = true;
 			is_starting_ = false;
 			is_begin_lap = true;

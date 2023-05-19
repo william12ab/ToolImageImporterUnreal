@@ -12,7 +12,9 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	//sound
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
-		class USoundCue* EngineSoundCue;
+		class USoundCue* engine_sound_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* countdown_sound_cue;
 
 	//hud
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
@@ -98,14 +100,19 @@ protected:
 		class USceneComponent* InternalCameraBase;
 	FVector InternalCameraOrigin;
 
+	//sounds
+	UAudioComponent* engine_comp;
+	UAudioComponent* countdown_comp;
+	bool is_countdown_set;
 
+	//particle systems
 	UPROPERTY(VisibleAnywhere)
 		UParticleSystemComponent* ParticleSystemRightWheel;
 	UPROPERTY(VisibleAnywhere)
 		UParticleSystemComponent* ParticleSystemLeftWheel;
 
 	TArray<UParticleSystemComponent*> particle_arr;
-	UAudioComponent* EngineComp;
+
 	//array of cameras used for swapping
 	TArray<UCameraComponent*> cameras;
 	//defaults these control camera stuff

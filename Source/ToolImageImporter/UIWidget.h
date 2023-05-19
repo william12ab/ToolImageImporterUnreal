@@ -98,4 +98,7 @@ protected:
 	int index_image;//index of the images when dispplaying them
 	bool is_images_off;//to stop changing visibility or checking constantly
 	bool is_system_on;//for same above
+
+
+
 };

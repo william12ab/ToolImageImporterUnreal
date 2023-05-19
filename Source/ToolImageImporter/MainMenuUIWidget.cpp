@@ -16,8 +16,12 @@ void UMainMenuUIWidget::NativeConstruct(){
 
 
 void UMainMenuUIWidget::OnClickPlay() {
-	level_name = "Main";
-	TimerDelay();
+	file_opener.OpenApplication();
+	if (file_opener.GetIsOpened()) {
+		level_name = "Main";
+		TimerDelay();
+	}
+	
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {
