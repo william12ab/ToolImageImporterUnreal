@@ -3,6 +3,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "FileLoader.h"
+#include "SoundHandler.h"
 #include "MainMenuUIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UMainMenuUIWidget : public UUserWidget
@@ -10,8 +11,14 @@ class TOOLIMAGEIMPORTER_API UMainMenuUIWidget : public UUserWidget
 	GENERATED_BODY()
 protected:
 
+	UPROPERTY(Category = MainMenuWidg, EditAnywhere, BlueprintReadWrite)
+		USoundBase* button_sound_base;
+
+	
 	//functions
 	void NativeConstruct() override;
+	void TimerDelay();
+	void LevelFunc();
 	//ui
 	UPROPERTY(meta = (BindWidget))
 		class UImage* play_image;
@@ -41,4 +48,5 @@ protected:
 
 	//accessers
 	FileLoader file_opener;
+	FName level_name;
 };
