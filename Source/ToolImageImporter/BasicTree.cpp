@@ -92,15 +92,14 @@ void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const i
 void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_) {
 	float yaw_rot = 0.0f;//gives random yaw
 	FString mesh_name;
-	int loop_range = FMath::RandRange(50, 140);
+	int loop_range = FMath::RandRange(250, 1000);
 	int tree_select = 0;
 	int pos_y = 0;
 	int pos_x = 0;
 	float z_pos = 0.f;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
-	float min_height_modi = 0.3f;//for the height check, different for trees and bushes
-	float max_height_modi = 0.15f; //same above
+
 	NameChoiceTree(mesh_name, tree_select);
 	yaw_rot = FMath::RandRange(-360, 360);
 	for (int i = 0; i < loop_range; i++) {
@@ -110,36 +109,27 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 		z_pos = m_verts[pos_y * 400 + pos_x].Z;
 		bool is_found = false;
 		while (!is_found) {
-			if (z_pos<(max_m - (max_m * min_height_modi)) && z_pos>(min_m + (max_m * max_height_modi))) {
-				if (CheckBounds(track_point, pos_x, pos_y)) {
-					is_found = true;
-					float rand_scale = FMath::RandRange(0.01f, 0.2f);
-					float rand_yaw = FMath::RandRange(0.0f, 180.f);
-					FTransform A{
-					   FRotator{0,yaw_rot,0},
-					   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
-					   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
-					AddBasicTree(A, tree_select, mesh_name, track_point, pos_x, pos_y);
-					instanced_basic_tree->SetMobility(EComponentMobility::Static);
-					instanced_basic_tree->bCastDynamicShadow = true;
-					instanced_basic_tree->CastShadow = true;
-					
-					track_tree_points.Add(FVector2D(pos_x, pos_y));
-				}
-				else {
-					pos_x += FMath::RandRange(-4, 8);
-					pos_y += FMath::RandRange(-8, 8);
-					if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
-						pos_y = track_point[rand_point].Y;
-						pos_x = track_point[rand_point].X;
-					}
-					z_pos = m_verts[pos_y * 400 + pos_x].Z;
-				}
+			if (CheckBounds(track_point, pos_x, pos_y)) {
+				is_found = true;
+				float rand_scale = FMath::RandRange(0.01f, 0.2f);
+				float rand_yaw = FMath::RandRange(0.0f, 180.f);
+				FTransform A{
+				   FRotator{0,yaw_rot,0},
+				   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
+				   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
+				AddBasicTree(A, tree_select, mesh_name, track_point, pos_x, pos_y);
+				instanced_basic_tree->SetMobility(EComponentMobility::Static);
+				instanced_basic_tree->bCastDynamicShadow = true;
+				instanced_basic_tree->CastShadow = true;
+				track_tree_points.Add(FVector2D(pos_x, pos_y));
 			}
 			else {
-				rand_point = FMath::RandRange(0, track_point.Num() - 1);
-				pos_y = track_point[rand_point].Y;
-				pos_x = track_point[rand_point].X;
+				pos_x += FMath::RandRange(-4, 8);
+				pos_y += FMath::RandRange(-8, 8);
+				if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
+					pos_y = track_point[rand_point].Y;
+					pos_x = track_point[rand_point].X;
+				}
 				z_pos = m_verts[pos_y * 400 + pos_x].Z;
 			}
 		}
@@ -150,7 +140,7 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh, ttree sleect is for sleecting a tree. z_alter is for fixing the position of foilage.
 	FString mesh_name;
-	int loop_range = FMath::RandRange(100, 280);
+	int loop_range = FMath::RandRange(250, 1000);
 	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
@@ -283,7 +273,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 	float rand_percent = FMath::RandRange(0.0f, spacing_);
 	float rocks_to_spawn_float = d * (rand_percent/100.0f);
 	int rocks_to_spawn = round(rocks_to_spawn_float);
-	rocks_to_spawn *= 4;
+	rocks_to_spawn *= 8;
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
 	for (int i = 0; i < rocks_to_spawn; i++){
 		int rand_point = FMath::RandRange(0, track_point.Num()-1);
