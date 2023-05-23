@@ -33,6 +33,9 @@ void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select){
 		range_end = 11;
 	}
 	tree_select = FMath::RandRange(range_start, range_end);
+	if (tree_select==7|| tree_select == 8){
+		tree_select = 10;
+	}
 }
 
 void ABasicTree::NameChoicePlant(FString& mesh_name, float& z_alter){
@@ -120,6 +123,7 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 					instanced_basic_tree->SetMobility(EComponentMobility::Static);
 					instanced_basic_tree->bCastDynamicShadow = true;
 					instanced_basic_tree->CastShadow = true;
+					
 					track_tree_points.Add(FVector2D(pos_x, pos_y));
 				}
 				else {
