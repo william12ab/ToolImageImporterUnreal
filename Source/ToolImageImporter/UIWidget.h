@@ -13,6 +13,7 @@
 #include "StartDecalActor.h"
 #include "TriggerBoxDecal.h"
 #include "HeightmapHandler.h"
+#include "MainSounds.h"
 #include "UIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
@@ -85,6 +86,7 @@ protected:
 	HeightmapHandler level_loader;//for loading map
 	FVector starting_position;//starting position
 	FRotator starting_angle;//starting angle
+	AMainSounds* sound_controller;
 
 	bool is_level_spawnned;//singalling if everything is generated
 	bool give_time_penalty;//for false start
@@ -98,7 +100,4 @@ protected:
 	int index_image;//index of the images when dispplaying them
 	bool is_images_off;//to stop changing visibility or checking constantly
 	bool is_system_on;//for same above
-
-
-
 };

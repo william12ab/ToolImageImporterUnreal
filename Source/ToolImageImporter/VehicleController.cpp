@@ -265,7 +265,6 @@ void AVehicleController::Tick(float DeltaTime) {
 	else{
 		engine_comp->SetFloatParameter(FName("RPM"), current_RPM);
 		ground_audio_comp->SetFloatParameter(FName("RPM"), current_KPH);
-
 	}
 	//for parrticels
 	if (current_KPH >2.f){
@@ -286,7 +285,6 @@ void AVehicleController::Tick(float DeltaTime) {
 			if (!is_start_countdown){
 				GetVehicleMovementComponent()->SetThrottleInput(0);
 			}
-			
 		}
 		else {
 			if (!is_stop) {
