@@ -10,6 +10,10 @@ ACarGameMode::ACarGameMode(){
 	if (WidgetClassFinder.Succeeded()){
 		SomeWidgetClass = WidgetClassFinder.Class;
 	}
+	ConstructorHelpers::FClassFinder<UOptionsWidget> OptionsWidgetClassFinder(TEXT("/Game/UI_BP/OptionsBP"));
+	if (OptionsWidgetClassFinder.Succeeded()) {
+		options_class = OptionsWidgetClassFinder.Class;
+	}
 
 }
 void ACarGameMode::BeginPlay() {
@@ -17,10 +21,14 @@ void ACarGameMode::BeginPlay() {
 	if (IsValid(SomeWidgetClass)) {
 		pause_ui = CreateWidget<UPauseUI>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SomeWidgetClass);
 		if (pause_ui) {
-			pause_ui->AddToViewport(9990);
+			pause_ui->AddToViewport(9900);
 		}
 	}
-	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->ConsoleCommand("fullscreen");
-
+	if (IsValid(options_class)) {
+		options_ui = CreateWidget<UOptionsWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), options_class);
+		if (options_ui) {
+			options_ui->AddToViewport(9999);
+		}
+	}
 }
 

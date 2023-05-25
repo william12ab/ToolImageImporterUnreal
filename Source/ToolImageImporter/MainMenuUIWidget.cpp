@@ -2,6 +2,8 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "UObject/ConstructorHelpers.h"
+
 void UMainMenuUIWidget::NativeConstruct(){
 	Super::NativeConstruct();
 	play_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickPlay);
@@ -11,7 +13,6 @@ void UMainMenuUIWidget::NativeConstruct(){
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
-
 }
 
 
@@ -21,7 +22,6 @@ void UMainMenuUIWidget::OnClickPlay() {
 		level_name = "Main";
 		TimerDelay();
 	}
-	
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {
@@ -30,8 +30,9 @@ void UMainMenuUIWidget::OnClickTestArena() {
 }
 
 void UMainMenuUIWidget::OnClickOptions() {
-	UE_LOG(LogTemp, Warning, TEXT("test"));
+	UE_LOG(LogTemp, Warning, TEXT("clickoptionbuttn"));
 	PlaySound(button_sound_base);
+	is_active = true;
 }
 
 void UMainMenuUIWidget::OnClickQuit() {

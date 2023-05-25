@@ -9,11 +9,13 @@ UCLASS()
 class TOOLIMAGEIMPORTER_API UMainMenuUIWidget : public UUserWidget
 {
 	GENERATED_BODY()
+public:
+	void SetActive(bool f) { is_active = f; }
+	bool GetIsActive() { return is_active; }
 protected:
 
 	UPROPERTY(Category = MainMenuWidg, EditAnywhere, BlueprintReadWrite)
 		USoundBase* button_sound_base;
-
 	
 	//functions
 	void NativeConstruct() override;
@@ -49,4 +51,5 @@ protected:
 	//accessers
 	FileLoader file_opener;
 	FName level_name;
+	bool is_active;
 };

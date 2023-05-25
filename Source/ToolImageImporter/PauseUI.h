@@ -39,6 +39,4 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UImage* restart_image;
 	AVehicleController* vehicle_pawn;//ref for pause
-
-
 };
