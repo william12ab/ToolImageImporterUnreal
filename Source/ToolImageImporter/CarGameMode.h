@@ -11,7 +11,7 @@ class TOOLIMAGEIMPORTER_API ACarGameMode : public AGameMode
 	GENERATED_BODY()
 public:
 	ACarGameMode();
-
+	virtual void Tick(float DeltaTime)override;
 protected:    
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 		TSubclassOf<UPauseUI> SomeWidgetClass = nullptr;

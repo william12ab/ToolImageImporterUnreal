@@ -13,6 +13,7 @@ void UMainMenuUIWidget::NativeConstruct(){
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
+	is_active = false;
 }
 
 

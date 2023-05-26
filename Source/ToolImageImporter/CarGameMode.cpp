@@ -14,21 +14,35 @@ ACarGameMode::ACarGameMode(){
 	if (OptionsWidgetClassFinder.Succeeded()) {
 		options_class = OptionsWidgetClassFinder.Class;
 	}
-
+	SetTickableWhenPaused(true);
 }
 void ACarGameMode::BeginPlay() {
 	Super::BeginPlay();
-	if (IsValid(SomeWidgetClass)) {
-		pause_ui = CreateWidget<UPauseUI>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SomeWidgetClass);
-		if (pause_ui) {
-			pause_ui->AddToViewport(9900);
-		}
-	}
 	if (IsValid(options_class)) {
 		options_ui = CreateWidget<UOptionsWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), options_class);
 		if (options_ui) {
 			options_ui->AddToViewport(9999);
 		}
 	}
+	if (IsValid(SomeWidgetClass)) {
+		pause_ui = CreateWidget<UPauseUI>(UGameplayStatics::GetPlayerController(GetWorld(), 0), SomeWidgetClass);
+		if (pause_ui) {
+			pause_ui->AddToViewport(9909);
+		}
+	}
 }
 
+
+void ACarGameMode::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+
+	if (pause_ui->GetIsActive()) {
+		UE_LOG(LogTemp, Warning, TEXT("true"));
+
+		options_ui->SetOpen();
+		pause_ui->SetActive(false);
+	}
+	else if (!options_ui->GetActive()) {
+	}
+	UE_LOG(LogTemp, Warning, TEXT("true"));
+}

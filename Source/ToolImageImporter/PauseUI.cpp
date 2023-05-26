@@ -6,7 +6,9 @@ void UPauseUI::NativeConstruct() {
 	return_to_menu_button->OnClicked.AddUniqueDynamic(this, &UPauseUI::ReturnToMenu);
 	return_to_game_button->OnClicked.AddUniqueDynamic(this, &UPauseUI::ReturnToGame);
 	restart_game_button->OnClicked.AddUniqueDynamic(this, &UPauseUI::RestartFunction);
+	options_button->OnClicked.AddUniqueDynamic(this, &UPauseUI::OptionsButton);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
+	is_active = false;
 }
 void UPauseUI::ReturnToMenu() {
 	UGameplayStatics::OpenLevel(GetWorld(), "MainMenuLevel");
@@ -26,6 +28,11 @@ void UPauseUI::RenderPauseDisplay() {
 		wrapper_->SetVisibility(ESlateVisibility::Hidden);
 		UGameplayStatics::SetGamePaused(UGameplayStatics::GetPlayerPawn(GetWorld(), 0), false);
 	}
+}
+void UPauseUI::OptionsButton() {
+	UE_LOG(LogTemp, Warning, TEXT("clickoptionbuttn"));
+	auto f= UGameplayStatics::GetGameMode(GetWorld());
+	is_active = true;
 }
 
 void UPauseUI::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {

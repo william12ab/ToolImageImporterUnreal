@@ -38,6 +38,8 @@ void UOptionsWidget::ReturnFunction() {
 	UE_LOG(LogTemp, Warning, TEXT("reutrnbutton"));
 }
 void UOptionsWidget::SetOpen() {
+	UE_LOG(LogTemp, Warning, TEXT("vius"));
+
 	whole_panel->SetVisibility(ESlateVisibility::Visible);
 	is_active = true;
 }
