@@ -14,6 +14,7 @@ class TOOLIMAGEIMPORTER_API UOptionsWidget : public UUserWidget
 public:
 	void SetOpen();
 	bool GetActive() { return is_active; }
+	float GetMusicVol() { return music_vol; }
 protected:
 	//functions
 	void NativeConstruct() override;

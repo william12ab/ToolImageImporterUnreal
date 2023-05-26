@@ -1,5 +1,6 @@
 #pragma once
 #include "WheeledVehicle.h"
+#include "MainSounds.h"
 #include "VehicleController.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API AVehicleController : public AWheeledVehicle
@@ -13,8 +14,7 @@ public:
 	//sound
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* engine_sound_cue;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
-		class USoundCue* countdown_sound_cue;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* ground_sound_cue;
 
@@ -106,7 +106,6 @@ protected:
 
 	//sounds
 	UAudioComponent* engine_comp;
-	UAudioComponent* countdown_comp;
 	UAudioComponent* ground_audio_comp;
 	bool is_countdown_set;
 
@@ -157,7 +156,9 @@ protected:
 
 	//testing 
 	UPrimitiveComponent* UpdatedPrimitive;
+	AMainSounds* sound_ref_veh;
 	float speed_timer;
 	int32 gear_marker;
+
 };
 

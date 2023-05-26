@@ -13,12 +13,12 @@
 #include "StartDecalActor.h"
 #include "TriggerBoxDecal.h"
 #include "HeightmapHandler.h"
-#include "MainSounds.h"
 #include "UIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
 {
 	GENERATED_BODY()
+public:
 protected:
 	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
 	void CreateTrack();//creates track
@@ -86,7 +86,6 @@ protected:
 	HeightmapHandler level_loader;//for loading map
 	FVector starting_position;//starting position
 	FRotator starting_angle;//starting angle
-	AMainSounds* sound_controller;
 
 	bool is_level_spawnned;//singalling if everything is generated
 	bool give_time_penalty;//for false start

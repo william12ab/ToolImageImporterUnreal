@@ -4,6 +4,7 @@
 #include "GameFramework/GameMode.h"
 #include "PauseUI.h"
 #include "OptionsWidget.h"
+#include "MainSounds.h"
 #include "CarGameMode.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API ACarGameMode : public AGameMode
@@ -24,4 +25,6 @@ protected:
 		class UOptionsWidget* options_ui;
 
 	virtual void BeginPlay() override;
+
+	AMainSounds* sound_ref;
 };

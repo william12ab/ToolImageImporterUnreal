@@ -39,7 +39,6 @@ void AMenuGameMode::Tick(float DeltaTime){
 		options_ui->SetOpen();
 		menu_ui->SetActive(false);
 	}
-	else if (!options_ui->GetActive()){
-	}
+
 }
 

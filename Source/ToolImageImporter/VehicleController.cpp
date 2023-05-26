@@ -181,12 +181,7 @@ AVehicleController::AVehicleController(){
 		engine_comp= CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
 		engine_comp->SetupAttachment(RootComponent);
 	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> CountdownObj(TEXT("SoundCue'/Game/Sound/countdown_cue.countdown_cue'"));
-	if (CountdownObj.Succeeded()) {
-		countdown_sound_cue = CountdownObj.Object;
-		countdown_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("CountdownComp"));
-		countdown_comp->SetupAttachment(RootComponent);
-	}
+
 	static ConstructorHelpers::FObjectFinder<USoundCue> ground_obj(TEXT("SoundCue'/Game/Sound/ground_cue.ground_cue'"));
 	if (ground_obj.Succeeded()) {
 		ground_sound_cue = ground_obj.Object;
@@ -214,6 +209,8 @@ AVehicleController::AVehicleController(){
 	is_unorthadox_start = false;
 	is_countdown_set = false;
 	gear_marker = 1;
+
+	sound_ref_veh = Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainSounds::StaticClass()));
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -539,9 +536,7 @@ void AVehicleController::StartFunction(const float& dt) {
 		starting_counter += dt;
 		if (starting_counter>=3.0f){
 			if (!is_countdown_set) {
-				countdown_comp->Activate(true);
-				countdown_comp->SetSound(countdown_sound_cue);
-				countdown_comp->Play(0.f);
+				sound_ref_veh->PlayCountdown();
 				is_countdown_set = true;
 			}
 		}
@@ -564,7 +559,7 @@ void AVehicleController::SpeedTest(const float& dt) {
 void AVehicleController::CheckForStart() {
 	if (is_start_countdown) {
 		if (current_KPH > 1.f) {
-			countdown_comp->Activate(false);
+			sound_ref_veh->StopCountdown();
 			is_unorthadox_start = true;
 			is_starting_ = false;
 			is_begin_lap = true;

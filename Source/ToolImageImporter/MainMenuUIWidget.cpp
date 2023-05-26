@@ -31,7 +31,6 @@ void UMainMenuUIWidget::OnClickTestArena() {
 }
 
 void UMainMenuUIWidget::OnClickOptions() {
-	UE_LOG(LogTemp, Warning, TEXT("clickoptionbuttn"));
 	PlaySound(button_sound_base);
 	is_active = true;
 }

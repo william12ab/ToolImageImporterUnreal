@@ -17,9 +17,15 @@ public:
 	void StopBackgroundMusic();
 	void SelectStartPointBackground();
 	void SetVolume(const float &increase_);
+	float GetVolume();
+	void PlayCountdown();
+	void StopCountdown();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* background_sound_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* countdown_sound_cue;
+	UAudioComponent* countdown_comp;
 
 protected:
 	// Called when the game starts or when spawned

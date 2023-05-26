@@ -12,6 +12,12 @@ AMainSounds::AMainSounds(){
 		background_audio_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("BackgroundComp"));
 		background_audio_comp->SetupAttachment(RootComponent);
 	}
+	static ConstructorHelpers::FObjectFinder<USoundCue> CountdownObj(TEXT("SoundCue'/Game/Sound/countdown_cue.countdown_cue'"));
+	if (CountdownObj.Succeeded()) {
+		countdown_sound_cue = CountdownObj.Object;
+		countdown_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("CountdownComp"));
+		countdown_comp->SetupAttachment(RootComponent);
+	}
 	is_sound_on = false;
 	starting_point = 0.0f;
 	base_ = 0.75f;
@@ -56,4 +62,19 @@ void AMainSounds::StopBackgroundMusic() {
 }
 void AMainSounds::SelectStartPointBackground() {
 	starting_point = FMath::RandRange(0.0f, 11460.f);
+}
+
+float AMainSounds::GetVolume() {
+	float vol_=background_audio_comp->VolumeMultiplier;
+	return vol_;
+}
+
+void AMainSounds::PlayCountdown() {
+	countdown_comp->Activate(true);
+	countdown_comp->SetSound(countdown_sound_cue);
+	countdown_comp->Play(0.f);
+}
+
+void AMainSounds::StopCountdown() {
+	countdown_comp->Activate(false);
 }

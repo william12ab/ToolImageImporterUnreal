@@ -15,9 +15,6 @@ void UUIWidget::NativeConstruct(){
 	scaling_down_ = 10.0f;		//scale factor of everything, so 8 times what it is now
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
-	sound_controller = Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(),AMainSounds::StaticClass()));
-
-
 
 	point_type = false;
 	m_colors= level_loader.ReadFileInfo(h_, w_);
@@ -264,7 +261,7 @@ void UUIWidget::FixScales(){
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
 	is_level_spawnned = true;
-	sound_controller->PlayBackgroundMusic();
+
 }
 
 void UUIWidget::OnTest(){

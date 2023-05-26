@@ -35,11 +35,8 @@ void UOptionsWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) 
 void UOptionsWidget::ReturnFunction() {
 	whole_panel->SetVisibility(ESlateVisibility::Hidden);
 	is_active = false;
-	UE_LOG(LogTemp, Warning, TEXT("reutrnbutton"));
 }
 void UOptionsWidget::SetOpen() {
-	UE_LOG(LogTemp, Warning, TEXT("vius"));
-
 	whole_panel->SetVisibility(ESlateVisibility::Visible);
 	is_active = true;
 }
