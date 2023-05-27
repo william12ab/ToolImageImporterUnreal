@@ -12,11 +12,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	//sound
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
-		class USoundCue* engine_sound_cue;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
-		class USoundCue* ground_sound_cue;
 
 	//hud
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
@@ -91,8 +87,7 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(Category = MainMenuWidg, EditAnywhere, BlueprintReadWrite)
-		USoundBase* pop_sound_base;
+
 	//camera stuff
 	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* SpringArm;
@@ -104,11 +99,7 @@ protected:
 		class USceneComponent* InternalCameraBase;
 	FVector InternalCameraOrigin;
 
-	//sounds
-	UAudioComponent* engine_comp;
-	UAudioComponent* ground_audio_comp;
 	bool is_countdown_set;
-
 	//particle systems
 	UPROPERTY(VisibleAnywhere)
 		UParticleSystemComponent* ParticleSystemRightWheel;

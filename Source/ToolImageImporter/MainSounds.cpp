@@ -2,6 +2,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 #include "UObject/ConstructorHelpers.h"
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 // Sets default values
 AMainSounds::AMainSounds(){
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -18,6 +19,23 @@ AMainSounds::AMainSounds(){
 		countdown_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("CountdownComp"));
 		countdown_comp->SetupAttachment(RootComponent);
 	}
+	static ConstructorHelpers::FObjectFinder<USoundCue> EngineSoundCueObj(TEXT("SoundCue'/Game/Sound/Engine.Engine'"));
+	if (EngineSoundCueObj.Succeeded()) {
+		engine_sound_cue = EngineSoundCueObj.Object;
+		engine_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
+		engine_comp->SetupAttachment(RootComponent);
+	}
+	static ConstructorHelpers::FObjectFinder<USoundCue> ground_obj(TEXT("SoundCue'/Game/Sound/ground_cue.ground_cue'"));
+	if (ground_obj.Succeeded()) {
+		ground_sound_cue = ground_obj.Object;
+		ground_audio_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("GroundComp"));
+		ground_audio_comp->SetupAttachment(RootComponent);
+	}
+	static ConstructorHelpers::FObjectFinder<USoundBase> pop_obj(TEXT("SoundWave'/Game/Sound/Subaru_sounds/det3.det3'"));
+	if (pop_obj.Succeeded()){
+		pop_sound_base = pop_obj.Object;
+	}
+	
 	is_sound_on = false;
 	starting_point = 0.0f;
 	base_ = 0.75f;
@@ -27,7 +45,12 @@ AMainSounds::AMainSounds(){
 // Called when the game starts or when spawned
 void AMainSounds::BeginPlay(){
 	Super::BeginPlay();
-	
+	engine_comp->Activate(true);
+	engine_comp->SetSound(engine_sound_cue);
+	engine_comp->Play(0.f);
+	ground_audio_comp->Activate(true);
+	ground_audio_comp->SetSound(ground_sound_cue);
+	ground_audio_comp->Play(0.f);
 }
 
 // Called every frame
@@ -77,4 +100,18 @@ void AMainSounds::PlayCountdown() {
 
 void AMainSounds::StopCountdown() {
 	countdown_comp->Activate(false);
+}
+
+void AMainSounds::SetEngineParam(const float& rpm, const float& kph){
+	if (rpm < 600) {
+		engine_comp->SetFloatParameter(FName("RPM"), 600);
+	}
+	else {
+		engine_comp->SetFloatParameter(FName("RPM"), rpm);
+		ground_audio_comp->SetFloatParameter(FName("RPM"), kph);
+	}
+}
+
+void AMainSounds::PlayPopSound(const FVector& loc_) {
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), pop_sound_base, loc_, 0.6f, 0.2f);
 }

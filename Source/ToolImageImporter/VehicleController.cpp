@@ -154,8 +154,7 @@ AVehicleController::AVehicleController(){
 	static ConstructorHelpers::FObjectFinder<UMaterial> TextMaterial(TEXT("Material'/Engine/EngineMaterials/AntiAliasedTextMaterialTranslucent.AntiAliasedTextMaterialTranslucent'"));
 	UMaterialInterface* Material = TextMaterial.Object;
 
-	static ConstructorHelpers::FObjectFinder<USoundBase> pop_obj(TEXT("SoundWave'/Game/Sound/Subaru_sounds/det3.det3'"));
-	pop_sound_base = pop_obj.Object;
+
 
 	ParticleSystemRightWheel = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particlesright"));
 	ParticleSystemLeftWheel = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Particlesleft"));
@@ -175,19 +174,7 @@ AVehicleController::AVehicleController(){
 		particle_arr[0]->SetTemplate(ParticleAsset.Object);
 		particle_arr[1]->SetTemplate(ParticleAsset.Object);
 	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> EngineSoundCueObj(TEXT("SoundCue'/Game/Sound/Engine.Engine'"));
-	if (EngineSoundCueObj.Succeeded()){
-		engine_sound_cue = EngineSoundCueObj.Object;
-		engine_comp= CreateDefaultSubobject<UAudioComponent>(TEXT("EngineSoundComponent"));
-		engine_comp->SetupAttachment(RootComponent);
-	}
-
-	static ConstructorHelpers::FObjectFinder<USoundCue> ground_obj(TEXT("SoundCue'/Game/Sound/ground_cue.ground_cue'"));
-	if (ground_obj.Succeeded()) {
-		ground_sound_cue = ground_obj.Object;
-		ground_audio_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("GroundComp"));
-		ground_audio_comp->SetupAttachment(RootComponent);
-	}
+	
 	//starting
 	is_starting_ = false;
 	is_stop = false;
@@ -216,21 +203,7 @@ void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
 	Camera->Activate();
 	InternalCamera->Deactivate();
-	engine_comp->Activate(true);
-	engine_comp->SetSound(engine_sound_cue);
-	engine_comp->Play(0.f);
-	ground_audio_comp->Activate(true);
-	ground_audio_comp->SetSound(ground_sound_cue);
-	ground_audio_comp->Play(0.f);
-	
-	
-	
-	if (GetVehicleMovement()->GetEngineRotationSpeed() < 600) {
-		engine_comp->SetFloatParameter(FName("RPM"), 600);
-	}
-	else {
-		engine_comp->SetFloatParameter(FName("RPM"), GetVehicleMovement()->GetEngineRotationSpeed());
-	}
+	//sound set in mainsounds beginplay
 }
 
 void AVehicleController::Tick(float DeltaTime) {
@@ -238,7 +211,10 @@ void AVehicleController::Tick(float DeltaTime) {
 	//current values
 	
 	if (GetVehicleMovement()->GetCurrentGear()>gear_marker) {
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), pop_sound_base, GetActorLocation(),0.6f,0.2f);
+		//play pop sound
+		if (sound_ref_veh != nullptr) {
+			sound_ref_veh->PlayPopSound(GetActorLocation());
+		}
 	}
 	if (current_gear != 0) {
 		gear_marker = current_gear;
@@ -256,13 +232,11 @@ void AVehicleController::Tick(float DeltaTime) {
 	//SpeedTest(DeltaTime);
 	ChangeBrakeSystem();
 	//sound
-	if (current_RPM < 600){
-		engine_comp->SetFloatParameter(FName("RPM"), 600);
+	if (sound_ref_veh !=nullptr){
+		sound_ref_veh->SetEngineParam(current_RPM, current_KPH);
 	}
-	else{
-		engine_comp->SetFloatParameter(FName("RPM"), current_RPM);
-		ground_audio_comp->SetFloatParameter(FName("RPM"), current_KPH);
-	}
+	
+
 	//for parrticels
 	if (current_KPH >2.f){
 		if (ParticleSystemRightWheel != nullptr) {
@@ -459,7 +433,9 @@ void AVehicleController::UnPause() {
 }
 void AVehicleController::GearUp() {
 	GetVehicleMovementComponent()->SetTargetGear(current_gear+1, true);
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), pop_sound_base, GetActorLocation(), 0.6f, 0.2f);
+	if (sound_ref_veh!=nullptr){
+		sound_ref_veh->PlayPopSound(GetActorLocation());
+	}
 }
 void AVehicleController::GearDown() {
 	GetVehicleMovementComponent()->SetTargetGear(current_gear - 1, true);
