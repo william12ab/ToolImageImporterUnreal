@@ -34,20 +34,21 @@ void ACarHUD::DrawHUD(){
 	// Get our vehicle so we can check if we are in car. If we are we don't want onscreen HUD
 	AVehicleController* Vehicle = Cast<AVehicleController>(GetOwningPawn());
 	if ((Vehicle != nullptr) ){
-		// Gear
-
-		FCanvasTextItem GearTextItem(FVector2D(size_.X * .90f, size_.Y * .85f), Vehicle->GearDisplayString, HUDFont, Vehicle->is_in_reverse_gear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
-		Canvas->DrawItem(GearTextItem);
-		// Speed
-		FCanvasTextItem SpeedTextItem(FVector2D(size_.X * .90f, size_.Y * .88f), Vehicle->SpeedDisplayString, HUDFont, FLinearColor(white_));
-		Canvas->DrawItem(SpeedTextItem);
-		FCanvasTextItem units_v_text_item(FVector2D(size_.X * .93f, size_.Y * .88f), v_unit, HUDFont, FLinearColor(red_));
-		Canvas->DrawItem(units_v_text_item);
-		//rpm
-		FCanvasTextItem RPMTextItem(FVector2D(size_.X * .90f, size_.Y * .91f), Vehicle->RPMDisplayString, HUDFont, FLinearColor(white_));
-		Canvas->DrawItem(RPMTextItem);
-		FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
-		Canvas->DrawItem(units_r_text_item);
+		if (Vehicle->GetIsRenderSpedo()) {
+			// Gear
+			FCanvasTextItem GearTextItem(FVector2D(size_.X * .90f, size_.Y * .85f), Vehicle->GearDisplayString, HUDFont, Vehicle->is_in_reverse_gear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
+			Canvas->DrawItem(GearTextItem);
+			// Speed
+			FCanvasTextItem SpeedTextItem(FVector2D(size_.X * .90f, size_.Y * .88f), Vehicle->SpeedDisplayString, HUDFont, FLinearColor(white_));
+			Canvas->DrawItem(SpeedTextItem);
+			FCanvasTextItem units_v_text_item(FVector2D(size_.X * .93f, size_.Y * .88f), v_unit, HUDFont, FLinearColor(red_));
+			Canvas->DrawItem(units_v_text_item);
+			//rpm
+			FCanvasTextItem RPMTextItem(FVector2D(size_.X * .90f, size_.Y * .91f), Vehicle->RPMDisplayString, HUDFont, FLinearColor(white_));
+			Canvas->DrawItem(RPMTextItem);
+			FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
+			Canvas->DrawItem(units_r_text_item);
+		}
 	}
 }
 

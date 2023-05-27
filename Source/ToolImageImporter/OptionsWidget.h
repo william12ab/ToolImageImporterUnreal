@@ -17,6 +17,8 @@ public:
 	float GetMusicVol() { return music_vol; }
 	float GetVoiceVol() { return voice_vol; }
 	float GetEngineVol() { return engine_vol; }
+	bool GetIsTimerDisp() { return is_timer_disp; }
+	bool GetIsSpedoDisp() { return is_spedo_disp; }
 protected:
 	//functions
 	void NativeConstruct() override;

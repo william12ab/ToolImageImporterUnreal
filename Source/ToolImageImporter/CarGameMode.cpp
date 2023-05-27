@@ -15,9 +15,8 @@ ACarGameMode::ACarGameMode(){
 		options_class = OptionsWidgetClassFinder.Class;
 	}
 	SetTickableWhenPaused(true);
-
 	sound_ref= Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainSounds::StaticClass()));
-
+	vehicle_ref= Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 }
 void ACarGameMode::BeginPlay() {
 	Super::BeginPlay();
@@ -36,7 +35,6 @@ void ACarGameMode::BeginPlay() {
 	if (sound_ref != nullptr) {
 		sound_ref->PlayBackgroundMusic();
 	}
-	
 }
 
 
@@ -48,13 +46,13 @@ void ACarGameMode::Tick(float DeltaTime) {
 		pause_ui->SetActive(false);
 	}
 	if (sound_ref!=nullptr){
+		//sounds
 		sound_ref->SetVolume(options_ui->GetMusicVol());
 		sound_ref->SetVolumeVoice(options_ui->GetVoiceVol());
 		sound_ref->SetVolumeEngine(options_ui->GetEngineVol());
-		UE_LOG(LogTemp, Warning, TEXT("vol voice: %f"), sound_ref->GetVoiceVolume());
-		UE_LOG(LogTemp, Warning, TEXT("vol engine: %f"), sound_ref->GetEngineVolume());
-
 	}
-	
-
+	if (vehicle_ref!=nullptr){
+		vehicle_ref->SetIsRenderSpedo(options_ui->GetIsSpedoDisp());
+		vehicle_ref->SetIsRenderTimer(options_ui->GetIsTimerDisp());
+	}
 }

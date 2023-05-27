@@ -198,6 +198,8 @@ AVehicleController::AVehicleController(){
 	gear_marker = 1;
 
 	sound_ref_veh = Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainSounds::StaticClass()));
+	is_render_timer = true;
+	is_render_spedo = true;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -209,7 +211,6 @@ void AVehicleController::BeginPlay() {
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	//current values
-	
 	if (GetVehicleMovement()->GetCurrentGear()>gear_marker) {
 		//play pop sound
 		if (sound_ref_veh != nullptr) {
@@ -542,4 +543,6 @@ void AVehicleController::CheckForStart() {
 		}
 	}
 }
+
+
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

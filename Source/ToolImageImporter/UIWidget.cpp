@@ -51,6 +51,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	HandBreakTextFunction();
 	CountdownImageFunction(InDeltaTime);
 	LapTimerFunction(InDeltaTime);
+	RenderTimer();
 
 	//RESTARTING lap
 	RestartLap();
@@ -382,5 +383,15 @@ void UUIWidget::SkipCountdown() {
 		}
 		light_system->SetVisibility(ESlateVisibility::Hidden);
 		give_time_penalty = true;
+	}
+}
+void UUIWidget::RenderTimer() {
+	if (vehicle_pawn->GetIsRenderTimer()){
+		lap_timer_text->SetVisibility(ESlateVisibility::Visible);
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("false") );
+
+		lap_timer_text->SetVisibility(ESlateVisibility::Hidden);
 	}
 }

@@ -27,4 +27,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	AMainSounds* sound_ref;
+	AVehicleController* vehicle_ref;
+
 };

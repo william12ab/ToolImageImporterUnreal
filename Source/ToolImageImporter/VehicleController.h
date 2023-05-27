@@ -65,6 +65,8 @@ public:
 	void SetCounter(float c_) { counter_ = c_; }
 	void SetIsRestartLevel() { is_restart_level = false; }
 	void SetPause(bool p_) { is_paused = p_; }
+	void SetIsRenderTimer(bool p_) { is_render_timer = p_; }
+	void SetIsRenderSpedo(bool p_) { is_render_spedo= p_; }
 	//getter
 	bool GetPressed() { return pressed_; }
 	float GetCounter() { return counter_; }
@@ -78,6 +80,8 @@ public:
 	const bool GetIsPaused() { return is_paused; }
 	const bool GetIsRestartLevel() {return is_restart_level;}
 	bool GetIsUnorthadox() { return is_unorthadox_start; }
+	bool GetIsRenderTimer() { return is_render_timer; }
+	bool GetIsRenderSpedo() { return is_render_spedo; }
 	//pause
 	void OnPause();
 	void UnPause();
@@ -150,6 +154,8 @@ protected:
 	AMainSounds* sound_ref_veh;
 	float speed_timer;
 	int32 gear_marker;
+	bool is_render_timer;
+	bool is_render_spedo;
 
 };
 

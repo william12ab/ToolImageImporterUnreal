@@ -24,7 +24,6 @@ void AMenuGameMode::BeginPlay() {
 			options_ui->AddToViewport(9999);
 		}
 	}
-
 	if (IsValid(menu_class)) {
 		menu_ui = CreateWidget<UMainMenuUIWidget>(UGameplayStatics::GetPlayerController(GetWorld(), 0), menu_class);
 		if (menu_ui) {
@@ -39,6 +38,5 @@ void AMenuGameMode::Tick(float DeltaTime){
 		options_ui->SetOpen();
 		menu_ui->SetActive(false);
 	}
-
 }
 
