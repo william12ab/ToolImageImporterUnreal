@@ -18,13 +18,11 @@ void UOptionsWidget::NativeConstruct() {
 
 void UOptionsWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	if (sound_panel->GetVisibility() == ESlateVisibility::Visible){
-		UE_LOG(LogTemp, Warning, TEXT("test"));
 		music_vol = music_slider->GetValue();
 		engine_vol = car_sfx_slider->GetValue();
 		voice_vol = voice_slider->GetValue();
 	}
 	if (display_panel->GetVisibility() == ESlateVisibility::Visible){
-		UE_LOG(LogTemp, Warning, TEXT("test2"));
 		is_timer_disp = timer_box->IsChecked();
 		is_progress_disp = progress_box->IsChecked();
 		is_codriver_disp = codriver_box->IsChecked();

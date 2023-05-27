@@ -40,6 +40,7 @@ AMainSounds::AMainSounds(){
 	starting_point = 0.0f;
 	base_ = 0.75f;
 	is_done=false;
+	pop_base = 0.6f;
 }
 
 // Called when the game starts or when spawned
@@ -79,6 +80,14 @@ void AMainSounds::PlayBackgroundMusic() {
 void AMainSounds::SetVolume(const float& increase_) {
 	background_audio_comp->SetVolumeMultiplier(increase_);
 }
+void AMainSounds::SetVolumeEngine(const float& increase_) {
+	engine_comp->SetVolumeMultiplier(increase_);
+	ground_audio_comp->SetVolumeMultiplier(increase_);
+	pop_base = (increase_ / 2.f);
+}
+void AMainSounds::SetVolumeVoice(const float& increase_) {
+	countdown_comp->SetVolumeMultiplier(increase_);
+}
 
 void AMainSounds::StopBackgroundMusic() {
 	background_audio_comp->Activate(false);
@@ -91,7 +100,14 @@ float AMainSounds::GetVolume() {
 	float vol_=background_audio_comp->VolumeMultiplier;
 	return vol_;
 }
-
+float AMainSounds::GetEngineVolume() {
+	float vol_ = engine_comp->VolumeMultiplier;
+	return vol_;
+}
+float AMainSounds::GetVoiceVolume() {
+	float vol_ = countdown_comp->VolumeMultiplier;
+	return vol_;
+}
 void AMainSounds::PlayCountdown() {
 	countdown_comp->Activate(true);
 	countdown_comp->SetSound(countdown_sound_cue);
@@ -113,5 +129,5 @@ void AMainSounds::SetEngineParam(const float& rpm, const float& kph){
 }
 
 void AMainSounds::PlayPopSound(const FVector& loc_) {
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), pop_sound_base, loc_, 0.6f, 0.2f);
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), pop_sound_base, loc_, pop_base, 0.2f);
 }

@@ -235,8 +235,6 @@ void AVehicleController::Tick(float DeltaTime) {
 	if (sound_ref_veh !=nullptr){
 		sound_ref_veh->SetEngineParam(current_RPM, current_KPH);
 	}
-	
-
 	//for parrticels
 	if (current_KPH >2.f){
 		if (ParticleSystemRightWheel != nullptr) {

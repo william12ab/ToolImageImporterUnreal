@@ -18,16 +18,20 @@ public:
 	void SelectStartPointBackground();
 	void SetVolume(const float &increase_);
 	float GetVolume();
+	float GetEngineVolume();
+	float GetVoiceVolume();
 	void PlayCountdown();
 	void StopCountdown();
 	void SetEngineParam(const float& rpm, const float& kph);
 	void PlayPopSound(const FVector& loc_);
+	void SetVolumeEngine(const float &increase_);
+	void SetVolumeVoice(const float& increase_);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* background_sound_cue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* countdown_sound_cue;
-	UAudioComponent* countdown_comp;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* engine_sound_cue;
 
@@ -43,7 +47,9 @@ protected:
 	UAudioComponent* background_audio_comp;
 	UAudioComponent* engine_comp;
 	UAudioComponent* ground_audio_comp;
+	UAudioComponent* countdown_comp;
 	bool is_sound_on;
 	float base_;
 	bool is_done;
+	float pop_base;
 };

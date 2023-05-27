@@ -49,7 +49,11 @@ void ACarGameMode::Tick(float DeltaTime) {
 	}
 	if (sound_ref!=nullptr){
 		sound_ref->SetVolume(options_ui->GetMusicVol());
-		UE_LOG(LogTemp, Warning, TEXT("vol level: %f"), sound_ref->GetVolume());
+		sound_ref->SetVolumeVoice(options_ui->GetVoiceVol());
+		sound_ref->SetVolumeEngine(options_ui->GetEngineVol());
+		UE_LOG(LogTemp, Warning, TEXT("vol voice: %f"), sound_ref->GetVoiceVolume());
+		UE_LOG(LogTemp, Warning, TEXT("vol engine: %f"), sound_ref->GetEngineVolume());
+
 	}
 	
 

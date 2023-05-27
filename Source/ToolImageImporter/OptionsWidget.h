@@ -15,6 +15,8 @@ public:
 	void SetOpen();
 	bool GetActive() { return is_active; }
 	float GetMusicVol() { return music_vol; }
+	float GetVoiceVol() { return voice_vol; }
+	float GetEngineVol() { return engine_vol; }
 protected:
 	//functions
 	void NativeConstruct() override;
