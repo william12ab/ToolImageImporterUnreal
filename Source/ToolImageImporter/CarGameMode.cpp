@@ -58,6 +58,5 @@ void ACarGameMode::Tick(float DeltaTime) {
 	}
 	else {
 		vehicle_ref = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-
 	}
 }
