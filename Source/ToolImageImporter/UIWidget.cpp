@@ -390,8 +390,7 @@ void UUIWidget::RenderTimer() {
 		lap_timer_text->SetVisibility(ESlateVisibility::Visible);
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("false") );
-
+		UE_LOG(LogTemp, Warning, TEXT("false"));
 		lap_timer_text->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
