@@ -36,6 +36,7 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	void SkipCountdown();
 	void RenderTimer();
+	void SetLapTimeFinal();
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;

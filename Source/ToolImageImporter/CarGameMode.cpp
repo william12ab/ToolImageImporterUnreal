@@ -14,8 +14,13 @@ ACarGameMode::ACarGameMode(){
 	if (OptionsWidgetClassFinder.Succeeded()) {
 		options_class = OptionsWidgetClassFinder.Class;
 	}
+	ConstructorHelpers::FClassFinder<UEndUI> EndWidgetClassFinder(TEXT("/Game/UI_BP/EndBP"));
+	if (EndWidgetClassFinder.Succeeded()) {
+		end_class = EndWidgetClassFinder.Class;
+	}
 	SetTickableWhenPaused(true);
 	sound_ref= Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainSounds::StaticClass()));
+	is_set_end = false;
 }
 void ACarGameMode::BeginPlay() {
 	Super::BeginPlay();
@@ -31,6 +36,7 @@ void ACarGameMode::BeginPlay() {
 			pause_ui->AddToViewport(9909);
 		}
 	}
+
 	if (sound_ref != nullptr) {
 		sound_ref->PlayBackgroundMusic();
 	}
@@ -55,6 +61,23 @@ void ACarGameMode::Tick(float DeltaTime) {
 		UE_LOG(LogTemp, Warning, TEXT("in"));
 		vehicle_ref->SetIsRenderSpedo(options_ui->GetIsSpedoDisp());
 		vehicle_ref->SetIsRenderTimer(options_ui->GetIsTimerDisp());
+		if (vehicle_ref->GetBoolEnd()){
+			//display end UI
+			if (!is_set_end){
+				if (IsValid(SomeWidgetClass)) {
+					end_ui = CreateWidget<UEndUI>(UGameplayStatics::GetPlayerController(GetWorld(), 0), end_class);
+					if (end_ui) {
+						end_ui->AddToViewport(9919);
+					}
+				}
+				if (end_ui) {
+					end_ui->AddToViewport(9919);
+				}
+				end_ui->SetTimer();
+				is_set_end = true;
+				UGameplayStatics::SetGamePaused(UGameplayStatics::GetPlayerPawn(GetWorld(), 0), true);
+			}
+		}
 	}
 	else {
 		vehicle_ref = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));

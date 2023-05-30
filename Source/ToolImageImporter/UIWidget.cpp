@@ -85,6 +85,9 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 			}
 		}
 	}
+	if (vehicle_pawn->GetBoolEnd()){
+		SetLapTimeFinal();
+	}
 }
 
 void UUIWidget::GeneratePlane(){
@@ -354,6 +357,17 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 		lap_timer_text->SetText(FText::FromString(timer_string));
 	}
 }
+
+void UUIWidget::SetLapTimeFinal() {
+	auto from_disp = lap_timer_text->GetText();
+	vehicle_pawn->SetFinalTime(from_disp);
+	if (vehicle_pawn->GetIsUnorthadox()) {
+		FString string_= "0:00:10";
+		FText penalty_time = FText::FromString(string_);
+		vehicle_pawn->SetPenTime(penalty_time);
+	}
+}
+
 void UUIWidget::RestartLap() {
 	if (vehicle_pawn->GetIsRestartLevel()){
 		auto temp_start = starting_position;

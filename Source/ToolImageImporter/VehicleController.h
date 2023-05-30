@@ -67,8 +67,12 @@ public:
 	void SetPause(bool p_) { is_paused = p_; }
 	void SetIsRenderTimer(bool p_) { is_render_timer = p_; }
 	void SetIsRenderSpedo(bool p_) { is_render_spedo= p_; }
+	void SetFinalTime(FText f_) { final_text = f_; }
+	void SetPenTime(FText f_) { penalty_text = f_; }
 	//getter
 	bool GetPressed() { return pressed_; }
+	FText GetPenText() { return penalty_text; }
+	FText GetFinalText(){ return final_text; }
 	float GetCounter() { return counter_; }
 	float GetVelocityFromComp();
 	bool GetBoolStartText() {return is_stop_display_start_text;}
@@ -157,5 +161,7 @@ protected:
 	bool is_render_timer;
 	bool is_render_spedo;
 
+	FText final_text;
+	FText penalty_text;
 };
 
