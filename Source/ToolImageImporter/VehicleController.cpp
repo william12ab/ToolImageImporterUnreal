@@ -200,6 +200,7 @@ AVehicleController::AVehicleController(){
 	sound_ref_veh = Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainSounds::StaticClass()));
 	is_render_timer = true;
 	is_render_spedo = true;
+	penalty_time = 0.0f;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -486,6 +487,7 @@ void AVehicleController::Release() {
 	pressed_ = false;
 	counter_ = 0.0f;
 	GetVehicleMovementComponent()->SetThrottleInput(0.f);
+	penalty_time += 5.0f;
 }
 
 void AVehicleController::UpdateHUDStrings(){

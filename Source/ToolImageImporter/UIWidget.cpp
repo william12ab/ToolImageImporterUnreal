@@ -333,6 +333,7 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 				is_images_off = true;
 			}
 		}
+		lap_time += vehicle_pawn->GetPenaltyTime();
 		if (lap_time>60){
 			minutes = ((int)lap_time / 60);
 			lap_time -=(60*minutes);
@@ -362,7 +363,11 @@ void UUIWidget::SetLapTimeFinal() {
 	auto from_disp = lap_timer_text->GetText();
 	vehicle_pawn->SetFinalTime(from_disp);
 	if (vehicle_pawn->GetIsUnorthadox()) {
-		FString string_= "0:00:10";
+		float pen = 10;
+		pen += vehicle_pawn->GetPenaltyTime();
+		
+		FString string_= "0:00:";
+		string_ += FString::FromInt((int)pen);
 		FText penalty_time = FText::FromString(string_);
 		vehicle_pawn->SetPenTime(penalty_time);
 	}

@@ -86,6 +86,7 @@ public:
 	bool GetIsUnorthadox() { return is_unorthadox_start; }
 	bool GetIsRenderTimer() { return is_render_timer; }
 	bool GetIsRenderSpedo() { return is_render_spedo; }
+	float GetPenaltyTime() { return penalty_time; }
 	//pause
 	void OnPause();
 	void UnPause();
@@ -163,5 +164,7 @@ protected:
 
 	FText final_text;
 	FText penalty_text;
+
+	float penalty_time;
 };
 
