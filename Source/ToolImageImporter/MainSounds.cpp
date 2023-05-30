@@ -116,6 +116,7 @@ void AMainSounds::PlayCountdown() {
 
 void AMainSounds::StopCountdown() {
 	countdown_comp->Activate(false);
+	countdown_comp->Stop();
 }
 
 void AMainSounds::SetEngineParam(const float& rpm, const float& kph){

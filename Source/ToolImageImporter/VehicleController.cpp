@@ -269,6 +269,10 @@ void AVehicleController::Tick(float DeltaTime) {
 		lap_counter += DeltaTime;
 	}
 
+	if (is_end){
+		sound_ref_veh->StopCountdown();
+	}
+
 	UpdateHUDStrings();
 	//inside camera
 	if (InternalCamera->IsActive()){
