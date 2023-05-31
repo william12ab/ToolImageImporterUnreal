@@ -92,7 +92,7 @@ void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const i
 void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_) {
 	float yaw_rot = 0.0f;//gives random yaw
 	FString mesh_name;
-	int loop_range = FMath::RandRange(250, 1000);
+	int loop_range = FMath::RandRange(250, 750);
 	int tree_select = 0;
 	int pos_y = 0;
 	int pos_x = 0;

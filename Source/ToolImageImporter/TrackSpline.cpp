@@ -61,7 +61,6 @@ void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, con
 	if (t_value>0.0f){
 		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
 		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
-		
 	}
 	else	{
 		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
@@ -89,6 +88,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform){
 				min_height = (float)((height_z[y * 400 + x] * spacing_) / division_);
 			}
 			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, ((float)((height_z[y * 400 + x] * spacing_) / division_))+amount_added_to_z));
+			
 		}
 	}
 	for (size_t i = 0; i < spline->GetNumberOfSplinePoints(); i++){
@@ -118,6 +118,8 @@ void ATrackSpline::OnConstruction(const FTransform& Transform){
 
 			// define the positions of the points and tangents
 			const FVector StartPoint = spline->GetLocationAtSplinePoint(spline_count, ESplineCoordinateSpace::Type::Local);
+			points_total.Add(FVector(StartPoint));
+
 			const FVector StartTangent = spline->GetTangentAtSplinePoint(spline_count, ESplineCoordinateSpace::Type::Local);
 			const FVector EndPoint = spline->GetLocationAtSplinePoint(spline_count + 1, ESplineCoordinateSpace::Type::Local);
 			const FVector EndTangent = spline->GetTangentAtSplinePoint(spline_count + 1, ESplineCoordinateSpace::Type::Local);

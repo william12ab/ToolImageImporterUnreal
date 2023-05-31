@@ -79,7 +79,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 				last_point *= s_;
 				last_point.Z += 5;
 				while (!vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f), false, false)){
-					last_point.Z += 1.f;
+					last_point.Z += 0.1f;
 				}
 				counter_ = 0.0f;
 			}
@@ -142,7 +142,7 @@ void UUIWidget::CreateFoilage(){
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
-	for (int i = 0; i < 4; i++) {//tree near track
+	for (int i = 0; i < 2; i++) {//tree near track
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddTreeNearTrack(track_points, p_mesh->m_verts,max,min);
@@ -233,22 +233,22 @@ void UUIWidget::FixScales(){
 	auto t = w_mesh->GetActorLocation();
 	w_mesh->SetActorLocation(t* scaling_down_);
 
-	auto middle_point = FMath::Lerp(track_spline->GetSEPoints()[0], track_spline->GetSEPoints()[1], 0.5f);
-	middle_point *= scaling_down_;
-	float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
-	starting_position = middle_point;
-	starting_angle = FRotator(0.f, angle, 0.f);
-	while (!vehicle_pawn->TeleportTo(middle_point, starting_angle, false, false)) {
-		middle_point.Z += 1.f;
+	auto f = track_spline->GetTotalPoints()[1];
+	f *= scaling_down_;
+	float angle_f = atan2(track_spline->GetTotalPoints()[2].Y - track_spline->GetTotalPoints()[1].Y, track_spline->GetTotalPoints()[2].X - track_spline->GetTotalPoints()[1].X) * 180.0f / PI;
+	starting_angle = FRotator(0.f, angle_f, 0.f);
+
+	
+	while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
+		f.Z += 0.1f;
 	}
-
-
 	//trigger boxes used for end and start of the lap. - for starting and stopping timer etc...
-	auto ss = track_spline->GetSEPoints().Num();
+	auto ss = track_spline->GetTotalPoints().Num();
 	FActorSpawnParameters SpawnInfoDecal;
 	FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
 	FRotator myRotD(0, 0, 0);
-	FVector myLocD = FVector(track_spline->GetSEPoints()[1]);
+	FVector myLocD = FVector(track_spline->GetTotalPoints()[2]);
+	
 	myLocD *= scaling_down_;
 	myLocD.Z += 85.f;
 	FName RightName = FName(TEXT("boxendtriggername"));
@@ -257,7 +257,7 @@ void UUIWidget::FixScales(){
 	myLocD.Z -= 85.f;
 	myLocD.Z -= 85.f;
 	start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-	myLocD = track_spline->GetSEPoints()[ss- 10];
+	myLocD = track_spline->GetTotalPoints()[ss- 2];
 	myLocD *= scaling_down_;
 	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
 	myLocD.Z -= 85.f;
@@ -377,7 +377,7 @@ void UUIWidget::RestartLap() {
 	if (vehicle_pawn->GetIsRestartLevel()){
 		auto temp_start = starting_position;
 		while (!vehicle_pawn->TeleportTo(temp_start, starting_angle, false, false)) {
-			temp_start.Z += 1.f;
+			temp_start.Z += .1f;
 		}
 		vehicle_pawn->SetIsRestartLevel(); 
 		FString timer_string = FString::FromInt(00);
