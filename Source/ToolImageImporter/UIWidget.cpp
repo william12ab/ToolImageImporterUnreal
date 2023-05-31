@@ -276,7 +276,8 @@ void UUIWidget::OnTest(){
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	new_temp->Resize(temp_vec,2, temp_color);
-	new_temp->SetActorScale3D(FVector(4, 4, 8));//scaling*(s/2)(8*10) =80
+	new_temp->SetActorScale3D(FVector(5, 5, 10));//scaling*(s/2)(8*10) =80
+	p_mesh->Destroy();
 }
 
 void UUIWidget::StartTextFunction() {
@@ -409,7 +410,6 @@ void UUIWidget::RenderTimer() {
 		lap_timer_text->SetVisibility(ESlateVisibility::Visible);
 	}
 	else {
-		UE_LOG(LogTemp, Warning, TEXT("false"));
 		lap_timer_text->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
