@@ -58,7 +58,6 @@ void ACarGameMode::Tick(float DeltaTime) {
 		sound_ref->SetVolumeEngine(options_ui->GetEngineVol());
 	}
 	if (vehicle_ref!=nullptr){
-		UE_LOG(LogTemp, Warning, TEXT("in"));
 		vehicle_ref->SetIsRenderSpedo(options_ui->GetIsSpedoDisp());
 		vehicle_ref->SetIsRenderTimer(options_ui->GetIsTimerDisp());
 		if (vehicle_ref->GetBoolEnd()){
@@ -69,9 +68,6 @@ void ACarGameMode::Tick(float DeltaTime) {
 					if (end_ui) {
 						end_ui->AddToViewport(9919);
 					}
-				}
-				if (end_ui) {
-					end_ui->AddToViewport(9919);
 				}
 				end_ui->SetTimer();
 				is_set_end = true;

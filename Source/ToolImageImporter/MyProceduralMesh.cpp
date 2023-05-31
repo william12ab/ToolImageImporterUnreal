@@ -2,7 +2,6 @@
 #include "MyProceduralMesh.h"
 #include "IImageWrapperModule.h"
 #include "IImageWrapper.h"
-
 #include <Runtime/Engine/Public/ImageUtils.h>
 
 // Sets default values
@@ -39,55 +38,38 @@ void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_){
 		for (int i = 0; i < (height_); i++){
 			int count_loc = 0;
 			float tHeight = 0.0f;
-
-			if (i - 1 >= 0)											//left
-			{
+			if (i - 1 >= 0){
 				count_loc++;
 				tHeight += c_[(j * height_) + (i - 1)];
 			}
-
-			if (i + 1 < height_)									//right
-			{
+			if (i + 1 < height_){
 				count_loc++;
 				tHeight += c_[(j * height_) + (i + 1)];
 			}
-
-			if (j - 1 >= 0)											//down	
-			{
+			if (j - 1 >= 0){
 				count_loc++;
 				tHeight += c_[((j - 1) * height_) + i];
 			}
-
-			if (j + 1 < height_)									//up
-			{
+			if (j + 1 < height_){
 				count_loc++;
 				tHeight += c_[((j + 1) * height_) + i];
 			}
-
-			if ((i - 1 >= 0) && (j - 1 >= 0))								//down left 
-			{
+			if ((i - 1 >= 0) && (j - 1 >= 0)){
 				count_loc++;
 				tHeight += c_[((j - 1) * height_) + (i - 1)];
 			}
-
-			if ((i + 1 < height_) && (j - 1 >= 0))								//down right
-			{
+			if ((i + 1 < height_) && (j - 1 >= 0)){
 				count_loc++;
 				tHeight += c_[((j - 1) * height_) + (i + 1)];
 			}
-
-			if ((i - 1 >= 0) && (j + 1 < height_))								//up left 
-			{
+			if ((i - 1 >= 0) && (j + 1 < height_)){
 				count_loc++;
 				tHeight += c_[((j + 1) * height_) + (i - 1)];
 			}
-
-			if ((i + 1 < height_) && (j + 1 < height_))								//up right
-			{
+			if ((i + 1 < height_) && (j + 1 < height_)){
 				count_loc++;
 				tHeight += c_[((j + 1) * height_) + (i + 1)];
 			}
-
 			tHeight /= (float)count_loc;
 
 			c_[(j * height_) + i] = tHeight;
@@ -96,8 +78,7 @@ void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_){
 }
 
 
-float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3)
-{
+float AMyProceduralMesh::FindT(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3){
 	auto a = p1 - p3;
 	auto b = p1 - p2;
 
@@ -254,8 +235,7 @@ void AMyProceduralMesh::GenerateTris(){
 	}
 }
 
-void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spacing_)
-{
+void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spacing_){
 	height_ = d_height_;
 	width_ = d_width_;
 	spacing_ = 20.0f;
@@ -268,8 +248,14 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 
 
 void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_){
-	SmoothTerrain(c_);
-	SmoothTerrain(c_);
+	if (m_==0){
+		SmoothTerrain(c_);
+		SmoothTerrain(c_);
+		SmoothTerrain(c_);
+		SmoothTerrain(c_);
+	}
+
+
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			if (height_==400){
@@ -303,8 +289,7 @@ FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
 }
 
 
-float Distance(const FVector& p1, const FVector& p2)
-{
+float Distance(const FVector& p1, const FVector& p2){
 	float xd = p2.X - p1.X;
 	float yd = p2.Y - p1.Y;
 	auto c = sqrt((xd * xd) + (yd * yd));
@@ -325,6 +310,8 @@ void AMyProceduralMesh::ReplaceC(TArray<float>& c_)
 		temp.Add(m_verts[i].Z);
 	}
 	SmoothTerrain(temp);
+	SmoothTerrain(temp);
+
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			m_verts[y * height_ + x].Z = temp[y * height_ + x];
@@ -408,7 +395,7 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale
 	height_ = new_size;
 	width_ = new_size;
 	//inital vals
-	
+
 	NearestNeighbourSample(grid_size, new_size, m_verts_, new_z, scale_, temp_colour, new_c);
 	CreateMesh(height_, width_, spacing);
 

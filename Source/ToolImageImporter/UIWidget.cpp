@@ -265,7 +265,6 @@ void UUIWidget::FixScales(){
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
 	is_level_spawnned = true;
-
 }
 
 void UUIWidget::OnTest(){
@@ -275,8 +274,8 @@ void UUIWidget::OnTest(){
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	new_temp->Resize(temp_vec,2, temp_color);
-	new_temp->SetActorScale3D(FVector(5, 5, 10));//scaling*(s/2)(8*10) =80
+	new_temp->Resize(temp_vec,4, temp_color);
+	new_temp->SetActorScale3D(FVector(2.5f, 2.5f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();
 }
 
