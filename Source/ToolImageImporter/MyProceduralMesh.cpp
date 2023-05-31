@@ -138,7 +138,6 @@ void AMyProceduralMesh::GenerateVerts(){
 }
 
 void AMyProceduralMesh::CalculateNormals(){
-	
 	for (int j = 0; j < (height_ - 1); j++) {
 		for (int i = 0; i < (width_- 1); i++) {
 			//Calculate the plane normals
