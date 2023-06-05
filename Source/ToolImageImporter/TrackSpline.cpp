@@ -58,6 +58,24 @@ void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, con
 	int y = control_points[index_one].Y / spacing_;
 	FVector2D safe_point;
 	safe_point = LerpV2D(control_points[index_zero], control_points[index_one], t_value);
+	auto temp_safe_point = safe_point / spacing_;
+	if (temp_safe_point.X < 20 || temp_safe_point.Y <20 || temp_safe_point.X>380|| temp_safe_point.Y>380){
+		int s_x = 400 - temp_safe_point.X;
+		int s_y = 400 - temp_safe_point.Y;
+		if (s_x<20){
+			temp_safe_point.X += (s_x+s_x);
+		}
+		if (s_y < 20) {
+			temp_safe_point.Y += (s_y+s_y);
+		}
+		if (s_x > 380) {
+			temp_safe_point.X -= ((s_x-400)*2);
+		}
+		if (s_y > 380) {
+			temp_safe_point.Y -= ((s_y - 400) * 2);
+		}
+		safe_point = temp_safe_point * spacing_;
+	}
 	if (t_value>0.0f){
 		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
 		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));

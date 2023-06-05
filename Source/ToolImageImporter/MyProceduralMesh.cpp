@@ -297,7 +297,10 @@ float Distance(const FVector& p1, const FVector& p2){
 
 void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const float &z_pos){
 	//float rand_z = FMath::RandRange(-0.5f, 0.5f);
-	m_verts[(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))].Z = z_pos;
+	//m_verts[(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))].Z = z_pos;
+	int y_po= ((int)y_pos / spacing_);
+	int x_po = ((int)x_pos / spacing_);
+	m_verts[(y_po) * height_ + (x_po)].Z = z_pos;
 	m_vert_colors[(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
 }
 

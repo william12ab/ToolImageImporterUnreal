@@ -34,9 +34,10 @@ protected:
 	void RestartLap();//restating
 	void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	void SkipCountdown();
-	void RenderTimer();
-	void SetLapTimeFinal();
+	void SkipCountdown();//skips countdown if user off before finsih
+	void RenderTimer();//renders or unrenders timer
+	void SetLapTimeFinal();//sets final time for display in end ui
+	void StartPlaces();//used for choosing the starting places of both the flags and car
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
