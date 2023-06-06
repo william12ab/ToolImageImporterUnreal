@@ -6,7 +6,7 @@
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
 
-void UUIWidget::NativeConstruct(){
+void UUIWidget::NativeConstruct() {
 	Super::NativeConstruct();
 	w_ = 4;
 	h_ = 4;
@@ -17,9 +17,9 @@ void UUIWidget::NativeConstruct(){
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
 	point_type = false;
-	m_colors= level_loader.ReadFileInfo(h_, w_);
+	m_colors = level_loader.ReadFileInfo(h_, w_);
 	GeneratePlane();
-	point_type = level_loader.ReadTrackPoints(track_points,control_points);
+	point_type = level_loader.ReadTrackPoints(track_points, control_points);
 	CreateTrack();
 
 	counter_ = 0.0f;//for resetting postion
@@ -33,19 +33,19 @@ void UUIWidget::NativeConstruct(){
 	images_.Add(image_slot_4);
 	images_.Add(image_slot_5);
 	//for timer
-	minutes=0;
-	seconds=0;
-	point_seconds=0.0f;
-	counter_countdown=0.0f;
-	index_image=0;
+	minutes = 0;
+	seconds = 0;
+	point_seconds = 0.0f;
+	counter_countdown = 0.0f;
+	index_image = 0;
 	is_images_off = false;
 	is_system_on = false;
 	give_time_penalty = false;
 }
 
-void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
+void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	
+
 	//UI FUNCS
 	StartTextFunction();
 	HandBreakTextFunction();
@@ -71,60 +71,68 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime){
 	if (vehicle_pawn->GetPressed()) {
 		counter_ += InDeltaTime;
 		vehicle_pawn->SetCounter(counter_);
-		if (vehicle_pawn->GetCounter()>= 1.5f) {
+		if (vehicle_pawn->GetCounter() >= 1.5f) {
 			if (vehicle_pawn->GetVelocityFromComp() < 5.f) {
 				vehicle_pawn->SetPressed(false);
 				float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
 				last_point *= scaling_down_;
 				last_point *= s_;
 				last_point.Z += 5;
-				while (!vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f), false, false)){
+				while (!vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f), false, false)) {
 					last_point.Z += 0.1f;
 				}
 				counter_ = 0.0f;
 			}
 		}
 	}
-	if (vehicle_pawn->GetBoolEnd()){
+	if (vehicle_pawn->GetBoolEnd()) {
 		SetLapTimeFinal();
 	}
 }
 
-void UUIWidget::GeneratePlane(){
+void UUIWidget::GeneratePlane() {
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
-	FVector myLoc = FVector(0,0,0);
+	FVector myLoc = FVector(0, 0, 0);
 	p_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	p_mesh->CreateMesh(h_,w_,s_);
+	p_mesh->CreateMesh(h_, w_, s_);
 }
 
-void UUIWidget::CreateTrack(){
+void UUIWidget::CreateTrack() {
 	p_mesh->ModiVerts(m_colors, m_);
 	CreateFoilage();
 }
 
-void UUIWidget::LerpCalculation(TArray<FVector2D> &temp_arr, const int& index_saftey_p, const int& index_t_p){
+void UUIWidget::LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p) {
 	auto safet_p = track_spline->GetSafetyPoints();
 	for (int t = 0; t < 100; t++) {
 		float t_val = t / 100.f;
-		if (index_saftey_p==1){
-			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], (safet_p[index_saftey_p]/ s_), t_val));
+		if (index_saftey_p == 1) {
+			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], (safet_p[index_saftey_p] / s_), t_val));
 		}
-		else{
-			temp_arr.Add(track_spline->LerpV2D((safet_p[index_saftey_p]/ s_), track_points[index_t_p], t_val));
-		}	
+		else {
+			temp_arr.Add(track_spline->LerpV2D((safet_p[index_saftey_p] / s_), track_points[index_t_p], t_val));
+		}
 	}
 	track_points.Insert(temp_arr, index_t_p);
 }
 
-void UUIWidget::FillInGaps(){
-	TArray<FVector2D> temp_vec_first_pos;
-	LerpCalculation(temp_vec_first_pos, 0, 0);//between start and start respectively
-	temp_vec_first_pos.Empty();
-	LerpCalculation(temp_vec_first_pos, 1, track_points.Num()-1);//end and end respectively
+void UUIWidget::FillInGaps() {
+	if (track_spline->GetIsOutsideBounds()) {
+		TArray<FVector2D> temp_vec_first_pos;
+		LerpCalculation(temp_vec_first_pos, 0, 0);//between start and start respectively
+		temp_vec_first_pos.Empty();
+		LerpCalculation(temp_vec_first_pos, 1, track_points.Num() - 1);//end and end respectively
+	}
+	else {
+		TArray<FVector2D> temp_vec_first_pos;
+		LerpCalculation(temp_vec_first_pos, 0, 0);//between start and start respectively
+		temp_vec_first_pos.Empty();
+		LerpCalculation(temp_vec_first_pos, 1, track_points.Num() - 1);//end and end respectively
+	}
 }
 
-void UUIWidget::CreateFoilage(){
+void UUIWidget::CreateFoilage() {
 	int max = 0;
 	int min = 100000000;
 	int index = 0;
@@ -138,14 +146,14 @@ void UUIWidget::CreateFoilage(){
 		}
 	}
 	CreateSpline();
-	FillInGaps();
+	//FillInGaps();
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
 	for (int i = 0; i < 2; i++) {//tree near track
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddTreeNearTrack(track_points, p_mesh->m_verts,max,min);
+		tree_instancea->AddTreeNearTrack(track_points, p_mesh->m_verts, max, min);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	for (int i = 0; i < 4; i++) {//tree in general
@@ -175,24 +183,24 @@ void UUIWidget::CreateFoilage(){
 	}
 	//water
 	float water_height = (min + (max * 0.05f));
-	if (water_height>=track_spline->GetMinHeight()){
-		water_height = track_spline->GetMinHeight() ;
+	if (water_height >= track_spline->GetMinHeight()) {
+		water_height = track_spline->GetMinHeight();
 	}
-	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, water_height+track_spline->GetHeightChange());
+	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, water_height + track_spline->GetHeightChange());
 	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 	w_mesh->SetActorScale3D(FVector(30, 30, 30));
 	FixScales();
 }
-void UUIWidget::CreateSpline(){
+void UUIWidget::CreateSpline() {
 	TArray<FVector2D> temp_arr;
-	if (point_type){
+	if (point_type) {
 		temp_arr = track_points;
 	}
 	else {
 		temp_arr = control_points;
 	}
 
-	for (size_t i = 0; i < temp_arr.Num(); i++){
+	for (size_t i = 0; i < temp_arr.Num(); i++) {
 		(temp_arr[i].X) *= s_;
 		(temp_arr[i].Y) *= s_;
 	}
@@ -211,7 +219,7 @@ void UUIWidget::CreateSpline(){
 	track_spline->OnConstruction(t_transform_);//consttruction
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());//changing height of mesh
 	p_mesh->ReplaceC(m_colors);//replacing heightmap to match new mesh, also normals and smoothing
-	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z ));
+	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
 	track_spline->SetActorEnableCollision(false);
 	if (point_type) {
 		for (size_t i = 0; i < temp_arr.Num(); i++) {
@@ -226,95 +234,66 @@ void UUIWidget::CreateSpline(){
 }
 
 void UUIWidget::StartPlaces() {
-	if (point_type){
-		auto f = track_spline->GetTotalPoints()[1];
-		auto total = track_spline->GetTotalPoints();
-		f *= scaling_down_;
-		float angle_f = atan2(track_spline->GetTotalPoints()[2].Y - track_spline->GetTotalPoints()[1].Y, track_spline->GetTotalPoints()[2].X - track_spline->GetTotalPoints()[1].X) * 180.0f / PI;
-		starting_angle = FRotator(0.f, angle_f, 0.f);
-		while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
-			f.Z += 0.1f;
-		}
-
-		auto ss = track_spline->GetTotalPoints().Num();
-		FActorSpawnParameters SpawnInfoDecal;
-		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-		FRotator myRotD(0, 0, 0);
-		FVector myLocD = FVector(track_spline->GetTotalPoints()[2]);
-
-		myLocD *= scaling_down_;
-		myLocD.Z += 85.f;
-		FName RightName = FName(TEXT("boxendtriggername"));
-		SpawnInfoBox.Name = RightName;
-		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoDecal);
-		myLocD.Z -= 85.f;
-		myLocD.Z -= 85.f;
-		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-		myLocD = track_spline->GetTotalPoints()[ss - 2];
-		myLocD *= scaling_down_;
-		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-		myLocD.Z -= 85.f;
-		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+	auto f = FMath::Lerp(track_spline->GetTotalPoints()[0], track_spline->GetTotalPoints()[1], 0.25f);
+	auto total = track_spline->GetTotalPoints();
+	f *= scaling_down_;
+	float angle_f = atan2(track_spline->GetTotalPoints()[1].Y - track_spline->GetTotalPoints()[0].Y, track_spline->GetTotalPoints()[1].X - track_spline->GetTotalPoints()[0].X) * 180.0f / PI;
+	starting_angle = FRotator(0.f, angle_f, 0.f);
+	while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
+		f.Z += 0.5f;
 	}
-	else {
-		auto middle_point = FMath::Lerp(track_spline->GetSEPoints()[0], track_spline->GetSEPoints()[1], 0.5f);
-		middle_point *= scaling_down_;
-		float angle = atan2(track_spline->GetSEPoints()[1].Y - track_spline->GetSEPoints()[0].Y, track_spline->GetSEPoints()[1].X - track_spline->GetSEPoints()[0].X) * 180.0f / PI;
-		starting_position = middle_point;
-		starting_angle = FRotator(0.f, angle, 0.f);
-		while (!vehicle_pawn->TeleportTo(middle_point, starting_angle, false, false)) {
-			middle_point.Z += 1.f;
-		}
 
-		auto ss = track_spline->GetSEPoints().Num();
-		FActorSpawnParameters SpawnInfoDecal;
-		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-		FRotator myRotD(0, 0, 0);
-		FVector myLocD = FMath::Lerp(track_spline->GetSEPoints()[0], track_spline->GetSEPoints()[1], 0.75f);
-		myLocD *= scaling_down_;
-		myLocD.Z += 85.f;
-		FName RightName = FName(TEXT("boxendtriggername"));
-		SpawnInfoBox.Name = RightName;
-		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoDecal);
-		myLocD.Z -= 85.f;
-		myLocD.Z -= 85.f;
-		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-		myLocD = track_spline->GetSEPoints()[ss - 10];
-		myLocD *= scaling_down_;
-		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-		myLocD.Z -= 85.f;
-		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-		UE_LOG(LogTemp, Warning, TEXT("in else"));
+	auto ss = track_spline->GetTotalPoints().Num();
+	FActorSpawnParameters SpawnInfoDecal;
+	FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+	FRotator myRotD(0, 0, 0);
+	FVector myLocD = FMath::Lerp(track_spline->GetTotalPoints()[0], track_spline->GetTotalPoints()[1], 0.9f);
 
-	}
+	myLocD *= scaling_down_;
+	myLocD.Z += 85.f;
+	FName RightName = FName(TEXT("boxendtriggername"));
+	SpawnInfoBox.Name = RightName;
+	box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
+	//myLocD.Z -= 85.f;
+	//myLocD.Z -= 85.f;
+	start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
+	myLocD = track_spline->GetTotalPoints()[ss - 2];
+	myLocD = FMath::Lerp(track_spline->GetTotalPoints()[ss-2], track_spline->GetTotalPoints()[ss - 1], 0.9f);
+	myLocD *= scaling_down_;
+	float end_f = atan2(track_spline->GetTotalPoints()[ss - 1].Y - track_spline->GetTotalPoints()[ss - 2].Y, track_spline->GetTotalPoints()[ss - 1].X - track_spline->GetTotalPoints()[ss - 2].X) * 180.0f / PI;
+	myRotD= FRotator(0, end_f, 0);
+
+	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+	myLocD.Z -= 85.f;
+	end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
 }
 
-void UUIWidget::FixScales(){
+void UUIWidget::FixScales() {
 	//setting scales of terrain, spline, water.
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	w_mesh->SetActorScale3D(FVector(30* scaling_down_, 30* scaling_down_, 30* scaling_down_));
+	w_mesh->SetActorScale3D(FVector(30 * scaling_down_, 30 * scaling_down_, 30 * scaling_down_));
 	auto t = w_mesh->GetActorLocation();
-	w_mesh->SetActorLocation(t* scaling_down_);
+	w_mesh->SetActorLocation(t * scaling_down_);
 
 
 	StartPlaces();
 
 	//trigger boxes used for end and start of the lap. - for starting and stopping timer etc...
-	
+
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
 	is_level_spawnned = true;
 }
 
-void UUIWidget::OnTest(){
+void UUIWidget::OnTest() {
 	TArray<FLinearColor> temp_color;
 	p_mesh->Save(temp_vec, temp_color);
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	new_temp->Resize(temp_vec,4, temp_color);
+	new_temp->Resize(temp_vec, 4, temp_color);
 	new_temp->SetActorScale3D(FVector(2.5f, 2.5f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();
 }
@@ -331,39 +310,39 @@ void UUIWidget::StartTextFunction() {
 }
 
 void UUIWidget::HandBreakTextFunction() {
-	if (vehicle_pawn->GetBoolStartText()){
+	if (vehicle_pawn->GetBoolStartText()) {
 		instruction_image->SetVisibility(ESlateVisibility::Visible);
 		if (!is_system_on) {
 			light_system->SetVisibility(ESlateVisibility::Visible);
 			is_system_on = true;
 		}
 	}
-	if (vehicle_pawn->GetBoolCountdown()){
+	if (vehicle_pawn->GetBoolCountdown()) {
 		instruction_image->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
-void UUIWidget::CountdownImageFunction(const float &dt) {
-	if (vehicle_pawn->GetBoolCountdown()&&vehicle_pawn->GetBoolBeginLap()==false){
+void UUIWidget::CountdownImageFunction(const float& dt) {
+	if (vehicle_pawn->GetBoolCountdown() && vehicle_pawn->GetBoolBeginLap() == false) {
 		counter_countdown += dt;
-		if (counter_countdown>1.f){
+		if (counter_countdown > 1.f) {
 			counter_countdown = 0.0f;
 			images_[index_image]->SetVisibility(ESlateVisibility::Visible);
 			index_image++;
 		}
 	}
-	if (vehicle_pawn->GetBoolBeginLap()){
+	if (vehicle_pawn->GetBoolBeginLap()) {
 	}
 }
 
 void UUIWidget::LapTimerFunction(const float& dt) {
-	if (vehicle_pawn->GetBoolBeginLap()|| vehicle_pawn->GetIsUnorthadox()) {
+	if (vehicle_pawn->GetBoolBeginLap() || vehicle_pawn->GetIsUnorthadox()) {
 		SkipCountdown();
 		float lap_time = vehicle_pawn->GetLapTimer();
-		if (vehicle_pawn->GetIsUnorthadox()){
+		if (vehicle_pawn->GetIsUnorthadox()) {
 			lap_time += 10.f;
 		}
-		if (!is_images_off&&!vehicle_pawn->GetIsUnorthadox()) {
+		if (!is_images_off && !vehicle_pawn->GetIsUnorthadox()) {
 			images_[index_image]->SetVisibility(ESlateVisibility::Visible);
 			if (lap_time > 3.0f) {
 				for (int i = 0; i < images_.Num(); i++) {
@@ -374,16 +353,16 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 			}
 		}
 		lap_time += vehicle_pawn->GetPenaltyTime();
-		if (lap_time>60){
+		if (lap_time > 60) {
 			minutes = ((int)lap_time / 60);
-			lap_time -=(60*minutes);
+			lap_time -= (60 * minutes);
 			seconds = (int)lap_time;
 			lap_time -= seconds;
 			point_seconds = lap_time;
 			point_seconds *= 1000;
 			point_sec_int = (int)point_seconds;
 		}
-		else{
+		else {
 			seconds = (int)lap_time;
 			lap_time -= seconds;
 			point_seconds = lap_time;
@@ -405,8 +384,8 @@ void UUIWidget::SetLapTimeFinal() {
 	if (vehicle_pawn->GetIsUnorthadox()) {
 		float pen = 10;
 		pen += vehicle_pawn->GetPenaltyTime();
-		
-		FString string_= "0:00:";
+
+		FString string_ = "0:00:";
 		string_ += FString::FromInt((int)pen);
 		FText penalty_time = FText::FromString(string_);
 		vehicle_pawn->SetPenTime(penalty_time);
@@ -414,12 +393,12 @@ void UUIWidget::SetLapTimeFinal() {
 }
 
 void UUIWidget::RestartLap() {
-	if (vehicle_pawn->GetIsRestartLevel()){
+	if (vehicle_pawn->GetIsRestartLevel()) {
 		auto temp_start = starting_position;
 		while (!vehicle_pawn->TeleportTo(temp_start, starting_angle, false, false)) {
 			temp_start.Z += .1f;
 		}
-		vehicle_pawn->SetIsRestartLevel(); 
+		vehicle_pawn->SetIsRestartLevel();
 		FString timer_string = FString::FromInt(00);
 		timer_string += ":";
 		timer_string += FString::FromInt(00);
@@ -431,12 +410,12 @@ void UUIWidget::RestartLap() {
 		}
 		counter_countdown = 0.0f;
 		index_image = 0;
-		is_images_off=false;
+		is_images_off = false;
 		is_system_on = false;
 	}
 }
 void UUIWidget::SkipCountdown() {
-	if (vehicle_pawn->GetIsUnorthadox()){
+	if (vehicle_pawn->GetIsUnorthadox()) {
 		for (int i = 0; i < images_.Num(); i++) {
 			images_[i]->SetVisibility(ESlateVisibility::Hidden);
 		}
@@ -445,7 +424,7 @@ void UUIWidget::SkipCountdown() {
 	}
 }
 void UUIWidget::RenderTimer() {
-	if (vehicle_pawn->GetIsRenderTimer()){
+	if (vehicle_pawn->GetIsRenderTimer()) {
 		lap_timer_text->SetVisibility(ESlateVisibility::Visible);
 	}
 	else {

@@ -37,6 +37,7 @@ public:
 	TArray<FVector2D> GetSafetyPoints() { return saftey_points; }
 	TArray<FVector> GetTotalPoints() { return points_total; }
 	float GetMinHeight() { return min_height; }
+	bool GetIsOutsideBounds() { return is_outside_bounds; }
 
 	FVector2D LerpV2D(const FVector2D& p1, const FVector2D& p2, const float& t);
 
@@ -60,5 +61,5 @@ private:
 	float min_height;
 	float amount_added_to_z;
 
-
+	bool is_outside_bounds;
 };

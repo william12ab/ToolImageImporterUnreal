@@ -17,6 +17,7 @@ ATrackSpline::ATrackSpline(){
 	spacing_ = 20;
 	division_ = 5.0f;
 	amount_added_to_z=-15.f;
+	is_outside_bounds = false;
 }
 
 // Called when the game starts or when spawned
@@ -63,25 +64,46 @@ void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, con
 		int s_x = 400 - temp_safe_point.X;
 		int s_y = 400 - temp_safe_point.Y;
 		if (s_x<20){
-			temp_safe_point.X += (s_x+s_x);
+			if (s_x>0){
+				temp_safe_point.X-= (s_x + s_x);
+			}
+			else {
+				temp_safe_point.X += (s_x + s_x);
+			}
 		}
 		if (s_y < 20) {
-			temp_safe_point.Y += (s_y+s_y);
+			if (s_y > 0) {
+				temp_safe_point.Y -= (s_y + s_y);
+			}
+			else {
+				temp_safe_point.Y += (s_y + s_y);
+			}
 		}
 		if (s_x > 380) {
-			temp_safe_point.X -= ((s_x-400)*2);
+			if (s_x>400){
+				temp_safe_point.X += ((s_x - 400) * 2);
+			}
+			else {
+				temp_safe_point.X -= ((s_x - 400) * 2);
+			}
 		}
 		if (s_y > 380) {
-			temp_safe_point.Y -= ((s_y - 400) * 2);
+			if (s_x > 0) {
+				temp_safe_point.Y += ((s_y - 400) * 2);
+			}
+			else {
+				temp_safe_point.Y -= ((s_y - 400) * 2);
+			}
 		}
 		safe_point = temp_safe_point * spacing_;
+		is_outside_bounds = true;
 	}
 	if (t_value>0.0f){
 		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[temp_safe_point.Y * 400 + (temp_safe_point.X)] * spacing_) / division_) + amount_added_to_z));
 	}
-	else	{
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
+	else{
+		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[temp_safe_point.Y * 400 + (temp_safe_point.X)] * spacing_) / division_) + amount_added_to_z));
 		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
 	}	
 	saftey_points.Add(safe_point);
@@ -96,10 +118,10 @@ void ATrackSpline::OnConstruction(const FTransform& Transform){
 		int x = control_points[i].X / spacing_;
 		int y = control_points[i].Y / spacing_;
 		if (i == 0){
-			AddSafePoint(1, 0, i,-2.5f);//adds in point at start
+			//AddSafePoint(1, 0, i,-2.5f);//adds in point at start
 		}
 		else if (i == (control_points.Num()-1)){
-			AddSafePoint(i, control_points.Num() - 2, i,1.1f);//add point at end
+			//AddSafePoint(i, control_points.Num() - 2, i,1.1f);//add point at end
 		}
 		else{
 			if ((float)((height_z[y * 400 + x] * spacing_) / division_<min_height)){

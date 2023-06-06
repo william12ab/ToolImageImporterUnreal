@@ -325,8 +325,7 @@ void AMyProceduralMesh::ReplaceC(TArray<float>& c_)
 }
 
 
-void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_)
-{
+void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_){
 	int index_tracker_verts=0;
 	int right, left;
 	left = 3;
