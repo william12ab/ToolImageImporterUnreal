@@ -276,11 +276,15 @@ void UUIWidget::StartPlaces() {
 			int y = control_points[i].Y * s_;
 			float z =0.f;
 			for (int j= 0; j < track_spline->GetTotalPoints().Num(); j++){
-				if (track_spline->GetTotalPoints()[j].X == x&& track_spline->GetTotalPoints()[j].Y == y) {
+				if (track_spline->GetTotalPoints()[j].X == x&& track_spline->GetTotalPoints()[j].Y == y){
 					z = track_spline->GetTotalPoints()[j].Z;
 				}
 			}
-			control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z));
+			int xp = control_points[i].X;
+			int yp = control_points[i].Y;
+			float z_from_p_mesh = p_mesh->m_verts[(yp) * 400 + (xp)].Z;
+			control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z_from_p_mesh));
+			
 		}
 		if (control_points_with_z[0] == control_points_with_z[1]){
 			int sf = 23;//do something about this
