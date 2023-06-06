@@ -146,7 +146,6 @@ void UUIWidget::CreateFoilage() {
 		}
 	}
 	CreateSpline();
-	//FillInGaps();
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
@@ -232,40 +231,60 @@ void UUIWidget::CreateSpline() {
 		control_points = temp_arr;
 	}
 }
-
-void UUIWidget::StartPlaces() {
-	auto f = FMath::Lerp(track_spline->GetTotalPoints()[0], track_spline->GetTotalPoints()[1], 0.25f);
+void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
+	auto f = FMath::Lerp(point_arr[0], point_arr[1], 0.25f);
 	auto total = track_spline->GetTotalPoints();
 	f *= scaling_down_;
-	float angle_f = atan2(track_spline->GetTotalPoints()[1].Y - track_spline->GetTotalPoints()[0].Y, track_spline->GetTotalPoints()[1].X - track_spline->GetTotalPoints()[0].X) * 180.0f / PI;
+	float angle_f = atan2(point_arr[1].Y - point_arr[0].Y, point_arr[1].X - point_arr[0].X) * 180.0f / PI;
 	starting_angle = FRotator(0.f, angle_f, 0.f);
 	while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
 		f.Z += 0.5f;
 	}
 
-	auto ss = track_spline->GetTotalPoints().Num();
+	auto ss = point_arr.Num();
 	FActorSpawnParameters SpawnInfoDecal;
 	FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
 	FRotator myRotD(0, 0, 0);
-	FVector myLocD = FMath::Lerp(track_spline->GetTotalPoints()[0], track_spline->GetTotalPoints()[1], 0.9f);
+	FVector myLocD = FMath::Lerp(point_arr[0], point_arr[1], 0.9f);
 
 	myLocD *= scaling_down_;
 	myLocD.Z += 85.f;
 	FName RightName = FName(TEXT("boxendtriggername"));
 	SpawnInfoBox.Name = RightName;
 	box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
-	//myLocD.Z -= 85.f;
-	//myLocD.Z -= 85.f;
 	start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
-	myLocD = track_spline->GetTotalPoints()[ss - 2];
-	myLocD = FMath::Lerp(track_spline->GetTotalPoints()[ss-2], track_spline->GetTotalPoints()[ss - 1], 0.9f);
+	myLocD = point_arr[ss - 2];
+	myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
 	myLocD *= scaling_down_;
-	float end_f = atan2(track_spline->GetTotalPoints()[ss - 1].Y - track_spline->GetTotalPoints()[ss - 2].Y, track_spline->GetTotalPoints()[ss - 1].X - track_spline->GetTotalPoints()[ss - 2].X) * 180.0f / PI;
-	myRotD= FRotator(0, end_f, 0);
+	float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
+	myRotD = FRotator(0, end_f, 0);
 
 	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-	myLocD.Z -= 85.f;
+	//myLocD.Z -= 85.f;
 	end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+}
+
+//point type is true when curved, with width, or both
+void UUIWidget::StartPlaces() {
+	if (!point_type){
+		InnerStartPlaces(track_spline->GetTotalPoints());
+	}
+	else{
+		//finds the correct height(z) for the control points to build fvector for position for car and decals
+		TArray<FVector> control_points_with_z;
+		for (int i = 0; i < control_points.Num(); i++){
+			int x = control_points[i].X *s_;
+			int y = control_points[i].Y * s_;
+			float z =0.f;
+			for (int j= 0; j < track_spline->GetTotalPoints().Num(); j++){
+				if (track_spline->GetTotalPoints()[j].X == x&& track_spline->GetTotalPoints()[j].Y == y) {
+					z = track_spline->GetTotalPoints()[j].Z;
+				}
+			}
+			control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z));
+		}
+		InnerStartPlaces(control_points_with_z);
+	}
 }
 
 void UUIWidget::FixScales() {

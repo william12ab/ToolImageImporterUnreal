@@ -38,6 +38,7 @@ protected:
 	void RenderTimer();//renders or unrenders timer
 	void SetLapTimeFinal();//sets final time for display in end ui
 	void StartPlaces();//used for choosing the starting places of both the flags and car
+	void InnerStartPlaces(const TArray<FVector>& point_arr);
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
