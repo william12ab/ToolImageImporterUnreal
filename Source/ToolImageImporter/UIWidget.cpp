@@ -248,7 +248,7 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
 	FVector myLocD = FMath::Lerp(point_arr[0], point_arr[1], 0.9f);
 
 	myLocD *= scaling_down_;
-	myLocD.Z += 85.f;
+	//myLocD.Z += 85.f;
 	FName RightName = FName(TEXT("boxendtriggername"));
 	SpawnInfoBox.Name = RightName;
 	box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
@@ -260,7 +260,6 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
 	myRotD = FRotator(0, end_f, 0);
 
 	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-	//myLocD.Z -= 85.f;
 	end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
 }
 
@@ -283,6 +282,9 @@ void UUIWidget::StartPlaces() {
 			}
 			control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z));
 		}
+		if (control_points_with_z[0] == control_points_with_z[1]){
+			int sf = 23;//do something about this
+		}
 		InnerStartPlaces(control_points_with_z);
 	}
 }
@@ -294,12 +296,7 @@ void UUIWidget::FixScales() {
 	w_mesh->SetActorScale3D(FVector(30 * scaling_down_, 30 * scaling_down_, 30 * scaling_down_));
 	auto t = w_mesh->GetActorLocation();
 	w_mesh->SetActorLocation(t * scaling_down_);
-
-
 	StartPlaces();
-
-	//trigger boxes used for end and start of the lap. - for starting and stopping timer etc...
-
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
 	is_level_spawnned = true;
