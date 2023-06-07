@@ -21,6 +21,8 @@ ACarGameMode::ACarGameMode(){
 	SetTickableWhenPaused(true);
 	sound_ref= Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainSounds::StaticClass()));
 	is_set_end = false;
+	auto f =UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	
 }
 void ACarGameMode::BeginPlay() {
 	Super::BeginPlay();
@@ -40,7 +42,7 @@ void ACarGameMode::BeginPlay() {
 	if (sound_ref != nullptr) {
 		sound_ref->PlayBackgroundMusic();
 	}
-
+	
 }
 
 

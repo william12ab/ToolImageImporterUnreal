@@ -101,11 +101,11 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.75;
 	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
-	Vehicle4W->InertiaTensorScale = FVector(0.80f,3.0f,0.80f);
+	Vehicle4W->InertiaTensorScale = FVector(1.20f,3.0f,1.20f);
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(3, 0, -20.0f);
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(35.f, 0.f, -22.5f);//further down and along the body 
 		//28.4f
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}
@@ -201,6 +201,7 @@ AVehicleController::AVehicleController(){
 	is_render_timer = true;
 	is_render_spedo = true;
 	penalty_time = 0.0f;
+	
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -319,6 +320,7 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("LookUp", this, &AVehicleController::LookUp);
 	PlayerInputComponent->BindAxis("LookLeft", this, &AVehicleController::LookLeft);
 	PlayerInputComponent->BindAxis("LookRight", this, &AVehicleController::LookRight);
+	
 }
 void AVehicleController::CameraReverseViewRelease() {
 	if (InternalCamera->IsActive()){
@@ -410,7 +412,7 @@ void AVehicleController::MoveRight(float AxisValue){
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
 }
 void AVehicleController::LookUp(float AxisValue){
-		vertical_ = AxisValue;
+	vertical_ = AxisValue;
 }
 void AVehicleController::LookLeft(float AxisValue){
 		left_ = AxisValue;
