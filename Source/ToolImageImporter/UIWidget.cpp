@@ -272,19 +272,10 @@ void UUIWidget::StartPlaces() {
 		//finds the correct height(z) for the control points to build fvector for position for car and decals
 		TArray<FVector> control_points_with_z;
 		for (int i = 0; i < control_points.Num(); i++){
-			int x = control_points[i].X *s_;
-			int y = control_points[i].Y * s_;
-			float z =0.f;
-			for (int j= 0; j < track_spline->GetTotalPoints().Num(); j++){
-				if (track_spline->GetTotalPoints()[j].X == x&& track_spline->GetTotalPoints()[j].Y == y){
-					z = track_spline->GetTotalPoints()[j].Z;
-				}
-			}
 			int xp = control_points[i].X;
 			int yp = control_points[i].Y;
 			float z_from_p_mesh = p_mesh->m_verts[(yp) * 400 + (xp)].Z;
 			control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z_from_p_mesh));
-			
 		}
 		if (control_points_with_z[0] == control_points_with_z[1]){
 			int sf = 23;//do something about this
