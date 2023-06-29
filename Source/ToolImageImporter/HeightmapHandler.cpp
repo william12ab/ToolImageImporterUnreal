@@ -6,12 +6,12 @@ HeightmapHandler::HeightmapHandler(){
 	FString exe_name = "SFML_RuleBasedSystem.exe";
 	auto n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
 	fil_name.RemoveAt(n, exe_name.Len());
-	track_points_name = fil_name += "track_points.txt";
+	track_points_name = fil_name += "0track_points.txt";
 	fil_name = f_l.GetFileName();
 	exe_name = "SFML_RuleBasedSystem.exe";
 	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
 	fil_name.RemoveAt(n, exe_name.Len());
-	heightmap_name = fil_name += "final.png";
+	heightmap_name = fil_name += "0final.png";
 }
 HeightmapHandler::~HeightmapHandler(){
 }
