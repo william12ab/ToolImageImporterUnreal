@@ -17,9 +17,14 @@ void UUIWidget::NativeConstruct() {
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
 	point_type = false;
-	m_colors = level_loader.ReadFileInfo(h_, w_);
+	bool is_chunking = level_loader.ReadMetaFile();
+	int loop_index = 1;
+	if (is_chunking){
+		loop_index = 4;
+	}
+	m_colors = level_loader.ReadFileInfo(h_, w_,0);
 	GeneratePlane();
-	point_type = level_loader.ReadTrackPoints(track_points, control_points);
+	point_type = level_loader.ReadTrackPoints(track_points, control_points,0);
 	CreateTrack();
 
 	counter_ = 0.0f;//for resetting postion
