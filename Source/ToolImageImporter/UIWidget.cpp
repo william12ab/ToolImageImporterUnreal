@@ -16,6 +16,7 @@ void UUIWidget::NativeConstruct() {
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
+	is_decal_spawn = false;
 	point_type = false;
 	bool is_chunking = level_loader.ReadMetaFile();
 	int loop_index = 1;
@@ -31,6 +32,9 @@ void UUIWidget::NativeConstruct() {
 		loop_index = 4;
 	}
 	for (int i = 0; i < loop_index; i++){
+		m_colors.Empty();
+		track_points.Empty();
+		control_points.Empty();
 		m_colors = level_loader.ReadFileInfo(h_, w_, i);
 		GeneratePlane(i);
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
@@ -40,8 +44,6 @@ void UUIWidget::NativeConstruct() {
 
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
-
-	
 
 	//ui images
 	images_.Empty();
@@ -259,26 +261,29 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
 		f.Z += 0.5f;
 	}
 
-	auto ss = point_arr.Num();
-	FActorSpawnParameters SpawnInfoDecal;
-	FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-	FRotator myRotD(0, 0, 0);
-	FVector myLocD = FMath::Lerp(point_arr[0], point_arr[1], 0.9f);
+	if (!is_decal_spawn) {
+		auto ss = point_arr.Num();
+		FActorSpawnParameters SpawnInfoDecal;
+		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+		FRotator myRotD(0, 0, 0);
+		FVector myLocD = FMath::Lerp(point_arr[0], point_arr[1], 0.9f);
 
-	myLocD *= scaling_down_;
-	//myLocD.Z += 85.f;
-	FName RightName = FName(TEXT("boxendtriggername"));
-	SpawnInfoBox.Name = RightName;
-	box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
-	start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
-	myLocD = point_arr[ss - 2];
-	myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
-	myLocD *= scaling_down_;
-	float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
-	myRotD = FRotator(0, end_f, 0);
+		myLocD *= scaling_down_;
+		//myLocD.Z += 85.f;
+		FName RightName = FName(TEXT("boxendtriggername"));
+		SpawnInfoBox.Name = RightName;
+		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
+		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
+		myLocD = point_arr[ss - 2];
+		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
+		myLocD *= scaling_down_;
+		float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
+		myRotD = FRotator(0, end_f, 0);
 
-	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-	end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+		is_decal_spawn = true;
+	}
 }
 
 //point type is true when curved, with width, or both

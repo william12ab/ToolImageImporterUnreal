@@ -57,7 +57,7 @@ public:
 	void NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector>& temp_vec, const int& scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor>& new_c);
 	void Save(TArray<FVector> &temp_, TArray<FLinearColor> &temp_colours);
 
-
+	void ChangePos(int&pos,const int&max,bool & local_is_changed);
 	
 
 protected:

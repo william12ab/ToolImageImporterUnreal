@@ -24,6 +24,10 @@ HeightmapHandler::~HeightmapHandler(){
 
 TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_, const int& index_) {
 	auto n = heightmap_name.Find(FString("final.png"));
+	if (index_>0){
+		heightmap_name.RemoveAt(n-1);
+		n = heightmap_name.Find(FString("final.png"));
+	}
 	heightmap_name.InsertAt(n, FString::FromInt(index_));
 	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(heightmap_name);
 	texture_->AddToRoot();
@@ -70,6 +74,10 @@ bool HeightmapHandler::ReadTrackPoints(TArray<FVector2D>& track_points, TArray<F
 	IPlatformFile& file_manager = FPlatformFileManager::Get().GetPlatformFile();
 	TArray<FString> array_;
 	auto n = track_points_name.Find(FString("track_points.txt"));
+	if (index_p > 0) {
+		track_points_name.RemoveAt(n - 1);
+		n = track_points_name.Find(FString("track_points.txt"));
+	}
 	track_points_name.InsertAt(n, FString::FromInt(index_p));
 	if (file_manager.FileExists(*track_points_name)) {
 		if (FFileHelper::LoadFileToStringArray(array_, *track_points_name)) {

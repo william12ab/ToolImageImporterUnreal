@@ -113,4 +113,6 @@ protected:
 	TArray<AMyProceduralMesh*> vev_ground_meshes;//for p_mesh
 	TArray<AWaterMesh*> vec_water_mesh;//for water mesh
 	
+
+	bool is_decal_spawn;
 };
