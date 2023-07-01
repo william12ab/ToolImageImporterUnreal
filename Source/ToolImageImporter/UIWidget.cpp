@@ -19,16 +19,29 @@ void UUIWidget::NativeConstruct() {
 	point_type = false;
 	bool is_chunking = level_loader.ReadMetaFile();
 	int loop_index = 1;
+	vev_ground_meshes.Add(p_mesh);
+	vev_ground_meshes.Add(p_mesh1);
+	vev_ground_meshes.Add(p_mesh2);
+	vev_ground_meshes.Add(p_mesh3);
+	vec_water_mesh.Add(w_mesh);
+	vec_water_mesh.Add(w_mesh1);
+	vec_water_mesh.Add(w_mesh2);
+	vec_water_mesh.Add(w_mesh3);
 	if (is_chunking){
 		loop_index = 4;
 	}
-	m_colors = level_loader.ReadFileInfo(h_, w_,0);
-	GeneratePlane();
-	point_type = level_loader.ReadTrackPoints(track_points, control_points,0);
-	CreateTrack();
+	for (int i = 0; i < loop_index; i++){
+		m_colors = level_loader.ReadFileInfo(h_, w_, i);
+		GeneratePlane(i);
+		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
+		CreateTrack(i);
+	}
+	
 
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
+
+	
 
 	//ui images
 	images_.Empty();
@@ -95,17 +108,17 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	}
 }
 
-void UUIWidget::GeneratePlane() {
+void UUIWidget::GeneratePlane(const int& loop_index) {
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
-	p_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	p_mesh->CreateMesh(h_, w_, s_);
+	vev_ground_meshes[loop_index] = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+	vev_ground_meshes[loop_index]->CreateMesh(h_, w_, s_);
 }
 
-void UUIWidget::CreateTrack() {
-	p_mesh->ModiVerts(m_colors, m_);
-	CreateFoilage();
+void UUIWidget::CreateTrack(const int& loop_index) {
+	vev_ground_meshes[loop_index]->ModiVerts(m_colors, m_);
+	CreateFoilage(loop_index);
 }
 
 void UUIWidget::LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p) {
@@ -137,52 +150,52 @@ void UUIWidget::FillInGaps() {
 	}
 }
 
-void UUIWidget::CreateFoilage() {
+void UUIWidget::CreateFoilage(const int& loop_index) {
 	int max = 0;
 	int min = 100000000;
 	int index = 0;
-	for (int i = 0; i < p_mesh->m_verts.Num(); i++) {
-		if (p_mesh->m_verts[i].Z > max) {
-			max = p_mesh->m_verts[i].Z;
+	for (int i = 0; i < vev_ground_meshes[loop_index]->m_verts.Num(); i++) {
+		if (vev_ground_meshes[loop_index]->m_verts[i].Z > max) {
+			max = vev_ground_meshes[loop_index]->m_verts[i].Z;
 		}
-		if (p_mesh->m_verts[i].Z < min) {
-			min = p_mesh->m_verts[i].Z;
+		if (vev_ground_meshes[loop_index]->m_verts[i].Z < min) {
+			min = vev_ground_meshes[loop_index]->m_verts[i].Z;
 			index = i;
 		}
 	}
-	CreateSpline();
+	CreateSpline(loop_index);
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
 	for (int i = 0; i < 2; i++) {//tree near track
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddTreeNearTrack(track_points, p_mesh->m_verts, max, min);
+		tree_instancea->AddTreeNearTrack(track_points, vev_ground_meshes[loop_index]->m_verts, max, min);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	for (int i = 0; i < 4; i++) {//tree in general
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, false);
+		tree_instancea->AddClusterTrees(vev_ground_meshes[loop_index]->m_verts, max, min, track_points, false);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	for (int i = 0; i < 2; i++) {//ferns bushes
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->m_verts, max, min, track_points, true);
+		tree_instancea->AddClusterTrees(vev_ground_meshes[loop_index]->m_verts, max, min, track_points, true);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 
 	for (int i = 0; i < 1; i++) {//rocks
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddRockClusters(track_points, p_mesh->m_verts);
+		tree_instancea->AddRockClusters(track_points, vev_ground_meshes[loop_index]->m_verts);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	for (int i = 0; i < 1; i++) {//grass
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddGrass(track_points, p_mesh->m_verts, max, min);
+		tree_instancea->AddGrass(track_points, vev_ground_meshes[loop_index]->m_verts, max, min);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	}
 	//water
@@ -190,12 +203,12 @@ void UUIWidget::CreateFoilage() {
 	if (water_height >= track_spline->GetMinHeight()) {
 		water_height = track_spline->GetMinHeight();
 	}
-	myLocTree = FVector(p_mesh->m_verts[index].X, p_mesh->m_verts[index].Y, water_height + track_spline->GetHeightChange());
-	w_mesh = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
-	w_mesh->SetActorScale3D(FVector(30, 30, 30));
-	FixScales();
+	myLocTree = FVector(vev_ground_meshes[loop_index]->m_verts[index].X, vev_ground_meshes[loop_index]->m_verts[index].Y, water_height + track_spline->GetHeightChange());
+	vec_water_mesh[loop_index] = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
+	vec_water_mesh[loop_index]->SetActorScale3D(FVector(30, 30, 30));
+	FixScales(loop_index);
 }
-void UUIWidget::CreateSpline() {
+void UUIWidget::CreateSpline(const int&loop_index) {
 	TArray<FVector2D> temp_arr;
 	if (point_type) {
 		temp_arr = track_points;
@@ -221,8 +234,8 @@ void UUIWidget::CreateSpline() {
 	track_spline->SetControlPoints(temp_arr);//setting array in class to the points
 	track_spline->SetHeightArray(m_colors);//setting array as well
 	track_spline->OnConstruction(t_transform_);//consttruction
-	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());//changing height of mesh
-	p_mesh->ReplaceC(m_colors);//replacing heightmap to match new mesh, also normals and smoothing
+	vev_ground_meshes[loop_index]->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts());//changing height of mesh
+	vev_ground_meshes[loop_index]->ReplaceC(m_colors);//replacing heightmap to match new mesh, also normals and smoothing
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
 	track_spline->SetActorEnableCollision(false);
 	if (point_type) {
@@ -269,7 +282,7 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
 }
 
 //point type is true when curved, with width, or both
-void UUIWidget::StartPlaces() {
+void UUIWidget::StartPlaces(const int& loop_index) {
 	if (!point_type){
 		InnerStartPlaces(track_spline->GetTotalPoints());
 	}
@@ -279,7 +292,7 @@ void UUIWidget::StartPlaces() {
 		for (int i = 0; i < control_points.Num(); i++){
 			int xp = control_points[i].X;
 			int yp = control_points[i].Y;
-			float z_from_p_mesh = p_mesh->m_verts[(yp) * 400 + (xp)].Z;
+			float z_from_p_mesh = vev_ground_meshes[loop_index]->m_verts[(yp) * 400 + (xp)].Z;
 			control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z_from_p_mesh));
 		}
 		if (control_points_with_z[0] == control_points_with_z[1]){
@@ -289,14 +302,14 @@ void UUIWidget::StartPlaces() {
 	}
 }
 
-void UUIWidget::FixScales() {
+void UUIWidget::FixScales(const int& loop_index) {
 	//setting scales of terrain, spline, water.
-	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	vev_ground_meshes[loop_index]->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	w_mesh->SetActorScale3D(FVector(30 * scaling_down_, 30 * scaling_down_, 30 * scaling_down_));
-	auto t = w_mesh->GetActorLocation();
-	w_mesh->SetActorLocation(t * scaling_down_);
-	StartPlaces();
+	vec_water_mesh[loop_index]->SetActorScale3D(FVector(30 * scaling_down_, 30 * scaling_down_, 30 * scaling_down_));
+	auto t = vec_water_mesh[loop_index]->GetActorLocation();
+	vec_water_mesh[loop_index]->SetActorLocation(t * scaling_down_);
+	StartPlaces(loop_index);
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
 	is_level_spawnned = true;
@@ -304,14 +317,14 @@ void UUIWidget::FixScales() {
 
 void UUIWidget::OnTest() {
 	TArray<FLinearColor> temp_color;
-	p_mesh->Save(temp_vec, temp_color);
+	vev_ground_meshes[0]->Save(temp_vec, temp_color);
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	new_temp->Resize(temp_vec, 4, temp_color);
 	new_temp->SetActorScale3D(FVector(2.5f, 2.5f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
-	p_mesh->Destroy();
+	vev_ground_meshes[0]->Destroy();
 }
 
 void UUIWidget::StartTextFunction() {

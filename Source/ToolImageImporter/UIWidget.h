@@ -20,11 +20,11 @@ class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 protected:
-	void GeneratePlane();		//spawns plane using get world, etc and calls create mesh with params.
-	void CreateTrack();//creates track
-	void CreateFoilage();//creates foilage
-	void CreateSpline();//spine
-	void FixScales();//does scale of everything
+	void GeneratePlane(const int& loop_index);		//spawns plane using get world, etc and calls create mesh with params.
+	void CreateTrack(const int& loop_index);//creates track
+	void CreateFoilage(const int&loop_index);//creates foilage
+	void CreateSpline(const int&loop_index);//spine
+	void FixScales(const int&loop_index);//does scale of everything
 	void FillInGaps();//creates end and start
 	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function
 	void StartTextFunction();//ui func
@@ -37,7 +37,7 @@ protected:
 	void SkipCountdown();//skips countdown if user off before finsih
 	void RenderTimer();//renders or unrenders timer
 	void SetLapTimeFinal();//sets final time for display in end ui
-	void StartPlaces();//used for choosing the starting places of both the flags and car
+	void StartPlaces(const int&loop_index);//used for choosing the starting places of both the flags and car
 	void InnerStartPlaces(const TArray<FVector>& point_arr);
 	//ui 
 	UPROPERTY(meta = (BindWidget))
@@ -65,7 +65,13 @@ protected:
 	TArray<UImage*> images_;//has UI images - the starting countdown set
 
 	AWaterMesh* w_mesh;//water
+	AWaterMesh* w_mesh1;
+	AWaterMesh* w_mesh2;
+	AWaterMesh* w_mesh3;
 	AMyProceduralMesh* p_mesh;		//obj
+	AMyProceduralMesh* p_mesh1;		//obj
+	AMyProceduralMesh* p_mesh2;		//obj
+	AMyProceduralMesh* p_mesh3;		//obj
 	ABasicTree* tree_instance;//trees
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
@@ -93,7 +99,6 @@ protected:
 
 	bool is_level_spawnned;//singalling if everything is generated
 	bool give_time_penalty;//for false start
-
 	//for UI
 	int minutes;
 	int seconds;
@@ -103,4 +108,9 @@ protected:
 	int index_image;//index of the images when dispplaying them
 	bool is_images_off;//to stop changing visibility or checking constantly
 	bool is_system_on;//for same above
+
+	//for chunking 
+	TArray<AMyProceduralMesh*> vev_ground_meshes;//for p_mesh
+	TArray<AWaterMesh*> vec_water_mesh;//for water mesh
+	
 };
