@@ -300,28 +300,23 @@ void AMyProceduralMesh::ChangePos(int& pos, const int& max,bool& local_is_change
 		pos = 0;
 		local_is_changed = true;
 	}
-	if (pos>max){
-		pos = max - 1;
-		local_is_changed=true;
-	}
 }
 
 void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const float &z_pos){
-	//float rand_z = FMath::RandRange(-0.5f, 0.5f);
-	//m_verts[(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))].Z = z_pos;
-	bool local_is_changed=false;
-	int y_po= ((static_cast<int>(y_pos) / height_));
-	ChangePos(y_po, m_verts.Num(), local_is_changed);
-	int x_po = ((static_cast<int>(x_pos) / height_));
+	bool local_is_changed=false;//bool to catch if point changed
+	int y_po= ((static_cast<int>(y_pos) / spacing_));		//getting point in local coord system
+	ChangePos(y_po, m_verts.Num(), local_is_changed);		//if point is less than or greater than bounds change point.
+
+	int x_po = ((static_cast<int>(x_pos) / spacing_));		//samas as above
 	ChangePos(x_po, m_verts.Num(), local_is_changed);
-	m_verts[(y_po) * height_ + (x_po)].Z = z_pos;
-	if (local_is_changed||y_pos<0||x_pos<0){
-		m_vert_colors[(y_po*spacing_ ) * height_ + (x_po *spacing_) ] = FLinearColor::Black;
+
+	m_verts[(y_po) * height_ + (x_po)].Z = z_pos;			//set the vert to the height
+	if (local_is_changed){									//if changed used different mechanic
+		m_vert_colors[(static_cast<int>(y_po)) * height_ + (static_cast<int>(x_po ))] = FLinearColor::Black;
 	}
 	else {
 		m_vert_colors[(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
 	}
-	
 }
 
 void AMyProceduralMesh::ReplaceC(TArray<float>& c_)

@@ -93,12 +93,12 @@ bool HeightmapHandler::ReadTrackPoints(TArray<FVector2D>& track_points, TArray<F
 			}
 			else {
 				if (!found_) {
-					auto index_ = array_[1].Find(" ");
-					control_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+					auto index_ = array_[i].Find(" ");
+					control_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].RightChop(index_))));
 				}
 				else {
-					auto index_ = array_[1].Find(" ");
-					track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].Right(index_ + 1))));
+					auto index_ = array_[i].Find(" ");
+					track_points.Add(FVector2D(FCString::Atoi(*array_[i]), FCString::Atoi(*array_[i].RightChop(index_))));
 				}
 			}
 		}

@@ -18,7 +18,7 @@ void UUIWidget::NativeConstruct() {
 
 	is_decal_spawn = false;
 	point_type = false;
-	bool is_chunking = level_loader.ReadMetaFile();
+	is_chunking = level_loader.ReadMetaFile();
 	int loop_index = 1;
 	vev_ground_meshes.Add(p_mesh);
 	vev_ground_meshes.Add(p_mesh1);
@@ -38,9 +38,13 @@ void UUIWidget::NativeConstruct() {
 		m_colors = level_loader.ReadFileInfo(h_, w_, i);
 		GeneratePlane(i);
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
-		CreateTrack(i);
+		CreateTrack(i);	
 	}
-	
+	if (is_chunking) {
+		vev_ground_meshes[1]->SetActorLocation(FVector(79800, 0, 0));
+		vev_ground_meshes[2]->SetActorLocation(FVector(0, 79800, 0));
+		vev_ground_meshes[3]->SetActorLocation(FVector(79800, 79800, 0));
+	}
 
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
@@ -169,38 +173,38 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
-	for (int i = 0; i < 2; i++) {//tree near track
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddTreeNearTrack(track_points, vev_ground_meshes[loop_index]->m_verts, max, min);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	}
-	for (int i = 0; i < 4; i++) {//tree in general
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(vev_ground_meshes[loop_index]->m_verts, max, min, track_points, false);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	}
-	for (int i = 0; i < 2; i++) {//ferns bushes
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(vev_ground_meshes[loop_index]->m_verts, max, min, track_points, true);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	}
+	//for (int i = 0; i < 2; i++) {//tree near track
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddTreeNearTrack(track_points, vev_ground_meshes[loop_index]->m_verts, max, min);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//}
+	//for (int i = 0; i < 4; i++) {//tree in general
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddClusterTrees(vev_ground_meshes[loop_index]->m_verts, max, min, track_points, false);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//}
+	//for (int i = 0; i < 2; i++) {//ferns bushes
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddClusterTrees(vev_ground_meshes[loop_index]->m_verts, max, min, track_points, true);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//}
 
-	for (int i = 0; i < 1; i++) {//rocks
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddRockClusters(track_points, vev_ground_meshes[loop_index]->m_verts);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	}
-	for (int i = 0; i < 1; i++) {//grass
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddGrass(track_points, vev_ground_meshes[loop_index]->m_verts, max, min);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	}
-	//water
+	//for (int i = 0; i < 1; i++) {//rocks
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddRockClusters(track_points, vev_ground_meshes[loop_index]->m_verts);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//}
+	//for (int i = 0; i < 1; i++) {//grass
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddGrass(track_points, vev_ground_meshes[loop_index]->m_verts, max, min);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//}
+	////water
 	float water_height = (min + (max * 0.05f));
 	if (water_height >= track_spline->GetMinHeight()) {
 		water_height = track_spline->GetMinHeight();
@@ -317,6 +321,9 @@ void UUIWidget::FixScales(const int& loop_index) {
 	StartPlaces(loop_index);
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
+
+	
+
 	is_level_spawnned = true;
 }
 
