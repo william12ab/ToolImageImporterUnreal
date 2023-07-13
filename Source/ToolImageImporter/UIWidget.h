@@ -39,6 +39,11 @@ protected:
 	void SetLapTimeFinal();//sets final time for display in end ui
 	void StartPlaces(const int&loop_index);//used for choosing the starting places of both the flags and car
 	void InnerStartPlaces(const TArray<FVector>& point_arr);
+
+	void AddToTemp(const int&index_);
+	void InnerAddToTemp(const int& x_add, const int& y_add, const int& index_);
+	void SmoothTemp(TArray<float>& c_);
+	void SplitTemp();
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
@@ -115,4 +120,6 @@ protected:
 	bool is_chunking;
 
 	bool is_decal_spawn;
+
+	TArray<float> temp_array;//holds full image
 };

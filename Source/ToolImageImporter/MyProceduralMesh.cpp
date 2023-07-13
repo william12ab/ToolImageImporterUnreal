@@ -253,8 +253,6 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_){
 		SmoothTerrain(c_);
 		SmoothTerrain(c_);
 	}
-
-
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			if (height_==400){
@@ -300,6 +298,10 @@ void AMyProceduralMesh::ChangePos(int& pos, const int& max,bool& local_is_change
 		pos = 0;
 		local_is_changed = true;
 	}
+	if (pos > 399) {
+		pos = 399;
+		local_is_changed = true;
+	}
 }
 
 void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const float &z_pos){
@@ -326,8 +328,8 @@ void AMyProceduralMesh::ReplaceC(TArray<float>& c_)
 	{
 		temp.Add(m_verts[i].Z);
 	}
-	SmoothTerrain(temp);
-	SmoothTerrain(temp);
+	//SmoothTerrain(temp);
+	//SmoothTerrain(temp);
 
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
@@ -433,4 +435,9 @@ void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_
 		temp_.Add(m_verts[i]);
 		temp_colours.Add(m_vert_colors[i]);
 	}
+}
+
+void AMyProceduralMesh::UpdateChunking() {
+	//CalculateNormals();
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 }

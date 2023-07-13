@@ -59,7 +59,7 @@ public:
 
 	void ChangePos(int&pos,const int&max,bool & local_is_changed);
 	
-
+	void UpdateChunking();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -28,23 +28,50 @@ void UUIWidget::NativeConstruct() {
 	vec_water_mesh.Add(w_mesh1);
 	vec_water_mesh.Add(w_mesh2);
 	vec_water_mesh.Add(w_mesh3);
-	if (is_chunking){
+
+	if (is_chunking) {
 		loop_index = 4;
+		temp_array.SetNum(640000);
 	}
-	for (int i = 0; i < loop_index; i++){
+	for (int i = 0; i < loop_index; i++) {
 		m_colors.Empty();
 		track_points.Empty();
 		control_points.Empty();
 		m_colors = level_loader.ReadFileInfo(h_, w_, i);
 		GeneratePlane(i);
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
-		CreateTrack(i);	
+		CreateTrack(i);
+		if (is_chunking) {
+			AddToTemp(i);
+		}
 	}
+	SmoothTemp(temp_array);
+	SmoothTemp(temp_array);
+	SmoothTemp(temp_array);
+	SmoothTemp(temp_array);
+	SmoothTemp(temp_array);
+	SmoothTemp(temp_array);
+	SmoothTemp(temp_array);
+	SmoothTemp(temp_array);
+	SplitTemp();
+	for (int i = 0; i < loop_index; i++) {
+		vev_ground_meshes[i]->UpdateChunking();
+	}
+
 	if (is_chunking) {
 		vev_ground_meshes[1]->SetActorLocation(FVector(79800, 0, 0));
 		vev_ground_meshes[2]->SetActorLocation(FVector(0, 79800, 0));
 		vev_ground_meshes[3]->SetActorLocation(FVector(79800, 79800, 0));
 	}
+
+	/*int sizew = 800;
+	FActorSpawnParameters SpawnInfo;
+	FRotator myRot(0, 0, 0);
+	FVector myLoc = FVector(0, 0, 0);
+	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+	new_temp->CreateMesh(sizew, sizew, s_);
+	new_temp->ModiVerts(temp_array, m_);
+	new_temp->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));*/
 
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
@@ -256,16 +283,16 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 	}
 }
 void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
-	auto f = FMath::Lerp(point_arr[0], point_arr[1], 0.25f);
-	auto total = track_spline->GetTotalPoints();
-	f *= scaling_down_;
-	float angle_f = atan2(point_arr[1].Y - point_arr[0].Y, point_arr[1].X - point_arr[0].X) * 180.0f / PI;
-	starting_angle = FRotator(0.f, angle_f, 0.f);
-	while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
-		f.Z += 0.5f;
-	}
-
 	if (!is_decal_spawn) {
+		auto f = FMath::Lerp(point_arr[0], point_arr[1], 0.25f);
+		auto total = track_spline->GetTotalPoints();
+		f *= scaling_down_;
+		float angle_f = atan2(point_arr[1].Y - point_arr[0].Y, point_arr[1].X - point_arr[0].X) * 180.0f / PI;
+		starting_angle = FRotator(0.f, angle_f, 0.f);
+		while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
+			f.Z += 0.5f;
+		}
+
 		auto ss = point_arr.Num();
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
@@ -321,10 +348,122 @@ void UUIWidget::FixScales(const int& loop_index) {
 	StartPlaces(loop_index);
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
-
-	
-
 	is_level_spawnned = true;
+}
+
+void UUIWidget::InnerAddToTemp(const int& x_add, const int& y_add, const int&index_) {
+	int double_h = h_ * 2;
+	for (int y = 0; y < h_; y++) {
+		for (int x = 0; x < h_; x++) {
+			temp_array[((y + y_add) * double_h) + (x + x_add)] = vev_ground_meshes[index_]->m_verts[(y * h_) + x].Z;
+		}
+	}
+}
+
+void UUIWidget::AddToTemp(const int& index_) {
+	/*for (int y = 0; y < h_; y++) {
+		for (int x = 0; x < h_; x++) {
+			temp_array.Add(vev_ground_meshes[index_]->m_verts[(y * h_) + x].Z);
+		}
+	}*/
+
+	switch (index_) {
+	case 0: {
+		InnerAddToTemp(0, 0, index_);
+		break;
+	}
+	case 1: {
+		InnerAddToTemp(h_, 0, index_);
+		break;
+	}
+	case 2: {
+		InnerAddToTemp(0, h_, index_);
+		break;
+	}
+	case 3: {
+		InnerAddToTemp(h_, h_, index_);
+		break;
+	}
+	}
+}
+
+void UUIWidget::SmoothTemp(TArray<float>& c_) {
+	for (int j = 0; j < (h_*2); j++) {
+		for (int i = 0; i < (h_*2); i++) {
+			int count_loc = 0;
+			float tHeight = 0.0f;
+			if ((i - 1) >= 0) {
+				count_loc++;
+				tHeight += c_[(j * (h_*2)) + (i - 1)];
+			}
+			if ((i + 1) < (h_ * 2)) {
+				count_loc++;
+				tHeight += c_[(j * (h_ * 2)) + (i + 1)];
+			}
+			if ((j - 1) >= 0) {
+				count_loc++;
+				tHeight += c_[((j - 1) * (h_ * 2)) + i];
+			}
+			if ((j + 1) < (h_ * 2)) {
+				count_loc++;
+				tHeight += c_[((j + 1) * (h_ * 2)) + i];
+			}
+			if (((i - 1) >= 0) && ((j - 1) >= 0)) {
+				count_loc++;
+				tHeight += c_[((j - 1) * (h_ * 2)) + (i - 1)];
+			}
+			if (((i + 1) < (h_ * 2)) && ((j - 1) >= 0)) {
+				count_loc++;
+				tHeight += c_[((j - 1) * (h_ * 2)) + (i + 1)];
+			}
+			if (((i - 1) >= 0) && ((j + 1) < (h_ * 2))) {
+				count_loc++;
+				tHeight += c_[((j + 1) * (h_ * 2)) + (i - 1)];
+			}
+			if (((i + 1) < (h_ * 2)) && ((j + 1) < (h_ * 2))) {
+				count_loc++;
+				tHeight += c_[((j + 1) * (h_ * 2)) + (i + 1)];
+			}
+			tHeight /= (float)count_loc;
+
+			c_[(j * (h_ * 2)) + i] = tHeight;
+		}
+	}
+}
+void UUIWidget::SplitTemp() {
+	/*int co_=0;
+	for (int i = 0; i < temp_array.Num(); i++) {
+		if (co_ < 160000) {
+			vev_ground_meshes[0]->m_verts[co_].Z = temp_array[co_];
+		}
+		else if (co_ >= 160000 && co_ < 320000) {
+			vev_ground_meshes[1]->m_verts[co_-160000].Z = temp_array[co_];
+		}
+		else if (co_ >= 320000&&co_<480000) {
+			vev_ground_meshes[2]->m_verts[co_ - 320000].Z = temp_array[co_];
+		}
+		else if (co_ >= 480000) {
+			vev_ground_meshes[3]->m_verts[co_ - 480000].Z = temp_array[co_];
+		}
+		co_++;
+	}*/
+	int local_grid_size = h_ * 2;
+	for (size_t j = 0; j < local_grid_size; j++) {
+		for (int i = 0; i < local_grid_size; i++) {
+			if (i < h_ && j < h_) {
+				vev_ground_meshes[0]->m_verts[(j * h_) + i].Z = temp_array[(j * local_grid_size) + i];
+			}
+			else if (i >= h_ && j < h_) {
+				vev_ground_meshes[1]->m_verts[(j * h_) + (i - h_)].Z = temp_array[(j * local_grid_size) + i];
+			}
+			else if (i < h_ && j >= h_) {
+				vev_ground_meshes[2]->m_verts[((j - h_) * h_) + i].Z = temp_array[(j * local_grid_size) + i];
+			}
+			else if (i >= h_ && j >= h_) {
+				vev_ground_meshes[3]->m_verts[((j - h_) * h_) + (i - h_)].Z = temp_array[(j * local_grid_size) + i];
+			}
+		}
+	}
 }
 
 void UUIWidget::OnTest() {
