@@ -40,10 +40,6 @@ protected:
 	void StartPlaces(const int&loop_index);//used for choosing the starting places of both the flags and car
 	void InnerStartPlaces(const TArray<FVector>& point_arr);
 
-	void AddToTemp(const int&index_);
-	void InnerAddToTemp(const int& x_add, const int& y_add, const int& index_);
-	void SmoothTemp(TArray<float>& c_);
-	void SplitTemp();
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
@@ -74,9 +70,6 @@ protected:
 	AWaterMesh* w_mesh2;
 	AWaterMesh* w_mesh3;
 	AMyProceduralMesh* p_mesh;		//obj
-	AMyProceduralMesh* p_mesh1;		//obj
-	AMyProceduralMesh* p_mesh2;		//obj
-	AMyProceduralMesh* p_mesh3;		//obj
 	ABasicTree* tree_instance;//trees
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing
@@ -115,11 +108,10 @@ protected:
 	bool is_system_on;//for same above
 
 	//for chunking 
-	TArray<AMyProceduralMesh*> vev_ground_meshes;//for p_mesh
 	TArray<AWaterMesh*> vec_water_mesh;//for water mesh
 	bool is_chunking;
-
+	bool is_start_done;
+	bool is_created;
 	bool is_decal_spawn;
 
-	TArray<float> temp_array;//holds full image
 };

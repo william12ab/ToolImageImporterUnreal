@@ -20,6 +20,44 @@ AMyProceduralMesh::AMyProceduralMesh(){
 	if (PhysicalMaterialAsset.Object){
 		procedural_mesh_comp->BodyInstance.SetPhysMaterialOverride((UPhysicalMaterial*)PhysicalMaterialAsset.Object);
 	}
+	vec_m_verts.Add(m_verts);
+	vec_m_verts.Add(m_verts1);
+	vec_m_verts.Add(m_verts2);
+	vec_m_verts.Add(m_verts3);
+
+	vec_m_norms.Add(m_norms);
+	vec_m_norms.Add(m_norms1);
+	vec_m_norms.Add(m_norms2);
+	vec_m_norms.Add(m_norms3);
+
+	vec_m_vert_colors.Add(m_vert_colors);
+	vec_m_vert_colors.Add(m_vert_colors1);
+	vec_m_vert_colors.Add(m_vert_colors2);
+	vec_m_vert_colors.Add(m_vert_colors3);
+	
+	vec_m_tris.Add(m_tris);
+	vec_m_tris.Add(m_tris1);
+	vec_m_tris.Add(m_tris2);
+	vec_m_tris.Add(m_tris3);
+	is_created = false;
+}
+
+void AMyProceduralMesh::FullSize() {
+	procedural_mesh_comp->ClearAllMeshSections();
+
+	height_ = 800;
+	width_ = 800;
+	ClearMeshData();
+	GenerateVerts(0);
+	GenerateTris(0);
+	for (int i = 0; i < height_; i++){
+		for (int j = 0; j < height_; j++) {
+			vec_m_verts[0][(i * (height_)) + (j)].Z = z_axis[(i * (height_)) + (j)];
+		}	
+	}
+	CalculateNormals(0);
+	procedural_mesh_comp->CreateMeshSection_LinearColor(0, vec_m_verts[0], vec_m_tris[0], vec_m_norms[0], m_u_vs, temp_colors, m_tangents, true);
+	z_axis.Empty();
 }
 
 // Called when the game starts or when spawned
@@ -34,45 +72,46 @@ void AMyProceduralMesh::PostInitializeComponents(){
 
 
 void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_){
-	for (int j = 0; j < (height_); j++){
-		for (int i = 0; i < (height_); i++){
+	int double_h = height_ * 2;
+	for (int j = 0; j < (double_h); j++){
+		for (int i = 0; i < (double_h); i++){
 			int count_loc = 0;
 			float tHeight = 0.0f;
 			if (i - 1 >= 0){
 				count_loc++;
-				tHeight += c_[(j * height_) + (i - 1)];
+				tHeight += c_[(j * (double_h)) + (i - 1)];
 			}
-			if (i + 1 < height_){
+			if (i + 1 < (double_h)){
 				count_loc++;
-				tHeight += c_[(j * height_) + (i + 1)];
+				tHeight += c_[(j * (double_h)) + (i + 1)];
 			}
 			if (j - 1 >= 0){
 				count_loc++;
-				tHeight += c_[((j - 1) * height_) + i];
+				tHeight += c_[((j - 1) * (double_h)) + i];
 			}
-			if (j + 1 < height_){
+			if (j + 1 < (double_h)){
 				count_loc++;
-				tHeight += c_[((j + 1) * height_) + i];
+				tHeight += c_[((j + 1) * (double_h)) + i];
 			}
 			if ((i - 1 >= 0) && (j - 1 >= 0)){
 				count_loc++;
-				tHeight += c_[((j - 1) * height_) + (i - 1)];
+				tHeight += c_[((j - 1) * (double_h)) + (i - 1)];
 			}
-			if ((i + 1 < height_) && (j - 1 >= 0)){
+			if ((i + 1 < (double_h)) && (j - 1 >= 0)){
 				count_loc++;
-				tHeight += c_[((j - 1) * height_) + (i + 1)];
+				tHeight += c_[((j - 1) * (double_h)) + (i + 1)];
 			}
-			if ((i - 1 >= 0) && (j + 1 < height_)){
+			if ((i - 1 >= 0) && (j + 1 < (double_h))){
 				count_loc++;
-				tHeight += c_[((j + 1) * height_) + (i - 1)];
+				tHeight += c_[((j + 1) * (double_h)) + (i - 1)];
 			}
-			if ((i + 1 < height_) && (j + 1 < height_)){
+			if ((i + 1 < (double_h)) && (j + 1 < (double_h))){
 				count_loc++;
-				tHeight += c_[((j + 1) * height_) + (i + 1)];
+				tHeight += c_[((j + 1) * (double_h)) + (i + 1)];
 			}
 			tHeight /= (float)count_loc;
 
-			c_[(j * height_) + i] = tHeight;
+			c_[(j * (double_h)) + i] = tHeight;
 		}
 	}
 }
@@ -115,36 +154,94 @@ void AMyProceduralMesh::SetMaterial(UTexture* t_){
 	procedural_mesh_comp->SetMaterial(0, material_instance);
 }
 void AMyProceduralMesh::ClearMeshData(){
-	m_verts.Empty();
-	m_tris.Empty();
+	vec_m_verts[0].Empty();
+	vec_m_verts[1].Empty();
+	vec_m_verts[2].Empty();
+	vec_m_verts[3].Empty();
+	m_verts_total.Empty();
+	vec_m_tris[0].Empty();
+	vec_m_tris[1].Empty();
+	vec_m_tris[2].Empty();
+	vec_m_tris[3].Empty();
+	m_tris_total.Empty();
 	m_u_vs.Empty();
-	m_norms.Empty();
-	m_vert_colors.Empty();
+	m_u_vs_total.Empty();
+	vec_m_norms[0].Empty();
+	vec_m_norms[1].Empty();
+	vec_m_norms[2].Empty();
+	vec_m_norms[3].Empty();
+	m_norms_total.Empty();
+	vec_m_vert_colors[0].Empty();
+	vec_m_vert_colors[1].Empty();
+	vec_m_vert_colors[2].Empty();
+	vec_m_vert_colors[3].Empty();
 	m_tangents.Empty();
+	m_tangents_total.Empty();
 }
 
-void AMyProceduralMesh::GenerateVerts(){
+void AMyProceduralMesh::AddVert(const int& index_, const int& x, const int& y) {
+	switch (index_) {
+	case 0: {
+		vec_m_verts[0].Add(FVector(x * spacing_, y * spacing_, 0.0f));
+		m_verts_total.Add(FVector(x * spacing_, y * spacing_, 0.0f));
+		vec_m_norms[0].Add(FVector(0.0f, 0.0f, .0f));
+		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[0].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		break;
+	}
+	case 1: {
+		vec_m_verts[1].Add(FVector((x+(400-1)) * spacing_, y * spacing_, 0.0f));
+		m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
+		vec_m_norms[1].Add(FVector(0.0f, 0.0f, .0f));
+		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[1].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		break;
+	}
+	case 2: {
+		vec_m_verts[2].Add(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		m_verts_total.Add(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		vec_m_norms[2].Add(FVector(0.0f, 0.0f, .0f));
+		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[2].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		break;
+	}
+	case 3: {
+		vec_m_verts[3].Add(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		vec_m_norms[3].Add(FVector(0.0f, 0.0f, .0f));
+		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[3].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		break;
+	}
+	}
+}
+
+void AMyProceduralMesh::GenerateVerts(const int& index_){
 	float uv_spacing = 1.0f / FMath::Max(height_, width_);
 
 	for (int32 y = 0; y < height_; y++){
 		for (int32 x = 0; x < width_; x++){
-			m_verts.Add(FVector(x * spacing_, y * spacing_, 0.0f));
-			m_norms.Add(FVector(0.0f, 0.0f, .0f));
+			AddVert(index_, x, y);
 			m_u_vs.Add(FVector2D(x * uv_spacing, y * uv_spacing));
-			m_vert_colors.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+			m_u_vs_total.Add(FVector2D(x * uv_spacing, y * uv_spacing));
 			m_tangents.Add(FProcMeshTangent(0.0f, 1.0f, 0.0f));
+			m_tangents_total.Add(FProcMeshTangent(0.0f, 1.0f, 0.0f));
 		}
 	}
 }
 
-void AMyProceduralMesh::CalculateNormals(){
+void AMyProceduralMesh::CalculateNormals(const int& index_){
 	for (int j = 0; j < (height_ - 1); j++) {
 		for (int i = 0; i < (width_- 1); i++) {
 			//Calculate the plane normals
 			FVector a, b, c;	//Three corner vertices
-			a = m_verts[j * height_ + i];
-			b = m_verts[j * height_+ i + 1];
-			c = m_verts[(j + 1) * height_+ i];
+			a = vec_m_verts[index_][j * height_ + i];
+			b = vec_m_verts[index_][j * height_+ i + 1];
+			c = vec_m_verts[index_][(j + 1) * height_+ i];
 
 			//Two edges
 			FVector ab(c.X - a.X, c.Y - a.Y, c.Z - a.Z);
@@ -160,7 +257,7 @@ void AMyProceduralMesh::CalculateNormals(){
 			cross.X /= mag;
 			cross.Y /= mag;
 			cross.Z /= mag;
-			m_norms[j * height_+ i]= -cross;
+			vec_m_norms[index_][j * height_+ i]= -cross;
 		}
 	}
 
@@ -175,16 +272,16 @@ void AMyProceduralMesh::CalculateNormals(){
 			if ((i - 1) >= 0) {
 				//Top planes
 				if ((j) < (width_- 1)) {
-					smoothedNormal.X += m_norms[j * width_ + (i - 1)].X;
-					smoothedNormal.Y += m_norms[j * width_ + (i - 1)].Y;
-					smoothedNormal.Z += m_norms[j * width_ + (i - 1)].Z;
+					smoothedNormal.X += vec_m_norms[index_][j * width_ + (i - 1)].X;
+					smoothedNormal.Y += vec_m_norms[index_][j * width_ + (i - 1)].Y;
+					smoothedNormal.Z += vec_m_norms[index_][j * width_ + (i - 1)].Z;
 					count_n++;
 				}
 				//Bottom planes
 				if ((j - 1) >= 0) {
-					smoothedNormal.X += m_norms[(j - 1) * width_ + (i - 1)].X;
-					smoothedNormal.Y += m_norms[(j - 1) * width_ + (i - 1)].Y;
-					smoothedNormal.Z += m_norms[(j - 1) * width_ + (i - 1)].Z;
+					smoothedNormal.X += vec_m_norms[index_][(j - 1) * width_ + (i - 1)].X;
+					smoothedNormal.Y += vec_m_norms[index_][(j - 1) * width_ + (i - 1)].Y;
+					smoothedNormal.Z += vec_m_norms[index_][(j - 1) * width_ + (i - 1)].Z;
 					count_n++;
 				}
 			}
@@ -193,16 +290,16 @@ void AMyProceduralMesh::CalculateNormals(){
 
 				//Top planes
 				if ((j) < (width_ - 1)) {
-					smoothedNormal.X += m_norms[j * width_ + i].X;
-					smoothedNormal.Y += m_norms[j * width_ + i].Y;
-					smoothedNormal.Z += m_norms[j * width_ + i].Z;
+					smoothedNormal.X += vec_m_norms[index_][j * width_ + i].X;
+					smoothedNormal.Y += vec_m_norms[index_][j * width_ + i].Y;
+					smoothedNormal.Z += vec_m_norms[index_][j * width_ + i].Z;
 					count_n++;
 				}
 				//Bottom planes
 				if ((j - 1) >= 0) {
-					smoothedNormal.X += m_norms[(j - 1) * width_ + i].X;
-					smoothedNormal.Y += m_norms[(j - 1) * width_ + i].Y;
-					smoothedNormal.Z += m_norms[(j - 1) * width_ + i].Z;
+					smoothedNormal.X += vec_m_norms[index_][(j - 1) * width_ + i].X;
+					smoothedNormal.Y += vec_m_norms[index_][(j - 1) * width_ + i].Y;
+					smoothedNormal.Z += vec_m_norms[index_][(j - 1) * width_ + i].Z;
 					count_n++;
 				}
 			}
@@ -215,38 +312,142 @@ void AMyProceduralMesh::CalculateNormals(){
 			smoothedNormal.Y /= mag;
 			smoothedNormal.Z /= mag;
 
-			m_norms[j * width_ + i]= smoothedNormal;
+			vec_m_norms[index_][j * width_ + i]= smoothedNormal;
 		}
 	}
 }
 
-void AMyProceduralMesh::GenerateTris(){
+void AMyProceduralMesh::GenerateTris(const int& index_){
 	for (int32 y = 0; y < (height_-1); y++){
 		for (int32 x = 0; x < (width_ - 1); x++){
-			m_tris.Add(x + (y * width_));					//current vertex
-			m_tris.Add(x + (y * width_) + width_);			//current vertex + row
-			m_tris.Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
+			m_tris_total.Add(x + (y * width_));					//current vertex
+			m_tris_total.Add(x + (y * width_) + width_);			//current vertex + row
+			m_tris_total.Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
 
-			m_tris.Add(x + (y * width_));					//current vertex
-			m_tris.Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
-			m_tris.Add(x + (y * width_) + 1);				//current vertex + one right
+			m_tris_total.Add(x + (y * width_));					//current vertex
+			m_tris_total.Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
+			m_tris_total.Add(x + (y * width_) + 1);				//current vertex + one right
+
+			vec_m_tris[index_].Add(x + (y * width_));					//current vertex
+			vec_m_tris[index_].Add(x + (y * width_) + width_);			//current vertex + row
+			vec_m_tris[index_].Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
+
+			vec_m_tris[index_].Add(x + (y * width_));					//current vertex
+			vec_m_tris[index_].Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
+			vec_m_tris[index_].Add(x + (y * width_) + 1);				//current vertex + one right
 		}
 	}
 }
+void AMyProceduralMesh::SplitTris(const int& index_) {
+	
+}
+void AMyProceduralMesh::TestFinal() {
+	m_verts_total.Empty();
+	m_norms_total.Empty();
+	z_axis.SetNum(640000);
+	m_norms_total.SetNum(640000);
+	m_verts_total.SetNum(640000);
+	temp_colors.SetNum(640000);
+	//adds verts etc into total verts and also z_axis;
+	int local_grid_size = height_ * 2;
+	for (int j = 0;j < (local_grid_size); j++){
+		for (int i = 0; i < (local_grid_size); i++) {
+			if (i < height_ && j < height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[0][(j * (height_)) + (i)];
+				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[0][(j * (height_)) + (i)].Z;
+				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[0][(j * (height_)) + (i)];
+				temp_colors[(j * (local_grid_size)) + (i)] = vec_m_vert_colors[0][(j * (height_)) + (i)];
+			}
+			else if (i >= height_ && j < height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[1][(j * height_) + (i - height_)];
+				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[1][(j * height_) + (i - height_)].Z;
+				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[1][(j * height_) + (i - height_)];
+				temp_colors[(j * (local_grid_size)) + (i)] = vec_m_vert_colors[1][(j * height_) + (i - height_)];
+			}
+			else if (i < height_ && j >= height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[2][((j - height_) * height_) + i];
+				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[2][((j - height_) * height_) + i].Z;
+				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[2][((j - height_) * height_) + i];
+				temp_colors[(j * (local_grid_size)) + (i)] = vec_m_vert_colors[2][((j - height_) * height_) + i];
+			}
+			else if (i >= height_ && j >= height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[3][((j - height_) * height_) + (i - height_)];
+				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[3][((j - height_) * height_) + (i - height_)].Z;
+				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[3][((j - height_) * height_) + (i - height_)];
+				temp_colors[(j * (local_grid_size)) + (i)] =vec_m_vert_colors[3][((j - height_) * height_) + (i - height_)];
+			}
+		}
+	}
 
-void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spacing_){
+	//smoths
+	SmoothTerrain(z_axis);
+	SmoothTerrain(z_axis);
+	m_verts_total.Empty();
+	m_verts_total.SetNum(640000);
+	int ind = 0;
+	//adds verts back into total
+	for (int j = 0; j < (local_grid_size); j++) {
+		for (int i = 0; i < (local_grid_size); i++) {
+			if (i < height_ && j < height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[0][(j * (height_)) + (i)].X, vec_m_verts[0][(j * (height_)) + (i)].Y, z_axis[(j * (local_grid_size)) + (i)]);
+			}
+			else if (i >= height_ && j < height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[1][(j * height_) + (i - height_)].X, vec_m_verts[1][(j * height_) + (i - height_)].Y, z_axis[(j * (local_grid_size)) + (i)]);
+			}
+			else if (i < height_ && j >= height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[2][((j - height_) * height_) + i].X, vec_m_verts[2][((j - height_) * height_) + i].Y, z_axis[(j * (local_grid_size)) + (i)]);
+			}
+			else if (i >= height_ && j >= height_) {
+				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[3][((j - height_) * height_) + (i - height_)].X, vec_m_verts[3][((j - height_) * height_) + (i - height_)].Y, z_axis[(j * (local_grid_size)) + (i)]);
+			}
+		}
+	}
+
+	//into correct places
+	for (size_t j = 0; j < local_grid_size; j++) {
+		for (int i = 0; i < local_grid_size; i++) {
+			if (i < height_ && j < height_) {
+				vec_m_verts[0][(j * height_) + i].Z = z_axis[(j * local_grid_size) + i];
+			}
+			else if (i >= height_ && j < height_) {
+				vec_m_verts[1][(j * height_) + (i - height_)].Z = z_axis[(j * local_grid_size) + i];
+			}
+			else if (i < height_ && j >= height_) {
+				vec_m_verts[2][((j - height_) * height_) + i].Z = z_axis[(j * local_grid_size) + i];
+			}
+			else if (i >= height_ && j >= height_) {
+				vec_m_verts[3][((j - height_) * height_) + (i - height_)].Z = z_axis[(j * local_grid_size) + i];
+			}
+		}
+	}
+	for (int i = 0; i < 4; i++)	{
+		procedural_mesh_comp->UpdateMeshSection_LinearColor(i, vec_m_verts[i], vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
+	}
+
+}
+
+
+void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spacing_, const int& index_){
 	height_ = d_height_;
 	width_ = d_width_;
 	spacing_ = 20.0f;
-	ClearMeshData();
-	GenerateVerts();
-	GenerateTris();
+	if (!is_created){
+		ClearMeshData();
+		is_created = true;
+	}
+	GenerateVerts(index_);
+	GenerateTris(index_);
 	//Function that creates mesh section
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, m_verts, m_tris, m_norms, m_u_vs, m_vert_colors, m_tangents, true);
+	for (const TArray<FVector>& Hull : vec_m_verts)
+	{
+		procedural_mesh_comp->AddCollisionConvexMesh(Hull);
+	}
+
+	procedural_mesh_comp->CreateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_tris[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents, true);	
 }
 
 
-void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_){
+void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_, const int& index_){
 	if (m_==0){
 		SmoothTerrain(c_);
 		SmoothTerrain(c_);
@@ -256,20 +457,21 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_){
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			if (height_==400){
-				m_verts[y * height_ + x].Z = (c_[y * height_ + x] * spacing_) / m_;
+				vec_m_verts[index_][y * height_ + x].Z = (c_[y * height_ + x] * spacing_) / m_;
 			}
 			else{
-				m_verts[y * height_ + x].Z = (c_[y * height_ + x] );
+				vec_m_verts[index_][y * height_ + x].Z = (c_[y * height_ + x] );
 			}
 		}
 	}
-	CalculateNormals();
+	CalculateNormals(index_);
 
 	procedural_mesh_comp->bCastDynamicShadow=false;
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
+	
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
-	procedural_mesh_comp->SetMaterial(0, material_instance);
+	procedural_mesh_comp->SetMaterial(index_, material_instance);
 }
 
 
@@ -304,45 +506,43 @@ void AMyProceduralMesh::ChangePos(int& pos, const int& max,bool& local_is_change
 	}
 }
 
-void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const float &z_pos){
+void AMyProceduralMesh::ChangeVert(const float &x_pos, const float &y_pos, const float &z_pos, const int& index_){
 	bool local_is_changed=false;//bool to catch if point changed
 	int y_po= ((static_cast<int>(y_pos) / spacing_));		//getting point in local coord system
-	ChangePos(y_po, m_verts.Num(), local_is_changed);		//if point is less than or greater than bounds change point.
+	ChangePos(y_po, vec_m_verts[index_].Num(), local_is_changed);		//if point is less than or greater than bounds change point.
 
 	int x_po = ((static_cast<int>(x_pos) / spacing_));		//samas as above
-	ChangePos(x_po, m_verts.Num(), local_is_changed);
+	ChangePos(x_po, vec_m_verts[index_].Num(), local_is_changed);
 
-	m_verts[(y_po) * height_ + (x_po)].Z = z_pos;			//set the vert to the height
+	vec_m_verts[index_][(y_po) * height_ + (x_po)].Z = z_pos;			//set the vert to the height
 	if (local_is_changed){									//if changed used different mechanic
-		m_vert_colors[(static_cast<int>(y_po)) * height_ + (static_cast<int>(x_po ))] = FLinearColor::Black;
+		vec_m_vert_colors[index_][(static_cast<int>(y_po)) * height_ + (static_cast<int>(x_po ))] = FLinearColor::Black;
 	}
 	else {
-		m_vert_colors[(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
+		vec_m_vert_colors[index_][(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
 	}
 }
 
-void AMyProceduralMesh::ReplaceC(TArray<float>& c_)
-{
+void AMyProceduralMesh::ReplaceC(TArray<float>& c_, const int&index_){
 	TArray<float> temp;
-	for (int i = 0; i < m_verts.Num(); i++)
-	{
-		temp.Add(m_verts[i].Z);
+	for (int i = 0; i < vec_m_verts[index_].Num(); i++){
+		temp.Add(vec_m_verts[index_][i].Z);
 	}
-	//SmoothTerrain(temp);
-	//SmoothTerrain(temp);
+	/*SmoothTerrain(temp);
+	SmoothTerrain(temp);*/
 
 	for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
-			m_verts[y * height_ + x].Z = temp[y * height_ + x];
+			vec_m_verts[index_][y * height_ + x].Z = temp[y * height_ + x];
 		}
 	}
-	CalculateNormals();
+	CalculateNormals(index_);
 
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
+	procedural_mesh_comp->UpdateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
 }
 
 
-void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_){
+void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_, const int& index_){
 	int index_tracker_verts=0;
 	int right, left;
 	left = 3;
@@ -357,13 +557,13 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 			auto left_pos = LerpV(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left-2)], t);	//gives pos on left
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
 			auto centre_pos = LerpV(points_[i], points_[i + 1], t);
-			ChangeVert(centre_pos.X, centre_pos.Y, left_pos.Z);
-			ChangeVert(left_pos.X, left_pos.Y, left_pos.Z);
-			ChangeVert(right_pos.X, right_pos.Y, left_pos.Z);
+			ChangeVert(centre_pos.X, centre_pos.Y, left_pos.Z, index_);
+			ChangeVert(left_pos.X, left_pos.Y, left_pos.Z, index_);
+			ChangeVert(right_pos.X, right_pos.Y, left_pos.Z, index_);
 			for (int k = 0; k < (int)inner_count_size; k++){
 				float t_inner = (float)(k / inner_count_size);
 				auto a = LerpV(left_pos, right_pos, t_inner);
-				ChangeVert(a.X, a.Y, left_pos.Z);
+				ChangeVert(a.X, a.Y, left_pos.Z, index_);
 			}
 		}
 		index_tracker_verts += 4;
@@ -402,7 +602,7 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 	}
 }
 
-void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour){
+void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour, const int& index_){
 	int grid_size = 400;
 	float spacing = 0.f;//just for passing in
 	int new_size = grid_size * scale_;
@@ -415,7 +615,7 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale
 	//inital vals
 
 	NearestNeighbourSample(grid_size, new_size, m_verts_, new_z, scale_, temp_colour, new_c);
-	CreateMesh(height_, width_, spacing);
+	CreateMesh(height_, width_, spacing, index_);
 
 	//gaining temp verts
 	TArray<float> temp_c;
@@ -427,7 +627,7 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale
 			temp_c[y * height_ + x] = new_z[y * height_ + x].Z;
 		}
 	}
-	ModiVerts(temp_c, 0);//smoothing and setting verts plus regen.
+	ModiVerts(temp_c, 0, index_);//smoothing and setting verts plus regen.
 }
 
 void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_colours){
@@ -435,9 +635,4 @@ void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_
 		temp_.Add(m_verts[i]);
 		temp_colours.Add(m_vert_colors[i]);
 	}
-}
-
-void AMyProceduralMesh::UpdateChunking() {
-	//CalculateNormals();
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(0, m_verts, m_norms, m_u_vs, m_vert_colors, m_tangents);
 }
