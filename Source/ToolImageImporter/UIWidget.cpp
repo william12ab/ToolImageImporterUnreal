@@ -36,14 +36,21 @@ void UUIWidget::NativeConstruct() {
 		control_points.Empty();
 		m_colors = level_loader.ReadFileInfo(h_, w_, i);
 		GeneratePlane(i);
+		if (is_chunking){
+			p_mesh->SetIsChunking(true);
+		}
+		else {
+			p_mesh->SetIsChunking(false);
+		}
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
 		CreateTrack(i);
-		FixScales(loop_index);
+		FixScales(i);
 		is_start_done = true;
 	}
-	
-	p_mesh->TestFinal();
-	p_mesh->FullSize();
+	if (is_chunking){
+		p_mesh->TestFinal();
+		p_mesh->FullSize();
+	}
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	
 	counter_ = 0.0f;//for resetting postion
@@ -257,7 +264,7 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 		control_points = temp_arr;
 	}
 }
-void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
+void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& loop_index) {
 	if (!is_decal_spawn) {
 		auto f = FMath::Lerp(point_arr[0], point_arr[1], 0.25f);
 		auto total = track_spline->GetTotalPoints();
@@ -283,19 +290,26 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr) {
 		myLocD = point_arr[ss - 2];
 		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
 		myLocD *= scaling_down_;
-		float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
-		myRotD = FRotator(0, end_f, 0);
+		if (!is_chunking){
+			myLocD = point_arr[ss - 2];
+			myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
+			myLocD *= scaling_down_;
+			float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
+			myRotD = FRotator(0, end_f, 0);
 
-		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+			box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+			end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+		}
+
 		is_decal_spawn = true;
 	}
+	
 }
 
 //point type is true when curved, with width, or both
 void UUIWidget::StartPlaces(const int& loop_index) {
 	if (!point_type){
-		InnerStartPlaces(track_spline->GetTotalPoints());
+		InnerStartPlaces(track_spline->GetTotalPoints(),0);
 	}
 	else{
 		//finds the correct height(z) for the control points to build fvector for position for car and decals
@@ -309,8 +323,30 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 		if (control_points_with_z[0] == control_points_with_z[1]){
 			int sf = 23;//do something about this
 		}
-		InnerStartPlaces(control_points_with_z);
+		InnerStartPlaces(control_points_with_z,0);
 	}
+}
+void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {
+	if (is_chunking && loop_index == 2) {
+		FActorSpawnParameters SpawnInfoDecal;
+		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+		FName RightName = FName(TEXT("boxendtriggername"));
+		SpawnInfoBox.Name = RightName;
+		auto ss = point_arr.Num();
+		FVector myLocD;
+		myLocD = point_arr[ss - 2];
+		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
+		myLocD.Y /= 20; myLocD.Y += 400;
+		myLocD.Y *= 20; 
+		myLocD *= scaling_down_;
+		FRotator myRotD(0, 0, 0);
+		float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
+		myRotD = FRotator(0, end_f, 0);
+
+		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+	}
+	//divide by 10,20 add 400
 }
 
 void UUIWidget::FixScales(const int& loop_index) {
@@ -322,6 +358,20 @@ void UUIWidget::FixScales(const int& loop_index) {
 	if (!is_start_done){
 		StartPlaces(0);
 	}
+	if (!point_type) {
+		EndFlag(track_spline->GetTotalPoints(),loop_index); 
+	}
+	else{
+		TArray<FVector> control_points_with_z;
+		for (int i = 0; i < control_points.Num(); i++) {
+			int xp = control_points[i].X;
+			int yp = control_points[i].Y;
+			float z_from_p_mesh = p_mesh->vec_m_verts[loop_index][(yp) * 400 + (xp)].Z;
+			control_points_with_z.Add(FVector(control_points[i].X * s_, control_points[i].Y * s_, z_from_p_mesh));
+		}
+		EndFlag(control_points_with_z, loop_index);
+	}
+	
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
 	is_level_spawnned = true;
@@ -334,6 +384,10 @@ void UUIWidget::OnTest() {
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+	if (is_chunking){
+		new_temp->SetIsChunking(true);
+		new_temp->SetIsTemp(true);
+	}
 	new_temp->Resize(temp_vec, 4, temp_color,0);
 	new_temp->SetActorScale3D(FVector(2.5f, 2.5f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();

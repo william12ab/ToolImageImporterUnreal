@@ -100,7 +100,8 @@ public:
 	void TestFinal();
 
 	void FullSize();
-
+	void SetIsChunking(bool f) { is_chunking = f; }
+	void SetIsTemp(bool f) { is_temp = f; }
 	TArray<TArray<FVector>> vec_m_verts;
 	TArray<TArray<FVector>> vec_m_norms;
 	TArray<TArray<int32>> vec_m_tris;
@@ -115,7 +116,8 @@ protected:
 	float spacing_;
 	int count;
 	bool is_created;
-
+	bool is_chunking;
 	TArray<float> z_axis;
 	TArray<FLinearColor> temp_colors;
+	bool is_temp;
 };
