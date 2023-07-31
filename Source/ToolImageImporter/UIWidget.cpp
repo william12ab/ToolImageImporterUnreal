@@ -52,7 +52,7 @@ void UUIWidget::NativeConstruct() {
 		p_mesh->FullSize();
 	}
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	
+	OnTest();
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
 
@@ -384,9 +384,9 @@ void UUIWidget::OnTest() {
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+	new_temp->SetIsTemp(true);
 	if (is_chunking){
 		new_temp->SetIsChunking(true);
-		new_temp->SetIsTemp(true);
 	}
 	new_temp->Resize(temp_vec, 4, temp_color,0);
 	new_temp->SetActorScale3D(FVector(2.5f, 2.5f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase

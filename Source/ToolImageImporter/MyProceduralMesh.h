@@ -96,7 +96,6 @@ public:
 
 	void ChangePos(int&pos,const int&max,bool & local_is_changed);
 	
-	void SplitTris(const int& index_);
 	void TestFinal();
 
 	void FullSize();
