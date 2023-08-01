@@ -54,8 +54,6 @@ public:
 	UPROPERTY()
 		TArray<int32> m_tris3;
 	UPROPERTY()
-		TArray<int32> m_tris_total;
-	UPROPERTY()
 		TArray<FVector2D> m_u_vs;
 	UPROPERTY()
 		TArray<FLinearColor> m_vert_colors;
