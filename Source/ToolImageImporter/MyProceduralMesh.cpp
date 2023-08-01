@@ -52,6 +52,9 @@ void AMyProceduralMesh::FullSize() {
 	height_ = 800;
 	width_ = 800;
 	ClearMeshData();
+	vec_m_verts[0].SetNum(height_ * height_);
+	vec_m_norms[0].SetNum(height_ * height_);
+	vec_m_vert_colors[0].SetNum(height_ * height_);
 	GenerateVerts(0);
 	GenerateTris(0);
 	ParallelFor(width_, [&](int32 i) {
@@ -167,63 +170,53 @@ void AMyProceduralMesh::ClearMeshData() {
 	vec_m_verts[1].Empty();
 	vec_m_verts[2].Empty();
 	vec_m_verts[3].Empty();
-	m_verts_total.Empty();
+//	m_verts_total.Empty();
 	vec_m_tris[0].Empty();
 	vec_m_tris[1].Empty();
 	vec_m_tris[2].Empty();
 	vec_m_tris[3].Empty();
 	m_tris_total.Empty();
 	m_u_vs.Empty();
-	m_u_vs_total.Empty();
 	vec_m_norms[0].Empty();
 	vec_m_norms[1].Empty();
 	vec_m_norms[2].Empty();
 	vec_m_norms[3].Empty();
-	m_norms_total.Empty();
 	vec_m_vert_colors[0].Empty();
 	vec_m_vert_colors[1].Empty();
 	vec_m_vert_colors[2].Empty();
 	vec_m_vert_colors[3].Empty();
 	m_tangents.Empty();
-	m_tangents_total.Empty();
+
 }
 
 void AMyProceduralMesh::AddVert(const int& index_, const int& x, const int& y) {
 	switch (index_) {
 	case 0: {
-		vec_m_verts[0].Add(FVector(x * spacing_, y * spacing_, 0.0f));
-		m_verts_total.Add(FVector(x * spacing_, y * spacing_, 0.0f));
-		vec_m_norms[0].Add(FVector(0.0f, 0.0f, .0f));
-		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
-		vec_m_vert_colors[0].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
-		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		vec_m_verts[0][y * height_ + x]=(FVector(x * spacing_, y * spacing_, 0.0f));
+		//m_verts_total.Add(FVector(x * spacing_, y * spacing_, 0.0f));
+		vec_m_norms[0][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[0][y * height_ + x]=(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
 	}
 	case 1: {
-		vec_m_verts[1].Add(FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
-		m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
-		vec_m_norms[1].Add(FVector(0.0f, 0.0f, .0f));
-		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
-		vec_m_vert_colors[1].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
-		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		vec_m_verts[1][y * height_ + x]=(FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
+		//m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
+		vec_m_norms[1][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[1][y * height_ + x] = (FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
 	}
 	case 2: {
-		vec_m_verts[2].Add(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
-		m_verts_total.Add(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
-		vec_m_norms[2].Add(FVector(0.0f, 0.0f, .0f));
-		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
-		vec_m_vert_colors[2].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
-		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		vec_m_verts[2][y * height_ + x]=(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+	//	m_verts_total.Add(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		vec_m_norms[2][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[2][y * height_ + x] = (FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
 	}
 	case 3: {
-		vec_m_verts[3].Add(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
-		m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
-		vec_m_norms[3].Add(FVector(0.0f, 0.0f, .0f));
-		m_norms_total.Add(FVector(0.0f, 0.0f, .0f));
-		vec_m_vert_colors[3].Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
-		m_vert_colors_total.Add(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		vec_m_verts[3][y * height_ + x]=(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+	//	m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		vec_m_norms[3][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
+		vec_m_vert_colors[3][y * height_ + x] = (FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
 	}
 	}
@@ -231,17 +224,16 @@ void AMyProceduralMesh::AddVert(const int& index_, const int& x, const int& y) {
 
 void AMyProceduralMesh::GenerateVerts(const int& index_) {
 	float uv_spacing = 1.0f / FMath::Max(height_, width_);
-
-	for (int32 y = 0; y < height_; y++) {
+	m_u_vs.SetNum(height_* height_);
+	m_tangents.SetNum(height_ * height_);
+	ParallelFor(height_, [&](int32 y) {
+		//for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			AddVert(index_, x, y);
-			m_u_vs.Add(FVector2D(x * uv_spacing, y * uv_spacing));
-			m_u_vs_total.Add(FVector2D(x * uv_spacing, y * uv_spacing));
-			m_tangents.Add(FProcMeshTangent(0.0f, 1.0f, 0.0f));
-			m_tangents_total.Add(FProcMeshTangent(0.0f, 1.0f, 0.0f));
-
+			m_u_vs[y * height_ + x] = FVector2D(x * uv_spacing, y * uv_spacing);
+			m_tangents[y * height_ + x] = FProcMeshTangent(0.0f, 1.0f, 0.0f);
 		}
-	}
+		});
 }
 
 void AMyProceduralMesh::CalculateNormals(const int& index_) {
@@ -351,11 +343,9 @@ void AMyProceduralMesh::GenerateTris(const int& index_) {
 }
 
 void AMyProceduralMesh::TestFinal() {
-	m_verts_total.Empty();
-	m_norms_total.Empty();
+	//m_verts_total.Empty();
 	z_axis.SetNum(640000);
-	m_norms_total.SetNum(640000);
-	m_verts_total.SetNum(640000);
+//	m_verts_total.SetNum(640000);
 	temp_colors.SetNum(640000);
 	//adds verts etc into total verts and also z_axis;
 	int local_grid_size = height_ * 2;
@@ -363,27 +353,23 @@ void AMyProceduralMesh::TestFinal() {
 		//for (int j = 0; j < (local_grid_size); j++) {
 		for (int32 i = 0; i < (local_grid_size); i++) {
 			if (i < height_ && j < height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[0][(j * (height_)) + (i)];
+			//	m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[0][(j * (height_)) + (i)];
 				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[0][(j * (height_)) + (i)].Z;
-				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[0][(j * (height_)) + (i)];
 				temp_colors[(j * (local_grid_size)) + (i)] = vec_m_vert_colors[0][(j * (height_)) + (i)];
 			}
 			else if (i >= height_ && j < height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[1][(j * height_) + (i - height_)];
+				//m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[1][(j * height_) + (i - height_)];
 				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[1][(j * height_) + (i - height_)].Z;
-				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[1][(j * height_) + (i - height_)];
 				temp_colors[(j * (local_grid_size)) + (i)] = vec_m_vert_colors[1][(j * height_) + (i - height_)];
 			}
 			else if (i < height_ && j >= height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[2][((j - height_) * height_) + i];
+			//	m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[2][((j - height_) * height_) + i];
 				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[2][((j - height_) * height_) + i].Z;
-				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[2][((j - height_) * height_) + i];
 				temp_colors[(j * (local_grid_size)) + (i)] = vec_m_vert_colors[2][((j - height_) * height_) + i];
 			}
 			else if (i >= height_ && j >= height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[3][((j - height_) * height_) + (i - height_)];
+			//	m_verts_total[(j * (local_grid_size)) + (i)] = vec_m_verts[3][((j - height_) * height_) + (i - height_)];
 				z_axis[(j * (local_grid_size)) + (i)] = vec_m_verts[3][((j - height_) * height_) + (i - height_)].Z;
-				m_norms_total[(j * (local_grid_size)) + (i)] = vec_m_norms[3][((j - height_) * height_) + (i - height_)];
 				temp_colors[(j * (local_grid_size)) + (i)] = vec_m_vert_colors[3][((j - height_) * height_) + (i - height_)];
 			}
 		}
@@ -391,27 +377,27 @@ void AMyProceduralMesh::TestFinal() {
 	//smoths
 	SmoothTerrain(z_axis);
 	SmoothTerrain(z_axis);
-	m_verts_total.Empty();
-	m_verts_total.SetNum(640000);
+	//m_verts_total.Empty();
+	//m_verts_total.SetNum(640000);
 	int ind = 0;
 	//adds verts back into total
-	ParallelFor(local_grid_size, [&](int32 j) {
-		//for (int j = 0; j < (local_grid_size); j++) {
-		for (int32 i = 0; i < (local_grid_size); i++) {
-			if (i < height_ && j < height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[0][(j * (height_)) + (i)].X, vec_m_verts[0][(j * (height_)) + (i)].Y, z_axis[(j * (local_grid_size)) + (i)]);
-			}
-			else if (i >= height_ && j < height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[1][(j * height_) + (i - height_)].X, vec_m_verts[1][(j * height_) + (i - height_)].Y, z_axis[(j * (local_grid_size)) + (i)]);
-			}
-			else if (i < height_ && j >= height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[2][((j - height_) * height_) + i].X, vec_m_verts[2][((j - height_) * height_) + i].Y, z_axis[(j * (local_grid_size)) + (i)]);
-			}
-			else if (i >= height_ && j >= height_) {
-				m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[3][((j - height_) * height_) + (i - height_)].X, vec_m_verts[3][((j - height_) * height_) + (i - height_)].Y, z_axis[(j * (local_grid_size)) + (i)]);
-			}
-		}
-		});
+	//ParallelFor(local_grid_size, [&](int32 j) {
+	//	//for (int j = 0; j < (local_grid_size); j++) {
+	//	for (int32 i = 0; i < (local_grid_size); i++) {
+	//		if (i < height_ && j < height_) {
+	//			m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[0][(j * (height_)) + (i)].X, vec_m_verts[0][(j * (height_)) + (i)].Y, z_axis[(j * (local_grid_size)) + (i)]);
+	//		}
+	//		else if (i >= height_ && j < height_) {
+	//			m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[1][(j * height_) + (i - height_)].X, vec_m_verts[1][(j * height_) + (i - height_)].Y, z_axis[(j * (local_grid_size)) + (i)]);
+	//		}
+	//		else if (i < height_ && j >= height_) {
+	//			m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[2][((j - height_) * height_) + i].X, vec_m_verts[2][((j - height_) * height_) + i].Y, z_axis[(j * (local_grid_size)) + (i)]);
+	//		}
+	//		else if (i >= height_ && j >= height_) {
+	//			m_verts_total[(j * (local_grid_size)) + (i)] = FVector(vec_m_verts[3][((j - height_) * height_) + (i - height_)].X, vec_m_verts[3][((j - height_) * height_) + (i - height_)].Y, z_axis[(j * (local_grid_size)) + (i)]);
+	//		}
+	//	}
+	//	});
 
 	//into correct places
 	ParallelFor(local_grid_size, [&](int32 j) {
@@ -444,6 +430,14 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	spacing_ = 20.0f;
 	if (!is_created) {
 		ClearMeshData();
+		for (int i = 0; i < vec_m_verts.Num(); i++) {
+			vec_m_verts[i].SetNum(height_ * height_);
+			vec_m_norms[i].SetNum(height_ * height_);
+			vec_m_vert_colors[i].SetNum(height_ * height_);
+			if (is_temp){
+				i = 3;
+			}
+		}
 		is_created = true;
 	}
 	GenerateVerts(index_);

@@ -46,8 +46,6 @@ public:
 	UPROPERTY()
 		TArray<FVector> m_norms3;
 	UPROPERTY()
-		TArray<FVector> m_norms_total;
-	UPROPERTY()
 		TArray<int32> m_tris;
 	UPROPERTY()
 		TArray<int32> m_tris1;
@@ -60,8 +58,6 @@ public:
 	UPROPERTY()
 		TArray<FVector2D> m_u_vs;
 	UPROPERTY()
-		TArray<FVector2D> m_u_vs_total;
-	UPROPERTY()
 		TArray<FLinearColor> m_vert_colors;
 	UPROPERTY()
 		TArray<FLinearColor> m_vert_colors1;
@@ -70,11 +66,7 @@ public:
 	UPROPERTY()
 		TArray<FLinearColor> m_vert_colors3;
 	UPROPERTY()
-		TArray<FLinearColor> m_vert_colors_total;
-	UPROPERTY()
 		TArray<FProcMeshTangent> m_tangents;
-	UPROPERTY()
-		TArray<FProcMeshTangent> m_tangents_total;
 
 	void GenerateVerts(const int&index_);
 	void AddVert(const int& index_, const int& x, const int& y);
