@@ -220,6 +220,7 @@ void AMyProceduralMesh::ClearMeshData() {
 	vec_m_tris[1].Empty();
 	vec_m_tris[2].Empty();
 	vec_m_tris[3].Empty();
+	m_tris_total.Empty();
 	m_u_vs.Empty();
 	vec_m_norms[0].Empty();
 	vec_m_norms[1].Empty();
@@ -366,6 +367,14 @@ void AMyProceduralMesh::CalculateNormals(const int& index_) {
 void AMyProceduralMesh::GenerateTris(const int& index_) {
 	for (int32 y = 0; y < (height_ - 1); y++) {
 		for (int32 x = 0; x < (width_ - 1); x++) {
+			m_tris_total.Add(x + (y * width_));					//current vertex
+			m_tris_total.Add(x + (y * width_) + width_);			//current vertex + row
+			m_tris_total.Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
+
+			m_tris_total.Add(x + (y * width_));					//current vertex
+			m_tris_total.Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
+			m_tris_total.Add(x + (y * width_) + 1);				//current vertex + one right
+
 			vec_m_tris[index_].Add(x + (y * width_));					//current vertex
 			vec_m_tris[index_].Add(x + (y * width_) + width_);			//current vertex + row
 			vec_m_tris[index_].Add(x + (y * width_) + width_ + 1);		//current vertex + row + one right
@@ -490,6 +499,8 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_, const int& i
 	}
 	//FCriticalSection Mutex;
 	ParallelFor(width_, [&](int32 y) {
+
+		//for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			if (height_ == 400) {
 				vec_m_verts[index_][y * height_ + x].Z = (c_[y * height_ + x] * spacing_) / m_;
@@ -574,7 +585,7 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 		float dist = Distance(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
 		int_dist *= 20;
-		ParallelFor(int_dist, [&](int j) {
+		for (int j = 0; j < (int)int_dist; j++) {
 			float t = (float)(j / (float)int_dist);
 			auto left_pos = LerpV(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left - 2)], t);	//gives pos on left
 			auto right_pos = LerpV(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
@@ -587,23 +598,21 @@ void AMyProceduralMesh::SetHeightProper(const TArray<FVector>& points_, const TA
 				auto a = LerpV(left_pos, right_pos, t_inner);
 				ChangeVert(a.X, a.Y, left_pos.Z, index_);
 			}
-		});
+		}
 		index_tracker_verts += 4;
 	}
 }
 void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector>& temp_vec, const int& scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor>& new_c) {
-	ParallelFor(grid_size, [&](int i) {
-	//for (int i = 0; i < (grid_size); i++) {
+	for (int i = 0; i < (grid_size); i++) {
 		for (int j = 0; j < (grid_size); j++) {
 			int x_dash = j * new_size / grid_size;
 			int y_dash = i * new_size / grid_size;
 			temp_vec[i * new_size + j].Z = m_verts_[i * grid_size + j].Z;
 			new_c[y_dash * new_size + x_dash] = temp_colour[i * grid_size + j];
 		}
-	});
+	}
 	//coloums
-	ParallelFor(grid_size, [&](int i) {
-		//for (int i = 0; i < (new_size); i++) {
+	for (int i = 0; i < (new_size); i++) {
 		for (int j = 0; j < (new_size - 1); j += scale) {
 			auto c = m_verts_[(i / scale) * grid_size + (j / scale)].Z;
 			auto c_ = temp_colour[(i / scale) * grid_size + (j / scale)];
@@ -612,7 +621,7 @@ void AMyProceduralMesh::NearestNeighbourSample(const int& grid_size, const int& 
 				new_c[(i * new_size) + (j + g)] = c_;
 			}
 		}
-		});
+	}
 	//////rows - same for rows
 	for (int i = 0; i < (new_size - 1); i += scale) {
 		for (int j = 0; j < (new_size); j++) {
