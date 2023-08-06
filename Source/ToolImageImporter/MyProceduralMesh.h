@@ -94,6 +94,7 @@ public:
 
 	void SetEdges();
 	void CallUpdate(const int index_);
+	void CallCreate();
 	TArray<TArray<FVector>> vec_m_verts;
 	TArray<TArray<FVector>> vec_m_norms;
 	TArray<TArray<int32>> vec_m_tris;

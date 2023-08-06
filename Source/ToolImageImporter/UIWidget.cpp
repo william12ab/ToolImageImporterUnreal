@@ -385,17 +385,19 @@ void UUIWidget::FixScales(const int& loop_index) {
 
 void UUIWidget::ResizeMesh() {
 	TArray<FLinearColor> temp_color;
-	p_mesh->Save(temp_vec, temp_color,0);
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	new_temp->SetIsTemp(true);
-	if (is_chunking) {
-		new_temp->SetIsChunking(true);
-	}
-	new_temp->Resize(temp_vec, 4, temp_color, 0);
-	new_temp->SetActorScale3D(FVector(2.5f, 2.5f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
+	
+		p_mesh->Save(temp_vec, temp_color,0);
+		new_temp->SetIsTemp(true);
+		if (is_chunking) {
+			new_temp->SetIsChunking(true);
+		}
+		new_temp->Resize(temp_vec, 2, temp_color, 0);
+
+	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();
 }
 
