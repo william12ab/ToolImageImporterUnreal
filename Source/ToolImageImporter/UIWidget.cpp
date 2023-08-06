@@ -13,7 +13,7 @@ void UUIWidget::NativeConstruct() {
 	s_ = 20.0f;		//distance between verts in proc mesh
 	m_ = 7;			//division of height
 	scaling_down_ = 10.0f;		//scale factor of everything, so 8 times what it is now
-	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::OnTest);
+	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::ResizeMesh);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 
 	is_decal_spawn = false;
@@ -47,12 +47,18 @@ void UUIWidget::NativeConstruct() {
 		FixScales(i);
 		is_start_done = true;
 	}
-	if (is_chunking){
-		p_mesh->TestFinal();
-		p_mesh->FullSize();
+	p_mesh->SetEdges();
+
+	if (is_chunking){//at this point youre merging them to create a full big one
+		p_mesh->TestFinal();		//smooths each section uniformly
+		p_mesh->SetEdges();
+		p_mesh->FullSize();			//adds all together
+	}
+	else {
+		p_mesh->SetEdges();
 	}
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	OnTest();
+	ResizeMesh();//ading more verts
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
 
@@ -377,18 +383,18 @@ void UUIWidget::FixScales(const int& loop_index) {
 	is_level_spawnned = true;
 }
 
-void UUIWidget::OnTest() {
+void UUIWidget::ResizeMesh() {
 	TArray<FLinearColor> temp_color;
-	p_mesh->Save(temp_vec, temp_color);
+	p_mesh->Save(temp_vec, temp_color,0);
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	new_temp->SetIsTemp(true);
-	if (is_chunking){
+	if (is_chunking) {
 		new_temp->SetIsChunking(true);
 	}
-	new_temp->Resize(temp_vec, 4, temp_color,0);
+	new_temp->Resize(temp_vec, 4, temp_color, 0);
 	new_temp->SetActorScale3D(FVector(2.5f, 2.5f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();
 }

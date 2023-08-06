@@ -82,7 +82,7 @@ public:
 
 	void Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour, const int& index_);
 	void NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector>& temp_vec, const int& scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor>& new_c);
-	void Save(TArray<FVector> &temp_, TArray<FLinearColor> &temp_colours);
+	void Save(TArray<FVector> &temp_, TArray<FLinearColor> &temp_colours, const int& index_);
 
 	void ChangePos(int&pos,const int&max,bool & local_is_changed);
 	
@@ -91,6 +91,9 @@ public:
 	void FullSize();
 	void SetIsChunking(bool f) { is_chunking = f; }
 	void SetIsTemp(bool f) { is_temp = f; }
+
+	void SetEdges();
+	void CallUpdate(const int index_);
 	TArray<TArray<FVector>> vec_m_verts;
 	TArray<TArray<FVector>> vec_m_norms;
 	TArray<TArray<int32>> vec_m_tris;

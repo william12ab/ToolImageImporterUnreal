@@ -62,7 +62,7 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UImage* light_system;
 	UFUNCTION()
-		void OnTest();//new heightmap with more verts merge this
+		void ResizeMesh();//new heightmap with more verts merge this
 	TArray<UImage*> images_;//has UI images - the starting countdown set
 
 	AWaterMesh* w_mesh;//water

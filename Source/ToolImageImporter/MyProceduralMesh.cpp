@@ -9,6 +9,17 @@ using std::chrono::duration_cast;
 using std::chrono::milliseconds;
 using the_clock = std::chrono::steady_clock;
 // Sets default values
+float Lerp(const float& p1, const float& p2, const float& t)
+{
+	auto c = (1.0f - t) * p1 + t * p2;
+	return c;
+}
+
+FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
+{
+	auto c = (1.0f - t) * p1 + t * p2;
+	return c;
+}
 AMyProceduralMesh::AMyProceduralMesh() {
 	PrimaryActorTick.bCanEverTick = false;
 	ScnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Main"));
@@ -77,6 +88,41 @@ void AMyProceduralMesh::PostInitializeComponents() {
 	Super::PostInitializeComponents();
 }
 
+void AMyProceduralMesh::SetEdges() {
+	for (int32 y = 0; y < height_; y++) {
+		float p1 = vec_m_verts[1][(y * (height_)) + (0)].Z;
+		float p2 = vec_m_verts[0][(y * (height_)) + (height_ - 1)].Z;
+		float p3 = Lerp(p1, p2, 0.5f);
+		vec_m_verts[1][(y * (height_)) + (0)].Z = p3;
+		vec_m_verts[0][(y * (height_)) + (height_ - 1)].Z = p3;
+		//0 to 1
+
+		p1= vec_m_verts[3][(y * (height_)) + (0)].Z;
+		p2= vec_m_verts[2][(y * (height_)) + (height_ - 1)].Z;
+		p3 = Lerp(p1, p2, 0.5f);
+		vec_m_verts[3][(y * (height_)) + (0)].Z = p3;
+		vec_m_verts[2][(y * (height_)) + (height_ - 1)].Z = p3;
+	}
+
+	for (int32 x = 0; x < height_; x++){
+		float p1 = vec_m_verts[0][((height_-1) * (height_)) + (x)].Z;
+		float p2 = vec_m_verts[2][((0) * (height_)) + (x)].Z;
+		float p3 = Lerp(p1, p2, 0.5f);
+		vec_m_verts[0][((height_-1) * (height_)) + (x)].Z = p3;
+		vec_m_verts[2][((0) * (height_)) + (x)].Z = p3;
+
+		p1 = vec_m_verts[1][((height_ - 1) * (height_)) + (x)].Z;
+		p2 = vec_m_verts[3][((0) * (height_)) + (x)].Z;
+		p3 = Lerp(p1, p2, 0.5f);
+		vec_m_verts[1][((height_ - 1) * (height_)) + (x)].Z = p3;
+		vec_m_verts[3][((0) * (height_)) + (x)].Z = p3;
+	}
+}
+void AMyProceduralMesh::CallUpdate(const int index_) {
+	ParallelFor(4, [&](int32 i) {
+		procedural_mesh_comp->UpdateMeshSection_LinearColor(i, vec_m_verts[i], vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
+		});
+}
 
 void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_) {
 	int local_height;
@@ -85,7 +131,6 @@ void AMyProceduralMesh::SmoothTerrain(TArray<float>& c_) {
 		local_height *= 2;
 	}
 	ParallelFor(local_height, [&](int32 j) {
-		//for (int32 j = 0; j < (local_height); j++){
 		for (int32 i = 0; i < (local_height); i++) {
 			int count_loc = 0;
 			float tHeight = 0.0f;
@@ -191,29 +236,29 @@ void AMyProceduralMesh::ClearMeshData() {
 void AMyProceduralMesh::AddVert(const int& index_, const int& x, const int& y) {
 	switch (index_) {
 	case 0: {
-		vec_m_verts[0][y * height_ + x]=(FVector(x * spacing_, y * spacing_, 0.0f));
+		vec_m_verts[0][y * height_ + x] = (FVector(x * spacing_, y * spacing_, 0.0f));
 		//m_verts_total.Add(FVector(x * spacing_, y * spacing_, 0.0f));
 		vec_m_norms[0][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
-		vec_m_vert_colors[0][y * height_ + x]=(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		vec_m_vert_colors[0][y * height_ + x] = (FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
 	}
 	case 1: {
-		vec_m_verts[1][y * height_ + x]=(FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
+		vec_m_verts[1][y * height_ + x] = (FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
 		//m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, y * spacing_, 0.0f));
 		vec_m_norms[1][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
 		vec_m_vert_colors[1][y * height_ + x] = (FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
 	}
 	case 2: {
-		vec_m_verts[2][y * height_ + x]=(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
-	//	m_verts_total.Add(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		vec_m_verts[2][y * height_ + x] = (FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		//	m_verts_total.Add(FVector(x * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
 		vec_m_norms[2][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
 		vec_m_vert_colors[2][y * height_ + x] = (FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
 	}
 	case 3: {
-		vec_m_verts[3][y * height_ + x]=(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
-	//	m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		vec_m_verts[3][y * height_ + x] = (FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
+		//	m_verts_total.Add(FVector((x + (400 - 1)) * spacing_, (y + (400 - 1)) * spacing_, 0.0f));
 		vec_m_norms[3][y * height_ + x] = (FVector(0.0f, 0.0f, .0f));
 		vec_m_vert_colors[3][y * height_ + x] = (FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 		break;
@@ -226,7 +271,6 @@ void AMyProceduralMesh::GenerateVerts(const int& index_) {
 	m_u_vs.SetNum(height_* height_);
 	m_tangents.SetNum(height_ * height_);
 	ParallelFor(height_, [&](int32 y) {
-		//for (int32 y = 0; y < height_; y++) {
 		for (int32 x = 0; x < width_; x++) {
 			AddVert(index_, x, y);
 			m_u_vs[y * height_ + x] = FVector2D(x * uv_spacing, y * uv_spacing);
@@ -408,12 +452,11 @@ void AMyProceduralMesh::TestFinal() {
 			}
 		}
 		});
-
-	ParallelFor(4, [&](int32 i) {
+	/*ParallelFor(4, [&](int32 i) {
 		procedural_mesh_comp->UpdateMeshSection_LinearColor(i, vec_m_verts[i], vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
-		});
-}
+		});*/
 
+}
 
 void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spacing_, const int& index_) {
 	height_ = d_height_;
@@ -434,7 +477,6 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	GenerateVerts(index_);
 	GenerateTris(index_);
 	//Function that creates mesh section
-
 	procedural_mesh_comp->CreateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_tris[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents, is_temp);
 }
 
@@ -459,7 +501,6 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_, const int& i
 		});
 
 	CalculateNormals(index_);
-
 	procedural_mesh_comp->bCastDynamicShadow = false;
 	procedural_mesh_comp->UpdateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
 
@@ -467,20 +508,6 @@ void AMyProceduralMesh::ModiVerts(TArray<float>& c_, const int& m_, const int& i
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
 	procedural_mesh_comp->SetMaterial(index_, material_instance);
 }
-
-
-float Lerp(const float& p1, const float& p2, const float& t)
-{
-	auto c = (1.0f - t) * p1 + t * p2;
-	return c;
-}
-
-FVector LerpV(const FVector& p1, const FVector& p2, const float& t)
-{
-	auto c = (1.0f - t) * p1 + t * p2;
-	return c;
-}
-
 
 float Distance(const FVector& p1, const FVector& p2) {
 	float xd = p2.X - p1.X;
@@ -533,7 +560,7 @@ void AMyProceduralMesh::ReplaceC(TArray<float>& c_, const int& index_) {
 	}
 	CalculateNormals(index_);
 
-	procedural_mesh_comp->UpdateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
+	//procedural_mesh_comp->UpdateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
 }
 
 
@@ -634,7 +661,7 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale
 	ModiVerts(temp_c, 0, index_);//smoothing and setting verts plus regen.
 }
 
-void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_colours) {
+void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_colours, const int& index_) {
 	for (int i = 0; i < vec_m_verts[0].Num(); i++) {
 		temp_.Add(vec_m_verts[0][i]);
 		temp_colours.Add(vec_m_vert_colors[0][i]);
