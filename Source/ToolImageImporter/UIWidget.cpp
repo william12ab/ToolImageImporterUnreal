@@ -47,15 +47,13 @@ void UUIWidget::NativeConstruct() {
 		FixScales(i);
 		is_start_done = true;
 	}
-	p_mesh->SetEdges();
-
+	if (is_chunking){
+		p_mesh->SetEdges();
+	}
 	if (is_chunking){//at this point youre merging them to create a full big one
 		p_mesh->TestFinal();		//smooths each section uniformly
 		p_mesh->SetEdges();
 		p_mesh->FullSize();			//adds all together
-	}
-	else {
-		p_mesh->SetEdges();
 	}
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	ResizeMesh();//ading more verts
