@@ -290,15 +290,7 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 }
 void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& loop_index) {
 	if (!is_decal_spawn) {
-		auto f = FMath::Lerp(point_arr[0], point_arr[1], 0.25f);
-		auto total = track_spline->GetTotalPoints();
-		f *= scaling_down_;
-		float angle_f = atan2(point_arr[1].Y - point_arr[0].Y, point_arr[1].X - point_arr[0].X) * 180.0f / PI;
-		starting_angle = FRotator(0.f, angle_f, 0.f);
-		while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
-			f.Z += 0.5f;
-		}
-
+	
 		auto ss = point_arr.Num();
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
@@ -419,15 +411,25 @@ void UUIWidget::ResizeMesh() {
 	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();
 	for (int32 i = 0; i < vec_water_mesh.Num(); i++){
-		if (vec_water_mesh[i]!=NULL){
+		if (vec_water_mesh[i] != NULL) {
 			auto loc_ = vec_water_mesh[i]->GetActorLocation();
 			loc_ *= 10;
 			vec_water_mesh[i]->SetActorLocation(loc_);
 			vec_water_mesh[i]->SetActorScale3D(FVector(150.f, 150.f, 10.f));
 		}
-		
 	}
-	
+	int y_index = total_track_points[0].Y * 2; int x_index = total_track_points[0].X * 2;
+	FVector point_0 = new_temp->vec_m_verts[0][y_index * new_temp->GetHeight() + x_index];
+	y_index = total_track_points[1].Y * 2; x_index = total_track_points[1].X * 2;
+	FVector point_1 = new_temp->vec_m_verts[0][y_index * new_temp->GetHeight() + x_index];
+	auto f = FMath::Lerp(point_0, point_1, 0.25f);
+	f.X *= 5.f; f.Y *= 5.f; f.Z *= 10.f;
+	float angle_f = atan2(total_track_points[1].Y - total_track_points[0].Y, total_track_points[1].X - total_track_points[0].X) * 180.0f / PI;
+	starting_angle = FRotator(0.f, angle_f, 0.f);
+	while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
+		f.Z += 0.5f;
+	}
+
 }
 
 void UUIWidget::StartTextFunction() {
