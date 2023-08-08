@@ -671,11 +671,12 @@ void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_
 }
 void AMyProceduralMesh::CreateCollisionZone(const TArray<FVector2D>& track_points, const TArray<FVector>& verts_, const int32& grid_size) {
 	int32 counter = 0;
+	int32 scale_multi = 2;
 	for (int32 index = 0; index < track_points.Num(); index++) {
-		for (int32 y = -16; y <= 16; y++) {
-			for (int32 x = -16; x <= 16; x++) {
-				int track_x = (track_points[index].X) * 2 - x;
-				int track_y = (track_points[index].Y) * 2 - y;
+		for (int32 y = -12; y <= 12; y++) {
+			for (int32 x = -12; x <= 12; x++) {
+				int track_x = (track_points[index].X) * scale_multi - x;
+				int track_y = (track_points[index].Y) * scale_multi - y;
 				if (track_x < (grid_size - 1) && track_x >= 0 && track_y < (grid_size - 1) && track_y >= 0) {
 					new_m_verts.Add(verts_[track_y * grid_size + track_x]);//tl
 					new_m_verts.Add(verts_[track_y * grid_size + (track_x + 1)]);//tr
@@ -702,4 +703,5 @@ void AMyProceduralMesh::CreateCollisionZone(const TArray<FVector2D>& track_point
 		index_tri += 4;
 	}
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, new_m_verts, new_m_tris, TArray<FVector>(), TArray<FVector2D>(), TArray<FLinearColor>(), TArray<FProcMeshTangent>(), true);
+	procedural_mesh_comp->SetVisibility(false);
 }

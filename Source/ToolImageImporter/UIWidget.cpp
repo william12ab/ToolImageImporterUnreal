@@ -47,7 +47,24 @@ void UUIWidget::NativeConstruct() {
 		FixScales(i);
 		is_start_done = true;
 		for (int32 p = 0; p < track_points.Num(); p++){
-			total_track_points.Add(track_points[p]);
+			if (i == 0) {
+				total_track_points.Add(track_points[p]);
+			}
+			else if (i==1){
+				auto total_point = track_points[p];
+				total_point.X += 400;
+				total_track_points.Add(total_point);
+			}
+			else if (i	 == 2) {
+				auto total_point = track_points[p];
+				total_point.Y += 400;
+				total_track_points.Add(total_point);
+			}
+			else if (i == 3) {
+				auto total_point = track_points[p];
+				total_point.Y += 400;	total_point.X += 400;
+				total_track_points.Add(total_point);
+			}
 		}
 	}
 	if (is_chunking){
