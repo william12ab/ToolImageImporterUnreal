@@ -65,11 +65,14 @@ protected:
 		void ResizeMesh();//new heightmap with more verts merge this
 	TArray<UImage*> images_;//has UI images - the starting countdown set
 
+	TArray<FVector2D> total_track_points;
+
 	AWaterMesh* w_mesh;//water
 	AWaterMesh* w_mesh1;
 	AWaterMesh* w_mesh2;
 	AWaterMesh* w_mesh3;
 	AMyProceduralMesh* p_mesh;		//obj
+	AMyProceduralMesh* track_obj;
 	ABasicTree* tree_instance;//trees
 	int32 w_, h_,m_;		//width, height, modifier
 	float s_;				//spacing

@@ -66,6 +66,9 @@ public:
 	UPROPERTY()
 		TArray<FProcMeshTangent> m_tangents;
 
+	UPROPERTY()
+		TArray<FVector> new_m_verts;
+
 	void GenerateVerts(const int&index_);
 	void AddVert(const int& index_, const int& x, const int& y);
 	void GenerateTris(const int & index_);
@@ -94,7 +97,11 @@ public:
 
 	void SetEdges();
 	void CallUpdate(const int index_);
-	void CallCreate();
+	
+	void CreateCollisionZone(const TArray<FVector2D>& track_points, const TArray<FVector>& verts_, const int32& grid_size);
+
+	int32 GetHeight() { return height_; }
+
 	TArray<TArray<FVector>> vec_m_verts;
 	TArray<TArray<FVector>> vec_m_norms;
 	TArray<TArray<int32>> vec_m_tris;

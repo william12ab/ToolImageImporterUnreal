@@ -477,7 +477,7 @@ void AMyProceduralMesh::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	GenerateVerts(index_);
 	GenerateTris(index_);
 	//Function that creates mesh section
-	procedural_mesh_comp->CreateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_tris[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents, is_temp);
+	procedural_mesh_comp->CreateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_tris[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents, false);
 }
 
 
@@ -659,6 +659,8 @@ void AMyProceduralMesh::Resize(const TArray<FVector>& m_verts_, const int& scale
 		}
 	}
 	ModiVerts(temp_c, 0, index_);//smoothing and setting verts plus regen.
+////	procedural_mesh_comp->SetVisibility(false);
+
 }
 
 void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_colours, const int& index_) {
@@ -666,4 +668,38 @@ void AMyProceduralMesh::Save(TArray<FVector>& temp_, TArray<FLinearColor>& temp_
 		temp_.Add(vec_m_verts[0][i]);
 		temp_colours.Add(vec_m_vert_colors[0][i]);
 	}
+}
+void AMyProceduralMesh::CreateCollisionZone(const TArray<FVector2D>& track_points, const TArray<FVector>& verts_, const int32& grid_size) {
+	int32 counter = 0;
+	for (int32 index = 0; index < track_points.Num(); index++) {
+		for (int32 y = -16; y <= 16; y++) {
+			for (int32 x = -16; x <= 16; x++) {
+				int track_x = (track_points[index].X) * 2 - x;
+				int track_y = (track_points[index].Y) * 2 - y;
+				if (track_x < (grid_size - 1) && track_x >= 0 && track_y < (grid_size - 1) && track_y >= 0) {
+					new_m_verts.Add(verts_[track_y * grid_size + track_x]);//tl
+					new_m_verts.Add(verts_[track_y * grid_size + (track_x + 1)]);//tr
+					new_m_verts.Add(verts_[(track_y + 1) * grid_size + track_x]);//bl
+					new_m_verts.Add(verts_[(track_y + 1) * grid_size + (track_x + 1)]);//br
+					counter++;
+				}
+			}
+		}
+	}
+
+
+	//triangles
+	TArray<int32> new_m_tris;
+	int32 index_tri = 0;
+	for (int32 i = 0; i < counter; i++) {
+		new_m_tris.Add(index_tri);//0
+		new_m_tris.Add(index_tri + 2);//1
+		new_m_tris.Add(index_tri + 1);//2
+
+		new_m_tris.Add(index_tri + 1);//2
+		new_m_tris.Add(index_tri + 2);//1
+		new_m_tris.Add(index_tri + 3);//3
+		index_tri += 4;
+	}
+	procedural_mesh_comp->CreateMeshSection_LinearColor(0, new_m_verts, new_m_tris, TArray<FVector>(), TArray<FVector2D>(), TArray<FLinearColor>(), TArray<FProcMeshTangent>(), true);
 }

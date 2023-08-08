@@ -46,6 +46,9 @@ void UUIWidget::NativeConstruct() {
 		CreateTrack(i);
 		FixScales(i);
 		is_start_done = true;
+		for (int32 p = 0; p < track_points.Num(); p++){
+			total_track_points.Add(track_points[p]);
+		}
 	}
 	if (is_chunking){
 		p_mesh->SetEdges();
@@ -387,14 +390,16 @@ void UUIWidget::ResizeMesh() {
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	
-		p_mesh->Save(temp_vec, temp_color,0);
-		new_temp->SetIsTemp(true);
-		if (is_chunking) {
-			new_temp->SetIsChunking(true);
-		}
-		new_temp->Resize(temp_vec, 2, temp_color, 0);
+	track_obj = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 
+	p_mesh->Save(temp_vec, temp_color,0);
+	new_temp->SetIsTemp(true);
+	if (is_chunking) {
+		new_temp->SetIsChunking(true);
+	}
+	new_temp->Resize(temp_vec, 2, temp_color, 0);
+	track_obj->CreateCollisionZone(total_track_points, new_temp->vec_m_verts[0], new_temp->GetHeight());
+	track_obj->SetActorScale3D(FVector(5.f, 5.f, 10));
 	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();
 }
