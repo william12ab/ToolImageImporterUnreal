@@ -376,9 +376,8 @@ void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index)
 void UUIWidget::FixScales(const int& loop_index) {
 	//setting scales of terrain, spline, water.
 	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	vec_water_mesh[0]->SetActorScale3D(FVector(30 * scaling_down_, 30 * scaling_down_, 30 * scaling_down_));
-	auto t = vec_water_mesh[0]->GetActorLocation();
-	vec_water_mesh[0]->SetActorLocation(t * scaling_down_);
+	vec_water_mesh[loop_index]->SetActorScale3D(FVector( scaling_down_, scaling_down_, scaling_down_));
+	
 	if (!is_start_done){
 		StartPlaces(0);
 	}
@@ -419,6 +418,16 @@ void UUIWidget::ResizeMesh() {
 	track_obj->SetActorScale3D(FVector(5.f, 5.f, 10));
 	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	p_mesh->Destroy();
+	for (int32 i = 0; i < vec_water_mesh.Num(); i++){
+		if (vec_water_mesh[i]!=NULL){
+			auto loc_ = vec_water_mesh[i]->GetActorLocation();
+			loc_ *= 10;
+			vec_water_mesh[i]->SetActorLocation(loc_);
+			vec_water_mesh[i]->SetActorScale3D(FVector(150.f, 150.f, 10.f));
+		}
+		
+	}
+	
 }
 
 void UUIWidget::StartTextFunction() {
