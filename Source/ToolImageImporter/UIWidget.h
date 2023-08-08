@@ -40,6 +40,8 @@ protected:
 	void StartPlaces(const int&loop_index);//used for choosing the starting places of both the flags and car
 	void InnerStartPlaces(const TArray<FVector>& point_arr, const int&loop_index);
 	void EndFlag(const TArray<FVector>& point_arr, const int& loop_index);
+
+	void CheckForChunking(const int&index_, ABasicTree* instance_);
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
