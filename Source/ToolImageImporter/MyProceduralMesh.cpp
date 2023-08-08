@@ -71,11 +71,13 @@ void AMyProceduralMesh::FullSize() {
 	ParallelFor(width_, [&](int32 i) {
 		for (int32 j = 0; j < height_; j++) {
 			vec_m_verts[0][(i * (height_)) + (j)].Z = z_axis[(i * (height_)) + (j)];
+			vec_m_vert_colors[0][(i * (height_)) + (j)] = temp_colors[(i * (height_)) + (j)];
 		}
 		});
 	CalculateNormals(0);
-	procedural_mesh_comp->CreateMeshSection_LinearColor(0, vec_m_verts[0], vec_m_tris[0], vec_m_norms[0], m_u_vs, temp_colors, m_tangents, false);
+	procedural_mesh_comp->CreateMeshSection_LinearColor(0, vec_m_verts[0], vec_m_tris[0], vec_m_norms[0], m_u_vs, vec_m_vert_colors[0], m_tangents, false);
 	z_axis.Empty();
+	temp_colors.Empty();
 }
 
 // Called when the game starts or when spawned
