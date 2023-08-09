@@ -118,9 +118,11 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 				   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 				   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
 				AddBasicTree(A, tree_select, mesh_name, track_point, pos_x, pos_y);
-				instanced_basic_tree->SetMobility(EComponentMobility::Static);
+				instanced_basic_tree->SetMobility(EComponentMobility::Movable);
 				instanced_basic_tree->bCastDynamicShadow = true;
 				instanced_basic_tree->CastShadow = true;
+				instanced_basic_tree->SetMassOverrideInKg(NAME_None,10000.f);
+				instanced_basic_tree->SetMobility(EComponentMobility::Static);
 				track_tree_points.Add(FVector2D(pos_x, pos_y));
 			}
 			else {
@@ -301,8 +303,9 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				instanced_basic_tree->AddInstance(A);
+				instanced_basic_tree->SetMobility(EComponentMobility::Movable);
+				instanced_basic_tree->SetMassOverrideInKg(NAME_None, 10000.f);
 				instanced_basic_tree->SetMobility(EComponentMobility::Static);
-				
 			}
 			else {
 				pos_x += FMath::RandRange(-4, 8);

@@ -238,6 +238,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
+		
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 		CheckForChunking(loop_index, tree_instancea);
 	}
@@ -332,13 +333,13 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
 		FRotator myRotD(0, 0, 0);
-		FVector myLocD = FMath::Lerp(point_arr[0], point_arr[1], 0.9f);
+		FVector myLocD = FMath::Lerp(point_arr[0], point_arr[5], 0.9f);
 
 		myLocD *= scaling_down_;
 		//myLocD.Z += 85.f;
 		FName RightName = FName(TEXT("boxendtriggername"));
 		SpawnInfoBox.Name = RightName;
-		float angle_f = atan2(point_arr[0].Y - point_arr[1].Y, point_arr[0].X - point_arr[1].X) * 180.0f / PI;
+		float angle_f = atan2(point_arr[0].Y - point_arr[5].Y, point_arr[0].X - point_arr[5].X) * 180.0f / PI;
 		starting_angle = FRotator(0.f, angle_f, 0.f);
 		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
 		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
