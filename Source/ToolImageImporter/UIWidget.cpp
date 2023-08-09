@@ -281,10 +281,10 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 void UUIWidget::CreateSpline(const int&loop_index) {
 	TArray<FVector2D> temp_arr;
 	if (point_type) {
-		temp_arr = control_points;
+		temp_arr = track_points;
 	}
 	else {
-		temp_arr = control_points;
+		temp_arr = track_points;
 	}
 
 	for (size_t i = 0; i < temp_arr.Num(); i++) {
@@ -309,15 +309,20 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
 	track_spline->SetActorEnableCollision(false);
 	if (point_type) {
-		/*for (size_t i = 0; i < temp_arr.Num(); i++) {
+		for (size_t i = 0; i < temp_arr.Num(); i++) {
 			temp_arr[i].X /= s_;
 			temp_arr[i].Y /= s_;
 		}
-		track_points = temp_arr;*/
-		control_points = temp_arr;
+		track_points = temp_arr;
+		
 	}
 	else {
-		control_points = temp_arr;
+		for (size_t i = 0; i < temp_arr.Num(); i++) {
+			temp_arr[i].X /= s_;
+			temp_arr[i].Y /= s_;
+		}
+		track_points = temp_arr;
+		//control_points = temp_arr;
 	}
 }
 void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& loop_index) {
@@ -333,6 +338,8 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 		//myLocD.Z += 85.f;
 		FName RightName = FName(TEXT("boxendtriggername"));
 		SpawnInfoBox.Name = RightName;
+		float angle_f = atan2(point_arr[0].Y - point_arr[1].Y, point_arr[0].X - point_arr[1].X) * 180.0f / PI;
+		starting_angle = FRotator(0.f, angle_f, 0.f);
 		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
 		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
 		myLocD = point_arr[ss - 2];
@@ -360,19 +367,21 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 		InnerStartPlaces(track_spline->GetTotalPoints(),0);
 	}
 	else{
-		//finds the correct height(z) for the control points to build fvector for position for car and decals
-		TArray<FVector> control_points_with_z;
-		for (int i = 0; i < control_points.Num(); i++){
-			int xp = control_points[i].X;
-			int yp = control_points[i].Y;
-			float z_from_p_mesh = p_mesh->vec_m_verts[loop_index][(yp) * 400 + (xp)].Z;
-			control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z_from_p_mesh));
-		}
-		if (control_points_with_z[0] == control_points_with_z[1]){
-			int sf = 23;//do something about this
-		}
-		InnerStartPlaces(control_points_with_z,0);
-		UE_LOG(LogTemp, Warning, TEXT("Hello"));
+		InnerStartPlaces(track_spline->GetTotalPoints(), 0);
+
+		////finds the correct height(z) for the control points to build fvector for position for car and decals
+		//TArray<FVector> control_points_with_z;
+		//for (int i = 0; i < control_points.Num(); i++){
+		//	int xp = control_points[i].X;
+		//	int yp = control_points[i].Y;
+		//	float z_from_p_mesh = p_mesh->vec_m_verts[loop_index][(yp) * 400 + (xp)].Z;
+		//	control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z_from_p_mesh));
+		//}
+		//if (control_points_with_z[0] == control_points_with_z[1]){
+		//	int sf = 23;//do something about this
+		//}
+		//InnerStartPlaces(control_points_with_z,0);
+		//UE_LOG(LogTemp, Warning, TEXT("Hello"));
 
 	}
 }
@@ -454,16 +463,10 @@ void UUIWidget::ResizeMesh() {
 		}
 	}
 
-	int y_index = total_track_points[0].Y * 2; int x_index = total_track_points[0].X * 2;
-	FVector point_0 = new_temp->vec_m_verts[0][y_index * new_temp->GetHeight() + x_index];
-	y_index = total_track_points[1].Y * 2; x_index = total_track_points[1].X * 2;
-	FVector point_1 = new_temp->vec_m_verts[0][y_index * new_temp->GetHeight() + x_index];
-	auto f = FMath::Lerp(point_0, point_1, 0.25f);
-	f.X *= 5.f; f.Y *= 5.f; f.Z *= 10.f;
-	float angle_f = atan2(point_0.Y - point_1.Y, point_0.X - point_1.X) * 180.0f / PI;
-	starting_angle = FRotator(0.f, angle_f, 0.f);
-	while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
-		f.Z += 0.5f;
+	auto loc_ = start_decal->GetActorLocation();
+	starting_angle.Yaw += 180;
+	while (!vehicle_pawn->TeleportTo(loc_, starting_angle, false, false)) {
+		loc_.Z += 0.5f;
 	}
 
 }
