@@ -199,7 +199,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 					while (!is_found_pos){
 						pos_x += FMath::RandRange(-5, 5);
 						pos_y += FMath::RandRange(-5, 5);
-						if (pos_y > 0 && pos_y < 400 && pos_x>0 && pos_x < 400) {
+						if (pos_y >= 0 && pos_y < 400 && pos_x>=0 && pos_x < 400) {
 							z_pos = m_verts[pos_y * 400 + pos_x].Z;
 							is_found_pos = true;
 						}

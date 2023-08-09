@@ -463,7 +463,6 @@ void UUIWidget::ResizeMesh() {
 			vec_water_mesh[i]->SetActorScale3D(FVector(150.f, 150.f, 10.f));
 		}
 	}
-
 	auto loc_ = start_decal->GetActorLocation();
 	starting_angle.Yaw += 180;
 	while (!vehicle_pawn->TeleportTo(loc_, starting_angle, false, false)) {
