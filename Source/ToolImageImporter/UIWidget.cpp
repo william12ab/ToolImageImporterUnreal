@@ -281,7 +281,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 void UUIWidget::CreateSpline(const int&loop_index) {
 	TArray<FVector2D> temp_arr;
 	if (point_type) {
-		temp_arr = track_points;
+		temp_arr = control_points;
 	}
 	else {
 		temp_arr = control_points;
@@ -309,11 +309,12 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
 	track_spline->SetActorEnableCollision(false);
 	if (point_type) {
-		for (size_t i = 0; i < temp_arr.Num(); i++) {
+		/*for (size_t i = 0; i < temp_arr.Num(); i++) {
 			temp_arr[i].X /= s_;
 			temp_arr[i].Y /= s_;
 		}
-		track_points = temp_arr;
+		track_points = temp_arr;*/
+		control_points = temp_arr;
 	}
 	else {
 		control_points = temp_arr;
@@ -371,6 +372,8 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 			int sf = 23;//do something about this
 		}
 		InnerStartPlaces(control_points_with_z,0);
+		UE_LOG(LogTemp, Warning, TEXT("Hello"));
+
 	}
 }
 void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {
@@ -440,6 +443,7 @@ void UUIWidget::ResizeMesh() {
 	track_obj->CreateCollisionZone(total_track_points, new_temp->vec_m_verts[0], new_temp->GetHeight());
 	track_obj->SetActorScale3D(FVector(5.f, 5.f, 10));
 	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
+	track_obj->procedural_mesh_comp->SetMassOverrideInKg(NAME_None, 1000000000.f);
 	p_mesh->Destroy();
 	for (int32 i = 0; i < vec_water_mesh.Num(); i++){
 		if (vec_water_mesh[i] != NULL) {
@@ -449,13 +453,14 @@ void UUIWidget::ResizeMesh() {
 			vec_water_mesh[i]->SetActorScale3D(FVector(150.f, 150.f, 10.f));
 		}
 	}
+
 	int y_index = total_track_points[0].Y * 2; int x_index = total_track_points[0].X * 2;
 	FVector point_0 = new_temp->vec_m_verts[0][y_index * new_temp->GetHeight() + x_index];
 	y_index = total_track_points[1].Y * 2; x_index = total_track_points[1].X * 2;
 	FVector point_1 = new_temp->vec_m_verts[0][y_index * new_temp->GetHeight() + x_index];
 	auto f = FMath::Lerp(point_0, point_1, 0.25f);
 	f.X *= 5.f; f.Y *= 5.f; f.Z *= 10.f;
-	float angle_f = atan2(total_track_points[1].Y - total_track_points[0].Y, total_track_points[1].X - total_track_points[0].X) * 180.0f / PI;
+	float angle_f = atan2(point_0.Y - point_1.Y, point_0.X - point_1.X) * 180.0f / PI;
 	starting_angle = FRotator(0.f, angle_f, 0.f);
 	while (!vehicle_pawn->TeleportTo(f, starting_angle, false, false)) {
 		f.Z += 0.5f;

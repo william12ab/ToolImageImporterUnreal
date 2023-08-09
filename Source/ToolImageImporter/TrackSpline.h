@@ -28,7 +28,7 @@ public:
 
 
 
-	void AddSafePoint(const int& index_one, const int& index_zero, const int& index_, const float& t_value);
+	//void AddSafePoint(const int& index_one, const int& index_zero, const int& index_, const float& t_value);
 	//index one would be for example, [1], zero would be [0], and for end it would be [end], [end-1]
 
 	void CombinePoints();

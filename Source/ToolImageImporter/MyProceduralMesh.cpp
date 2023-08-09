@@ -704,6 +704,10 @@ void AMyProceduralMesh::CreateCollisionZone(const TArray<FVector2D>& track_point
 		new_m_tris.Add(index_tri + 3);//3
 		index_tri += 4;
 	}
+
+	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TrackMaterial.TrackMaterial'"));
+	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
+	procedural_mesh_comp->SetMaterial(0, material_instance);
 	procedural_mesh_comp->CreateMeshSection_LinearColor(0, new_m_verts, new_m_tris, TArray<FVector>(), TArray<FVector2D>(), TArray<FLinearColor>(), TArray<FProcMeshTangent>(), true);
 	procedural_mesh_comp->SetVisibility(false);
 }

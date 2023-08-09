@@ -54,60 +54,60 @@ void ATrackSpline::CombinePoints() {
 }
 
 //gets point, lerps between that and next point to create safe(start/endpoints)
-void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, const int& index_, const float& t_value) {
-	int x = control_points[index_one].X / spacing_;
-	int y = control_points[index_one].Y / spacing_;
-	FVector2D safe_point;
-	safe_point = LerpV2D(control_points[index_zero], control_points[index_one], t_value);
-	auto temp_safe_point = safe_point / spacing_;
-	if (temp_safe_point.X < 20 || temp_safe_point.Y < 20 || temp_safe_point.X>380 || temp_safe_point.Y>380) {
-		int s_x = 400 - temp_safe_point.X;
-		int s_y = 400 - temp_safe_point.Y;
-		if (s_x < 20) {
-			if (s_x > 0) {
-				temp_safe_point.X -= (s_x + s_x);
-			}
-			else {
-				temp_safe_point.X += (s_x + s_x);
-			}
-		}
-		if (s_y < 20) {
-			if (s_y > 0) {
-				temp_safe_point.Y -= (s_y + s_y);
-			}
-			else {
-				temp_safe_point.Y += (s_y + s_y);
-			}
-		}
-		if (s_x > 380) {
-			if (s_x > 400) {
-				temp_safe_point.X += ((s_x - 400) * 2);
-			}
-			else {
-				temp_safe_point.X -= ((s_x - 400) * 2);
-			}
-		}
-		if (s_y > 380) {
-			if (s_x > 0) {
-				temp_safe_point.Y += ((s_y - 400) * 2);
-			}
-			else {
-				temp_safe_point.Y -= ((s_y - 400) * 2);
-			}
-		}
-		safe_point = temp_safe_point * spacing_;
-		is_outside_bounds = true;
-	}
-	if (t_value > 0.0f) {
-		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[temp_safe_point.Y * 400 + (temp_safe_point.X)] * spacing_) / division_) + amount_added_to_z));
-	}
-	else {
-		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[temp_safe_point.Y * 400 + (temp_safe_point.X)] * spacing_) / division_) + amount_added_to_z));
-		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
-	}
-	saftey_points.Add(safe_point);
-}
+//void ATrackSpline::AddSafePoint(const int& index_one, const int& index_zero, const int& index_, const float& t_value) {
+//	int x = control_points[index_one].X / spacing_;
+//	int y = control_points[index_one].Y / spacing_;
+//	FVector2D safe_point;
+//	safe_point = LerpV2D(control_points[index_zero], control_points[index_one], t_value);
+//	auto temp_safe_point = safe_point / spacing_;
+//	if (temp_safe_point.X < 20 || temp_safe_point.Y < 20 || temp_safe_point.X>380 || temp_safe_point.Y>380) {
+//		int s_x = 400 - temp_safe_point.X;
+//		int s_y = 400 - temp_safe_point.Y;
+//		if (s_x < 20) {
+//			if (s_x > 0) {
+//				temp_safe_point.X -= (s_x + s_x);
+//			}
+//			else {
+//				temp_safe_point.X += (s_x + s_x);
+//			}
+//		}
+//		if (s_y < 20) {
+//			if (s_y > 0) {
+//				temp_safe_point.Y -= (s_y + s_y);
+//			}
+//			else {
+//				temp_safe_point.Y += (s_y + s_y);
+//			}
+//		}
+//		if (s_x > 380) {
+//			if (s_x > 400) {
+//				temp_safe_point.X += ((s_x - 400) * 2);
+//			}
+//			else {
+//				temp_safe_point.X -= ((s_x - 400) * 2);
+//			}
+//		}
+//		if (s_y > 380) {
+//			if (s_x > 0) {
+//				temp_safe_point.Y += ((s_y - 400) * 2);
+//			}
+//			else {
+//				temp_safe_point.Y -= ((s_y - 400) * 2);
+//			}
+//		}
+//		safe_point = temp_safe_point * spacing_;
+//		is_outside_bounds = true;
+//	}
+//	if (t_value > 0.0f) {
+//		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
+//		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[temp_safe_point.Y * 400 + (temp_safe_point.X)] * spacing_) / division_) + amount_added_to_z));
+//	}
+//	else {
+//		spline->AddSplineLocalPoint(FVector(safe_point.X, safe_point.Y, ((height_z[temp_safe_point.Y * 400 + (temp_safe_point.X)] * spacing_) / division_) + amount_added_to_z));
+//		spline->AddSplineLocalPoint(FVector(control_points[index_].X, control_points[index_].Y, ((height_z[y * 400 + (x)] * spacing_) / division_) + amount_added_to_z));
+//	}
+//	saftey_points.Add(safe_point);
+//}
 
 
 void ATrackSpline::OnConstruction(const FTransform& Transform) {
@@ -117,11 +117,12 @@ void ATrackSpline::OnConstruction(const FTransform& Transform) {
 	for (int i = 0; i < (control_points.Num()); i++) {
 		int x = control_points[i].X / spacing_;
 		int y = control_points[i].Y / spacing_;
-		if ((float)((height_z[y * 400 + x] * spacing_) / division_ < min_height)) {
-			min_height = (float)((height_z[y * 400 + x] * spacing_) / division_);
+		if (x>=0 && x<400 &&y>=0&&y<400){
+			if ((float)((height_z[y * 400 + x] * spacing_) / division_ < min_height)) {
+				min_height = (float)((height_z[y * 400 + x] * spacing_) / division_);
+			}
+			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, ((float)((height_z[y * 400 + x] * spacing_) / division_)) + amount_added_to_z));
 		}
-		spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, ((float)((height_z[y * 400 + x] * spacing_) / division_)) + amount_added_to_z));
-
 	}
 	for (size_t i = 0; i < spline->GetNumberOfSplinePoints(); i++) {
 		spline->SetSplinePointType(i, ESplinePointType::CurveCustomTangent, true);
