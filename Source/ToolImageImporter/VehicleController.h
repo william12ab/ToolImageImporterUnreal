@@ -1,6 +1,7 @@
 #pragma once
 #include "WheeledVehicle.h"
 #include "MainSounds.h"
+#include "MyVehicleAnimInstance.h"
 #include "VehicleController.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API AVehicleController : public AWheeledVehicle
@@ -39,6 +40,7 @@ public:
 	void UpdateHUDStrings();
 	void ChangeBrakeSystem();
 	void CheckForStart();
+	void GetWheelAngle();
 
 	//action maps
 	void Handbrake();
@@ -96,6 +98,8 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float steering_angle;
 
 	//camera stuff
 	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))

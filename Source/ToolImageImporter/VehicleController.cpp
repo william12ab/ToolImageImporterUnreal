@@ -23,9 +23,10 @@
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 AVehicleController::AVehicleController(){
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/correct_size/Subaru_Impreza_22B_STi__CORRECT_SIZE_.Subaru_Impreza_22B_STi__CORRECT_SIZE_'"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/test/Subaru_Impreza_22B_STi_wheel_test.Subaru_Impreza_22B_STi_wheel_test'"));
+	
 	GetMesh()->SetSkeletalMesh(CarMesh.Object);
-	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/correct_size/AMINBP"));
+	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/test/NewAnimBlueprint"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
 	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AVehicleController::OnOverlapBegin);
 
@@ -126,7 +127,7 @@ AVehicleController::AVehicleController(){
 	Camera->bUsePawnControlRotation = true;
 	Camera->FieldOfView = 90.f;
 	//inside
-	InternalCameraOrigin = FVector(-45.0f, 35.0f, 120.0f);
+	InternalCameraOrigin = FVector(-45.0f, 35.0f, 140.0f);
 	InternalCameraBase = CreateDefaultSubobject<USceneComponent>(TEXT("InternalCameraBase"));
 	InternalCameraBase->SetRelativeLocation(InternalCameraOrigin);
 	InternalCameraBase->SetupAttachment(GetMesh());
@@ -213,6 +214,8 @@ void AVehicleController::BeginPlay() {
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	//current values
+
+	GetWheelAngle();
 	if (GetVehicleMovement()->GetCurrentGear()>gear_marker) {
 		//play pop sound
 		if (sound_ref_veh != nullptr) {
@@ -462,6 +465,23 @@ void AVehicleController::AngleCap(float& angle_) {
 		angle_ = max_camera_rot;
 	}
 }
+void AVehicleController::GetWheelAngle() {
+	auto a1=GetVehicleMovementComponent()->Wheels[0]->GetSteerAngle();
+	auto a2=GetVehicleMovementComponent()->Wheels[1]->GetSteerAngle();
+
+	auto abs1 = FMath::Abs(a1);
+	auto abs2 = FMath::Abs(a2);
+
+	if (abs1>abs2){
+		steering_angle = a1;
+	}
+	else {
+		steering_angle = a2;
+	}
+	
+
+}
+
 void AVehicleController::RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed){
 	if (d_one == -1.0f) {
 		angle_ -= rot_speed * d_t;

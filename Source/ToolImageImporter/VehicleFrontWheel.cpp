@@ -4,8 +4,8 @@
 #include "UObject/ConstructorHelpers.h"
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 UVehicleFrontWheel::UVehicleFrontWheel(){
-	ShapeRadius = 32.f;
-	ShapeWidth = 12.50f;
+	ShapeRadius = 39.f;//32.f;
+	ShapeWidth = 15.5f;//12.50f;
 	bAffectedByHandbrake = false;
 	SteerAngle = 70.f;
 	LongStiffValue = 4000.0f;//fast	er acc, higher top speed, default =1000

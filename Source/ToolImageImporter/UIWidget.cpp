@@ -306,7 +306,7 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 	track_spline->SetHeightArray(m_colors);//setting array as well
 	track_spline->OnConstruction(t_transform_);//consttruction
 	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts(), loop_index);//changing height of mesh
-	p_mesh->ReplaceC(m_colors,loop_index);//replacing heightmap to match new mesh, also normals and smoothing
+	p_mesh->ReplaceC(loop_index);//replacing heightmap to match new mesh, also normals and smoothing
 	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
 	track_spline->SetActorEnableCollision(false);
 	if (point_type) {
@@ -369,21 +369,6 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 	}
 	else{
 		InnerStartPlaces(track_spline->GetTotalPoints(), 0);
-
-		////finds the correct height(z) for the control points to build fvector for position for car and decals
-		//TArray<FVector> control_points_with_z;
-		//for (int i = 0; i < control_points.Num(); i++){
-		//	int xp = control_points[i].X;
-		//	int yp = control_points[i].Y;
-		//	float z_from_p_mesh = p_mesh->vec_m_verts[loop_index][(yp) * 400 + (xp)].Z;
-		//	control_points_with_z.Add(FVector(control_points[i].X*s_, control_points[i].Y * s_, z_from_p_mesh));
-		//}
-		//if (control_points_with_z[0] == control_points_with_z[1]){
-		//	int sf = 23;//do something about this
-		//}
-		//InnerStartPlaces(control_points_with_z,0);
-		//UE_LOG(LogTemp, Warning, TEXT("Hello"));
-
 	}
 }
 void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {
@@ -455,6 +440,9 @@ void UUIWidget::ResizeMesh() {
 	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	track_obj->procedural_mesh_comp->SetMassOverrideInKg(NAME_None, 1000000000.f);
 	p_mesh->Destroy();
+
+
+	//water
 	for (int32 i = 0; i < vec_water_mesh.Num(); i++){
 		if (vec_water_mesh[i] != NULL) {
 			auto loc_ = vec_water_mesh[i]->GetActorLocation();
@@ -463,6 +451,7 @@ void UUIWidget::ResizeMesh() {
 			vec_water_mesh[i]->SetActorScale3D(FVector(150.f, 150.f, 10.f));
 		}
 	}
+	//starting
 	auto loc_ = start_decal->GetActorLocation();
 	starting_angle.Yaw += 180;
 	while (!vehicle_pawn->TeleportTo(loc_, starting_angle, false, false)) {

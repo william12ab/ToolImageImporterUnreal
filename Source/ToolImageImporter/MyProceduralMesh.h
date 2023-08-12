@@ -80,7 +80,7 @@ public:
 	void CalculateNormals(const int& index_);
 	void SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_, const int& index_);
 	void ChangeVert(const float& x_pos, const float& y_pos, const float& z_pos, const int& index_);
-	void ReplaceC(TArray<float>& c_, const int& index_);
+	void ReplaceC(const int& index_);
 	virtual void PostInitializeComponents() override;
 
 	void Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour, const int& index_);

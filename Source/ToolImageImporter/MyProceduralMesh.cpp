@@ -546,7 +546,7 @@ void AMyProceduralMesh::ChangeVert(const float& x_pos, const float& y_pos, const
 	}
 }
 
-void AMyProceduralMesh::ReplaceC(TArray<float>& c_, const int& index_) {
+void AMyProceduralMesh::ReplaceC( const int& index_) {
 	TArray<float> temp;
 	for (int i = 0; i < vec_m_verts[index_].Num(); i++) {
 		temp.Add(vec_m_verts[index_][i].Z);
@@ -561,8 +561,6 @@ void AMyProceduralMesh::ReplaceC(TArray<float>& c_, const int& index_) {
 		}
 	}
 	CalculateNormals(index_);
-
-	//procedural_mesh_comp->UpdateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
 }
 
 
