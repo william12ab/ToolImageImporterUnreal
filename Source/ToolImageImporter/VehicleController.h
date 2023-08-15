@@ -14,7 +14,10 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	//sound
 
-
+	UPROPERTY()
+		UStaticMeshComponent* sphere_left;
+	UPROPERTY()
+		UStaticMeshComponent* sphere_right;
 	//hud
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
 		FText SpeedDisplayString;
@@ -93,6 +96,8 @@ public:
 	void OnPause();
 	void UnPause();
 
+	void UpdateDriver(const float&dt);
+
 	void SpeedTest(const float& dt);
 protected:
 
@@ -170,5 +175,6 @@ protected:
 	FText penalty_text;
 
 	float penalty_time;
+
 };
 

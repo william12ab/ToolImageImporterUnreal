@@ -127,7 +127,7 @@ AVehicleController::AVehicleController(){
 	Camera->bUsePawnControlRotation = true;
 	Camera->FieldOfView = 90.f;
 	//inside
-	InternalCameraOrigin = FVector(-45.0f, 35.0f, 140.0f);
+	InternalCameraOrigin = FVector(-40.0f, 30.0f, 140.0f);
 	InternalCameraBase = CreateDefaultSubobject<USceneComponent>(TEXT("InternalCameraBase"));
 	InternalCameraBase->SetRelativeLocation(InternalCameraOrigin);
 	InternalCameraBase->SetupAttachment(GetMesh());
@@ -202,7 +202,24 @@ AVehicleController::AVehicleController(){
 	is_render_timer = true;
 	is_render_spedo = true;
 	penalty_time = 0.0f;
+
+
+	//spheres
+	sphere_left = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereLeft"));
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>SphereMeshAsset(TEXT("StaticMesh'/Engine/BasicShapes/Sphere.Sphere'"));
+	sphere_left->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	sphere_left->SetStaticMesh(SphereMeshAsset.Object);
+	sphere_left->AttachTo(GetMesh());
+	sphere_left->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
 	
+
+	sphere_right = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereRight"));
+	sphere_right->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	sphere_right->SetStaticMesh(SphereMeshAsset.Object);
+	sphere_right->AttachTo(GetMesh());
+	sphere_right->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
+
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -303,6 +320,8 @@ void AVehicleController::Tick(float DeltaTime) {
 			SpringArm->SetRelativeRotation(r);
 		}
 	}
+	UpdateDriver(DeltaTime);
+
 }
 
 void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){
@@ -478,8 +497,47 @@ void AVehicleController::GetWheelAngle() {
 	else {
 		steering_angle = a2;
 	}
-	
 
+	
+	FName HeadBone = "Wheel_Bone";
+	auto s = GetMesh()->GetBoneQuaternion(HeadBone, EBoneSpaces::ComponentSpace);
+	auto p=s.Rotator();
+	FVector BoneLocation = GetMesh()->GetBoneLocation(HeadBone, EBoneSpaces::ComponentSpace);
+	FVector centre_point = GetMesh()->GetBoneLocation(HeadBone, EBoneSpaces::ComponentSpace);
+	/*UE_LOG(LogTemp, Warning, TEXT("Head bone s is : %s"), *BoneLocation.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Head bone pitch is : %f"), p.Pitch);
+	UE_LOG(LogTemp, Warning, TEXT("Head bone yaw is : %f"), p.Yaw);
+	UE_LOG(LogTemp, Warning, TEXT("Head bone rol is : %f"), p.Roll);*/
+
+	BoneLocation.Y += 15;
+	BoneLocation.X += 6;
+	BoneLocation.Z += 13;
+	//sphere_right->SetRelativeLocation(BoneLocation);
+	BoneLocation.Y -= 30;
+	//sphere_left->SetRelativeLocation(BoneLocation);
+	//sphere_right->SetWorldRotation(p);
+	//sphere_left->SetWorldRotation(p);
+
+
+	//from here to end is all you need
+	//also alter for left side
+	FVector radius_ = FVector(6, 15, 13);
+
+
+	float hands_angle = (-3 * steering_angle);
+	FVector RotateValue = radius_.RotateAngleAxis(hands_angle, FVector(1, 0, 0));
+
+	centre_point.X += RotateValue.X;
+	centre_point.Y += RotateValue.Y;
+	centre_point.Z += RotateValue.Z;
+
+	sphere_right->SetRelativeLocation(centre_point);
+
+}
+
+void AVehicleController::UpdateDriver(const float& dt) {
+
+	
 }
 
 void AVehicleController::RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed){
