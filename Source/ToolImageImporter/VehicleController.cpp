@@ -498,41 +498,42 @@ void AVehicleController::GetWheelAngle() {
 		steering_angle = a2;
 	}
 
-	
-	FName HeadBone = "Wheel_Bone";
-	auto s = GetMesh()->GetBoneQuaternion(HeadBone, EBoneSpaces::ComponentSpace);
+	//gets location of wheel
+	FName wheel_bone = "Wheel_Bone";
+	auto s = GetMesh()->GetBoneQuaternion(wheel_bone, EBoneSpaces::ComponentSpace);
 	auto p=s.Rotator();
-	FVector BoneLocation = GetMesh()->GetBoneLocation(HeadBone, EBoneSpaces::ComponentSpace);
-	FVector centre_point = GetMesh()->GetBoneLocation(HeadBone, EBoneSpaces::ComponentSpace);
-	/*UE_LOG(LogTemp, Warning, TEXT("Head bone s is : %s"), *BoneLocation.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Head bone pitch is : %f"), p.Pitch);
-	UE_LOG(LogTemp, Warning, TEXT("Head bone yaw is : %f"), p.Yaw);
-	UE_LOG(LogTemp, Warning, TEXT("Head bone rol is : %f"), p.Roll);*/
+	FVector BoneLocation = GetMesh()->GetBoneLocation(wheel_bone, EBoneSpaces::ComponentSpace);
+	FVector centre_point = GetMesh()->GetBoneLocation(wheel_bone, EBoneSpaces::ComponentSpace);
 
-	BoneLocation.Y += 15;
-	BoneLocation.X += 6;
-	BoneLocation.Z += 13;
-	//sphere_right->SetRelativeLocation(BoneLocation);
-	BoneLocation.Y -= 30;
-	//sphere_left->SetRelativeLocation(BoneLocation);
-	//sphere_right->SetWorldRotation(p);
-	//sphere_left->SetWorldRotation(p);
-
-
-	//from here to end is all you need
-	//also alter for left side
+	//sets spheres to points on steering wheel for hands to go on 
 	FVector radius_ = FVector(6, 15, 13);
-
-
 	float hands_angle = (-3 * steering_angle);
 	FVector RotateValue = radius_.RotateAngleAxis(hands_angle, FVector(1, 0, 0));
-
 	centre_point.X += RotateValue.X;
 	centre_point.Y += RotateValue.Y;
 	centre_point.Z += RotateValue.Z;
-
 	sphere_right->SetRelativeLocation(centre_point);
+	//angle for arm rot right along horizontaol axis
+	float x = centre_point.X - (centre_point.X - 36.f);
+	float y = centre_point.Y - (46.f);
+	yaw_angle_r = FMath::Atan2(y, x);
+	yaw_angle_r *= (180.f / 3.141592f);
+	yaw_angle_r *= -1;
 
+	centre_point = GetMesh()->GetBoneLocation(wheel_bone, EBoneSpaces::ComponentSpace);
+	radius_ = FVector(6, -15, 13);
+	hands_angle = (-3 * steering_angle);
+	RotateValue = radius_.RotateAngleAxis(hands_angle, FVector(1, 0, 0));
+	centre_point.X += RotateValue.X;
+	centre_point.Y += RotateValue.Y;
+	centre_point.Z += RotateValue.Z;
+	sphere_left->SetRelativeLocation(centre_point);
+
+	//angle for arm rot left along horizontal axis
+	x = centre_point.X -(centre_point.X - 36.f);
+	y = centre_point.Y - (16.f);
+	yaw_angle = FMath::Atan2(y, x);
+	yaw_angle *= (180.f / 3.141592f);
 }
 
 void AVehicleController::UpdateDriver(const float& dt) {

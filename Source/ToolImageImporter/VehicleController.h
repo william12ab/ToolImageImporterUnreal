@@ -105,7 +105,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		float steering_angle;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float yaw_angle;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		float yaw_angle_r;
 	//camera stuff
 	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* SpringArm;
