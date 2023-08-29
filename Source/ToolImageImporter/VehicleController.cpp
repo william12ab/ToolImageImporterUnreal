@@ -531,6 +531,7 @@ void AVehicleController::GetWheelAngle() {
 	centre_point.X += RotateValue.X;
 	centre_point.Y += RotateValue.Y;
 	centre_point.Z += RotateValue.Z;
+	right_loc = centre_point;
 	sphere_left->SetRelativeLocation(centre_point);
 	UE_LOG(LogTemp, Warning, TEXT("The vector value is: %s"), *centre_point.ToString());
 
@@ -544,6 +545,9 @@ void AVehicleController::GetWheelAngle() {
 	roll_angle_l = FMath::Atan2(z, x);
 	roll_angle_l *= (180.f / 3.141592f);
 	roll_angle_l *= -1;
+	left_loc = sphere_left->GetComponentLocation();
+	UE_LOG(LogTemp, Warning, TEXT("The wolrd value is: %s"), *left_loc.ToString());
+
 }
 
 void AVehicleController::UpdateDriver(const float& dt) {

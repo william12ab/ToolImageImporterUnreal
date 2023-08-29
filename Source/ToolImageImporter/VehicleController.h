@@ -113,6 +113,10 @@ protected:
 		float roll_angle_r;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		float roll_angle_l;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		FVector left_loc;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		FVector right_loc;
 	//camera stuff
 	UPROPERTY(Category = Camera, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* SpringArm;
