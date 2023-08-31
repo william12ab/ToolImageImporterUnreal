@@ -132,7 +132,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 				float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
 				last_point *= scaling_down_;
 				last_point *= s_;
-				last_point.Z += 5;
+				last_point.Z += 25;
 				while (!vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f), false, false)) {
 					last_point.Z += 0.1f;
 				}
@@ -560,6 +560,7 @@ void UUIWidget::SetLapTimeFinal() {
 void UUIWidget::RestartLap() {
 	if (vehicle_pawn->GetIsRestartLevel()) {
 		auto temp_start = starting_position;
+		temp_start.Z += 25;
 		while (!vehicle_pawn->TeleportTo(temp_start, starting_angle, false, false)) {
 			temp_start.Z += .1f;
 		}
