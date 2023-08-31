@@ -4,14 +4,18 @@
 
 
 #include "GameFramework/Actor.h"
+#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "BasicTree.generated.h"
 
 UCLASS()
 class TOOLIMAGEIMPORTER_API ABasicTree : public AActor
 {
 	GENERATED_BODY()
-		UPROPERTY(VisibleAnywhere)
-		UInstancedStaticMeshComponent* instanced_basic_tree;
+	/*	UPROPERTY(VisibleAnywhere)
+		UInstancedStaticMeshComponent* instanced_basic_tree;*/
+
+	UPROPERTY(VisibleAnywhere)
+		UHierarchicalInstancedStaticMeshComponent* h_instanced;
 public:	
 	// Sets default values for this actor's properties
 	ABasicTree();

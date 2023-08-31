@@ -7,8 +7,8 @@ ABasicTree::ABasicTree(){
 	PrimaryActorTick.bCanEverTick = false;
 	ScnComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Default Scene"));
 	SetRootComponent(ScnComponent);
-	instanced_basic_tree = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("BasicInstancedTree"));
-	SetRootComponent(instanced_basic_tree);
+	h_instanced = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("BasicInstancedTree"));
+	SetRootComponent(h_instanced);
 	spacing_=20;
 	division_=5.0f;
 }
@@ -118,11 +118,12 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 				   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 				   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
 				AddBasicTree(A, tree_select, mesh_name, track_point, pos_x, pos_y);
-				instanced_basic_tree->SetMobility(EComponentMobility::Movable);
-				instanced_basic_tree->bCastDynamicShadow = true;
-				instanced_basic_tree->CastShadow = true;
-				instanced_basic_tree->SetMassOverrideInKg(NAME_None,10000.f);
-				instanced_basic_tree->SetMobility(EComponentMobility::Static);
+				h_instanced->SetMobility(EComponentMobility::Movable);
+				h_instanced->bCastDynamicShadow = true;
+				h_instanced->CastShadow = true;
+				h_instanced->SetMassOverrideInKg(NAME_None,10000.f);
+				h_instanced->SetCullDistances(500, 1000);
+				h_instanced->SetMobility(EComponentMobility::Static);
 				track_tree_points.Add(FVector2D(pos_x, pos_y));
 			}
 			else {
@@ -185,13 +186,14 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 					   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
 						AddBasicTree(A, tree_select, mesh_name,track_point,pos_x,pos_y);
 					}
-					instanced_basic_tree->bCastDynamicShadow = false;
-					instanced_basic_tree->SetMobility(EComponentMobility::Static);
+					h_instanced->bCastDynamicShadow = false;
+					h_instanced->SetCullDistances(500, 1000);
+					h_instanced->SetMobility(EComponentMobility::Static);
 					if (is_foilage) {
-						instanced_basic_tree->bCastDynamicShadow = false;
-						instanced_basic_tree->CastShadow = false;
-						instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
-						instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+						h_instanced->bCastDynamicShadow = false;
+						h_instanced->CastShadow = false;
+						h_instanced->BodyInstance.bSimulatePhysics = false;
+						h_instanced->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
 					}
 				}
 				else{
@@ -248,10 +250,10 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 	if (name_attachment_=="SM_Pine_Tree_"|| name_attachment_ == "SM_Common_Tree_"){
 		CheckDistance(track_point_arr, x_pos, y_pos, *meshToUse);
 	}
-	if (meshToUse && instanced_basic_tree){
-		instanced_basic_tree->SetStaticMesh(meshToUse);
+	if (meshToUse && h_instanced){
+		h_instanced->SetStaticMesh(meshToUse);
 	}
-	instanced_basic_tree->AddInstance(transform_);
+	h_instanced->AddInstance(transform_);
 }
 
 bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, int&point_y){
@@ -295,17 +297,18 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				float rand_scale = FMath::RandRange(0.01f, 0.2f);
 				float rand_yaw = FMath::RandRange(0.0f, 180.f);
 				UStaticMesh* meshToUse = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Game/Stylized_PBR_Nature/Rocks/Assets/SM_R_Rock_02.SM_R_Rock_02'")));
-				if (meshToUse && instanced_basic_tree) {
-					instanced_basic_tree->SetStaticMesh(meshToUse);
+				if (meshToUse && h_instanced) {
+					h_instanced->SetStaticMesh(meshToUse);
 				}
 				FTransform A{
 				FRotator{0,rand_yaw,0},
 				FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
-				instanced_basic_tree->AddInstance(A);
-				instanced_basic_tree->SetMobility(EComponentMobility::Movable);
-				instanced_basic_tree->SetMassOverrideInKg(NAME_None, 10000.f);
-				instanced_basic_tree->SetMobility(EComponentMobility::Static);
+				h_instanced->AddInstance(A);
+				h_instanced->SetMobility(EComponentMobility::Movable);
+				h_instanced->SetCullDistances(500, 1000);
+				h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
+				h_instanced->SetMobility(EComponentMobility::Static);
 			}
 			else {
 				pos_x += FMath::RandRange(-4, 8);
@@ -337,11 +340,12 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 					FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				TArray<FVector2D>a;
 				AddBasicTree(A, 0, "SM_Grass",a,0,0);
-				instanced_basic_tree->SetMobility(EComponentMobility::Static);
-				instanced_basic_tree->bCastDynamicShadow = true;
-				instanced_basic_tree->CastShadow = true;
-				instanced_basic_tree->BodyInstance.bSimulatePhysics = false;
-				instanced_basic_tree->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				h_instanced->SetCullDistances(500, 1000);
+				h_instanced->SetMobility(EComponentMobility::Static);
+				h_instanced->bCastDynamicShadow = true;
+				h_instanced->CastShadow = true;
+				h_instanced->BodyInstance.bSimulatePhysics = false;
+				h_instanced->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			}
 			else {
 				i--;

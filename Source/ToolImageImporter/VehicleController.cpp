@@ -547,7 +547,6 @@ void AVehicleController::GetWheelAngle() {
 	left_loc = sphere_left->GetComponentLocation();
 	sphere_left->SetVisibility(false);
 	sphere_right->SetVisibility(false);
-	
 }
 
 void AVehicleController::UpdateDriver(const float& dt) {
