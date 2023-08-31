@@ -453,9 +453,12 @@ void UUIWidget::ResizeMesh() {
 	}
 	//starting
 	auto loc_ = start_decal->GetActorLocation();
+	loc_.Z += 25;
 	starting_angle.Yaw += 180;
 	while (!vehicle_pawn->TeleportTo(loc_, starting_angle, false, false)) {
-		loc_.Z += 0.1f;
+		UE_LOG(LogTemp, Warning, TEXT("Hello"));
+
+		loc_.Z += 0.5f;
 	}
 
 }
