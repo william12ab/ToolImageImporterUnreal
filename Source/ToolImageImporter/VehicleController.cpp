@@ -106,7 +106,7 @@ AVehicleController::AVehicleController(){
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(35.f, 0.f, -22.5f);//further down and along the body 
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(35.f, -3.656f, -22.5f);//further down and along the body 
 		//28.4f
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}

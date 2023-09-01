@@ -122,7 +122,7 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 				h_instanced->bCastDynamicShadow = true;
 				h_instanced->CastShadow = true;
 				h_instanced->SetMassOverrideInKg(NAME_None,10000.f);
-				h_instanced->SetCullDistances(500, 1000);
+				h_instanced->SetCullDistances(750, 3000);
 				h_instanced->SetMobility(EComponentMobility::Static);
 				track_tree_points.Add(FVector2D(pos_x, pos_y));
 			}
@@ -187,7 +187,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 						AddBasicTree(A, tree_select, mesh_name,track_point,pos_x,pos_y);
 					}
 					h_instanced->bCastDynamicShadow = false;
-					h_instanced->SetCullDistances(500, 1000);
+					h_instanced->SetCullDistances(750, 3000);
 					h_instanced->SetMobility(EComponentMobility::Static);
 					if (is_foilage) {
 						h_instanced->bCastDynamicShadow = false;
@@ -306,7 +306,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				h_instanced->AddInstance(A);
 				h_instanced->SetMobility(EComponentMobility::Movable);
-				h_instanced->SetCullDistances(500, 1000);
+				h_instanced->SetCullDistances(750, 3000);
 				h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
 				h_instanced->SetMobility(EComponentMobility::Static);
 			}
@@ -340,7 +340,7 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 					FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 				TArray<FVector2D>a;
 				AddBasicTree(A, 0, "SM_Grass",a,0,0);
-				h_instanced->SetCullDistances(500, 1000);
+				h_instanced->SetCullDistances(750, 3000);
 				h_instanced->SetMobility(EComponentMobility::Static);
 				h_instanced->bCastDynamicShadow = true;
 				h_instanced->CastShadow = true;

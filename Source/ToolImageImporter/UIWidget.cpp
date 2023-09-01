@@ -6,6 +6,8 @@
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
 
+#include <chrono>
+using namespace std::chrono;
 void UUIWidget::NativeConstruct() {
 	Super::NativeConstruct();
 	w_ = 4;
@@ -31,6 +33,8 @@ void UUIWidget::NativeConstruct() {
 		loop_index = 4;
 	}
 	for (int i = 0; i < loop_index; i++) {
+		auto start = high_resolution_clock::now();
+
 		m_colors.Empty();
 		track_points.Empty();
 		control_points.Empty();
@@ -66,17 +70,37 @@ void UUIWidget::NativeConstruct() {
 				total_track_points.Add(total_point);
 			}
 		}
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+		float s=duration.count();
+		UE_LOG(LogTemp, Warning, TEXT("construction loop %f"), s);
 	}
 	if (is_chunking){
+		auto start = high_resolution_clock::now();
 		p_mesh->SetEdges();
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+		float s = duration.count();
+		UE_LOG(LogTemp, Warning, TEXT("set edges %f"),s);
 	}
 	if (is_chunking){//at this point youre merging them to create a full big one
+		auto start = high_resolution_clock::now();
 		p_mesh->TestFinal();		//smooths each section uniformly
 		p_mesh->SetEdges();
 		p_mesh->FullSize();			//adds all together
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+		float s = duration.count();
+		UE_LOG(LogTemp, Warning, TEXT("full %f"),s);
 	}
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	auto start = high_resolution_clock::now();
+
 	ResizeMesh();//ading more verts
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	float s = duration.count();
+	UE_LOG(LogTemp, Warning, TEXT("resize %f"),s);
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
 
@@ -234,6 +258,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 	FActorSpawnParameters SpawnInfoTree;
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
+	auto start = high_resolution_clock::now();
 	for (int i = 0; i < 2; i++) {//tree near track
 		ABasicTree* tree_instancea;
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
@@ -270,6 +295,10 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 		CheckForChunking(loop_index, tree_instancea);
 	}
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(stop - start);
+	float s = duration.count();
+	UE_LOG(LogTemp, Warning, TEXT("foliage %f"), s);
 	////water
 	float water_height = (min + (max * 0.05f));
 	if (water_height >= track_spline->GetMinHeight()) {

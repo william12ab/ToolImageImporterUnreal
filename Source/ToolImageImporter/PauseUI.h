@@ -26,8 +26,7 @@ protected:
 		void OptionsButton();
 	void RenderPauseDisplay();
 	//ui properties
-	UPROPERTY(BlueprintReadWrite,meta = (BindWidget))
-		class UImage* background_;
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UImage* return_to_menu_image;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
