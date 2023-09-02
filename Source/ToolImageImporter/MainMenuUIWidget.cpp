@@ -52,7 +52,7 @@ void UMainMenuUIWidget::TimerDelay() {
 
 void UMainMenuUIWidget::LevelFunc() {
 	UGameplayStatics::OpenLevel(GetWorld(), level_name);
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
-	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
+	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
+	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
+	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
 }

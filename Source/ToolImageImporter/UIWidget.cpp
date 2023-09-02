@@ -262,48 +262,49 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
 	auto start = high_resolution_clock::now();
-	for (int i = 0; i < 1; i++) {//tree near track
-		ABasicTree* tree_instancea;
-		TArray<AActor*> FoundActors;
+	for (int i = 0; i < 2; i++) {//tree near track
+		/*TArray<AActor*> FoundActors;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABasicTree::StaticClass(), FoundActors);
 		UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *FoundActors[0]->GetName());
+		\
+		tree_instancea = Cast<ABasicTree>(FoundActors[0]);*/
+		ABasicTree* tree_instancea;
 
-		tree_instancea = Cast<ABasicTree>(FoundActors[0]);
-		tree_instancea->SetActorLocation(myLocTree);
-		//tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
 		
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 		CheckForChunking(loop_index, tree_instancea);
 	}
-	//for (int i = 0; i < 4; i++) {//tree in general
-	//	ABasicTree* tree_instancea;
-	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-	//	tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, false);
-	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	//	CheckForChunking(loop_index, tree_instancea);
-	//}
-	//for (int i = 0; i < 2; i++) {//ferns bushes
-	//	ABasicTree* tree_instancea;
-	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-	//	tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, true);
-	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	//	CheckForChunking(loop_index, tree_instancea);
-	//}
-	//for (int i = 0; i < 1; i++) {//rocks
-	//	ABasicTree* tree_instancea;
-	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-	//	tree_instancea->AddRockClusters(track_points, p_mesh->vec_m_verts[loop_index]);
-	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	//	CheckForChunking(loop_index, tree_instancea);
-	//}
-	//for (int i = 0; i < 1; i++) {//grass
-	//	ABasicTree* tree_instancea;
-	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-	//	tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
-	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	//	CheckForChunking(loop_index, tree_instancea);
-	//}
+	for (int i = 0; i < 4; i++) {//tree in general
+		ABasicTree* tree_instancea;
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, false);
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+		CheckForChunking(loop_index, tree_instancea);
+	}
+	for (int i = 0; i < 2; i++) {//ferns bushes
+		ABasicTree* tree_instancea;
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, true);
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+		CheckForChunking(loop_index, tree_instancea);
+	}
+	for (int i = 0; i < 1; i++) {//rocks
+		ABasicTree* tree_instancea;
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddRockClusters(track_points, p_mesh->vec_m_verts[loop_index]);
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+		CheckForChunking(loop_index, tree_instancea);
+	}
+	for (int i = 0; i < 1; i++) {//grass
+		ABasicTree* tree_instancea;
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+		CheckForChunking(loop_index, tree_instancea);
+	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
 	float s = duration.count();
