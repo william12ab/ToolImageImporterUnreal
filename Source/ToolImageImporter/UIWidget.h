@@ -46,6 +46,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
 	UPROPERTY(meta = (BindWidget))
+		class UCircularThrobber* triangle_button;
+	UPROPERTY(meta = (BindWidget))
 		class UImage* instruction_image;
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* lap_timer_text;
@@ -118,5 +120,5 @@ protected:
 	bool is_start_done;
 	bool is_created;
 	bool is_decal_spawn;
-
+	bool is_spinner_enabled;
 };

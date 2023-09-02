@@ -4,8 +4,8 @@
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "DesktopPlatform/Public/IDesktopPlatform.h"
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
+#include "Components/CircularThrobber.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
-
 #include <chrono>
 using namespace std::chrono;
 void UUIWidget::NativeConstruct() {
@@ -120,6 +120,7 @@ void UUIWidget::NativeConstruct() {
 	is_images_off = false;
 	is_system_on = false;
 	give_time_penalty = false;
+	is_spinner_enabled = false;
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
@@ -148,6 +149,10 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	}
 	//if pressed, start timer, if held for 1.5sec, and v <5, put back to correct place.
 	if (vehicle_pawn->GetPressed()) {
+		if (!is_spinner_enabled){
+			triangle_button->SetVisibility(ESlateVisibility::Visible);
+			is_spinner_enabled = true;
+		}
 		counter_ += InDeltaTime;
 		vehicle_pawn->SetCounter(counter_);
 		if (vehicle_pawn->GetCounter() >= 1.5f) {
@@ -164,8 +169,14 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 					last_point.Z += 0.1f;
 				}
 				counter_ = 0.0f;
+				triangle_button->SetVisibility(ESlateVisibility::Hidden);
+				is_spinner_enabled = false;
 			}
 		}
+	}
+	else {
+		triangle_button->SetVisibility(ESlateVisibility::Hidden);
+		is_spinner_enabled = false;
 	}
 	if (vehicle_pawn->GetBoolEnd()) {
 		SetLapTimeFinal();
