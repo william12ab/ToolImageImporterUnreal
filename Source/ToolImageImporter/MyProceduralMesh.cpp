@@ -539,10 +539,16 @@ void AMyProceduralMesh::ChangeVert(const float& x_pos, const float& y_pos, const
 
 	vec_m_verts[index_][(y_po)*height_ + (x_po)].Z = z_pos;			//set the vert to the height
 	if (local_is_changed) {									//if changed used different mechanic
-		vec_m_vert_colors[index_][(static_cast<int>(y_po)) * height_ + (static_cast<int>(x_po))] = FLinearColor::Black;
+		FLinearColor c;
+		c.R = 0.f;
+		c.G = c.R; c.B = c.R; c.A = 1;
+		vec_m_vert_colors[index_][(static_cast<int>(y_po)) * height_ + (static_cast<int>(x_po))] = c;
 	}
 	else {
-		vec_m_vert_colors[index_][(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
+		FLinearColor c;
+		c.R = 0.0f;
+		c.G = c.R; c.B = c.R; c.A = 1;
+		vec_m_vert_colors[index_][(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))] = c;
 	}
 }
 

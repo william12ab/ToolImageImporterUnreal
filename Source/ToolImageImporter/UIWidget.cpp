@@ -151,12 +151,15 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 		counter_ += InDeltaTime;
 		vehicle_pawn->SetCounter(counter_);
 		if (vehicle_pawn->GetCounter() >= 1.5f) {
-			if (vehicle_pawn->GetVelocityFromComp() < 5.f) {
+			if (vehicle_pawn->GetVelocityFromComp() < 500.f) {
 				vehicle_pawn->SetPressed(false);
 				float angle = atan2(track_points[index_recorder + 1].Y - last_point.Y, track_points[index_recorder + 1].X - last_point.X) * 180.0f / PI;
 				last_point *= scaling_down_;
 				last_point *= s_;
 				last_point.Z += 25;
+
+				vehicle_pawn->GetMesh()->SetPhysicsAngularVelocity(FVector(0, 0, 0));
+				vehicle_pawn->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
 				while (!vehicle_pawn->TeleportTo(last_point, FRotator(0.0f, angle, 0.0f), false, false)) {
 					last_point.Z += 0.1f;
 				}
@@ -259,42 +262,48 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 	FRotator myRotTree(0, 0, 0);
 	FVector myLocTree = FVector(0, 0, 0);
 	auto start = high_resolution_clock::now();
-	for (int i = 0; i < 2; i++) {//tree near track
+	for (int i = 0; i < 1; i++) {//tree near track
 		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		TArray<AActor*> FoundActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABasicTree::StaticClass(), FoundActors);
+		UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *FoundActors[0]->GetName());
+
+		tree_instancea = Cast<ABasicTree>(FoundActors[0]);
+		tree_instancea->SetActorLocation(myLocTree);
+		//tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
 		
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 		CheckForChunking(loop_index, tree_instancea);
 	}
-	for (int i = 0; i < 4; i++) {//tree in general
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, false);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 2; i++) {//ferns bushes
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, true);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 1; i++) {//rocks
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddRockClusters(track_points, p_mesh->vec_m_verts[loop_index]);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 1; i++) {//grass
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
+	//for (int i = 0; i < 4; i++) {//tree in general
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, false);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//	CheckForChunking(loop_index, tree_instancea);
+	//}
+	//for (int i = 0; i < 2; i++) {//ferns bushes
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, true);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//	CheckForChunking(loop_index, tree_instancea);
+	//}
+	//for (int i = 0; i < 1; i++) {//rocks
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddRockClusters(track_points, p_mesh->vec_m_verts[loop_index]);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//	CheckForChunking(loop_index, tree_instancea);
+	//}
+	//for (int i = 0; i < 1; i++) {//grass
+	//	ABasicTree* tree_instancea;
+	//	tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+	//	tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
+	//	tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	//	CheckForChunking(loop_index, tree_instancea);
+	//}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
 	float s = duration.count();
@@ -381,8 +390,9 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 			myLocD *= scaling_down_;
 			float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
 			myRotD = FRotator(0, end_f, 0);
-
+			myLocD.Z += 20;
 			box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+			myLocD.Z += -20;
 			end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
 		}
 
@@ -489,6 +499,7 @@ void UUIWidget::ResizeMesh() {
 
 		loc_.Z += 0.5f;
 	}
+	starting_position = loc_;
 
 }
 
@@ -588,7 +599,10 @@ void UUIWidget::SetLapTimeFinal() {
 
 void UUIWidget::RestartLap() {
 	if (vehicle_pawn->GetIsRestartLevel()) {
+
 		auto temp_start = starting_position;
+		vehicle_pawn->GetMesh()->SetPhysicsAngularVelocity(FVector(0, 0, 0));
+		vehicle_pawn->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
 		temp_start.Z += 25;
 		while (!vehicle_pawn->TeleportTo(temp_start, starting_angle, false, false)) {
 			temp_start.Z += .1f;

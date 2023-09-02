@@ -284,7 +284,9 @@ void AVehicleController::Tick(float DeltaTime) {
 			}
 		}
 		StartFunction(DeltaTime);
-		CheckForStart();
+		if (!is_begin_lap){
+			CheckForStart();
+		}
 	}
 
 	if (is_begin_lap&&!is_end){
@@ -582,6 +584,7 @@ void AVehicleController::Release() {
 	counter_ = 0.0f;
 	GetVehicleMovementComponent()->SetThrottleInput(0.f);
 	penalty_time += 5.0f;
+	
 }
 
 void AVehicleController::UpdateHUDStrings(){
@@ -618,6 +621,7 @@ void AVehicleController::StartFunction(const float& dt) {
 		if (starting_counter>=5.0f){
 			is_starting_ = false;
 			is_begin_lap = true;
+
 		}
 	}
 }
@@ -633,7 +637,7 @@ void AVehicleController::SpeedTest(const float& dt) {
 
 void AVehicleController::CheckForStart() {
 	if (is_start_countdown) {
-		if (current_KPH > 1.f) {
+		if (current_KPH > 10.f) {
 			sound_ref_veh->StopCountdown();
 			is_unorthadox_start = true;
 			is_starting_ = false;
