@@ -30,6 +30,8 @@ public:
 	void AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_);
 	void AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts);
 	void AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float& max, const float& min);
+	void AddGrassAtEdge(const TArray<FVector>& m_verts, const TArray<FLinearColor>& m_colors, const int& height_);
+	void AddGrassInstance(const int& x, const int& y, const float& z_pos);
 	void NameChoiceTree(FString& mesh_name, int& tree_select);
 	void NameChoicePlant(FString& mesh_name, float& z_alter);
 	void SetSpacing(float s_) { spacing_ = s_; }

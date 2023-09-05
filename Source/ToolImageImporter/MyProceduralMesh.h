@@ -79,13 +79,13 @@ public:
 	void SmoothTerrain(TArray<float>& c_);
 	void CalculateNormals(const int& index_);
 	void SetHeightProper(const TArray<FVector>& points_, const TArray<FVector>& verts_, const int& index_);
-	void ChangeVert(const float& x_pos, const float& y_pos, const float& z_pos, const int& index_);
+	void ChangeVert(const float& x_pos, const float& y_pos, const float& z_pos, const int& index_, const bool& checker_,const float&x_step,const float&y_step);
 	void ReplaceC(const int& index_);
 	virtual void PostInitializeComponents() override;
 
-	void Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour, const int& index_);
-	void NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector>& temp_vec, const int& scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor>& new_c);
-	void Save(TArray<FVector> &temp_, TArray<FLinearColor> &temp_colours, const int& index_);
+	void Resize(const TArray<FVector>& m_verts_, const int& scale_, const TArray<FLinearColor>& temp_colour, const int& index_,const TArray<FVector2D>& temp_uvs);
+	void NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector>& temp_vec, const int& scale, const TArray<FLinearColor>& temp_colour, TArray<FLinearColor>& new_c, TArray<FVector2D>&new_uvs,const TArray<FVector2D>& old_uvs);
+	void Save(TArray<FVector> &temp_, TArray<FLinearColor> &temp_colours, TArray<FVector2D> &temp_uvs,const int& index_);
 
 	void ChangePos(int&pos,const int&max,bool & local_is_changed);
 	

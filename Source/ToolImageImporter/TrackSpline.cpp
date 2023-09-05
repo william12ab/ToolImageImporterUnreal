@@ -18,6 +18,7 @@ ATrackSpline::ATrackSpline() {
 	division_ = 5.0f;
 	amount_added_to_z = -10;
 	is_outside_bounds = false;
+	
 }
 
 // Called when the game starts or when spawned
@@ -78,6 +79,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform) {
 
 			UMaterialInterface* Material = nullptr;
 			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
+
 			// update mesh details
 			spline_mesh->SetStaticMesh(static_mesh);
 			spline_mesh->SetForwardAxis(ESplineMeshAxis::X, true);

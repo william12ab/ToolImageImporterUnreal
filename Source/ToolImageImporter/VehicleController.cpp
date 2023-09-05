@@ -219,7 +219,7 @@ AVehicleController::AVehicleController(){
 	sphere_right->SetStaticMesh(SphereMeshAsset.Object);
 	sphere_right->AttachTo(GetMesh());
 	sphere_right->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
-
+	GetMesh()->bReceivesDecals = false;
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();

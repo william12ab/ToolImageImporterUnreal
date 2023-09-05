@@ -274,17 +274,9 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 	FVector myLocTree = FVector(0, 0, 0);
 	auto start = high_resolution_clock::now();
 	for (int i = 0; i < 2; i++) {//tree near track
-		/*TArray<AActor*> FoundActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABasicTree::StaticClass(), FoundActors);
-		UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *FoundActors[0]->GetName());
-		\
-		tree_instancea = Cast<ABasicTree>(FoundActors[0]);*/
 		ABasicTree* tree_instancea;
-
-
 		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 		tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
-		
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 		CheckForChunking(loop_index, tree_instancea);
 	}
@@ -315,6 +307,19 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
 		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 		CheckForChunking(loop_index, tree_instancea);
+	}
+	for (int i = 0; i < 1; i++){//grass verge
+		auto start_grass = high_resolution_clock::now();
+
+		ABasicTree* tree_instancea;
+		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+		tree_instancea->AddGrassAtEdge(p_mesh->vec_m_verts[loop_index], p_mesh->vec_m_vert_colors[loop_index],p_mesh->GetHeight());
+		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+		CheckForChunking(loop_index, tree_instancea);
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start_grass);
+		float s = duration.count();
+		UE_LOG(LogTemp, Warning, TEXT("grass %f"), s);
 	}
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
@@ -474,18 +479,19 @@ void UUIWidget::FixScales(const int& loop_index) {
 
 void UUIWidget::ResizeMesh() {
 	TArray<FLinearColor> temp_color;
+	TArray<FVector2D> temp_uvs;
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
 	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 	track_obj = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 
-	p_mesh->Save(temp_vec, temp_color,0);
+	p_mesh->Save(temp_vec, temp_color, temp_uvs,0);
 	new_temp->SetIsTemp(true);
 	if (is_chunking) {
 		new_temp->SetIsChunking(true);
 	}
-	new_temp->Resize(temp_vec, 2, temp_color, 0);
+	new_temp->Resize(temp_vec, 2, temp_color, 0, temp_uvs);
 	track_obj->CreateCollisionZone(total_track_points, new_temp->vec_m_verts[0], new_temp->GetHeight());
 	track_obj->SetActorScale3D(FVector(5.f, 5.f, 10));
 	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
@@ -512,7 +518,7 @@ void UUIWidget::ResizeMesh() {
 		loc_.Z += 0.5f;
 	}
 	starting_position = loc_;
-
+	
 }
 
 void UUIWidget::StartTextFunction() {

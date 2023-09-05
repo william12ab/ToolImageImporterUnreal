@@ -309,6 +309,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 				h_instanced->SetCullDistances(750, 3000);
 				h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
 				h_instanced->SetMobility(EComponentMobility::Static);
+				h_instanced->bReceivesDecals = false;
 			}
 			else {
 				pos_x += FMath::RandRange(-4, 8);
@@ -321,6 +322,49 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 		}
 	}
 }
+void ABasicTree::AddGrassInstance(const int&x, const int&y, const float&z_pos) {
+	float rand_rot_yaw = FMath::RandRange(-360, 360);
+	float rand_scale = FMath::RandRange(0.125f, 0.2f);
+	float min_range = FMath::RandRange(0.250f, 0.350f);
+	float max_range = FMath::RandRange(0.050f, 0.10f);
+
+	FTransform A{
+	FRotator{0,rand_rot_yaw,0},
+	FVector{x * spacing_, y * spacing_, (z_pos) },
+	FVector{rand_scale, rand_scale, rand_scale} };	//Scale
+	TArray<FVector2D>a;
+	AddBasicTree(A, 0, "SM_Grass", a, 0, 0);
+	h_instanced->SetCullDistances(750, 3000);
+	h_instanced->SetMobility(EComponentMobility::Static);
+	h_instanced->bCastDynamicShadow = true;
+	h_instanced->CastShadow = true;
+	h_instanced->BodyInstance.bSimulatePhysics = false;
+	h_instanced->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	h_instanced->bReceivesDecals = false;
+}
+void ABasicTree::AddGrassAtEdge(const TArray<FVector>& m_verts, const TArray<FLinearColor>& m_colors, const int& height_) {
+	for (int y = 0; y < height_; y++){
+		for (int x = 0; x < height_; x++){
+			if (x+1<height_){
+				if (m_colors[y * height_ + x] != m_colors[y * height_ + (x + 1)]) {
+					float z_pos = m_verts[y* height_+ x].Z;
+					AddGrassInstance(x, y, z_pos);
+					z_pos = m_verts[y * height_ + (x + 1)].Z;
+					AddGrassInstance((x+1), y, z_pos);
+				}
+			}
+			if (y + 1 < height_) {
+				if (m_colors[y * height_ + x] != m_colors[(y + 1) * height_ + x]) {
+					float z_pos = m_verts[(y+1) * height_ + x].Z;
+					AddGrassInstance(x, (y+1), z_pos);
+					z_pos = m_verts[y * height_ + x].Z;
+					AddGrassInstance(x, y, z_pos);
+				}
+			}
+		}
+	}
+}
+
 void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float&max, const float&min){
 	float max_m = max;
 	float min_m = min;
@@ -346,6 +390,7 @@ void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVe
 				h_instanced->CastShadow = true;
 				h_instanced->BodyInstance.bSimulatePhysics = false;
 				h_instanced->BodyInstance.SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				h_instanced->bReceivesDecals = false;
 			}
 			else {
 				i--;
