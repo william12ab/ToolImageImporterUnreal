@@ -125,10 +125,12 @@ void AMainSounds::SetEngineParam(const float& rpm, const float& kph){
 	}
 	else {
 		engine_comp->SetFloatParameter(FName("RPM"), rpm);
+		
 		ground_audio_comp->SetFloatParameter(FName("RPM"), kph);
 	}
 }
 
 void AMainSounds::PlayPopSound(const FVector& loc_) {
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), pop_sound_base, loc_, pop_base, 0.2f);
+	
 }

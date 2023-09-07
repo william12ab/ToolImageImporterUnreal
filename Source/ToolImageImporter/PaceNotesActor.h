@@ -22,11 +22,13 @@ protected:
 	TArray<int>inclines_;
 	TArray<int>widths_;
 	TArray<int> pacenotes_array;
+	int note_count ;
+	int play_value;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void FindOrder();
-	void WhenToPlay();
+	void WhenToPlay(const FVector& p1, const FVector& p2, const FVector& p3);
 	void FindAngle(const int& i);
 
 	TArray<int> GetLengths() { return lengths_; }
@@ -38,4 +40,6 @@ public:
 	void SetAngles(const TArray<int>& v) { angles_ = v; }
 	void SetInclines(const TArray<int>& v) { inclines_ = v; }
 	void SetWidths(const TArray<int>& v) { widths_= v; }
+	void PlayNextNote();
+	void PlayAddition();
 };
