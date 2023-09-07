@@ -35,11 +35,97 @@ public:
 	TArray<int> GetAngles() { return angles_; }
 	TArray<int> GetInclines() { return inclines_; }
 	TArray<int> GetWidths() { return widths_; }
-
 	void SetLengths(const TArray<int>&v) { lengths_ = v; }
 	void SetAngles(const TArray<int>& v) { angles_ = v; }
 	void SetInclines(const TArray<int>& v) { inclines_ = v; }
 	void SetWidths(const TArray<int>& v) { widths_= v; }
 	void PlayNextNote();
 	void PlayAddition();
+
+	//comps
+	UAudioComponent* hunder_comp;
+	UAudioComponent* hunderf_comp;
+	UAudioComponent* thunder_comp;
+	UAudioComponent* olcomp;
+	UAudioComponent* orcomp;
+	UAudioComponent* tlcomp;
+	UAudioComponent* trcomp;
+	UAudioComponent* thlcomp;
+	UAudioComponent* thrcomp;
+	UAudioComponent* flcomp;
+	UAudioComponent* frcomp;
+	UAudioComponent* fvlcomp;
+	UAudioComponent* fvrcomp;
+	UAudioComponent* slcomp;
+	UAudioComponent* srcomp;
+	UAudioComponent* hprcomp;
+	UAudioComponent* hplcomp;
+	UAudioComponent* sqrcomp;
+	UAudioComponent* sqlcomp;
+	UAudioComponent* intocomp;
+	UAudioComponent* andcomp;
+	UAudioComponent* tightencomp;
+	UAudioComponent* shortcomp;
+	UAudioComponent* crestcomp;
+	UAudioComponent* opencomp;
+	UAudioComponent* narrowcomp;
+	UAudioComponent* longcomp;
+	UAudioComponent* dipcomp;
+	//sound cues
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* hunder_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* hunderf_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* twohunder_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* one_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* one_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* two_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* two_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* three_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* three_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* four_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* four_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* five_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* five_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* six_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* six_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* hp_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* hp_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* sq_l_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* sq_r_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* into_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* and_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* dip_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* long_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* narrow_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* open_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* crest_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* short_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* tighten_cue;
 };
