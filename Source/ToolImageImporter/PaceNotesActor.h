@@ -21,14 +21,21 @@ protected:
 	TArray<int>angles_;
 	TArray<int>inclines_;
 	TArray<int>widths_;
+	TArray<int> pacenotes_array;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void FindOrder();
 	void WhenToPlay();
+	void FindAngle(const int& i);
 
 	TArray<int> GetLengths() { return lengths_; }
 	TArray<int> GetAngles() { return angles_; }
 	TArray<int> GetInclines() { return inclines_; }
 	TArray<int> GetWidths() { return widths_; }
+
+	void SetLengths(const TArray<int>&v) { lengths_ = v; }
+	void SetAngles(const TArray<int>& v) { angles_ = v; }
+	void SetInclines(const TArray<int>& v) { inclines_ = v; }
+	void SetWidths(const TArray<int>& v) { widths_= v; }
 };

@@ -17,6 +17,7 @@ void UUIWidget::NativeConstruct() {
 	scaling_down_ = 10.0f;		//scale factor of everything, so 8 times what it is now
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::ResizeMesh);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
+	pace_notes_actor = Cast<APaceNotesActor>(UGameplayStatics::GetActorOfClass(GetWorld(), APaceNotesActor::StaticClass()));
 
 	is_decal_spawn = false;
 	point_type = false;
@@ -28,7 +29,11 @@ void UUIWidget::NativeConstruct() {
 	vec_water_mesh.Add(w_mesh3);
 	is_start_done = false;
 	is_created = false;
-	level_loader.ReadPaceNoteFile(pace_notes_actor.GetLengths(), pace_notes_actor.GetAngles(), pace_notes_actor.GetInclines(), pace_notes_actor.GetWidths());
+	TArray<int>temp_l; TArray<int>temp_a; TArray<int>temp_i; TArray<int>temp_w;
+	level_loader.ReadPaceNoteFile(temp_l, temp_a, temp_i, temp_w);
+	pace_notes_actor->SetLengths(temp_l); pace_notes_actor->SetAngles(temp_a); pace_notes_actor->SetInclines(temp_i); pace_notes_actor->SetWidths(temp_w);
+	pace_notes_actor->FindOrder();
+	pace_notes_actor->WhenToPlay();
 	if (is_chunking) {
 		loop_index = 4;
 	}
