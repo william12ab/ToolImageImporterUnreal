@@ -39,13 +39,13 @@ void APaceNotesActor::FindAngle(const int& i) {
 void APaceNotesActor::FindOrder() {
 	for (size_t i = 0; i < lengths_.Num(); i++){
 		//lengths 150,100,200
-		if (lengths_[i] > 90 && lengths_[i] < 110) {
+		if (lengths_[i] > (90/2) && lengths_[i] < (110/2)) {
 			pacenotes_array.Add(1);
 		}
-		else if (lengths_[i] > 140 && lengths_[i] < 160) {
+		else if (lengths_[i] > (140/2) && lengths_[i] < (160/2)) {
 			pacenotes_array.Add(2);
 		}
-		else if (lengths_[i] > 190 && lengths_[i] < 210) {
+		else if (lengths_[i] > (190/2) && lengths_[i] < (210/2)) {
 			pacenotes_array.Add(3);
 		}
 
