@@ -18,6 +18,11 @@ HeightmapHandler::HeightmapHandler(){
 	fil_name.RemoveAt(n, exe_name.Len());
 	meta_file_name = fil_name += "meta.txt";
 	is_chunking = false;
+
+	fil_name = f_l.GetFileName();
+	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	fil_name.RemoveAt(n, exe_name.Len());
+	pacenote_file_name = fil_name += "pacenote_info.txt";
 }
 HeightmapHandler::~HeightmapHandler(){
 }
@@ -67,6 +72,54 @@ bool HeightmapHandler::ReadMetaFile() {
 		is_chunking = false;
 	}
 	return is_chunking;
+}
+
+void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angles_, TArray<int>& inclines_, TArray<int>& widths_) {
+	IPlatformFile& file_manager = FPlatformFileManager::Get().GetPlatformFile();
+	TArray<FString> array_;
+	if (file_manager.FileExists(*pacenote_file_name)) {
+		if (FFileHelper::LoadFileToStringArray(array_, *pacenote_file_name)) {
+		}//yes
+		else {
+		}//no
+	}
+	int chooser = 0;
+	for (size_t i = 1; i < array_.Num(); i++){//skip first element because it is indication
+		bool is_chosen = false;
+		if (array_[i].Contains(FString("l"))) {
+			chooser = 1;
+			is_chosen = true;
+		}
+		else if (array_[i].Contains(FString("i"))){
+			chooser = 2;
+			is_chosen = true;
+		}
+		else if (array_[i].Contains(FString("w"))){
+			chooser = 3;
+			is_chosen = true;
+		}
+		if (!is_chosen) {
+			switch (chooser)
+			{
+			case 0: {//angle
+				angles_.Add(FCString::Atoi(*array_[i]));
+				break;
+			}
+			case 1: {//length
+				lengths_.Add(FCString::Atoi(*array_[i]));
+				break;
+			}
+			case 2: {//incline
+				inclines_.Add(FCString::Atoi(*array_[i]));
+				break;
+			}
+			case 3: {//w
+				widths_.Add(FCString::Atoi(*array_[i]));
+				break;
+			}
+			}
+		}
+	}
 }
 
 bool HeightmapHandler::ReadTrackPoints(TArray<FVector2D>& track_points, TArray<FVector2D>& control_points, const int& index_p) {

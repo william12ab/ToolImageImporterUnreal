@@ -13,6 +13,7 @@
 #include "StartDecalActor.h"
 #include "TriggerBoxDecal.h"
 #include "HeightmapHandler.h"
+#include "PaceNotesActor.h"
 #include "UIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
@@ -99,6 +100,7 @@ protected:
 	float counter_;//time counter for reset
 	TArray<FVector> temp_vec;//used for filling in gaps, creating new trackpoints for end and start
 	HeightmapHandler level_loader;//for loading map
+	APaceNotesActor pace_notes_actor;
 	FVector starting_position;//starting position
 	FRotator starting_angle;//starting angle
 

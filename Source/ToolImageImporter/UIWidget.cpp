@@ -28,13 +28,12 @@ void UUIWidget::NativeConstruct() {
 	vec_water_mesh.Add(w_mesh3);
 	is_start_done = false;
 	is_created = false;
-
+	level_loader.ReadPaceNoteFile(pace_notes_actor.GetLengths(), pace_notes_actor.GetAngles(), pace_notes_actor.GetInclines(), pace_notes_actor.GetWidths());
 	if (is_chunking) {
 		loop_index = 4;
 	}
 	for (int i = 0; i < loop_index; i++) {
 		auto start = high_resolution_clock::now();
-
 		m_colors.Empty();
 		track_points.Empty();
 		control_points.Empty();
