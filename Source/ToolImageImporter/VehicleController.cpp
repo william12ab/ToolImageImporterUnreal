@@ -323,7 +323,7 @@ void AVehicleController::Tick(float DeltaTime) {
 		}
 	}
 	UpdateDriver(DeltaTime);
-
+	pace3 = GetActorLocation();
 }
 
 void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){
@@ -607,6 +607,10 @@ void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 	auto ss=OtherActor->GetName();
 	if (ss== "boxendtriggername"){
 		is_end = true;
+	}
+	auto sss = OtherActor->GetName();//is the vehicle
+	if (sss.Contains("ControlPointTriggerBox")){
+		pace1 = OtherActor->GetActorLocation();
 	}
 }
 void AVehicleController::StartFunction(const float& dt) {

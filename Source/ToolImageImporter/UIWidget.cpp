@@ -29,11 +29,10 @@ void UUIWidget::NativeConstruct() {
 	vec_water_mesh.Add(w_mesh3);
 	is_start_done = false;
 	is_created = false;
-	TArray<int>temp_l; TArray<int>temp_a; TArray<int>temp_i; TArray<int>temp_w;
-	level_loader.ReadPaceNoteFile(temp_l, temp_a, temp_i, temp_w);
-	pace_notes_actor->SetLengths(temp_l); pace_notes_actor->SetAngles(temp_a); pace_notes_actor->SetInclines(temp_i); pace_notes_actor->SetWidths(temp_w);
+	TArray<int>temp_l; TArray<int>temp_a; TArray<int>temp_i; TArray<int>temp_w; TArray<int>temp_d;
+	level_loader.ReadPaceNoteFile(temp_l, temp_a, temp_i, temp_w,temp_d);
+	pace_notes_actor->SetLengths(temp_l); pace_notes_actor->SetAngles(temp_a); pace_notes_actor->SetInclines(temp_i); pace_notes_actor->SetWidths(temp_w); pace_notes_actor->SetDirections(temp_d);
 	pace_notes_actor->FindOrder();
-	pace_notes_actor->WhenToPlay();
 	if (is_chunking) {
 		loop_index = 4;
 	}
@@ -101,6 +100,13 @@ void UUIWidget::NativeConstruct() {
 	auto start = high_resolution_clock::now();
 
 	ResizeMesh();//ading more verts
+	SetControlPointTriggerBoxes();
+	FVector first_pace = FVector(control_points[0].X*s_, control_points[0].Y * s_, z_height[0]);
+	first_pace *= scaling_down_;
+	vehicle_pawn->SetPaceOne(first_pace);
+	first_pace = FVector(control_points[1].X * s_, control_points[1].Y * s_, z_height[1]);
+	first_pace *= scaling_down_;
+	pacetwo = first_pace;
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
 	float s = duration.count();
@@ -136,9 +142,10 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	CountdownImageFunction(InDeltaTime);
 	LapTimerFunction(InDeltaTime);
 	RenderTimer();
-
 	//RESTARTING lap
 	RestartLap();
+	CheckForControlPointChange();
+	
 
 	//collisons for restarting position
 	auto l = vehicle_pawn->GetActorLocation();
@@ -149,6 +156,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 		if (static_cast<int>(current_point.X) == static_cast<int>(track_points[i].X) && static_cast<int>(current_point.Y) == static_cast<int>(track_points[i].Y)) {
 			last_point = FVector(track_points[i].X, track_points[i].Y, l.Z);
 			index_recorder = i;
+			
 		}
 	}
 	//if pressed, start timer, if held for 1.5sec, and v <5, put back to correct place.
@@ -431,7 +439,7 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 		InnerStartPlaces(track_spline->GetTotalPoints(), 0);
 	}
 }
-void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {
+void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {//setting position 
 	if (is_chunking && loop_index == 2) {
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
@@ -472,6 +480,7 @@ void UUIWidget::FixScales(const int& loop_index) {
 			int yp = control_points[i].Y;
 			float z_from_p_mesh = p_mesh->vec_m_verts[loop_index][(yp) * 400 + (xp)].Z;
 			control_points_with_z.Add(FVector(control_points[i].X * s_, control_points[i].Y * s_, z_from_p_mesh));
+			z_height.Add(z_from_p_mesh);
 		}
 		EndFlag(control_points_with_z, loop_index);
 	}
@@ -661,4 +670,42 @@ void UUIWidget::RenderTimer() {
 	else {
 		lap_timer_text->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UUIWidget::SetControlPointTriggerBoxes() {
+	for (int i = 0; i < control_points.Num(); i++) {
+		int xp = control_points[i].X;
+		int yp = control_points[i].Y;
+		float z_from_p_mesh = p_mesh->vec_m_verts[0][(yp) * 400 + (xp)].Z;
+		z_height.Add(z_from_p_mesh);
+	}
+	for (size_t i = 0; i < control_points.Num(); i++){
+		FActorSpawnParameters SpawnInfoDecal;
+		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+		FRotator myRotD(0, 0, 0);
+		FVector myLocD = FVector(control_points[i].X * s_, control_points[i].Y * s_, z_height[i]);
+		myLocD *= scaling_down_;
+		if (i==0){
+			myLocD = box_start->GetActorLocation();
+		}
+		starting_angle = FRotator(0.f, 0, 0.f);
+		AControlPointTriggerBox* control_point_trigger;
+		control_point_trigger = GetWorld()->SpawnActor<AControlPointTriggerBox>(myLocD, starting_angle, SpawnInfoDecal);
+	}
+}
+void UUIWidget::CheckForControlPointChange() {
+	for (int i = 0; i < control_points.Num(); i++){
+		FVector pace1 = FVector(control_points[i].X*s_, control_points[i].Y*s_, z_height[i]);
+		pace1*=scaling_down_;
+		if (vehicle_pawn->GetPaceOne()== pace1){
+			pacetwo = FVector(control_points[i+1].X*s_, control_points[i+1].Y*s_, z_height[i+1]);
+			pacetwo *= scaling_down_;
+			pace_notes_actor->SetIsPlayed();
+		}
+		pace_notes_actor->WhenToPlay(vehicle_pawn->GetPaceOne(), pacetwo, vehicle_pawn->GetPaceThree());
+	}
+	UE_LOG(LogTemp, Warning, TEXT("pace1: %s"), *vehicle_pawn->GetPaceOne().ToString());
+	UE_LOG(LogTemp, Warning, TEXT("pace2: %s"), *pacetwo.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("pace3: %s"), *vehicle_pawn->GetPaceThree().ToString());
+
 }

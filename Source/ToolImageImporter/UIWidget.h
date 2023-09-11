@@ -14,6 +14,7 @@
 #include "TriggerBoxDecal.h"
 #include "HeightmapHandler.h"
 #include "PaceNotesActor.h"
+#include "ControlPointTriggerBox.h"
 #include "UIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UUIWidget : public UUserWidget
@@ -41,6 +42,8 @@ protected:
 	void StartPlaces(const int&loop_index);//used for choosing the starting places of both the flags and car
 	void InnerStartPlaces(const TArray<FVector>& point_arr, const int&loop_index);
 	void EndFlag(const TArray<FVector>& point_arr, const int& loop_index);
+	void SetControlPointTriggerBoxes();
+	void CheckForControlPointChange();
 
 	void CheckForChunking(const int&index_, ABasicTree* instance_);
 	//ui 
@@ -123,4 +126,7 @@ protected:
 	bool is_created;
 	bool is_decal_spawn;
 	bool is_spinner_enabled;
+	TArray<float> z_height;
+	FVector pacetwo;
+	TArray<FVector> pacenote_c_p;
 };

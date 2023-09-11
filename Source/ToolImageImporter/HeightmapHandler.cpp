@@ -74,7 +74,7 @@ bool HeightmapHandler::ReadMetaFile() {
 	return is_chunking;
 }
 
-void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angles_, TArray<int>& inclines_, TArray<int>& widths_) {
+void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angles_, TArray<int>& inclines_, TArray<int>& widths_,TArray<int>&directions_) {
 	IPlatformFile& file_manager = FPlatformFileManager::Get().GetPlatformFile();
 	TArray<FString> array_;
 	if (file_manager.FileExists(*pacenote_file_name)) {
@@ -86,6 +86,10 @@ void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angl
 	int chooser = 0;
 	for (size_t i = 1; i < array_.Num(); i++){//skip first element because it is indication
 		bool is_chosen = false;
+		if (array_[i].Contains(FString("d"))){
+			chooser = 4;
+			is_chosen = true;
+		}
 		if (array_[i].Contains(FString("l"))) {
 			chooser = 1;
 			is_chosen = true;
@@ -115,6 +119,10 @@ void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angl
 			}
 			case 3: {//w
 				widths_.Add(FCString::Atoi(*array_[i]));
+				break;
+			}
+			case 4: {//w
+				directions_.Add(FCString::Atoi(*array_[i]));
 				break;
 			}
 			}

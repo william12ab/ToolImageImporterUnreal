@@ -6,6 +6,7 @@
 APaceNotesActor::APaceNotesActor(){
 	PrimaryActorTick.bCanEverTick = true;
 	note_count = 0;
+	play_value = 0.5f;
 	static ConstructorHelpers::FObjectFinder<USoundCue> hobj(TEXT("SoundCue'/Game/Sound/pacenotes/100_Cue.100_Cue'"));
 	if (hobj.Succeeded()) {
 		hunder_cue = hobj.Object;
@@ -159,22 +160,23 @@ APaceNotesActor::APaceNotesActor(){
 	static ConstructorHelpers::FObjectFinder<USoundCue> narrowobj(TEXT("SoundCue'/Game/Sound/pacenotes/narrow_archway_Cue.narrow_archway_Cue'"));
 	if (narrowobj.Succeeded()) {
 		narrow_cue = narrowobj.Object;
-		narrowcomp = CreateDefaultSubobject<UAudioComponent>(TEXT("BackgroundComp"));
+		narrowcomp = CreateDefaultSubobject<UAudioComponent>(TEXT("narroc"));
 		narrowcomp->SetupAttachment(RootComponent);
 	}
 	static ConstructorHelpers::FObjectFinder<USoundCue> longobj(TEXT("SoundCue'/Game/Sound/pacenotes/long_Cue.long_Cue'"));
 	if (longobj.Succeeded()) {
 		long_cue = longobj.Object;
-		longcomp = CreateDefaultSubobject<UAudioComponent>(TEXT("BackgroundComp"));
+		longcomp = CreateDefaultSubobject<UAudioComponent>(TEXT("longc"));
 		longcomp->SetupAttachment(RootComponent);
 	}
 	
 	static ConstructorHelpers::FObjectFinder<USoundCue> dipobj(TEXT("SoundCue'/Game/Sound/pacenotes/dip_Cue.dip_Cue'"));
 	if (dipobj.Succeeded()) {
 		dip_cue = dipobj.Object;
-		dipcomp = CreateDefaultSubobject<UAudioComponent>(TEXT("BackgroundComp"));
+		dipcomp = CreateDefaultSubobject<UAudioComponent>(TEXT("dipc"));
 		dipcomp->SetupAttachment(RootComponent);
 	}
+	
 }
 
 void APaceNotesActor::BeginPlay(){
@@ -184,31 +186,52 @@ void APaceNotesActor::BeginPlay(){
 void APaceNotesActor::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 }
+void APaceNotesActor::FindDirection(const int& i, const int&n, const int& a) {
+	if (directions_[i]>0){//right
+		pacenotes_array[n] = a + 50;
+		
+	}
+	else if (directions_[i] < 0){//left
+		pacenotes_array[n] = a + 40;
+	}
+	else if (directions_[i] == 0){//same line
+		//same line
+	}
+	//checks direction, modis most recent note, and changes for left and right
+}
 
 void APaceNotesActor::FindAngle(const int& i) {
 	if (angles_[i] >= 0 && angles_[i] < 20) {
 		pacenotes_array.Add(16);
+		FindDirection(i, pacenotes_array.Num()-1, 16);
 	}
 	else if (angles_[i] >= 20 && angles_[i] < 35) {
 		pacenotes_array.Add(15);
+		FindDirection(i, pacenotes_array.Num() - 1, 15);
 	}
 	else if (angles_[i] >= 35 && angles_[i] < 50) {
 		pacenotes_array.Add(14);
+		FindDirection(i, pacenotes_array.Num() - 1, 14);
 	}
 	else if (angles_[i] >= 50 && angles_[i] < 65) {
 		pacenotes_array.Add(13);
+		FindDirection(i, pacenotes_array.Num() - 1, 13);
 	}
 	else if (angles_[i] >= 65 && angles_[i] < 75) {
 		pacenotes_array.Add(12);
+		FindDirection(i, pacenotes_array.Num() - 1, 12);
 	}
 	else if (angles_[i] >= 75 && angles_[i] < 89) {
 		pacenotes_array.Add(11);
+		FindDirection(i, pacenotes_array.Num() - 1, 11);
 	}
 	else if (angles_[i] >= 89 && angles_[i]<91) {
 		pacenotes_array.Add(10);
+		FindDirection(i, pacenotes_array.Num() - 1, 10);
 	}
 	else if(angles_[i] >= 91 ) {
 		pacenotes_array.Add(9);
+		FindDirection(i, pacenotes_array.Num() - 1, 9);
 	}
 }
 
@@ -275,81 +298,134 @@ void APaceNotesActor::WhenToPlay(const FVector&p1, const FVector& p2, const FVec
 		t = (c1 + c2) / 2.0f;
 	}
 	//above works out t
-
-	if (t< play_value){
-		PlayNextNote();
-		PlayAddition();
-		note_count++;
+	UE_LOG(LogTemp, Warning, TEXT("The float value is: %f"), t);
+	if (t> play_value){
+		UE_LOG(LogTemp, Warning, TEXT("playing"));
+		if (!is_played){
+			UE_LOG(LogTemp, Warning, TEXT("The float value is: %d"), note_count);
+			PlayNextNote();
+			PlayAddition();
+			note_count++;
+			is_played = true;
+		}
 	}
 }
 
 void APaceNotesActor::PlayNextNote() {
 	switch (pacenotes_array[note_count])
 	{
-	case 1: {
+	case 1: {//100
 		hunder_comp->Activate(true);
 		hunder_comp->SetSound(hunder_cue);
 		hunder_comp->Play(0.f);
 		break;
 	}
-	case 2: {
+	case 2: {//150
 		hunderf_comp->Activate(true);
 		hunderf_comp->SetSound(hunderf_cue);
 		hunderf_comp->Play(0.f);
 		break;
 	}
-	case 3: {
+	case 3: {//200
 		thunder_comp->Activate(true);
 		thunder_comp->SetSound(twohunder_cue);
 		thunder_comp->Play(0.f);
 		break;
 	}
-	case 16: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 56: {//l6
+		slcomp->Activate(true);
+		slcomp->SetSound(six_l_cue);
+		slcomp->Play(0.f);
 		break;
 	}
-	case 15: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 55: {//l5
+		fvlcomp->Activate(true);
+		fvlcomp->SetSound(five_l_cue);
+		fvlcomp->Play(0.f);
 		break;
 	}
-	case 14: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 54: {//l4
+		flcomp->Activate(true);
+		flcomp->SetSound(four_l_cue);
+		flcomp->Play(0.f);
 		break;
 	}
-	case 13: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 53: {//l3
+		thlcomp->Activate(true);
+		thlcomp->SetSound(three_l_cue);
+		thlcomp->Play(0.f);
 		break;
 	}
-	case 12: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 52: {//l2
+		tlcomp->Activate(true);
+		tlcomp->SetSound(two_l_cue);
+		tlcomp->Play(0.f);
 		break;
 	}
-	case 11: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 51: {//l1
+		olcomp->Activate(true);
+		olcomp->SetSound(one_l_cue);
+		olcomp->Play(0.f);
 		break;
 	}
-	case 10: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 50: {//sql
+		sqlcomp->Activate(true);
+		sqlcomp->SetSound(sq_l_cue);
+		sqlcomp->Play(0.f);
 		break;
 	}
-	case 9: {
-		thunder_comp->Activate(true);
-		thunder_comp->SetSound(twohunder_cue);
-		thunder_comp->Play(0.f);
+	case 59: {//hpl
+		hplcomp->Activate(true);
+		hplcomp->SetSound(hp_l_cue);
+		hplcomp->Play(0.f);
+		break;
+	}
+	case 66: {//r6
+		srcomp->Activate(true);
+		srcomp->SetSound(six_r_cue);
+		srcomp->Play(0.f);
+		break;
+	}
+	case 65: {//r5
+		fvrcomp->Activate(true);
+		fvrcomp->SetSound(five_r_cue);
+		fvrcomp->Play(0.f);
+		break;
+	}
+	case 64: {//r4
+		frcomp->Activate(true);
+		frcomp->SetSound(four_r_cue);
+		frcomp->Play(0.f);
+		break;
+	}
+	case 63: {//r3
+		thrcomp->Activate(true);
+		thrcomp->SetSound(three_r_cue);
+		thrcomp->Play(0.f);
+		break;
+	}
+	case 62: {//r2
+		trcomp->Activate(true);
+		trcomp->SetSound(two_r_cue);
+		trcomp->Play(0.f);
+		break;
+	}
+	case 61: {//r1
+		orcomp->Activate(true);
+		orcomp->SetSound(one_r_cue);
+		orcomp->Play(0.f);
+		break;
+	}
+	case 60: {//sqr
+		sqrcomp->Activate(true);
+		sqrcomp->SetSound(sq_r_cue);
+		sqrcomp->Play(0.f);
+		break;
+	}
+	case 69: {//hpr
+		hprcomp->Activate(true);
+		hprcomp->SetSound(hp_r_cue);
+		hprcomp->Play(0.f);
 		break;
 	}
 	}

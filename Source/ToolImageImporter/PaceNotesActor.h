@@ -21,26 +21,33 @@ protected:
 	TArray<int>angles_;
 	TArray<int>inclines_;
 	TArray<int>widths_;
+	TArray<int> directions_;
 	TArray<int> pacenotes_array;
 	int note_count ;
-	int play_value;
+	float play_value;
+	bool is_played;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void FindOrder();
 	void WhenToPlay(const FVector& p1, const FVector& p2, const FVector& p3);
 	void FindAngle(const int& i);
+	void FindDirection(const int& i, const int& n, const int&a);
 
 	TArray<int> GetLengths() { return lengths_; }
 	TArray<int> GetAngles() { return angles_; }
 	TArray<int> GetInclines() { return inclines_; }
 	TArray<int> GetWidths() { return widths_; }
+	TArray<int> GetDirections() { return directions_; }
 	void SetLengths(const TArray<int>&v) { lengths_ = v; }
 	void SetAngles(const TArray<int>& v) { angles_ = v; }
 	void SetInclines(const TArray<int>& v) { inclines_ = v; }
 	void SetWidths(const TArray<int>& v) { widths_= v; }
+	void SetDirections(const TArray<int>& v) { directions_ = v; }
 	void PlayNextNote();
 	void PlayAddition();
+	void SetIsPlayed() { is_played = false; }
+	
 
 	//comps
 	UAudioComponent* hunder_comp;

@@ -74,6 +74,7 @@ public:
 	void SetIsRenderSpedo(bool p_) { is_render_spedo= p_; }
 	void SetFinalTime(FText f_) { final_text = f_; }
 	void SetPenTime(FText f_) { penalty_text = f_; }
+	void SetPaceOne(FVector f_) { pace1 = FVector(f_); }
 	//getter
 	bool GetPressed() { return pressed_; }
 	FText GetPenText() { return penalty_text; }
@@ -92,6 +93,8 @@ public:
 	bool GetIsRenderTimer() { return is_render_timer; }
 	bool GetIsRenderSpedo() { return is_render_spedo; }
 	float GetPenaltyTime() { return penalty_time; }
+	FVector GetPaceOne() { return pace1; }
+	FVector GetPaceThree() { return pace3; }
 	//pause
 	void OnPause();
 	void UnPause();
@@ -186,6 +189,10 @@ protected:
 	FText penalty_text;
 
 	float penalty_time;
+
+	FVector pace1;
+	FVector pace2;
+	FVector pace3;
 
 };
 
