@@ -127,6 +127,6 @@ protected:
 	bool is_decal_spawn;
 	bool is_spinner_enabled;
 	TArray<float> z_height;
-	FVector pacetwo;
-	TArray<FVector> pacenote_c_p;
+	FVector2D pacetwo;
+	TArray<FVector2D> pacenote_c_p;
 };

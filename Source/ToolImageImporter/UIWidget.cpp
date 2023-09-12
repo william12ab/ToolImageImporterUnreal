@@ -104,9 +104,9 @@ void UUIWidget::NativeConstruct() {
 	FVector first_pace = FVector(control_points[0].X*s_, control_points[0].Y * s_, z_height[0]);
 	first_pace *= scaling_down_;
 	vehicle_pawn->SetPaceOne(first_pace);
-	first_pace = FVector(control_points[1].X * s_, control_points[1].Y * s_, z_height[1]);
-	first_pace *= scaling_down_;
-	pacetwo = first_pace;
+	FVector2D first_paced= FVector2D(control_points[1].X * s_, control_points[1].Y * s_);
+	first_paced *= scaling_down_;
+	pacetwo = first_paced;
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
 	float s = duration.count();
@@ -131,6 +131,9 @@ void UUIWidget::NativeConstruct() {
 	is_system_on = false;
 	give_time_penalty = false;
 	is_spinner_enabled = false;
+	for (size_t i = 0; i < control_points.Num(); i++){
+		pacenote_c_p.Add(control_points[i]);
+	}
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
@@ -579,7 +582,9 @@ void UUIWidget::LapTimerFunction(const float& dt) {
 			lap_time += 10.f;
 		}
 		if (!is_images_off && !vehicle_pawn->GetIsUnorthadox()) {
-			images_[index_image]->SetVisibility(ESlateVisibility::Visible);
+			if (index_image < 5) {
+				images_[index_image]->SetVisibility(ESlateVisibility::Visible);
+			}
 			if (lap_time > 3.0f) {
 				for (int i = 0; i < images_.Num(); i++) {
 					images_[i]->SetVisibility(ESlateVisibility::Hidden);
@@ -694,18 +699,23 @@ void UUIWidget::SetControlPointTriggerBoxes() {
 	}
 }
 void UUIWidget::CheckForControlPointChange() {
-	for (int i = 0; i < control_points.Num(); i++){
-		FVector pace1 = FVector(control_points[i].X*s_, control_points[i].Y*s_, z_height[i]);
+	for (int i = 0; i < pacenote_c_p.Num(); i++){
+		FVector2D pace1 = FVector2D(pacenote_c_p[i].X*s_, pacenote_c_p[i].Y*s_);
 		pace1*=scaling_down_;
-		if (vehicle_pawn->GetPaceOne()== pace1){
-			pacetwo = FVector(control_points[i+1].X*s_, control_points[i+1].Y*s_, z_height[i+1]);
+		FVector2D pacev1 = FVector2D(vehicle_pawn->GetPaceOne().X, vehicle_pawn->GetPaceOne().Y);
+		if (pacev1== pace1){
+			pacetwo = FVector2D(pacenote_c_p[i+1].X*s_, pacenote_c_p[i+1].Y*s_);
 			pacetwo *= scaling_down_;
-			pace_notes_actor->SetIsPlayed();
+			FVector2D pacev3 = FVector2D(vehicle_pawn->GetPaceThree().X, vehicle_pawn->GetPaceThree().Y);
+			pace_notes_actor->WhenToPlay(pacev1, pacetwo, pacev3);
 		}
-		pace_notes_actor->WhenToPlay(vehicle_pawn->GetPaceOne(), pacetwo, vehicle_pawn->GetPaceThree());
+		if (pace_notes_actor->GetIsPlayed()){
+			pace_notes_actor->SetIsPlayed();
+			pacenote_c_p.RemoveAt(i);
+		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("pace1: %s"), *vehicle_pawn->GetPaceOne().ToString());
-	UE_LOG(LogTemp, Warning, TEXT("pace2: %s"), *pacetwo.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("pace3: %s"), *vehicle_pawn->GetPaceThree().ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("pace1: %s"), *vehicle_pawn->GetPaceOne().ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("pace2: %s"), *pacetwo.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("pace3: %s"), *vehicle_pawn->GetPaceThree().ToString());
 
 }

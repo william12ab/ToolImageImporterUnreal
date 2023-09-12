@@ -2,6 +2,8 @@
 
 #pragma once
 #include "GameFramework/Actor.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
 #include "PaceNotesActor.generated.h"
 
 UCLASS()
@@ -26,11 +28,15 @@ protected:
 	int note_count ;
 	float play_value;
 	bool is_played;
+	bool is_playing;
+	TArray<int>to_play;
+	float accum_time;
+	TArray<USoundCue*> cues_;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void FindOrder();
-	void WhenToPlay(const FVector& p1, const FVector& p2, const FVector& p3);
+	void WhenToPlay(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3);
 	void FindAngle(const int& i);
 	void FindDirection(const int& i, const int& n, const int&a);
 
@@ -47,7 +53,9 @@ public:
 	void PlayNextNote();
 	void PlayAddition();
 	void SetIsPlayed() { is_played = false; }
-	
+	bool GetIsPlayed() { return is_played; }
+	void Playing(float DeltaTime);
+	void PlayNote(const float& DeltaTime, const int& index);
 
 	//comps
 	UAudioComponent* hunder_comp;
@@ -78,6 +86,7 @@ public:
 	UAudioComponent* narrowcomp;
 	UAudioComponent* longcomp;
 	UAudioComponent* dipcomp;
+	UAudioComponent* current_comp;
 	//sound cues
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* hunder_cue;
