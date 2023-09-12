@@ -95,6 +95,7 @@ public:
 	float GetPenaltyTime() { return penalty_time; }
 	FVector GetPaceOne() { return pace1; }
 	FVector GetPaceThree() { return pace3; }
+	int GetCPCounter() { return cp_counter; }
 	//pause
 	void OnPause();
 	void UnPause();
@@ -193,6 +194,6 @@ protected:
 	FVector pace1;
 	FVector pace2;
 	FVector pace3;
-
+	int cp_counter;
 };
 

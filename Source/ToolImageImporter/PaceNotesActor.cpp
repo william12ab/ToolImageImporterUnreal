@@ -8,6 +8,8 @@ APaceNotesActor::APaceNotesActor(){
 	play_value = 0.25f;
 	is_played = false;
 	is_playing = false;
+	turn_counter = 0;
+	turn_counter_called = 0;
 	static ConstructorHelpers::FObjectFinder<USoundCue> hobj(TEXT("SoundCue'/Game/Sound/pacenotes/100_Cue.100_Cue'"));
 	if (hobj.Succeeded()) {
 		hunder_cue = hobj.Object;
@@ -154,7 +156,6 @@ void APaceNotesActor::PlayNote(const float& DeltaTime, const int& index) {
 		is_playing = true;
 	}
 	if (accum_time > cues_[0]->GetDuration()) {
-		to_play.RemoveAt(0);
 		cues_.RemoveAt(0);
 		accum_time = 0.0f;
 		is_playing = false;
@@ -162,7 +163,7 @@ void APaceNotesActor::PlayNote(const float& DeltaTime, const int& index) {
 }
 
 void APaceNotesActor::Playing(float DeltaTime){
-	if (to_play.Num()!=0){
+	if (cues_.Num()!=0){
 		PlayNote(DeltaTime,0);
 	}
 }
@@ -241,6 +242,9 @@ void APaceNotesActor::FindOrder() {
 			}
 		}
 	}
+	for (size_t i = 0; i < pacenotes_array.Num(); i++){
+		UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), pacenotes_array[i]);
+	}
 }
 
 void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const FVector2D& p3) {
@@ -267,139 +271,142 @@ void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const 
 	//above works out t
 	if (t> play_value){
 		if (!is_played){
-			if (note_count<pacenotes_array.Num()){
-				PlayNextNote();
-				PlayAddition();
-				note_count++;
-				is_played = true;
+			if (turn_counter >= turn_counter_called) {
+				if (note_count < pacenotes_array.Num()) {
+					UE_LOG(LogTemp, Warning, TEXT("before: %d"), turn_counter_called);
+
+					PlayNextNote();
+					PlayAddition();
+					note_count++;
+					is_played = true;
+					UE_LOG(LogTemp, Warning, TEXT("after: %d"), turn_counter_called);
+				}
 			}
 		}
 	}
 }
 
 void APaceNotesActor::PlayNextNote() {
-	UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"),pacenotes_array[note_count]);
-	switch (pacenotes_array[note_count])
-	{
-	case 16: {//l6
-		to_play.Add(16);
-		cues_.Add(six_l_cue);
-		break;
-	}
-	case 1: {//100
-		to_play.Add(1);
-		cues_.Add(hunder_cue);
-		note_count++;
-		PlayNextNote();
-		break;
-	}
-	case 2: {//150
-		to_play.Add(2);
-		cues_.Add(hunderf_cue);
-		note_count++;
-		PlayNextNote();
-		break;
-	}
-	case 3: {//200
-		cues_.Add(twohunder_cue);
-		to_play.Add(3);
-		PlayNextNote();
-		note_count++;
-		break;
-	}
-	case 56: {//l6
-		to_play.Add(56);
-		cues_.Add(six_l_cue);
-		break;
-	}
-	case 55: {//l5
-		to_play.Add(55);
-		cues_.Add(five_l_cue);
-		break;
-	}
-	case 54: {//l4
-		to_play.Add(54);
-		cues_.Add(four_l_cue);
-		break;
-	}
-	case 53: {//l3
-		to_play.Add(53);
-		cues_.Add(three_l_cue);
-		break;
-	}
-	case 52: {//l2
-		to_play.Add(52);
-		cues_.Add(two_l_cue);
-		break;
-	}
-	case 51: {//l1
-		to_play.Add(51);
-		cues_.Add(one_l_cue);
-		break;
-	}
-	case 50: {//sql
-		to_play.Add(50);
-		cues_.Add(sq_l_cue);
-		break;
-	}
-	case 59: {//hpl
-		to_play.Add(59);
-		cues_.Add(hp_l_cue);
-		break;
-	}
-	case 66: {//r6
-		to_play.Add(66);
-		cues_.Add(six_r_cue);
-		break;
-	}
-	case 65: {//r5
-		to_play.Add(65);
-		cues_.Add(five_r_cue);
-		break;
-	}
-	case 64: {//r4
-		to_play.Add(64);
-		cues_.Add(four_r_cue);
-		break;
-	}
-	case 63: {//r3
-		to_play.Add(63);
-		cues_.Add(three_r_cue);
-		break;
-	}
-	case 62: {//r2
-		to_play.Add(62);
-		cues_.Add(two_r_cue);
-		break;
-	}
-	case 61: {//r1
-		to_play.Add(61);
-		cues_.Add(one_r_cue);
-		break;
-	}
-	case 60: {//sqr
-		to_play.Add(60);
-		cues_.Add(sq_r_cue);
-		break;
-	}
-	case 69: {//hpr
-		to_play.Add(69);
-		cues_.Add(hp_r_cue);
-		break;
-	}
+	if (note_count < pacenotes_array.Num()) {
+		//UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), note_count);
+		switch (pacenotes_array[note_count])
+		{
+		case 16: {//l6
+			cues_.Add(six_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 1: {//100
+			cues_.Add(hunder_cue);
+			note_count++;
+			PlayNextNote();
+			break;
+		}
+		case 2: {//150
+			cues_.Add(hunderf_cue);
+			note_count++;
+			PlayNextNote();
+			break;
+		}
+		case 3: {//200
+			cues_.Add(twohunder_cue);
+			PlayNextNote();
+			note_count++;
+			break;
+		}
+		case 56: {//l6
+			cues_.Add(six_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 55: {//l5
+			cues_.Add(five_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 54: {//l4
+			cues_.Add(four_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 53: {//l3
+			cues_.Add(three_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 52: {//l2
+			cues_.Add(two_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 51: {//l1
+			cues_.Add(one_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 50: {//sql
+			cues_.Add(sq_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 59: {//hpl
+			cues_.Add(hp_l_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 66: {//r6
+			cues_.Add(six_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 65: {//r5
+			cues_.Add(five_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 64: {//r4
+			cues_.Add(four_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 63: {//r3
+			cues_.Add(three_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 62: {//r2
+			cues_.Add(two_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 61: {//r1
+			cues_.Add(one_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 60: {//sqr
+			cues_.Add(sq_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		case 69: {//hpr
+			cues_.Add(hp_r_cue);
+			turn_counter_called++;
+			break;
+		}
+		}
 	}
 }
 
 void APaceNotesActor::PlayAddition() {
 	bool is_addition = false;
-	UE_LOG(LogTemp, Warning, TEXT("NOTEaddition: %d"), pacenotes_array[note_count]);
+	
 	if (note_count + 1 < pacenotes_array.Num()) {
 		switch (pacenotes_array[note_count + 1])
 		{
 		case 20: {
 			is_addition = true;
 			//tightens/widens
-			to_play.Add(20);
 			cues_.Add(tighten_cue);
 			note_count++;
 			break;
@@ -407,7 +414,6 @@ void APaceNotesActor::PlayAddition() {
 		case 21: {
 			is_addition = true;
 			//into
-			to_play.Add(21);
 			cues_.Add(into_cue);
 			note_count++;
 			break;
@@ -415,7 +421,6 @@ void APaceNotesActor::PlayAddition() {
 		case 22: {
 			is_addition = true;
 			//and
-			to_play.Add(22);
 			cues_.Add(and_cue);
 			note_count++;
 			break;
@@ -423,6 +428,7 @@ void APaceNotesActor::PlayAddition() {
 		}
 	}
 	if (is_addition){
+	//	UE_LOG(LogTemp, Warning, TEXT("NOTEaddition: %d"), note_count);
 		note_count++;
 		PlayNextNote();
 	}

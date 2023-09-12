@@ -29,9 +29,10 @@ protected:
 	float play_value;
 	bool is_played;
 	bool is_playing;
-	TArray<int>to_play;
 	float accum_time;
 	TArray<USoundCue*> cues_;
+	int turn_counter;
+	int turn_counter_called;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -50,6 +51,7 @@ public:
 	void SetInclines(const TArray<int>& v) { inclines_ = v; }
 	void SetWidths(const TArray<int>& v) { widths_= v; }
 	void SetDirections(const TArray<int>& v) { directions_ = v; }
+	void SetTurnCounter(const int& a) { turn_counter = a; }
 	void PlayNextNote();
 	void PlayAddition();
 	void SetIsPlayed() { is_played = false; }

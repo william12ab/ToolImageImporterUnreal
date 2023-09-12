@@ -202,7 +202,7 @@ AVehicleController::AVehicleController(){
 	is_render_timer = true;
 	is_render_spedo = true;
 	penalty_time = 0.0f;
-
+	cp_counter = 0;
 
 	//spheres
 	sphere_left = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SphereLeft"));
@@ -611,6 +611,7 @@ void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 	auto sss = OtherActor->GetName();//is the vehicle
 	if (sss.Contains("ControlPointTriggerBox")){
 		pace1 = OtherActor->GetActorLocation();
+		cp_counter++;
 	}
 }
 void AVehicleController::StartFunction(const float& dt) {

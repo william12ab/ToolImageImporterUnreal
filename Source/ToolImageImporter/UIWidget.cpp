@@ -5,6 +5,7 @@
 #include "DesktopPlatform/Public/IDesktopPlatform.h"
 #include "DesktopPlatform/Public/DesktopPlatformModule.h"
 #include "Components/CircularThrobber.h"
+#include "DrawDebugHelpers.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
 #include <chrono>
 using namespace std::chrono;
@@ -148,7 +149,9 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	//RESTARTING lap
 	RestartLap();
 	CheckForControlPointChange();
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("turn: %d"), vehicle_pawn->GetCPCounter());
+	pace_notes_actor->SetTurnCounter(vehicle_pawn->GetCPCounter());
 
 	//collisons for restarting position
 	auto l = vehicle_pawn->GetActorLocation();
@@ -529,12 +532,9 @@ void UUIWidget::ResizeMesh() {
 	loc_.Z += 25;
 	starting_angle.Yaw += 180;
 	while (!vehicle_pawn->TeleportTo(loc_, starting_angle, false, false)) {
-		UE_LOG(LogTemp, Warning, TEXT("Hello"));
-
 		loc_.Z += 0.5f;
 	}
 	starting_position = loc_;
-	
 }
 
 void UUIWidget::StartTextFunction() {
@@ -696,6 +696,7 @@ void UUIWidget::SetControlPointTriggerBoxes() {
 		starting_angle = FRotator(0.f, 0, 0.f);
 		AControlPointTriggerBox* control_point_trigger;
 		control_point_trigger = GetWorld()->SpawnActor<AControlPointTriggerBox>(myLocD, starting_angle, SpawnInfoDecal);
+		control_point_trigger->SetActorHiddenInGame(false);
 	}
 }
 void UUIWidget::CheckForControlPointChange() {
@@ -704,18 +705,17 @@ void UUIWidget::CheckForControlPointChange() {
 		pace1*=scaling_down_;
 		FVector2D pacev1 = FVector2D(vehicle_pawn->GetPaceOne().X, vehicle_pawn->GetPaceOne().Y);
 		if (pacev1== pace1){
-			pacetwo = FVector2D(pacenote_c_p[i+1].X*s_, pacenote_c_p[i+1].Y*s_);
-			pacetwo *= scaling_down_;
-			FVector2D pacev3 = FVector2D(vehicle_pawn->GetPaceThree().X, vehicle_pawn->GetPaceThree().Y);
-			pace_notes_actor->WhenToPlay(pacev1, pacetwo, pacev3);
+			if (i + 1 < pacenote_c_p.Num()) {
+				pacetwo = FVector2D(pacenote_c_p[i + 1].X * s_, pacenote_c_p[i + 1].Y * s_);
+				pacetwo *= scaling_down_;
+				FVector2D pacev3 = FVector2D(vehicle_pawn->GetPaceThree().X, vehicle_pawn->GetPaceThree().Y);
+				pace_notes_actor->WhenToPlay(pacev1, pacetwo, pacev3);
+			}
 		}
 		if (pace_notes_actor->GetIsPlayed()){
 			pace_notes_actor->SetIsPlayed();
 			pacenote_c_p.RemoveAt(i);
 		}
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("pace1: %s"), *vehicle_pawn->GetPaceOne().ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("pace2: %s"), *pacetwo.ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("pace3: %s"), *vehicle_pawn->GetPaceThree().ToString());
 
 }
