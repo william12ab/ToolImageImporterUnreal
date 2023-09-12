@@ -168,7 +168,7 @@ void APaceNotesActor::Playing(float DeltaTime){
 	}
 }
 
-void APaceNotesActor::FindAngle(const int& i) {
+void APaceNotesActor::FindAngle(int& i) {
 	if (angles_[i] >= 0 && angles_[i] < 20) {
 		pacenotes_array.Add(16);
 		FindDirection(i, pacenotes_array.Num()-1, 16);
@@ -201,10 +201,34 @@ void APaceNotesActor::FindAngle(const int& i) {
 		pacenotes_array.Add(9);
 		FindDirection(i, pacenotes_array.Num() - 1, 9);
 	}
+	FindSmallDist(i);
 }
-
+void APaceNotesActor::FindSmallDist(int&i) {
+	//checking if next length is short
+	bool is_added = false;
+	if (lengths_[i + 1] < 5) {
+		pacenotes_array.Add(20);//tighten/widen
+		is_added = true;
+	}
+	else if (lengths_[i + 1] >= 5 && lengths_[i + 1] < 15) {
+		pacenotes_array.Add(21);//into
+		is_added = true;
+	}
+	else if (lengths_[i + 1] >= 15 && lengths_[i + 1] < 25) {
+		pacenotes_array.Add(22);//and
+		is_added = true;
+	}
+	//find next angle too
+	if (is_added) {
+		if ((i + 1) < angles_.Num()) {
+			int temp_i = i + 1;
+			FindAngle(temp_i);
+			i++;
+		}
+	}
+}
 void APaceNotesActor::FindOrder() {
-	for (size_t i = 0; i < lengths_.Num(); i++){
+	for (int i = 0; i < lengths_.Num(); i++){
 		//lengths 150,100,200
 		if (lengths_[i] > (45) && lengths_[i] < (70)) {
 			pacenotes_array.Add(1);
@@ -219,30 +243,10 @@ void APaceNotesActor::FindOrder() {
 		//angles
 		if (i<(angles_.Num())){
 			FindAngle(i);
-			//checking if next length is short
-			bool is_added = false;
-			if (lengths_[i+1]<5){
-				pacenotes_array.Add(20);//tighten/widen
-				is_added = true;
-			}
-			else if (lengths_[i+1]>=5 && lengths_[i + 1]<15){
-				pacenotes_array.Add(21);//into
-				is_added = true;
-			}
-			else if (lengths_[i + 1] >= 15 && lengths_[i + 1] < 25) {
-				pacenotes_array.Add(22);//and
-				is_added = true;
-			}
-			//find next angle too
-			if (is_added ){
-				if ((i+1)<angles_.Num()){
-					FindAngle(i + 1);
-					i++;
-				}
-			}
+			
 		}
 	}
-	for (size_t i = 0; i < pacenotes_array.Num(); i++){
+	for (int i = 0; i < pacenotes_array.Num(); i++){
 		UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), pacenotes_array[i]);
 	}
 }
@@ -271,13 +275,10 @@ void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const 
 	//above works out t
 	if (t> play_value){
 		if (!is_played){
-			UE_LOG(LogTemp, Warning, TEXT("turn_counter: %d"), turn_counter);
-			UE_LOG(LogTemp, Warning, TEXT("turn_counter_called: %d"), turn_counter_called);
-
+			
 			if (turn_counter == turn_counter_called||turn_counter==0) {
 				if (note_count < pacenotes_array.Num()) {
 					PlayNextNote();
-					PlayAddition();
 					note_count++;
 					is_played = true;
 				}
@@ -397,6 +398,7 @@ void APaceNotesActor::PlayNextNote() {
 		}
 		UE_LOG(LogTemp, Warning, TEXT("turn_counter_called: %d"), turn_counter_called);
 	}
+	PlayAddition();
 }
 
 void APaceNotesActor::PlayAddition() {

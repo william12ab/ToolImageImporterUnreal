@@ -38,7 +38,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void FindOrder();
 	void WhenToPlay(const FVector2D& p1, const FVector2D& p2, const FVector2D& p3);
-	void FindAngle(const int& i);
+	void FindAngle( int& i);
 	void FindDirection(const int& i, const int& n, const int&a);
 
 	TArray<int> GetLengths() { return lengths_; }
@@ -58,7 +58,7 @@ public:
 	bool GetIsPlayed() { return is_played; }
 	void Playing(float DeltaTime);
 	void PlayNote(const float& DeltaTime, const int& index);
-
+	void FindSmallDist(int& i);
 	//comps
 
 	UAudioComponent* current_comp;
