@@ -58,34 +58,7 @@ public:
 	void PlayNote(const float& DeltaTime, const int& index);
 
 	//comps
-	UAudioComponent* hunder_comp;
-	UAudioComponent* hunderf_comp;
-	UAudioComponent* thunder_comp;
-	UAudioComponent* olcomp;
-	UAudioComponent* orcomp;
-	UAudioComponent* tlcomp;
-	UAudioComponent* trcomp;
-	UAudioComponent* thlcomp;
-	UAudioComponent* thrcomp;
-	UAudioComponent* flcomp;
-	UAudioComponent* frcomp;
-	UAudioComponent* fvlcomp;
-	UAudioComponent* fvrcomp;
-	UAudioComponent* slcomp;
-	UAudioComponent* srcomp;
-	UAudioComponent* hprcomp;
-	UAudioComponent* hplcomp;
-	UAudioComponent* sqrcomp;
-	UAudioComponent* sqlcomp;
-	UAudioComponent* intocomp;
-	UAudioComponent* andcomp;
-	UAudioComponent* tightencomp;
-	UAudioComponent* shortcomp;
-	UAudioComponent* crestcomp;
-	UAudioComponent* opencomp;
-	UAudioComponent* narrowcomp;
-	UAudioComponent* longcomp;
-	UAudioComponent* dipcomp;
+
 	UAudioComponent* current_comp;
 	//sound cues
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
