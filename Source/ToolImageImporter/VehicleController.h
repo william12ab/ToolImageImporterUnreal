@@ -195,5 +195,6 @@ protected:
 	FVector pace2;
 	FVector pace3;
 	int cp_counter;
+	TArray<FString> box_names;
 };
 

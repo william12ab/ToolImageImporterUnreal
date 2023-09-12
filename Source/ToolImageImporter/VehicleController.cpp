@@ -611,7 +611,31 @@ void AVehicleController::OnOverlapBegin(class UPrimitiveComponent* OverlappedCom
 	auto sss = OtherActor->GetName();//is the vehicle
 	if (sss.Contains("ControlPointTriggerBox")){
 		pace1 = OtherActor->GetActorLocation();
-		cp_counter++;
+		if (box_names.Num() == 0) {
+			if (sss == "ControlPointTriggerBox_0") {
+			}
+			else {
+				box_names.Add(sss);
+				cp_counter++;
+			}
+		}
+		else {
+			if (sss == "ControlPointTriggerBox_0") {
+			}
+			else {
+				bool is_dont_add = false;
+				for (size_t i = 0; i < box_names.Num(); i++) {
+					if (sss == box_names[i]) {
+						is_dont_add = true;
+					}
+				}
+				if (!is_dont_add) {
+					box_names.Add(sss);
+					cp_counter++;
+				}
+			}
+		}
+		UE_LOG(LogTemp, Warning, TEXT("cp_counter: %d"), cp_counter);
 	}
 }
 void AVehicleController::StartFunction(const float& dt) {

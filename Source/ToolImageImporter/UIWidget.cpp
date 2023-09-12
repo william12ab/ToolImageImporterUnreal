@@ -149,8 +149,6 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	//RESTARTING lap
 	RestartLap();
 	CheckForControlPointChange();
-
-	UE_LOG(LogTemp, Warning, TEXT("turn: %d"), vehicle_pawn->GetCPCounter());
 	pace_notes_actor->SetTurnCounter(vehicle_pawn->GetCPCounter());
 
 	//collisons for restarting position
@@ -717,5 +715,4 @@ void UUIWidget::CheckForControlPointChange() {
 			pacenote_c_p.RemoveAt(i);
 		}
 	}
-
 }
