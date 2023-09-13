@@ -275,12 +275,12 @@ void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const 
 	//above works out t
 	if (t> play_value){
 		if (!is_played){
-			
 			if (turn_counter == turn_counter_called||turn_counter==0|| turn_counter_called==0) {
 				if (note_count < pacenotes_array.Num()) {
 					PlayNextNote();
 					note_count++;
 					is_played = true;
+					
 				}
 			}
 		}
@@ -402,8 +402,8 @@ void APaceNotesActor::PlayNextNote() {
 			break;
 		}
 		}
-		UE_LOG(LogTemp, Warning, TEXT("turn_counter_called: %d"), turn_counter_called);
 	}
+	UE_LOG(LogTemp, Warning, TEXT("turn_counter_called: %d"), turn_counter_called);
 	PlayAddition();
 }
 
@@ -437,7 +437,7 @@ void APaceNotesActor::PlayAddition() {
 		}
 	}
 	if (is_addition){
-	//	UE_LOG(LogTemp, Warning, TEXT("NOTEaddition: %d"), note_count);
+		UE_LOG(LogTemp, Warning, TEXT("NOTEaddition: %d"), note_count);
 		note_count++;
 		PlayNextNote();
 	}
