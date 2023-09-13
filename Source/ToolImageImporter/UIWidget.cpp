@@ -101,7 +101,6 @@ void UUIWidget::NativeConstruct() {
 	auto start = high_resolution_clock::now();
 
 	ResizeMesh();//ading more verts
-	SetControlPointTriggerBoxes();
 	FVector first_pace = FVector(control_points[0].X*s_, control_points[0].Y * s_, z_height[0]);
 	first_pace *= scaling_down_;
 	vehicle_pawn->SetPaceOne(first_pace);
@@ -132,6 +131,7 @@ void UUIWidget::NativeConstruct() {
 	is_system_on = false;
 	give_time_penalty = false;
 	is_spinner_enabled = false;
+	is_generated_boxes = false;
 	for (size_t i = 0; i < control_points.Num(); i++){
 		pacenote_c_p.Add(control_points[i]);
 	}
@@ -139,6 +139,15 @@ void UUIWidget::NativeConstruct() {
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 	Super::NativeTick(MyGeometry, InDeltaTime);
+	//spawning boxes
+	if (!is_generated_boxes){
+		is_generated_boxes = true;
+		SetControlPointTriggerBoxes();	
+		UE_LOG(LogTemp, Warning, TEXT("spawned: "), );
+	}
+	if (pacenote_c_p[0]==control_points[0]){
+		pace_notes_actor->PlayFirstNote();
+	}
 
 	//UI FUNCS
 	StartTextFunction();
@@ -513,6 +522,15 @@ void UUIWidget::ResizeMesh() {
 	track_obj->SetActorScale3D(FVector(5.f, 5.f, 10));
 	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
 	track_obj->procedural_mesh_comp->SetMassOverrideInKg(NAME_None, 1000000000.f);
+
+
+	//getting z before destroyed
+	for (int i = 0; i < control_points.Num(); i++) {
+		int xp = control_points[i].X;
+		int yp = control_points[i].Y;
+		float z_from_p_mesh = p_mesh->vec_m_verts[0][(yp) * 400 + (xp)].Z;
+		z_height.Add(z_from_p_mesh);
+	}
 	p_mesh->Destroy();
 
 
@@ -676,12 +694,7 @@ void UUIWidget::RenderTimer() {
 }
 
 void UUIWidget::SetControlPointTriggerBoxes() {
-	for (int i = 0; i < control_points.Num(); i++) {
-		int xp = control_points[i].X;
-		int yp = control_points[i].Y;
-		float z_from_p_mesh = p_mesh->vec_m_verts[0][(yp) * 400 + (xp)].Z;
-		z_height.Add(z_from_p_mesh);
-	}
+
 	for (size_t i = 0; i < control_points.Num(); i++){
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();

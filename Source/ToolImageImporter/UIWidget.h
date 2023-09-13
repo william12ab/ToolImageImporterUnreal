@@ -129,4 +129,6 @@ protected:
 	TArray<float> z_height;
 	FVector2D pacetwo;
 	TArray<FVector2D> pacenote_c_p;
+
+	bool is_generated_boxes;
 };

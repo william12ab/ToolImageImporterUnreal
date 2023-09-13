@@ -60,6 +60,7 @@ public:
 	void Playing(float DeltaTime);
 	void PlayNote(const float& DeltaTime, const int& index);
 	void FindSmallDist(int& i);
+	void PlayFirstNote();
 	//comps
 
 	UAudioComponent* current_comp;

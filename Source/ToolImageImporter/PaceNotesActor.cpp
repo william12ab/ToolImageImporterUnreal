@@ -241,10 +241,6 @@ void APaceNotesActor::FindOrder() {
 		else if (lengths_[index_] >= (95) && lengths_[index_] < (105)) {
 			pacenotes_array.Add(3);
 		}
-		if (index_ ==lengths_.Num()-2)
-		{
-			int get = 12;
-		}
 		//angles
 		if (index_ <(angles_.Num())){
 			FindAngle(index_);
@@ -280,7 +276,7 @@ void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const 
 	if (t> play_value){
 		if (!is_played){
 			
-			if (turn_counter == turn_counter_called||turn_counter==0) {
+			if (turn_counter == turn_counter_called||turn_counter==0|| turn_counter_called==0) {
 				if (note_count < pacenotes_array.Num()) {
 					PlayNextNote();
 					note_count++;
@@ -289,6 +285,12 @@ void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const 
 			}
 		}
 	}
+}
+
+void APaceNotesActor::PlayFirstNote() {
+	PlayNextNote();
+	note_count++;
+	is_played = true;
 }
 
 void APaceNotesActor::PlayNextNote() {
@@ -315,8 +317,8 @@ void APaceNotesActor::PlayNextNote() {
 		}
 		case 3: {//200
 			cues_.Add(twohunder_cue);
-			PlayNextNote();
 			note_count++;
+			PlayNextNote();
 			break;
 		}
 		case 56: {//l6
