@@ -102,6 +102,10 @@ void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angl
 			chooser = 3;
 			is_chosen = true;
 		}
+		else if (array_[i].Contains(FString("n"))) {
+			chooser = 5;
+			is_chosen = true;
+		}
 		if (!is_chosen) {
 			switch (chooser)
 			{

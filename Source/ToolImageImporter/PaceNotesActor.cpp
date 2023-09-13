@@ -10,6 +10,7 @@ APaceNotesActor::APaceNotesActor(){
 	is_playing = false;
 	turn_counter = 0;
 	turn_counter_called = 0;
+	index_ = 0;
 	static ConstructorHelpers::FObjectFinder<USoundCue> hobj(TEXT("SoundCue'/Game/Sound/pacenotes/100_Cue.100_Cue'"));
 	if (hobj.Succeeded()) {
 		hunder_cue = hobj.Object;
@@ -221,29 +222,32 @@ void APaceNotesActor::FindSmallDist(int&i) {
 	//find next angle too
 	if (is_added) {
 		if ((i + 1) < angles_.Num()) {
-			int temp_i = i + 1;
-			FindAngle(temp_i);
 			i++;
+			index_ = i;
+			FindAngle(i);
+
 		}
 	}
 }
 void APaceNotesActor::FindOrder() {
-	for (int i = 0; i < lengths_.Num(); i++){
+	for (index_; index_ < lengths_.Num(); index_++){
 		//lengths 150,100,200
-		if (lengths_[i] > (45) && lengths_[i] < (70)) {
+		if (lengths_[index_] > (45) && lengths_[index_] < (70)) {
 			pacenotes_array.Add(1);
 		}
-		else if (lengths_[i] >= (70) && lengths_[i] < (95)) {
+		else if (lengths_[index_] >= (70) && lengths_[index_] < (95)) {
 			pacenotes_array.Add(2);
 		}
-		else if (lengths_[i] >= (95) && lengths_[i] < (105)) {
+		else if (lengths_[index_] >= (95) && lengths_[index_] < (105)) {
 			pacenotes_array.Add(3);
 		}
-
+		if (index_ ==lengths_.Num()-2)
+		{
+			int get = 12;
+		}
 		//angles
-		if (i<(angles_.Num())){
-			FindAngle(i);
-			
+		if (index_ <(angles_.Num())){
+			FindAngle(index_);
 		}
 	}
 	for (int i = 0; i < pacenotes_array.Num(); i++){

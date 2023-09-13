@@ -33,6 +33,7 @@ protected:
 	TArray<USoundCue*> cues_;
 	int turn_counter;
 	int turn_counter_called;
+	int index_;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
