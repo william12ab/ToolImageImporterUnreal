@@ -24,6 +24,7 @@ protected:
 	TArray<int>inclines_;
 	TArray<int>widths_;
 	TArray<int> directions_;
+	
 	TArray<int> pacenotes_array;
 	int note_count ;
 	float play_value;

@@ -10,7 +10,7 @@ public:
 	TArray<float> ReadFileInfo(int &height_, int &width_, const int&index_);//reads file for height map returns array of float of colours
 	bool ReadTrackPoints(TArray<FVector2D>&track_points,TArray<FVector2D> &control_points, const int& index_p);//returns filled arrays and bool of what type track(used in construction)
 	bool ReadMetaFile();
-	void ReadPaceNoteFile(TArray<int>&lengths_, TArray<int>&angles_,TArray<int>&inclines_, TArray<int>&widths_, TArray<int>& directions_);
+	void ReadPaceNoteFile(TArray<int>&lengths_, TArray<int>&angles_,TArray<int>&inclines_, TArray<int>&widths_, TArray<int>& directions_, TArray<int>&cp_width_);
 	FileLoader f_l;
 
 protected:

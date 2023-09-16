@@ -709,10 +709,6 @@ void UUIWidget::SetControlPointTriggerBoxes() {
 		}
 		AControlPointTriggerBox* control_point_trigger;
 		control_point_trigger = GetWorld()->SpawnActor<AControlPointTriggerBox>(myLocD, starting_angle, SpawnInfoDecal);
-		if (temp_cp_w[i]>0){
-			auto scale = control_point_trigger->GetActorScale();
-			control_point_trigger->SetActorScale3D(FVector(scale.X * temp_cp_w[i], scale.Y * temp_cp_w[i], scale.Z));
-		}
 		control_point_trigger->SetActorHiddenInGame(false);
 	}
 }

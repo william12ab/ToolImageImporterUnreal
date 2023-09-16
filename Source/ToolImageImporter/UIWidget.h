@@ -125,10 +125,11 @@ protected:
 	bool is_start_done;
 	bool is_created;
 	bool is_decal_spawn;
-	bool is_spinner_enabled;
-	TArray<float> z_height;
-	FVector2D pacetwo;
-	TArray<FVector2D> pacenote_c_p;
+	bool is_spinner_enabled;//respawn ui element
+	TArray<float> z_height;//height of control points
+	FVector2D pacetwo;//position of next box
+	TArray<FVector2D> pacenote_c_p;//actor
 
-	bool is_generated_boxes;
+	bool is_generated_boxes;//for if the boxes are generated
+	TArray<int>temp_cp_w;//for width of control points
 };

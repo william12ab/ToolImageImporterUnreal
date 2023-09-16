@@ -4,7 +4,7 @@
 AControlPointTriggerBox::AControlPointTriggerBox() {
     //Register Events
     OnActorBeginOverlap.AddDynamic(this, &AControlPointTriggerBox::OnOverlapBegin);
-    SetActorScale3D(FVector(10, 10, 10));//change this
+    SetActorScale3D(FVector(10, 20, 10));//change this
 }
 
 void AControlPointTriggerBox::BeginPlay() {
