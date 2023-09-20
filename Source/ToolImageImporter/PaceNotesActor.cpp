@@ -170,35 +170,38 @@ void APaceNotesActor::Playing(float DeltaTime){
 }
 
 void APaceNotesActor::FindAngle(int& i) {
-	if (angles_[i] >= 0 && angles_[i] < 20) {
+	if (angles_[i] >= 180){//flat
+		pacenotes_array.Add(17);
+	}
+	else if (angles_[i] >= 165 && angles_[i] < 180) {//6
 		pacenotes_array.Add(16);
 		FindDirection(i, pacenotes_array.Num()-1, 16);
 	}
-	else if (angles_[i] >= 20 && angles_[i] < 35) {
+	else if (angles_[i] >= 150 && angles_[i] < 165) {//5
 		pacenotes_array.Add(15);
 		FindDirection(i, pacenotes_array.Num() - 1, 15);
 	}
-	else if (angles_[i] >= 35 && angles_[i] < 50) {
+	else if (angles_[i] >= 135 && angles_[i] < 150) {//4
 		pacenotes_array.Add(14);
 		FindDirection(i, pacenotes_array.Num() - 1, 14);
 	}
-	else if (angles_[i] >= 50 && angles_[i] < 65) {
+	else if (angles_[i] >= 120 && angles_[i] < 135) {//3
 		pacenotes_array.Add(13);
 		FindDirection(i, pacenotes_array.Num() - 1, 13);
 	}
-	else if (angles_[i] >= 65 && angles_[i] < 75) {
+	else if (angles_[i] >= 105 && angles_[i] < 120) {//2
 		pacenotes_array.Add(12);
 		FindDirection(i, pacenotes_array.Num() - 1, 12);
 	}
-	else if (angles_[i] >= 75 && angles_[i] < 89) {
+	else if (angles_[i] >= 91 && angles_[i] < 105) {//1
 		pacenotes_array.Add(11);
 		FindDirection(i, pacenotes_array.Num() - 1, 11);
 	}
-	else if (angles_[i] >= 89 && angles_[i]<91) {
+	else if (angles_[i] == 90 ) {//sq
 		pacenotes_array.Add(10);
 		FindDirection(i, pacenotes_array.Num() - 1, 10);
 	}
-	else if(angles_[i] >= 91 ) {
+	else if(angles_[i] <90 ) {//hp
 		pacenotes_array.Add(9);
 		FindDirection(i, pacenotes_array.Num() - 1, 9);
 	}

@@ -38,8 +38,6 @@ TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_, const in
 	texture_->AddToRoot();
 
 	TArray<float> temp_arr;
-	//since grey scale already. each rgb component should be greyscale value. therefore no need to add up and divide by 3.
-	//rgb comp is uint8 value. so, use this as the height and modifiy the height of terrain.
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
 	heightmap_h_ = texture_->PlatformData->Mips[0].SizeY;
 	heightmap_w_ = texture_->PlatformData->Mips[0].SizeX;
