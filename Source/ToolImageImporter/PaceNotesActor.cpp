@@ -203,7 +203,7 @@ void APaceNotesActor::FindAngle(int& i) {
 	}
 	else if(angles_[i] <90 ) {//hp
 		pacenotes_array.Add(9);
-		FindDirection(i, pacenotes_array.Num() - 1, 9);
+		FindDirection(i, pacenotes_array.Num() - 1, 19);
 	}
 	FindSmallDist(i);
 }
