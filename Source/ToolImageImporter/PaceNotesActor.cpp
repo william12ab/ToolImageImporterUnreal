@@ -219,15 +219,15 @@ void APaceNotesActor::FindAngle(int& i) {
 void APaceNotesActor::FindSmallDist(int&i) {
 	//checking if next length is short
 	bool is_added = false;
-	if (lengths_[i + 1] < 10) {
+	if (lengths_[i + 1] < 5) {
 		pacenotes_array.Add(20);//tighten/widen
 		is_added = true;
 	}
-	else if (lengths_[i + 1] >= 10 && lengths_[i + 1] < 20) {
+	else if (lengths_[i + 1] >= 5 && lengths_[i + 1] < 10) {
 		pacenotes_array.Add(21);//into
 		is_added = true;
 	}
-	else if (lengths_[i + 1] >= 20&& lengths_[i + 1] < 30) {
+	else if (lengths_[i + 1] >= 10&& lengths_[i + 1] < 20) {
 		pacenotes_array.Add(22);//and
 		is_added = true;
 	}
