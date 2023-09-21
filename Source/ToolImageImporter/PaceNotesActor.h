@@ -35,6 +35,7 @@ protected:
 	int turn_counter;
 	int turn_counter_called;
 	int index_;
+	bool is_end_played;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -62,10 +63,15 @@ public:
 	void PlayNote(const float& DeltaTime, const int& index);
 	void FindSmallDist(int& i);
 	void PlayFirstNote();
+	void SetForEnd();
 	//comps
 
 	UAudioComponent* current_comp;
 	//sound cues
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* straight_cue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+		class USoundCue* finish_cue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* hunder_cue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))

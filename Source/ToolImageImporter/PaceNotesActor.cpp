@@ -10,7 +10,16 @@ APaceNotesActor::APaceNotesActor(){
 	is_playing = false;
 	turn_counter = 0;
 	turn_counter_called = 0;
-	index_ = 0;
+	index_ = 0; 
+	is_end_played = false;
+	static ConstructorHelpers::FObjectFinder<USoundCue> strobj(TEXT("SoundCue'/Game/Sound/pacenotes/straight_Cue.straight_Cue'"));
+	if (strobj.Succeeded()) {
+		straight_cue = strobj.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<USoundCue> finobj(TEXT("SoundCue'/Game/Sound/pacenotes/and_finish_Cue.and_finish_Cue'"));
+	if (finobj.Succeeded()) {
+		finish_cue = finobj.Object;
+	}
 	static ConstructorHelpers::FObjectFinder<USoundCue> hobj(TEXT("SoundCue'/Game/Sound/pacenotes/100_Cue.100_Cue'"));
 	if (hobj.Succeeded()) {
 		hunder_cue = hobj.Object;
@@ -210,15 +219,15 @@ void APaceNotesActor::FindAngle(int& i) {
 void APaceNotesActor::FindSmallDist(int&i) {
 	//checking if next length is short
 	bool is_added = false;
-	if (lengths_[i + 1] < 5) {
+	if (lengths_[i + 1] < 10) {
 		pacenotes_array.Add(20);//tighten/widen
 		is_added = true;
 	}
-	else if (lengths_[i + 1] >= 5 && lengths_[i + 1] < 15) {
+	else if (lengths_[i + 1] >= 10 && lengths_[i + 1] < 20) {
 		pacenotes_array.Add(21);//into
 		is_added = true;
 	}
-	else if (lengths_[i + 1] >= 15 && lengths_[i + 1] < 25) {
+	else if (lengths_[i + 1] >= 20&& lengths_[i + 1] < 30) {
 		pacenotes_array.Add(22);//and
 		is_added = true;
 	}
@@ -228,7 +237,6 @@ void APaceNotesActor::FindSmallDist(int&i) {
 			i++;
 			index_ = i;
 			FindAngle(i);
-
 		}
 	}
 }
@@ -284,6 +292,11 @@ void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const 
 					note_count++;
 					is_played = true;
 					
+					if (note_count=(pacenotes_array.Num()-1)&&!is_end_played){
+						cues_.Add(finish_cue);
+						note_count++;
+						is_end_played = true;
+					}
 				}
 			}
 		}
@@ -296,12 +309,21 @@ void APaceNotesActor::PlayFirstNote() {
 	is_played = true;
 }
 
+void APaceNotesActor::SetForEnd() {
+	if (pacenotes_array[pacenotes_array.Num()-1]==22|| pacenotes_array[pacenotes_array.Num() - 1]==20|| pacenotes_array[pacenotes_array.Num() - 1] == 20 || 21){
+		pacenotes_array[pacenotes_array.Num() - 1] = 23;
+	}
+	else {
+		pacenotes_array.Add(23);
+	}
+}
+
 void APaceNotesActor::PlayNextNote() {
 	if (note_count < pacenotes_array.Num()) {
 		//UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), note_count);
 		switch (pacenotes_array[note_count])
 		{
-		case 16: {//l6
+		case 17: {//straight
 			cues_.Add(six_l_cue);
 			turn_counter_called++;
 			break;
@@ -435,6 +457,15 @@ void APaceNotesActor::PlayAddition() {
 			//and
 			cues_.Add(and_cue);
 			note_count++;
+			break;
+		}
+		case 23: {
+			if (!is_end_played) {
+				cues_.Add(finish_cue);
+				note_count++;
+				is_addition = true;
+				is_end_played = true;
+			}
 			break;
 		}
 		}
