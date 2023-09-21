@@ -227,7 +227,7 @@ void APaceNotesActor::FindSmallDist(int&i) {
 		pacenotes_array.Add(21);//into
 		is_added = true;
 	}
-	else if (lengths_[i + 1] >= 10&& lengths_[i + 1] < 20) {
+	else if (lengths_[i + 1] >= 10&& lengths_[i + 1] < 15) {
 		pacenotes_array.Add(22);//and
 		is_added = true;
 	}

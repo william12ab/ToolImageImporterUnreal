@@ -19,7 +19,7 @@ void UUIWidget::NativeConstruct() {
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::ResizeMesh);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 	pace_notes_actor = Cast<APaceNotesActor>(UGameplayStatics::GetActorOfClass(GetWorld(), APaceNotesActor::StaticClass()));
-
+	
 	is_decal_spawn = false;
 	point_type = false;
 	is_chunking = level_loader.ReadMetaFile();

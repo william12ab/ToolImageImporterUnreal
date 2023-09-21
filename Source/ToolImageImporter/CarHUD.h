@@ -24,9 +24,10 @@ public:
 
 protected:
 	class UTexture2D* pause_background_tex;
-
+	TArray<UTexture2D*>pacenote_images;
 	FColor white_;
 	FColor red_;
 	FText r_unit;
 	FText v_unit;
+	TArray<FFCanvasTextItem> pacenote_items;
 };
