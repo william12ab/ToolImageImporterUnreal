@@ -12,6 +12,7 @@
 #include "CanvasItem.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/Engine.h"
+#include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 ACarHUD::ACarHUD(){
 	static ConstructorHelpers::FObjectFinder<UFont> Font(TEXT("/Game/ui_font"));
@@ -51,7 +52,8 @@ ACarHUD::ACarHUD(){
 	red_.R = 208; red_.G = 34; red_.B = 65; red_.A = 255.f;
 	r_unit = FText::FromString("RPM");
 	v_unit = FText::FromString("KPH");
-	
+	pace_notes_actor = Cast<APaceNotesActor>(UGameplayStatics::GetActorOfClass(GetWorld(), APaceNotesActor::StaticClass()));
+
 }
 
 void ACarHUD::DrawHUD(){

@@ -36,6 +36,7 @@ protected:
 	int turn_counter_called;
 	int index_;
 	bool is_end_played;
+	TArray<int> notes_to_display;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,6 +50,7 @@ public:
 	TArray<int> GetInclines() { return inclines_; }
 	TArray<int> GetWidths() { return widths_; }
 	TArray<int> GetDirections() { return directions_; }
+	TArray<int> GetNotesToDisplay() { return notes_to_display; }
 	void SetLengths(const TArray<int>&v) { lengths_ = v; }
 	void SetAngles(const TArray<int>& v) { angles_ = v; }
 	void SetInclines(const TArray<int>& v) { inclines_ = v; }
@@ -64,6 +66,8 @@ public:
 	void FindSmallDist(int& i);
 	void PlayFirstNote();
 	void SetForEnd();
+
+	void AddSwitch(const int& note, USoundCue* cue_,const bool &is_addition_);
 	//comps
 
 	UAudioComponent* current_comp;
