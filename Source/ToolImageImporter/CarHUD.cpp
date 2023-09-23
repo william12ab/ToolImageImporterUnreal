@@ -79,8 +79,6 @@ void ACarHUD::DrawHUD(){
 			FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
 			Canvas->DrawItem(units_r_text_item);
 
-
-
 			//positions see note for order
 			const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.15f);
 			const float y_position = Center.Y - (pacenote_images[0]->GetSurfaceHeight() * 0.5f);

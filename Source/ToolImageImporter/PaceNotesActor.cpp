@@ -12,127 +12,127 @@ APaceNotesActor::APaceNotesActor(){
 	turn_counter_called = 0;
 	index_ = 0; 
 	is_end_played = false;
-	static ConstructorHelpers::FObjectFinder<USoundCue> strobj(TEXT("SoundCue'/Game/Sound/pacenotes/straight_Cue.straight_Cue'"));
-	if (strobj.Succeeded()) {
-		straight_cue = strobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> finobj(TEXT("SoundCue'/Game/Sound/pacenotes/and_finish_Cue.and_finish_Cue'"));
-	if (finobj.Succeeded()) {
-		finish_cue = finobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> hobj(TEXT("SoundCue'/Game/Sound/pacenotes/100_Cue.100_Cue'"));
-	if (hobj.Succeeded()) {
-		hunder_cue = hobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> hfobj(TEXT("SoundCue'/Game/Sound/pacenotes/150_Cue.150_Cue'"));
-	if (hfobj.Succeeded()) {
-		hunderf_cue = hfobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> thobj(TEXT("SoundCue'/Game/Sound/pacenotes/200_Cue.200_Cue'"));
-	if (thobj.Succeeded()) {
-		twohunder_cue = thobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> olobj(TEXT("SoundCue'/Game/Sound/pacenotes/1_left_Cue.1_left_Cue'"));
-	if (olobj.Succeeded()) {
-		one_l_cue = olobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> orobj(TEXT("SoundCue'/Game/Sound/pacenotes/1_right_Cue.1_right_Cue'"));
-	if (orobj.Succeeded()) {
-		one_r_cue = orobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> tobj(TEXT("SoundCue'/Game/Sound/pacenotes/2_left_Cue.2_left_Cue'"));
-	if (tobj.Succeeded()) {
-		two_l_cue = tobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> trobj(TEXT("SoundCue'/Game/Sound/pacenotes/2_right_Cue.2_right_Cue'"));
-	if (trobj.Succeeded()) {
-		two_r_cue = trobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> thlobj(TEXT("SoundCue'/Game/Sound/pacenotes/3_left_Cue.3_left_Cue'"));
-	if (thlobj.Succeeded()) {
-		three_l_cue = thlobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> throbj(TEXT("SoundCue'/Game/Sound/pacenotes/3_right_Cue.3_right_Cue'"));
-	if (throbj.Succeeded()) {
-		three_r_cue = throbj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> fobj(TEXT("SoundCue'/Game/Sound/pacenotes/4_left_Cue.4_left_Cue'"));
-	if (fobj.Succeeded()) {
-		four_l_cue = fobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> frobj(TEXT("SoundCue'/Game/Sound/pacenotes/4_right_Cue.4_right_Cue'"));
-	if (frobj.Succeeded()) {
-		four_r_cue = frobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> fvobj(TEXT("SoundCue'/Game/Sound/pacenotes/5_left_Cue.5_left_Cue'"));
-	if (fvobj.Succeeded()) {
-		five_l_cue = fvobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> fvrobj(TEXT("SoundCue'/Game/Sound/pacenotes/5_right_Cue.5_right_Cue'"));
-	if (fvrobj.Succeeded()) {
-		five_r_cue = fvrobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> sobj(TEXT("SoundCue'/Game/Sound/pacenotes/6_left_Cue.6_left_Cue'"));
-	if (sobj.Succeeded()) {
-		six_l_cue = sobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> srobj(TEXT("SoundCue'/Game/Sound/pacenotes/6_right_Cue.6_right_Cue'"));
-	if (srobj.Succeeded()) {
-		six_r_cue = srobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> hplobj(TEXT("SoundCue'/Game/Sound/pacenotes/hairpin_left_Cue.hairpin_left_Cue'"));
-	if (hplobj.Succeeded()) {
-		hp_l_cue = hplobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> hprobj(TEXT("SoundCue'/Game/Sound/pacenotes/hairpin_right_Cue.hairpin_right_Cue'"));
-	if (hprobj.Succeeded()) {
-		hp_r_cue = hprobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> sqobj(TEXT("SoundCue'/Game/Sound/pacenotes/hard_left_Cue.hard_left_Cue'"));
-	if (sqobj.Succeeded()) {
-		sq_l_cue = sqobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> sqrobj(TEXT("SoundCue'/Game/Sound/pacenotes/hard_right_Cue.hard_right_Cue'"));
-	if (sqrobj.Succeeded()) {
-		sq_r_cue = sqrobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> intobj(TEXT("SoundCue'/Game/Sound/pacenotes/into_Cue.into_Cue'"));
-	if (intobj.Succeeded()) {
-		into_cue = intobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> andobj(TEXT("SoundCue'/Game/Sound/pacenotes/and_Cue.and_Cue'"));
-	if (andobj.Succeeded()) {
-		and_cue = andobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> tightenobj(TEXT("SoundCue'/Game/Sound/pacenotes/tightens_Cue.tightens_Cue'"));
-	if (tightenobj.Succeeded()) {
-		tighten_cue = tightenobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> shortobj(TEXT("SoundCue'/Game/Sound/pacenotes/short_Cue.short_Cue'"));
-	if (shortobj.Succeeded()) {
-		short_cue = shortobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> restobj(TEXT("SoundCue'/Game/Sound/pacenotes/over_crest_Cue.over_crest_Cue'"));
-	if (restobj.Succeeded()) {
-		crest_cue = restobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> openobj(TEXT("SoundCue'/Game/Sound/pacenotes/opens_Cue.opens_Cue'"));
-	if (openobj.Succeeded()) {
-		open_cue = openobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> narrowobj(TEXT("SoundCue'/Game/Sound/pacenotes/narrow_archway_Cue.narrow_archway_Cue'"));
-	if (narrowobj.Succeeded()) {
-		narrow_cue = narrowobj.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<USoundCue> longobj(TEXT("SoundCue'/Game/Sound/pacenotes/long_Cue.long_Cue'"));
-	if (longobj.Succeeded()) {
-		long_cue = longobj.Object;
-	}
-	
-	static ConstructorHelpers::FObjectFinder<USoundCue> dipobj(TEXT("SoundCue'/Game/Sound/pacenotes/dip_Cue.dip_Cue'"));
-	if (dipobj.Succeeded()) {
-		dip_cue = dipobj.Object;
-	}
+		static ConstructorHelpers::FObjectFinder<USoundCue> strobj(TEXT("SoundCue'/Game/Sound/pacenotes/straight_Cue.straight_Cue'"));
+		if (strobj.Succeeded()) {
+			straight_cue = strobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> finobj(TEXT("SoundCue'/Game/Sound/pacenotes/and_finish_Cue.and_finish_Cue'"));
+		if (finobj.Succeeded()) {
+			finish_cue = finobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> hobj(TEXT("SoundCue'/Game/Sound/pacenotes/100_Cue.100_Cue'"));
+		if (hobj.Succeeded()) {
+			hunder_cue = hobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> hfobj(TEXT("SoundCue'/Game/Sound/pacenotes/150_Cue.150_Cue'"));
+		if (hfobj.Succeeded()) {
+			hunderf_cue = hfobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> thobj(TEXT("SoundCue'/Game/Sound/pacenotes/200_Cue.200_Cue'"));
+		if (thobj.Succeeded()) {
+			twohunder_cue = thobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> olobj(TEXT("SoundCue'/Game/Sound/pacenotes/1_left_Cue.1_left_Cue'"));
+		if (olobj.Succeeded()) {
+			one_l_cue = olobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> orobj(TEXT("SoundCue'/Game/Sound/pacenotes/1_right_Cue.1_right_Cue'"));
+		if (orobj.Succeeded()) {
+			one_r_cue = orobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> tobj(TEXT("SoundCue'/Game/Sound/pacenotes/2_left_Cue.2_left_Cue'"));
+		if (tobj.Succeeded()) {
+			two_l_cue = tobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> trobj(TEXT("SoundCue'/Game/Sound/pacenotes/2_right_Cue.2_right_Cue'"));
+		if (trobj.Succeeded()) {
+			two_r_cue = trobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> thlobj(TEXT("SoundCue'/Game/Sound/pacenotes/3_left_Cue.3_left_Cue'"));
+		if (thlobj.Succeeded()) {
+			three_l_cue = thlobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> throbj(TEXT("SoundCue'/Game/Sound/pacenotes/3_right_Cue.3_right_Cue'"));
+		if (throbj.Succeeded()) {
+			three_r_cue = throbj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> fobj(TEXT("SoundCue'/Game/Sound/pacenotes/4_left_Cue.4_left_Cue'"));
+		if (fobj.Succeeded()) {
+			four_l_cue = fobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> frobj(TEXT("SoundCue'/Game/Sound/pacenotes/4_right_Cue.4_right_Cue'"));
+		if (frobj.Succeeded()) {
+			four_r_cue = frobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> fvobj(TEXT("SoundCue'/Game/Sound/pacenotes/5_left_Cue.5_left_Cue'"));
+		if (fvobj.Succeeded()) {
+			five_l_cue = fvobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> fvrobj(TEXT("SoundCue'/Game/Sound/pacenotes/5_right_Cue.5_right_Cue'"));
+		if (fvrobj.Succeeded()) {
+			five_r_cue = fvrobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> sobj(TEXT("SoundCue'/Game/Sound/pacenotes/6_left_Cue.6_left_Cue'"));
+		if (sobj.Succeeded()) {
+			six_l_cue = sobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> srobj(TEXT("SoundCue'/Game/Sound/pacenotes/6_right_Cue.6_right_Cue'"));
+		if (srobj.Succeeded()) {
+			six_r_cue = srobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> hplobj(TEXT("SoundCue'/Game/Sound/pacenotes/hairpin_left_Cue.hairpin_left_Cue'"));
+		if (hplobj.Succeeded()) {
+			hp_l_cue = hplobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> hprobj(TEXT("SoundCue'/Game/Sound/pacenotes/hairpin_right_Cue.hairpin_right_Cue'"));
+		if (hprobj.Succeeded()) {
+			hp_r_cue = hprobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> sqobj(TEXT("SoundCue'/Game/Sound/pacenotes/hard_left_Cue.hard_left_Cue'"));
+		if (sqobj.Succeeded()) {
+			sq_l_cue = sqobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> sqrobj(TEXT("SoundCue'/Game/Sound/pacenotes/hard_right_Cue.hard_right_Cue'"));
+		if (sqrobj.Succeeded()) {
+			sq_r_cue = sqrobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> intobj(TEXT("SoundCue'/Game/Sound/pacenotes/into_Cue.into_Cue'"));
+		if (intobj.Succeeded()) {
+			into_cue = intobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> andobj(TEXT("SoundCue'/Game/Sound/pacenotes/and_Cue.and_Cue'"));
+		if (andobj.Succeeded()) {
+			and_cue = andobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> tightenobj(TEXT("SoundCue'/Game/Sound/pacenotes/tightens_Cue.tightens_Cue'"));
+		if (tightenobj.Succeeded()) {
+			tighten_cue = tightenobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> shortobj(TEXT("SoundCue'/Game/Sound/pacenotes/short_Cue.short_Cue'"));
+		if (shortobj.Succeeded()) {
+			short_cue = shortobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> restobj(TEXT("SoundCue'/Game/Sound/pacenotes/over_crest_Cue.over_crest_Cue'"));
+		if (restobj.Succeeded()) {
+			crest_cue = restobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> openobj(TEXT("SoundCue'/Game/Sound/pacenotes/opens_Cue.opens_Cue'"));
+		if (openobj.Succeeded()) {
+			open_cue = openobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> narrowobj(TEXT("SoundCue'/Game/Sound/pacenotes/narrow_archway_Cue.narrow_archway_Cue'"));
+		if (narrowobj.Succeeded()) {
+			narrow_cue = narrowobj.Object;
+		}
+		static ConstructorHelpers::FObjectFinder<USoundCue> longobj(TEXT("SoundCue'/Game/Sound/pacenotes/long_Cue.long_Cue'"));
+		if (longobj.Succeeded()) {
+			long_cue = longobj.Object;
+		}
+
+		static ConstructorHelpers::FObjectFinder<USoundCue> dipobj(TEXT("SoundCue'/Game/Sound/pacenotes/dip_Cue.dip_Cue'"));
+		if (dipobj.Succeeded()) {
+			dip_cue = dipobj.Object;
+		}
 	current_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("currents"));
 	current_comp->SetupAttachment(RootComponent);
 }
@@ -257,6 +257,9 @@ void APaceNotesActor::FindOrder() {
 			FindAngle(index_);
 		}
 	}
+	for (int i = 0; i < pacenotes_array.Num(); i++) {
+		UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), pacenotes_array[i]);
+	}
 }
 
 void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const FVector2D& p3) {
@@ -318,12 +321,6 @@ void APaceNotesActor::SetForEnd() {
 void APaceNotesActor::AddSwitch(const int& note,USoundCue*cue_,const bool& is_addition_) {
 	cues_.Add(cue_);
 	notes_to_display.Add(note);
-	turn_counter_called++;
-	note_count++;
-	if (!is_addition_) {
-		PlayNextNote();
-	}
-
 }
 
 void APaceNotesActor::PlayNextNote() {
@@ -332,82 +329,105 @@ void APaceNotesActor::PlayNextNote() {
 		switch (pacenotes_array[note_count])
 		{
 		case 17: {//straight
-			AddSwitch(22,six_l_cue,false);
+			turn_counter_called++;
+			AddSwitch(22,six_l_cue,true);
 			break;
 		}
 		case 1: {//100
+			note_count++;
 			AddSwitch(1, hunder_cue, false);
+			PlayNextNote();
 			break;
 		}
 		case 2: {//150
+			note_count++;
 			AddSwitch(2, hunderf_cue, false);
+			PlayNextNote();
 			break;
 		}
 		case 3: {//200
+			note_count++;
 			AddSwitch(3, twohunder_cue, false);
+			PlayNextNote();
 			break;
 		}
 		case 56: {//l6
+			turn_counter_called++;
 			AddSwitch(22, six_l_cue, false);
 			break;
 		}
 		case 55: {//l5
+			turn_counter_called++;
 			AddSwitch(20, five_l_cue, false);
 			break;
 		}
 		case 54: {//l4
+			turn_counter_called++;
 			AddSwitch(18, four_l_cue, false);
 			break;
 		}
 		case 53: {//l3
+			turn_counter_called++;
 			AddSwitch(16, three_l_cue, false);
 			break;
 		}
 		case 52: {//l2
+			turn_counter_called++;
 			AddSwitch(14, two_l_cue, false);
 			break;
 		}
 		case 51: {//l1
+			turn_counter_called++;
 			AddSwitch(12, one_l_cue, false);
 			break;
 		}
 		case 50: {//sql
+			turn_counter_called++;
 			AddSwitch(10, sq_l_cue, false);
 			break;
 		}
 		case 59: {//hpl
+			turn_counter_called++;
 			AddSwitch(5, hp_l_cue, false);
 			break;
 		}
 		case 66: {//r6
+			turn_counter_called++;
 			AddSwitch(23, six_r_cue, false);
 			break;
 		}
-		case 65: {//r5			
+		case 65: {//r5		
+			turn_counter_called++;
 			AddSwitch(21, five_r_cue, false);
 			break;
 		}
 		case 64: {//r4
+			turn_counter_called++;
 			AddSwitch(19, four_r_cue, false);
 			break;
 		}
 		case 63: {//r3
+			turn_counter_called++;
 			AddSwitch(17, three_r_cue, false);
 			break;
 		}
 		case 62: {//r2
+			turn_counter_called++;
 			AddSwitch(15, two_r_cue, false);
 			break;
 		}
 		case 61: {//r1
+			turn_counter_called++;
 			AddSwitch(13, one_r_cue, false);
 			break;
 		}
 		case 60: {//sqr
+			turn_counter_called++;
 			AddSwitch(9, sq_r_cue, false);
 			break;
 		}
 		case 69: {//hpr
+			turn_counter_called++;
 			AddSwitch(6, hp_r_cue, false);
 			break;
 		}
@@ -424,24 +444,28 @@ void APaceNotesActor::PlayAddition() {
 		case 20: {
 			is_addition = true;
 			//tightens/widens
+			note_count++;
 			AddSwitch(11, tighten_cue, true);
 			break;
 		}
 		case 21: {
 			is_addition = true;
 			//into
+			note_count++;
 			AddSwitch(7, into_cue, true);
 			break;
 		}
 		case 22: {
 			is_addition = true;
 			//and
+			note_count++;
 			AddSwitch(4, and_cue, true);
 			break;
 		}
 		case 23: {
 			if (!is_end_played) {
 				AddSwitch(24, finish_cue, true);
+				note_count++;
 				is_addition = true;
 				is_end_played = true;
 			}

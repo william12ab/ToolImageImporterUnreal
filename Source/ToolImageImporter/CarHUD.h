@@ -3,6 +3,7 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "PaceNotesActor.h"
+#include <Runtime/Engine/Public/CanvasItem.h>
 #include "CarHUD.generated.h"
 
 UCLASS()
@@ -30,7 +31,7 @@ protected:
 	FColor red_;
 	FText r_unit;
 	FText v_unit;
-	TArray<FFCanvasTextItem> pacenote_items;
+	TArray<FCanvasTextItem> pacenote_items;
 	APaceNotesActor* pace_notes_actor;
 
 };
