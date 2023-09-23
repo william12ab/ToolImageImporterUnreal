@@ -19,9 +19,11 @@ public:
 
 
 	void DrawPauseMenu(const FVector2D& scale_vec);
-
+	void ShowNote();
+	void DisplayNote(const int& index, const FVector2D& position_, FTexture* texture);
 	// Begin AHUD interface
 	virtual void DrawHUD() override;
+
 	// End AHUD interface
 
 protected:
@@ -31,6 +33,8 @@ protected:
 	FColor red_;
 	FText r_unit;
 	FText v_unit;
-	TArray<FCanvasTextItem> pacenote_items;
+	TArray<FCanvasTileItem> pacenote_items;
 	APaceNotesActor* pace_notes_actor;
+
+	bool is_drawing;
 };

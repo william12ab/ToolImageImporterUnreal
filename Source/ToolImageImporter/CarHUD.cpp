@@ -46,14 +46,17 @@ ACarHUD::ACarHUD(){
 			// You can log an error or take appropriate action here.
 		}
 	}
-	static ConstructorHelpers::FObjectFinder<UTexture2D> TextureFinder(*TexturePaths[5]);
-	pacenote_images[5]= TextureFinder.Object;
 	white_.R = 255; white_.G = 250; white_.B = 239; white_.A = 255.f;
 	red_.R = 208; red_.G = 34; red_.B = 65; red_.A = 255.f;
 	r_unit = FText::FromString("RPM");
 	v_unit = FText::FromString("KPH");
 	pace_notes_actor = Cast<APaceNotesActor>(UGameplayStatics::GetActorOfClass(GetWorld(), APaceNotesActor::StaticClass()));
 
+	for (int i = 0; i < 5; i++){
+		const FVector2D position_(0, 0);
+		FCanvasTileItem temp(position_, pacenote_images[0]->Resource, FLinearColor::Transparent);
+		pacenote_items.Add(temp);
+	}
 }
 
 void ACarHUD::DrawHUD(){
@@ -79,14 +82,67 @@ void ACarHUD::DrawHUD(){
 			FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
 			Canvas->DrawItem(units_r_text_item);
 
-			//positions see note for order
-			const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.15f);
-			const float y_position = Center.Y - (pacenote_images[0]->GetSurfaceHeight() * 0.5f);
-			const FVector2D position_four((Center.X - (pacenote_images[0]->GetSurfaceWidth() * 0.5)),(y_position));
-			const FVector2D position_three((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 1.6)), (y_position));
-			const FVector2D position_two((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 2.7)), (y_position));
-			const FVector2D position_one((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 3.8)), (y_position));
-			const FVector2D position_five((Center.X + (pacenote_images[6]->GetSurfaceWidth() * 0.6)), (y_position));
+			ShowNote();
+			if (is_drawing){
+				for (int i = 0; i < 5; i++) {
+					Canvas->DrawItem(pacenote_items[i]);
+				}
+			}
+		}
+	}
+}
+
+void ACarHUD::DisplayNote(const int& index,const FVector2D& position_, FTexture* texture) {
+	FCanvasTileItem temp(position_, texture, FLinearColor::White);
+	pacenote_items[index]=temp;
+	pacenote_items[index].BlendMode = SE_BLEND_Translucent;
+}
+
+
+void ACarHUD::ShowNote() {
+	//positions see note for order
+	const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.15f);
+	const float y_position = Center.Y - (pacenote_images[0]->GetSurfaceHeight() * 0.5f);
+	const FVector2D position_four((Center.X - (pacenote_images[0]->GetSurfaceWidth() * 0.5)), (y_position));
+	const FVector2D position_three((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 1.6)), (y_position));
+	const FVector2D position_two((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 2.7)), (y_position));
+	const FVector2D position_one((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 3.8)), (y_position));
+	const FVector2D position_zero((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 4.9)), (y_position));
+	const FVector2D position_five((Center.X + (pacenote_images[6]->GetSurfaceWidth() * 0.6)), (y_position));
+	if (pace_notes_actor->GetNotesToDisplay().IsValidIndex(0)){
+		switch (pace_notes_actor->GetNotesToDisplay().Num()) {
+		case 1: {
+			DisplayNote(0, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]]->Resource);
+			is_drawing = true;
+			//set to 4, wait 2 secs remove
+			break; 
+		}
+		case 2: {
+			DisplayNote(1, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]]->Resource);
+			is_drawing = true;
+			//set to 3,4
+			break; 
+		}
+		case 3: {
+			DisplayNote(1, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]]->Resource);
+			is_drawing = true;
+			break;
+		}
+		case 4: {
+			DisplayNote(1, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]]->Resource);
+			is_drawing = true;
+			break; 
+		}
+		case 5: {
+			DisplayNote(1, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]]->Resource);
+			is_drawing = true;
+			break;
+		}
+		case 6: {
+			DisplayNote(1, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]]->Resource);
+			is_drawing = true;
+			break;
+		}
 		}
 	}
 }
