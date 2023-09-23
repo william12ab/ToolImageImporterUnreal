@@ -257,6 +257,7 @@ void APaceNotesActor::FindOrder() {
 			FindAngle(index_);
 		}
 	}
+	pacenotes_array.Add(23);
 	for (int i = 0; i < pacenotes_array.Num(); i++) {
 		UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), pacenotes_array[i]);
 	}
@@ -291,12 +292,6 @@ void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const 
 					PlayNextNote();
 					note_count++;
 					is_played = true;
-					
-					if (note_count=(pacenotes_array.Num()-1)&&!is_end_played){
-						cues_.Add(finish_cue);
-						note_count++;
-						is_end_played = true;
-					}
 				}
 			}
 		}
@@ -463,12 +458,9 @@ void APaceNotesActor::PlayAddition() {
 			break;
 		}
 		case 23: {
-			if (!is_end_played) {
-				AddSwitch(24, finish_cue, true);
-				note_count++;
-				is_addition = true;
-				is_end_played = true;
-			}
+			AddSwitch(24, finish_cue, true);
+			note_count++;
+			is_addition = false;
 			break;
 		}
 		}

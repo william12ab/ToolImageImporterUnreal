@@ -33,5 +33,4 @@ protected:
 	FText v_unit;
 	TArray<FCanvasTextItem> pacenote_items;
 	APaceNotesActor* pace_notes_actor;
-
 };
