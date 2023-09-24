@@ -317,6 +317,9 @@ void APaceNotesActor::AddSwitch(const int& note,USoundCue*cue_,const bool& is_ad
 	cues_.Add(cue_);
 	notes_to_display.Add(note);
 }
+void APaceNotesActor::EmptyArray() {
+	notes_to_display.Empty();
+}
 
 void APaceNotesActor::PlayNextNote() {
 	if (note_count < pacenotes_array.Num()) {

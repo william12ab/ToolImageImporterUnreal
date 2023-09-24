@@ -4,6 +4,8 @@
 #include "Components/Image.h"
 #include "PaceNotesActor.h"
 #include <Runtime/Engine/Public/CanvasItem.h>
+#include <iostream>
+#include <chrono>
 #include "CarHUD.generated.h"
 
 UCLASS()
@@ -21,6 +23,7 @@ public:
 	void DrawPauseMenu(const FVector2D& scale_vec);
 	void ShowNote();
 	void DisplayNote(const int& index, const FVector2D& position_, FTexture* texture);
+	void ClearNotes();
 	// Begin AHUD interface
 	virtual void DrawHUD() override;
 
@@ -37,4 +40,6 @@ protected:
 	APaceNotesActor* pace_notes_actor;
 
 	bool is_drawing;
+	bool is_timer_started;
+	std::chrono::steady_clock::time_point start;
 };

@@ -37,6 +37,7 @@ protected:
 	int index_;
 	bool is_end_played;
 	TArray<int> notes_to_display;
+	float last_note_duration;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -66,6 +67,8 @@ public:
 	void FindSmallDist(int& i);
 	void PlayFirstNote();
 	void SetForEnd();
+
+	void EmptyArray();
 
 	void AddSwitch(const int& note, USoundCue* cue_,const bool &is_addition_);
 	//comps
