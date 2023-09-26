@@ -38,8 +38,10 @@ protected:
 	FText v_unit;
 	TArray<FCanvasTileItem> pacenote_items;
 	APaceNotesActor* pace_notes_actor;
-
+	TArray<int> extra_array;
+	bool is_extra;
 	bool is_drawing;
 	bool is_timer_started;
 	std::chrono::steady_clock::time_point start;
+	int notes_displayed;
 };

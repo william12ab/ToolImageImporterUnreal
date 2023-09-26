@@ -58,6 +58,7 @@ public:
 	void SetWidths(const TArray<int>& v) { widths_= v; }
 	void SetDirections(const TArray<int>& v) { directions_ = v; }
 	void SetTurnCounter(const int& a) { turn_counter = a; }
+	void SetExtraNotes(const TArray<int>& v) { notes_to_display = v; }
 	void PlayNextNote();
 	void PlayAddition();
 	void SetIsPlayed() { is_played = false; }
@@ -69,7 +70,7 @@ public:
 	void SetForEnd();
 
 	void EmptyArray();
-
+	void RemoveSix();
 	void AddSwitch(const int& note, USoundCue* cue_,const bool &is_addition_);
 	//comps
 

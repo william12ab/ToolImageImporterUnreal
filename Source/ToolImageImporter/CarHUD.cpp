@@ -60,6 +60,8 @@ ACarHUD::ACarHUD(){
 	}
 	is_timer_started = false;
 	is_drawing = false;
+	is_extra = false;
+	notes_displayed = 0;
 }
 
 void ACarHUD::DrawHUD(){
@@ -86,7 +88,6 @@ void ACarHUD::DrawHUD(){
 			Canvas->DrawItem(units_r_text_item);
 
 			ShowNote();
-			
 			for (int i = 0; i < 6; i++) {
 				if (is_drawing){
 					Canvas->DrawItem(pacenote_items[i]);
@@ -101,6 +102,10 @@ void ACarHUD::DrawHUD(){
 						is_drawing = false;
 						is_timer_started = false;
 						ClearNotes();
+						if (is_extra){
+							pace_notes_actor->SetExtraNotes(extra_array);
+							is_extra = false;
+						}
 					}
 				}
 			}
@@ -133,11 +138,22 @@ void ACarHUD::ShowNote() {
 	const FVector2D position_zero((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 4.9)), (y_position));
 	const FVector2D position_five((Center.X + (pacenote_images[6]->GetSurfaceWidth() * 0.6)), (y_position));
 	if (pace_notes_actor->GetNotesToDisplay().IsValidIndex(0)){
+		if (notes_displayed ==0){
+			notes_displayed++;
+			pace_notes_actor->EmptyArray();
+		}
+		if (pace_notes_actor->GetNotesToDisplay().Num()>6){
+			for (size_t i = 3; i < 6; i++){
+				extra_array.Add(pace_notes_actor->GetNotesToDisplay()[i]);
+			}
+			is_extra = true;
+		}
 		switch (pace_notes_actor->GetNotesToDisplay().Num()) {
 		case 1: {
 			DisplayNote(0, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]-1]->Resource);
 			is_drawing = true;
 			pace_notes_actor->EmptyArray();
+			notes_displayed++;
 			break; 
 		}
 		case 2: {
@@ -145,6 +161,7 @@ void ACarHUD::ShowNote() {
 			DisplayNote(1, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[1]-1]->Resource);
 			is_drawing = true;
 			pace_notes_actor->EmptyArray();
+			notes_displayed++;
 			break; 
 		}
 		case 3: {
@@ -153,6 +170,7 @@ void ACarHUD::ShowNote() {
 			DisplayNote(2, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[2]-1]->Resource);
 			is_drawing = true;
 			pace_notes_actor->EmptyArray();
+			notes_displayed++;
 			break;
 		}
 		case 4: {
@@ -162,6 +180,7 @@ void ACarHUD::ShowNote() {
 			DisplayNote(3, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[3]-1]->Resource);
 			is_drawing = true;
 			pace_notes_actor->EmptyArray();
+			notes_displayed++;
 			break;
 		}
 		case 5: {
@@ -172,6 +191,7 @@ void ACarHUD::ShowNote() {
 			DisplayNote(4, position_five, pacenote_images[pace_notes_actor->GetNotesToDisplay()[4]-1]->Resource);
 			is_drawing = true;
 			pace_notes_actor->EmptyArray();
+			notes_displayed++;
 			break;
 		}
 		case 6: {
@@ -183,9 +203,11 @@ void ACarHUD::ShowNote() {
 			DisplayNote(5, position_five, pacenote_images[pace_notes_actor->GetNotesToDisplay()[5]-1]->Resource);
 			is_drawing = true;
 			pace_notes_actor->EmptyArray();
+			notes_displayed++;
 			break;
 		}
 		}
+		
 	}
 }
 

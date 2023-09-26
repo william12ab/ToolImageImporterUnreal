@@ -434,6 +434,10 @@ void APaceNotesActor::PlayNextNote() {
 	PlayAddition();
 }
 
+void APaceNotesActor::RemoveSix() {
+	notes_to_display.RemoveAt(0, 6);
+}
+
 void APaceNotesActor::PlayAddition() {
 	bool is_addition = false;
 	if (note_count + 1 < pacenotes_array.Num()) {
