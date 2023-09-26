@@ -226,7 +226,18 @@ void APaceNotesActor::FindSmallDist(int&i) {
 	//checking if next length is short
 	bool is_added = false;
 	if (lengths_[i + 1] < 5) {
-		pacenotes_array.Add(20);//tighten/widen
+		if (i+1<angles_.Num()){
+			if (angles_[i + 1] > angles_[i]) {
+				pacenotes_array.Add(25);
+			}
+			else {
+				pacenotes_array.Add(20);
+			}
+		}
+		else {
+			pacenotes_array.Add(20);
+		}
+		
 		is_added = true;
 	}
 	else if (lengths_[i + 1] >= 5 && lengths_[i + 1] < 10) {
@@ -474,6 +485,13 @@ void APaceNotesActor::PlayAddition() {
 			AddSwitch(24, finish_cue, true);
 			note_count++;
 			is_addition = false;
+			break;
+		}
+		case 25: {
+			is_addition = true;
+			//tightens/widens
+			note_count++;
+			AddSwitch(8, open_cue, true);
 			break;
 		}
 		}
