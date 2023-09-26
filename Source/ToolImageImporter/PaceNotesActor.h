@@ -136,4 +136,7 @@ public:
 		class USoundCue* short_cue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 		class USoundCue* tighten_cue;
+
+
+	float timert;
 };

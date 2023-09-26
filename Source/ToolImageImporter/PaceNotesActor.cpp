@@ -135,6 +135,7 @@ APaceNotesActor::APaceNotesActor(){
 		}
 	current_comp = CreateDefaultSubobject<UAudioComponent>(TEXT("currents"));
 	current_comp->SetupAttachment(RootComponent);
+	timert = 0.0f;
 }
 
 void APaceNotesActor::BeginPlay(){
@@ -158,17 +159,22 @@ void APaceNotesActor::FindDirection(const int& i, const int&n, const int& a) {
 	//checks direction, modis most recent note, and changes for left and right
 }
 void APaceNotesActor::PlayNote(const float& DeltaTime, const int& index) {
-	accum_time += DeltaTime;
-	if (!is_playing){
-		current_comp->Activate();
-		current_comp->SetSound(cues_[0]);
-		current_comp->Play(0.f);
-		is_playing = true;
-	}
-	if (accum_time > cues_[0]->GetDuration()) {
-		cues_.RemoveAt(0);
-		accum_time = 0.0f;
-		is_playing = false;
+	
+	timert += DeltaTime;
+	UE_LOG(LogTemp, Warning, TEXT("NOTE: %f"),timert);
+	if (timert>2.0f){
+		accum_time += DeltaTime;
+		if (!is_playing) {
+			current_comp->Activate();
+			current_comp->SetSound(cues_[0]);
+			current_comp->Play(0.f);
+			is_playing = true;
+		}
+		if (accum_time > cues_[0]->GetDuration()) {
+			cues_.RemoveAt(0);
+			accum_time = 0.0f;
+			is_playing = false;
+		}
 	}
 }
 
