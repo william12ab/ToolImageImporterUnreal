@@ -34,6 +34,7 @@ void UUIWidget::NativeConstruct() {
 	level_loader.ReadPaceNoteFile(temp_l, temp_a, temp_i, temp_w,temp_d, temp_cp_w);
 	pace_notes_actor->SetLengths(temp_l); pace_notes_actor->SetAngles(temp_a); pace_notes_actor->SetInclines(temp_i); pace_notes_actor->SetWidths(temp_w); pace_notes_actor->SetDirections(temp_d);
 	pace_notes_actor->FindOrder();
+	control_points_multi.SetNum(4);
 	if (is_chunking) {
 		loop_index = 4;
 	}
@@ -86,10 +87,10 @@ void UUIWidget::NativeConstruct() {
 			float z_from_p_mesh = p_mesh->vec_m_verts[i][(yp) * 400 + (xp)].Z;
 			z_height.Add(z_from_p_mesh);
 		}
-		FixControlPoints(i);
-		total_control_points += control_points;
-		
+		control_points_multi[i] = control_points;
+		//total_control_points += control_points;
 	}
+	GetOrderOfControlPoints();
 	if (is_chunking){
 		auto start = high_resolution_clock::now();
 		p_mesh->SetEdges();
@@ -245,28 +246,28 @@ void UUIWidget::CreateTrack(const int& loop_index) {
 }
 
 
-void UUIWidget::FixControlPoints(const int& index_) {
+void UUIWidget::FixControlPoints(const int& index_, TArray<FVector2D>& points_to_fix) {
 	switch (index_)
 	{
 	case 0: {
 		break;
 	}
 	case 1: {
-		for (size_t i = 0; i < control_points.Num(); i++){
-			control_points[i].X += 400;
+		for (size_t i = 0; i < points_to_fix.Num(); i++){
+			points_to_fix[i].X += 400;
 		}
 		break;
 	}
 	case 2: {
-		for (size_t i = 0; i < control_points.Num(); i++) {
-			control_points[i].Y += 400;
+		for (size_t i = 0; i < points_to_fix.Num(); i++) {
+			points_to_fix[i].Y += 400;
 		}
 		break;
 	}
 	case 3: {
-		for (size_t i = 0; i < control_points.Num(); i++) {
-			control_points[i].Y += 400;
-			control_points[i].X += 400;
+		for (size_t i = 0; i < points_to_fix.Num(); i++) {
+			points_to_fix[i].Y += 400;
+			points_to_fix[i].X += 400;
 		}
 		break;
 	}
@@ -651,25 +652,24 @@ void UUIWidget::RenderTimer() {
 }
 
 void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {//setting position 
-	if (is_chunking && loop_index == 2) {
-		FActorSpawnParameters SpawnInfoDecal;
-		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-		FName RightName = FName(TEXT("boxendtriggername"));
-		SpawnInfoBox.Name = RightName;
-		auto ss = point_arr.Num();
-		FVector myLocD;
-		myLocD = point_arr[ss - 2];
-		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
-		myLocD.Y /= 20; myLocD.Y += 400;
-		myLocD.Y *= 20;
-		myLocD *= scaling_down_;
-		FRotator myRotD(0, 0, 0);
-		float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
-		myRotD = FRotator(0, end_f, 0);
 
-		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-	}
+	FActorSpawnParameters SpawnInfoDecal;
+	FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+	FName RightName = FName(TEXT("boxendtriggername"));
+	SpawnInfoBox.Name = RightName;
+	auto ss = point_arr.Num();
+	FVector myLocD;
+	myLocD = point_arr[ss - 2];
+	myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
+	myLocD.Y /= 20; myLocD.Y += 400;
+	myLocD.Y *= 20;
+	myLocD *= scaling_down_;
+	FRotator myRotD(0, 0, 0);
+	float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
+	myRotD = FRotator(0, end_f, 0);
+
+	box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+	end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
 	//divide by 10,20 add 400
 }
 
@@ -679,8 +679,7 @@ void UUIWidget::SpawnStartEndFlags() {
 		int xp = total_control_points[i].X;
 		int yp = total_control_points[i].Y;
 		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
-		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_from_p_mesh));
-		//z_height.Add(z_from_p_mesh);
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_height[i]));
 	}
 	StartPlaces(0);
 	if (!point_type) {
@@ -732,8 +731,7 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 		int xp = total_control_points[i].X;
 		int yp = total_control_points[i].Y;
 		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
-		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_from_p_mesh));
-		//z_height.Add(z_from_p_mesh);
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_height[i]));
 	}
 	if (!point_type) {
 		InnerStartPlaces(control_points_with_z, 0);
@@ -784,4 +782,40 @@ void UUIWidget::CheckForControlPointChange() {
 			pacenote_c_p.RemoveAt(i);
 		}
 	}
+}
+
+void UUIWidget::GetOrderOfControlPoints() {
+	auto local_start = level_loader.GetStartEndPos(0);
+	auto local_end = level_loader.GetStartEndPos(1);
+	int index_holder=0;
+	for (size_t i = 0; i < control_points_multi.Num(); i++){
+		if (control_points_multi[i].IsValidIndex(0)) {
+			if (control_points_multi[i][0] == local_start ) {
+				FixControlPoints(i, control_points_multi[i]);
+				for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+					total_control_points.Add(control_points_multi[i][j]);
+					index_holder = i;
+				}
+			}
+		}
+	}
+	for (size_t i = 0; i < control_points_multi.Num(); i++){
+		FixControlPoints(i, control_points_multi[i]);
+		
+	}
+	control_points_multi.RemoveAt(index_holder);
+	if (control_points_multi.IsValidIndex(0)) {
+		for (size_t i = 0; i < control_points_multi.Num(); i++) {
+			if (control_points_multi[i].IsValidIndex(0)) {
+				auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
+				if (distance < 75) {
+					for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+						total_control_points.Add(control_points_multi[i][j]);
+					}
+				}
+			}
+		}
+	}
+	
+	//if total.end
 }

@@ -46,7 +46,8 @@ protected:
 	void CheckForControlPointChange();
 	void SpawnStartEndFlags();
 	void CheckForChunking(const int&index_, ABasicTree* instance_);
-	void FixControlPoints(const int&index_);
+	void FixControlPoints(const int&index_, TArray<FVector2D>&points_to_fix);
+	void GetOrderOfControlPoints();
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
@@ -135,4 +136,8 @@ protected:
 	TArray<int>temp_cp_w;//for width of control points
 
 	TArray<FVector2D> total_control_points;
+
+	TArray<TArray<FVector2D>> control_points_multi;
+
+	
 };

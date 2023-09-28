@@ -69,6 +69,10 @@ bool HeightmapHandler::ReadMetaFile() {
 	else {
 		is_chunking = false;
 	}
+	auto index_ = array_[1].Find(" ");
+	start_pos = (FVector2D(FCString::Atoi(*array_[1]), FCString::Atoi(*array_[1].RightChop(index_))));
+	index_ = array_[2].Find(" ");
+	end_pos = (FVector2D(FCString::Atoi(*array_[2]), FCString::Atoi(*array_[2].RightChop(index_))));
 	return is_chunking;
 }
 
@@ -183,4 +187,16 @@ bool HeightmapHandler::ReadTrackPoints(TArray<FVector2D>& track_points, TArray<F
 		}
 	}
 	return point_type;
+}
+
+
+FVector2D HeightmapHandler::GetStartEndPos(int a) {
+	FVector2D return_val;
+	if (a==0){
+		return_val = start_pos;
+	}
+	else {
+		return_val = end_pos;
+	}
+	return return_val;
 }

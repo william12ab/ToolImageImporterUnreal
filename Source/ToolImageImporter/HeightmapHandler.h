@@ -13,6 +13,8 @@ public:
 	void ReadPaceNoteFile(TArray<int>&lengths_, TArray<int>&angles_,TArray<int>&inclines_, TArray<int>&widths_, TArray<int>& directions_, TArray<int>&cp_width_);
 	FileLoader f_l;
 
+	FVector2D GetStartEndPos(int a);
+
 protected:
 	int heightmap_h_;//height,width
 	int heightmap_w_;
@@ -21,4 +23,6 @@ protected:
 	FString meta_file_name;
 	FString pacenote_file_name;
 	bool is_chunking;
+	FVector2D start_pos;
+	FVector2D end_pos;
 };
