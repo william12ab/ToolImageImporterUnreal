@@ -44,8 +44,9 @@ protected:
 	void EndFlag(const TArray<FVector>& point_arr, const int& loop_index);
 	void SetControlPointTriggerBoxes();
 	void CheckForControlPointChange();
-
+	void SpawnStartEndFlags();
 	void CheckForChunking(const int&index_, ABasicTree* instance_);
+	void FixControlPoints(const int&index_);
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
@@ -132,4 +133,6 @@ protected:
 
 	bool is_generated_boxes;//for if the boxes are generated
 	TArray<int>temp_cp_w;//for width of control points
+
+	TArray<FVector2D> total_control_points;
 };

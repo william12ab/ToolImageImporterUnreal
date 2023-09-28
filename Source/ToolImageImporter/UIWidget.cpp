@@ -51,8 +51,10 @@ void UUIWidget::NativeConstruct() {
 			p_mesh->SetIsChunking(false);
 		}
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
-		CreateTrack(i);
-		FixScales(i);
+		if (track_points.IsValidIndex(0)){
+			CreateTrack(i);
+			FixScales(i);
+		}
 		is_start_done = true;
 		for (int32 p = 0; p < track_points.Num(); p++){
 			if (i == 0) {
@@ -78,6 +80,15 @@ void UUIWidget::NativeConstruct() {
 		auto duration = duration_cast<microseconds>(stop - start);
 		float s=duration.count();
 		UE_LOG(LogTemp, Warning, TEXT("construction loop %f"), s);
+		for (int j = 0; j < control_points.Num(); j++) {
+			int xp = control_points[j].X;
+			int yp = control_points[j].Y;
+			float z_from_p_mesh = p_mesh->vec_m_verts[i][(yp) * 400 + (xp)].Z;
+			z_height.Add(z_from_p_mesh);
+		}
+		FixControlPoints(i);
+		total_control_points += control_points;
+		
 	}
 	if (is_chunking){
 		auto start = high_resolution_clock::now();
@@ -96,15 +107,25 @@ void UUIWidget::NativeConstruct() {
 		auto duration = duration_cast<microseconds>(stop - start);
 		float s = duration.count();
 		UE_LOG(LogTemp, Warning, TEXT("full %f"),s);
+
 	}
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	auto start = high_resolution_clock::now();
 
 	ResizeMesh();//ading more verts
-	FVector first_pace = FVector(control_points[0].X*s_, control_points[0].Y * s_, z_height[0]);
+	SpawnStartEndFlags();
+	//starting
+	auto loc_ = start_decal->GetActorLocation();
+	loc_.Z += 25;
+	starting_angle.Yaw += 180;
+	while (!vehicle_pawn->TeleportTo(loc_, starting_angle, false, false)) {
+		loc_.Z += 0.5f;
+	}
+	starting_position = loc_;
+	FVector first_pace = FVector(total_control_points[0].X*s_*scaling_down_, total_control_points[0].Y * s_ * scaling_down_, z_height[0]);
 	first_pace *= scaling_down_;
 	vehicle_pawn->SetPaceOne(first_pace);
-	FVector2D first_paced= FVector2D(control_points[1].X * s_, control_points[1].Y * s_);
+	FVector2D first_paced= FVector2D(total_control_points[1].X * s_ * scaling_down_, total_control_points[1].Y * s_ * scaling_down_);
 	first_paced *= scaling_down_;
 	pacetwo = first_paced;
 	auto stop = high_resolution_clock::now();
@@ -132,8 +153,8 @@ void UUIWidget::NativeConstruct() {
 	give_time_penalty = false;
 	is_spinner_enabled = false;
 	is_generated_boxes = false;
-	for (size_t i = 0; i < control_points.Num(); i++){
-		pacenote_c_p.Add(control_points[i]);
+	for (size_t i = 0; i < total_control_points.Num(); i++){
+		pacenote_c_p.Add(total_control_points[i]);
 	}
 }
 
@@ -144,7 +165,7 @@ void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
 		is_generated_boxes = true;
 		SetControlPointTriggerBoxes();	
 	}
-	if (pacenote_c_p[0]==control_points[0]){
+	if (pacenote_c_p[0]== total_control_points[0]){
 		pace_notes_actor->PlayFirstNote();
 	}
 
@@ -223,6 +244,34 @@ void UUIWidget::CreateTrack(const int& loop_index) {
 	CreateFoilage(loop_index);
 }
 
+
+void UUIWidget::FixControlPoints(const int& index_) {
+	switch (index_)
+	{
+	case 0: {
+		break;
+	}
+	case 1: {
+		for (size_t i = 0; i < control_points.Num(); i++){
+			control_points[i].X += 400;
+		}
+		break;
+	}
+	case 2: {
+		for (size_t i = 0; i < control_points.Num(); i++) {
+			control_points[i].Y += 400;
+		}
+		break;
+	}
+	case 3: {
+		for (size_t i = 0; i < control_points.Num(); i++) {
+			control_points[i].Y += 400;
+			control_points[i].X += 400;
+		}
+		break;
+	}
+	}
+}
 void UUIWidget::LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p) {
 	auto safet_p = track_spline->GetSafetyPoints();
 	for (int t = 0; t < 100; t++) {
@@ -293,209 +342,125 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		}
 	}
 	CreateSpline(loop_index);
-	FActorSpawnParameters SpawnInfoTree;
-	FRotator myRotTree(0, 0, 0);
-	FVector myLocTree = FVector(0, 0, 0);
-	auto start = high_resolution_clock::now();
-	for (int i = 0; i < 2; i++) {//tree near track
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 4; i++) {//tree in general
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, false);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 2; i++) {//ferns bushes
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, true);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 1; i++) {//rocks
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddRockClusters(track_points, p_mesh->vec_m_verts[loop_index]);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 1; i++) {//grass
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
-	}
-	for (int i = 0; i < 1; i++){//grass verge
-		auto start_grass = high_resolution_clock::now();
-
-		ABasicTree* tree_instancea;
-		tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-		tree_instancea->AddGrassAtEdge(p_mesh->vec_m_verts[loop_index], p_mesh->vec_m_vert_colors[loop_index],p_mesh->GetHeight());
-		tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-		CheckForChunking(loop_index, tree_instancea);
+	if (track_points.IsValidIndex(0)) {
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		auto start = high_resolution_clock::now();
+		for (int i = 0; i < 2; i++) {//tree near track
+			ABasicTree* tree_instancea;
+			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+			tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
+			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+			CheckForChunking(loop_index, tree_instancea);
+		}
+		for (int i = 0; i < 4; i++) {//tree in general
+			ABasicTree* tree_instancea;
+			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+			tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, false);
+			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+			CheckForChunking(loop_index, tree_instancea);
+		}
+		for (int i = 0; i < 2; i++) {//ferns bushes
+			ABasicTree* tree_instancea;
+			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+			tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, true);
+			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+			CheckForChunking(loop_index, tree_instancea);
+		}
+		for (int i = 0; i < 1; i++) {//rocks
+			ABasicTree* tree_instancea;
+			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+			tree_instancea->AddRockClusters(track_points, p_mesh->vec_m_verts[loop_index]);
+			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+			CheckForChunking(loop_index, tree_instancea);
+		}
+		for (int i = 0; i < 1; i++) {//grass
+			ABasicTree* tree_instancea;
+			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+			tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
+			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+			CheckForChunking(loop_index, tree_instancea);
+		}
+		for (int i = 0; i < 1; i++) {//grass verge
+			auto start_grass = high_resolution_clock::now();
+			ABasicTree* tree_instancea;
+			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+			tree_instancea->AddGrassAtEdge(p_mesh->vec_m_verts[loop_index], p_mesh->vec_m_vert_colors[loop_index], p_mesh->GetHeight());
+			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+			CheckForChunking(loop_index, tree_instancea);
+			auto stop = high_resolution_clock::now();
+			auto duration = duration_cast<microseconds>(stop - start_grass);
+			float s = duration.count();
+			UE_LOG(LogTemp, Warning, TEXT("grass %f"), s);
+		}
 		auto stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start_grass);
+		auto duration = duration_cast<microseconds>(stop - start);
 		float s = duration.count();
-		UE_LOG(LogTemp, Warning, TEXT("grass %f"), s);
+		UE_LOG(LogTemp, Warning, TEXT("foliage %f"), s);
+		////water
+		float water_height = (min + (max * 0.05f));
+		if (water_height >= track_spline->GetMinHeight()) {
+			water_height = track_spline->GetMinHeight();
+		}
+		myLocTree = FVector(p_mesh->vec_m_verts[loop_index][index].X, p_mesh->vec_m_verts[loop_index][index].Y, water_height + track_spline->GetHeightChange());
+		vec_water_mesh[loop_index] = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
+		vec_water_mesh[loop_index]->SetActorScale3D(FVector(30, 30, 30));
 	}
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop - start);
-	float s = duration.count();
-	UE_LOG(LogTemp, Warning, TEXT("foliage %f"), s);
-	////water
-	float water_height = (min + (max * 0.05f));
-	if (water_height >= track_spline->GetMinHeight()) {
-		water_height = track_spline->GetMinHeight();
-	}
-	myLocTree = FVector(p_mesh->vec_m_verts[loop_index][index].X, p_mesh->vec_m_verts[loop_index][index].Y, water_height + track_spline->GetHeightChange());
-	vec_water_mesh[loop_index] = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
-	vec_water_mesh[loop_index]->SetActorScale3D(FVector(30, 30, 30));
 }
 void UUIWidget::CreateSpline(const int&loop_index) {
 	TArray<FVector2D> temp_arr;
-	if (point_type) {
-		temp_arr = track_points;
-	}
-	else {
-		temp_arr = track_points;
-	}
+	if (track_points.IsValidIndex(0)) {
+		if (point_type) {
+			temp_arr = track_points;
+		}
+		else {
+			temp_arr = track_points;
+		}
 
-	for (size_t i = 0; i < temp_arr.Num(); i++) {
-		(temp_arr[i].X) *= s_;
-		(temp_arr[i].Y) *= s_;
-	}
-	FActorSpawnParameters SpawnInfoTree;
-	FRotator myRotTree(0, 0, 0);
-	FVector myLocTree = FVector(0, 0, 0);
-	FTransform t_transform_{
-					FRotator{0,0,0},
-					FVector{0, 0, 0},
-					FVector{1, 1, 1} };
-	track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);//above to here just spawning actor
-	track_spline->SetSpacing(s_);
-	track_spline->SetDivision(m_);//setters
-	track_spline->SetControlPoints(temp_arr);//setting array in class to the points
-	track_spline->SetHeightArray(m_colors);//setting array as well
-	track_spline->OnConstruction(t_transform_);//consttruction
-	p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts(), loop_index);//changing height of mesh
-	p_mesh->ReplaceC(loop_index);//replacing heightmap to match new mesh, also normals and smoothing
-	track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
-	track_spline->SetActorEnableCollision(false);
-	if (point_type) {
 		for (size_t i = 0; i < temp_arr.Num(); i++) {
-			temp_arr[i].X /= s_;
-			temp_arr[i].Y /= s_;
+			(temp_arr[i].X) *= s_;
+			(temp_arr[i].Y) *= s_;
 		}
-		track_points = temp_arr;
-		
-	}
-	else {
-		for (size_t i = 0; i < temp_arr.Num(); i++) {
-			temp_arr[i].X /= s_;
-			temp_arr[i].Y /= s_;
+		FActorSpawnParameters SpawnInfoTree;
+		FRotator myRotTree(0, 0, 0);
+		FVector myLocTree = FVector(0, 0, 0);
+		FTransform t_transform_{
+						FRotator{0,0,0},
+						FVector{0, 0, 0},
+						FVector{1, 1, 1} };
+		track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);//above to here just spawning actor
+		track_spline->SetSpacing(s_);
+		track_spline->SetDivision(m_);//setters
+		track_spline->SetControlPoints(temp_arr);//setting array in class to the points
+		track_spline->SetHeightArray(m_colors);//setting array as well
+		track_spline->OnConstruction(t_transform_);//consttruction
+		p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts(), loop_index);//changing height of mesh
+		p_mesh->ReplaceC(loop_index);//replacing heightmap to match new mesh, also normals and smoothing
+		track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
+		track_spline->SetActorEnableCollision(false);
+		if (point_type) {
+			for (size_t i = 0; i < temp_arr.Num(); i++) {
+				temp_arr[i].X /= s_;
+				temp_arr[i].Y /= s_;
+			}
+			track_points = temp_arr;
+
 		}
-		track_points = temp_arr;
-		//control_points = temp_arr;
-	}
-}
-void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& loop_index) {
-	if (!is_decal_spawn) {
-	
-		auto ss = point_arr.Num();
-		FActorSpawnParameters SpawnInfoDecal;
-		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-		FRotator myRotD(0, 0, 0);
-		FVector myLocD = FMath::Lerp(point_arr[0], point_arr[5], 0.9f);
-
-		myLocD *= scaling_down_;
-		//myLocD.Z += 85.f;
-		FName RightName = FName(TEXT("boxendtriggername"));
-		SpawnInfoBox.Name = RightName;
-		float angle_f = atan2(point_arr[0].Y - point_arr[5].Y, point_arr[0].X - point_arr[5].X) * 180.0f / PI;
-		starting_angle = FRotator(0.f, angle_f, 0.f);
-		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
-		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
-		myLocD = point_arr[ss - 2];
-		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
-		myLocD *= scaling_down_;
-		if (!is_chunking){
-			myLocD = point_arr[ss - 2];
-			myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
-			myLocD *= scaling_down_;
-			float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
-			myRotD = FRotator(0, end_f, 0);
-			myLocD.Z += 20;
-			box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-			myLocD.Z += -20;
-			end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+		else {
+			for (size_t i = 0; i < temp_arr.Num(); i++) {
+				temp_arr[i].X /= s_;
+				temp_arr[i].Y /= s_;
+			}
+			track_points = temp_arr;
 		}
-
-		is_decal_spawn = true;
 	}
-	
-}
-
-//point type is true when curved, with width, or both
-void UUIWidget::StartPlaces(const int& loop_index) {
-	if (!point_type){
-		InnerStartPlaces(track_spline->GetTotalPoints(),0);
-	}
-	else{
-		InnerStartPlaces(track_spline->GetTotalPoints(), 0);
-	}
-}
-void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {//setting position 
-	if (is_chunking && loop_index == 2) {
-		FActorSpawnParameters SpawnInfoDecal;
-		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-		FName RightName = FName(TEXT("boxendtriggername"));
-		SpawnInfoBox.Name = RightName;
-		auto ss = point_arr.Num();
-		FVector myLocD;
-		myLocD = point_arr[ss - 2];
-		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
-		myLocD.Y /= 20; myLocD.Y += 400;
-		myLocD.Y *= 20; 
-		myLocD *= scaling_down_;
-		FRotator myRotD(0, 0, 0);
-		float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
-		myRotD = FRotator(0, end_f, 0);
-
-		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-	}
-	//divide by 10,20 add 400
 }
 
 void UUIWidget::FixScales(const int& loop_index) {
 	//setting scales of terrain, spline, water.
 	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	vec_water_mesh[loop_index]->SetActorScale3D(FVector( scaling_down_, scaling_down_, scaling_down_));
-	
-	if (!is_start_done){
-		StartPlaces(0);
-	}
-	if (!point_type) {
-		EndFlag(track_spline->GetTotalPoints(),loop_index); 
-	}
-	else{
-		TArray<FVector> control_points_with_z;
-		for (int i = 0; i < control_points.Num(); i++) {
-			int xp = control_points[i].X;
-			int yp = control_points[i].Y;
-			float z_from_p_mesh = p_mesh->vec_m_verts[loop_index][(yp) * 400 + (xp)].Z;
-			control_points_with_z.Add(FVector(control_points[i].X * s_, control_points[i].Y * s_, z_from_p_mesh));
-			z_height.Add(z_from_p_mesh);
-		}
-		EndFlag(control_points_with_z, loop_index);
-	}
 	
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
@@ -524,10 +489,10 @@ void UUIWidget::ResizeMesh() {
 
 
 	//getting z before destroyed
-	for (int i = 0; i < control_points.Num(); i++) {
-		int xp = control_points[i].X;
-		int yp = control_points[i].Y;
-		float z_from_p_mesh = p_mesh->vec_m_verts[0][(yp) * 400 + (xp)].Z;
+	for (int i = 0; i < total_control_points.Num(); i++) {
+		int xp = total_control_points[i].X;
+		int yp = total_control_points[i].Y;
+		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600+ (xp)].Z;
 		z_height.Add(z_from_p_mesh);
 	}
 	p_mesh->Destroy();
@@ -542,14 +507,7 @@ void UUIWidget::ResizeMesh() {
 			vec_water_mesh[i]->SetActorScale3D(FVector(150.f, 150.f, 10.f));
 		}
 	}
-	//starting
-	auto loc_ = start_decal->GetActorLocation();
-	loc_.Z += 25;
-	starting_angle.Yaw += 180;
-	while (!vehicle_pawn->TeleportTo(loc_, starting_angle, false, false)) {
-		loc_.Z += 0.5f;
-	}
-	starting_position = loc_;
+
 }
 
 void UUIWidget::StartTextFunction() {
@@ -692,19 +650,111 @@ void UUIWidget::RenderTimer() {
 	}
 }
 
-void UUIWidget::SetControlPointTriggerBoxes() {
-
-	for (size_t i = 0; i < control_points.Num(); i++){
+void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index) {//setting position 
+	if (is_chunking && loop_index == 2) {
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
-		FVector myLocD = FVector(control_points[i].X * s_, control_points[i].Y * s_, z_height[i]);
+		FName RightName = FName(TEXT("boxendtriggername"));
+		SpawnInfoBox.Name = RightName;
+		auto ss = point_arr.Num();
+		FVector myLocD;
+		myLocD = point_arr[ss - 2];
+		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
+		myLocD.Y /= 20; myLocD.Y += 400;
+		myLocD.Y *= 20;
+		myLocD *= scaling_down_;
+		FRotator myRotD(0, 0, 0);
+		float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
+		myRotD = FRotator(0, end_f, 0);
+
+		box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+		end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+	}
+	//divide by 10,20 add 400
+}
+
+void UUIWidget::SpawnStartEndFlags() {
+	TArray<FVector> control_points_with_z;
+	for (int i = 0; i < total_control_points.Num(); i++) {
+		int xp = total_control_points[i].X;
+		int yp = total_control_points[i].Y;
+		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_from_p_mesh));
+		//z_height.Add(z_from_p_mesh);
+	}
+	StartPlaces(0);
+	if (!point_type) {
+		EndFlag(control_points_with_z, 0);
+	}
+	else {
+		EndFlag(control_points_with_z, 0);
+	}
+}
+void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& loop_index) {
+	if (!is_decal_spawn) {
+
+		auto ss = point_arr.Num();
+		FActorSpawnParameters SpawnInfoDecal;
+		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+		FRotator myRotD(0, 0, 0);
+		FVector myLocD = FMath::Lerp(point_arr[0], point_arr[5], 0.9f);
+
+		myLocD *= scaling_down_;
+		//myLocD.Z += 85.f;
+		FName RightName = FName(TEXT("boxendtriggername"));
+		SpawnInfoBox.Name = RightName;
+		float angle_f = atan2(point_arr[0].Y - point_arr[5].Y, point_arr[0].X - point_arr[5].X) * 180.0f / PI;
+		starting_angle = FRotator(0.f, angle_f, 0.f);
+		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
+		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
+		myLocD = point_arr[ss - 2];
+		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
+		myLocD *= scaling_down_;
+		if (!is_chunking) {
+			myLocD = point_arr[ss - 2];
+			myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
+			myLocD *= scaling_down_;
+			float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
+			myRotD = FRotator(0, end_f, 0);
+			myLocD.Z += 20;
+			box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
+			myLocD.Z += -20;
+			end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
+		}
+		is_decal_spawn = true;
+	}
+}
+
+//point type is true when curved, with width, or both
+void UUIWidget::StartPlaces(const int& loop_index) {
+	TArray<FVector> control_points_with_z;
+	for (int i = 0; i < total_control_points.Num(); i++) {
+		int xp = total_control_points[i].X;
+		int yp = total_control_points[i].Y;
+		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_from_p_mesh));
+		//z_height.Add(z_from_p_mesh);
+	}
+	if (!point_type) {
+		InnerStartPlaces(control_points_with_z, 0);
+	}
+	else {
+		InnerStartPlaces(control_points_with_z, 0);
+	}
+}
+
+void UUIWidget::SetControlPointTriggerBoxes() {
+	for (size_t i = 0; i < total_control_points.Num(); i++){
+		FActorSpawnParameters SpawnInfoDecal;
+		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
+		FVector myLocD = FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_ , z_height[i]);
 		myLocD *= scaling_down_;
 		if (i==0){
 			myLocD = box_start->GetActorLocation();
 		}
 		starting_angle = FRotator(0.f, 0, 0.f);
-		if (i+1<control_points.Num()){
-			float end_f = atan2(control_points[i].Y - control_points[i + 1].Y, control_points[i].X - control_points[i + 1].X) * 180.0f / PI;
+		if (i+1< total_control_points.Num()){
+			float end_f = atan2(total_control_points[i].Y - total_control_points[i + 1].Y, total_control_points[i].X - total_control_points[i + 1].X) * 180.0f / PI;
 			starting_angle = FRotator(0, end_f, 0);
 		}
 		AControlPointTriggerBox* control_point_trigger;
