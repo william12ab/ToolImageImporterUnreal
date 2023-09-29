@@ -655,6 +655,7 @@ void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index)
 	FName RightName = FName(TEXT("boxendtriggername"));
 	SpawnInfoBox.Name = RightName;
 	auto ss = point_arr.Num();
+
 	FVector myLocD;
 	myLocD = point_arr[ss - 2];
 	myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
@@ -706,17 +707,6 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 		myLocD = point_arr[ss - 2];
 		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
 		myLocD *= scaling_down_;
-		/*if (!is_chunking) {
-			myLocD = point_arr[ss - 2];
-			myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
-			myLocD *= scaling_down_;
-			float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
-			myRotD = FRotator(0, end_f, 0);
-			myLocD.Z += 20;
-			box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
-			myLocD.Z += -20;
-			end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-		}*/
 		is_decal_spawn = true;
 	}
 }
@@ -788,12 +778,15 @@ void UUIWidget::CheckForControlPointChange() {
 void UUIWidget::GetOrderOfControlPoints() {
 	auto local_start = level_loader.GetStartEndPos(0);
 	auto local_end = level_loader.GetStartEndPos(1);
+	for (size_t i = 0; i < control_points_multi.Num(); i++) {
+		FixControlPoints(i, control_points_multi[i]);
+	}
 	int index_holder=0;
 	for (size_t i = 0; i < control_points_multi.Num(); i++){
 		if (control_points_multi[i].IsValidIndex(0)) {
 			auto distance = FVector2D::Distance(control_points_multi[i][0], local_start);
 			if (distance<10 ) {
-				FixControlPoints(i, control_points_multi[i]);
+				//FixControlPoints(i, control_points_multi[i]);
 				for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
 					total_control_points.Add(control_points_multi[i][j]);
 					index_holder = i;
@@ -801,17 +794,46 @@ void UUIWidget::GetOrderOfControlPoints() {
 			}
 		}
 	}
-	for (size_t i = 0; i < control_points_multi.Num(); i++){
-		FixControlPoints(i, control_points_multi[i]);
-	}
+
 	control_points_multi.RemoveAt(index_holder);
 	if (control_points_multi.IsValidIndex(0)) {
-		for (size_t i = 0; i < control_points_multi.Num(); i++) {
-			if (control_points_multi[i].IsValidIndex(0)) {
-				auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
-				if (distance < 75) {
-					for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
-						total_control_points.Add(control_points_multi[i][j]);
+		while (control_points_multi.Num() > 0) {
+			for (size_t i = 0; i < control_points_multi.Num(); i++) {
+				if (control_points_multi[i].IsValidIndex(0)) {
+					if (control_points_multi.Num()==3){
+						auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
+						if (distance < 75) {
+							for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+								total_control_points.Add(control_points_multi[i][j]);
+							}
+							index_holder = i;
+							control_points_multi.RemoveAt(index_holder);
+						}
+					}
+					else if(control_points_multi.Num()>1) {
+						auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
+						auto distance2 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i+1][0]);
+						if (distance < distance2) {
+							for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+								total_control_points.Add(control_points_multi[i][j]);
+							}
+							index_holder = i;
+							control_points_multi.RemoveAt(index_holder);
+						}
+						else {
+							for (size_t j = 0; j < control_points_multi[i+1].Num(); j++) {
+								total_control_points.Add(control_points_multi[i+1][j]);
+							}
+							index_holder = i+1;
+							control_points_multi.RemoveAt(index_holder);
+						}
+					}
+					else if (control_points_multi.Num() == 1) {
+						for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+							total_control_points.Add(control_points_multi[i][j]);
+						}
+						control_points_multi.RemoveAt(i);
+
 					}
 				}
 			}
