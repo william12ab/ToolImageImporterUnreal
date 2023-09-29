@@ -33,7 +33,7 @@ void ABasicTree::NameChoiceTree(FString& mesh_name, int& tree_select){
 		range_end = 11;
 	}
 	tree_select = FMath::RandRange(range_start, range_end);
-	if (tree_select==7|| tree_select == 8){
+	if (tree_select==7|| tree_select == 8|| tree_select==4){
 		tree_select = 10;
 	}
 }

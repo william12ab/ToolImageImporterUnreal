@@ -486,7 +486,11 @@ void UUIWidget::ResizeMesh() {
 	for (int i = 0; i < total_control_points.Num(); i++) {
 		int xp = total_control_points[i].X*2;
 		int yp = total_control_points[i].Y*2;
-		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600+ (xp)].Z;
+		int resolution_ = 800;
+		if (is_chunking){
+			resolution_ = 1600;
+		}
+		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
 		z_height.Add(z_from_p_mesh);
 	}
 	p_mesh->Destroy();
@@ -654,9 +658,7 @@ void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index)
 	FVector myLocD;
 	myLocD = point_arr[ss - 2];
 	myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
-	myLocD.Y /= 20; myLocD.Y += 400;
-	myLocD.Y *= 20;
-	myLocD *= scaling_down_;
+	myLocD.Z *= scaling_down_;
 	FRotator myRotD(0, 0, 0);
 	float end_f = atan2(point_arr[ss - 1].Y - point_arr[ss - 2].Y, point_arr[ss - 1].X - point_arr[ss - 2].X) * 180.0f / PI;
 	myRotD = FRotator(0, end_f, 0);
@@ -671,7 +673,11 @@ void UUIWidget::SpawnStartEndFlags() {
 	for (int i = 0; i < total_control_points.Num(); i++) {
 		int xp = total_control_points[i].X*2;
 		int yp = total_control_points[i].Y*2;
-		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
+		int resolution_ = 800;
+		if (is_chunking) {
+			resolution_ = 1600;
+		}
+		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
 		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_from_p_mesh));
 	}
 	StartPlaces(0);
@@ -684,15 +690,13 @@ void UUIWidget::SpawnStartEndFlags() {
 }
 void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& loop_index) {
 	if (!is_decal_spawn) {
-
 		auto ss = point_arr.Num();
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
 		FRotator myRotD(0, 0, 0);
-		FVector myLocD = point_arr[0];//FMath::Lerp(point_arr[0], point_arr[1], 0.9f);
+		FVector myLocD = point_arr[0];
 
 		myLocD *= scaling_down_;
-		//myLocD.Z += 85.f;
 		FName RightName = FName(TEXT("boxendtriggername"));
 		SpawnInfoBox.Name = RightName;
 		float angle_f = atan2(point_arr[0].Y - point_arr[1].Y, point_arr[0].X - point_arr[1].X) * 180.0f / PI;
@@ -702,7 +706,7 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 		myLocD = point_arr[ss - 2];
 		myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
 		myLocD *= scaling_down_;
-		if (!is_chunking) {
+		/*if (!is_chunking) {
 			myLocD = point_arr[ss - 2];
 			myLocD = FMath::Lerp(point_arr[ss - 2], point_arr[ss - 1], 0.9f);
 			myLocD *= scaling_down_;
@@ -712,7 +716,7 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 			box_end = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, myRotD, SpawnInfoBox);
 			myLocD.Z += -20;
 			end_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, myRotD, SpawnInfoDecal);
-		}
+		}*/
 		is_decal_spawn = true;
 	}
 }
@@ -723,7 +727,11 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 	for (int i = 0; i < total_control_points.Num(); i++) {
 		int xp = total_control_points[i].X*2;
 		int yp = total_control_points[i].Y*2;
-		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
+		int resolution_ = 800;
+		if (is_chunking) {
+			resolution_ = 1600;
+		}
+		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
 		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_from_p_mesh));
 	}
 	if (!point_type) {
@@ -783,7 +791,8 @@ void UUIWidget::GetOrderOfControlPoints() {
 	int index_holder=0;
 	for (size_t i = 0; i < control_points_multi.Num(); i++){
 		if (control_points_multi[i].IsValidIndex(0)) {
-			if (control_points_multi[i][0] == local_start ) {
+			auto distance = FVector2D::Distance(control_points_multi[i][0], local_start);
+			if (distance<10 ) {
 				FixControlPoints(i, control_points_multi[i]);
 				for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
 					total_control_points.Add(control_points_multi[i][j]);
