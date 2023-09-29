@@ -81,14 +81,7 @@ void UUIWidget::NativeConstruct() {
 		auto duration = duration_cast<microseconds>(stop - start);
 		float s=duration.count();
 		UE_LOG(LogTemp, Warning, TEXT("construction loop %f"), s);
-		for (int j = 0; j < control_points.Num(); j++) {
-			int xp = control_points[j].X;
-			int yp = control_points[j].Y;
-			float z_from_p_mesh = p_mesh->vec_m_verts[i][(yp) * 400 + (xp)].Z;
-			z_height.Add(z_from_p_mesh);
-		}
 		control_points_multi[i] = control_points;
-		//total_control_points += control_points;
 	}
 	GetOrderOfControlPoints();
 	if (is_chunking){
@@ -491,8 +484,8 @@ void UUIWidget::ResizeMesh() {
 
 	//getting z before destroyed
 	for (int i = 0; i < total_control_points.Num(); i++) {
-		int xp = total_control_points[i].X;
-		int yp = total_control_points[i].Y;
+		int xp = total_control_points[i].X*2;
+		int yp = total_control_points[i].Y*2;
 		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600+ (xp)].Z;
 		z_height.Add(z_from_p_mesh);
 	}
@@ -676,10 +669,10 @@ void UUIWidget::EndFlag(const TArray<FVector>& point_arr, const int& loop_index)
 void UUIWidget::SpawnStartEndFlags() {
 	TArray<FVector> control_points_with_z;
 	for (int i = 0; i < total_control_points.Num(); i++) {
-		int xp = total_control_points[i].X;
-		int yp = total_control_points[i].Y;
+		int xp = total_control_points[i].X*2;
+		int yp = total_control_points[i].Y*2;
 		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
-		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_height[i]));
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_from_p_mesh));
 	}
 	StartPlaces(0);
 	if (!point_type) {
@@ -696,13 +689,13 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 		FActorSpawnParameters SpawnInfoDecal;
 		FActorSpawnParameters SpawnInfoBox = FActorSpawnParameters();
 		FRotator myRotD(0, 0, 0);
-		FVector myLocD = FMath::Lerp(point_arr[0], point_arr[5], 0.9f);
+		FVector myLocD = point_arr[0];//FMath::Lerp(point_arr[0], point_arr[1], 0.9f);
 
 		myLocD *= scaling_down_;
 		//myLocD.Z += 85.f;
 		FName RightName = FName(TEXT("boxendtriggername"));
 		SpawnInfoBox.Name = RightName;
-		float angle_f = atan2(point_arr[0].Y - point_arr[5].Y, point_arr[0].X - point_arr[5].X) * 180.0f / PI;
+		float angle_f = atan2(point_arr[0].Y - point_arr[1].Y, point_arr[0].X - point_arr[1].X) * 180.0f / PI;
 		starting_angle = FRotator(0.f, angle_f, 0.f);
 		box_start = GetWorld()->SpawnActor<ATriggerBoxDecal>(myLocD, starting_angle, SpawnInfoDecal);
 		start_decal = GetWorld()->SpawnActor<AStartDecalActor>(myLocD, starting_angle, SpawnInfoDecal);
@@ -728,10 +721,10 @@ void UUIWidget::InnerStartPlaces(const TArray<FVector>& point_arr, const int& lo
 void UUIWidget::StartPlaces(const int& loop_index) {
 	TArray<FVector> control_points_with_z;
 	for (int i = 0; i < total_control_points.Num(); i++) {
-		int xp = total_control_points[i].X;
-		int yp = total_control_points[i].Y;
+		int xp = total_control_points[i].X*2;
+		int yp = total_control_points[i].Y*2;
 		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) * 1600 + (xp)].Z;
-		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_height[i]));
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_from_p_mesh));
 	}
 	if (!point_type) {
 		InnerStartPlaces(control_points_with_z, 0);
@@ -801,7 +794,6 @@ void UUIWidget::GetOrderOfControlPoints() {
 	}
 	for (size_t i = 0; i < control_points_multi.Num(); i++){
 		FixControlPoints(i, control_points_multi[i]);
-		
 	}
 	control_points_multi.RemoveAt(index_holder);
 	if (control_points_multi.IsValidIndex(0)) {
