@@ -161,7 +161,6 @@ void APaceNotesActor::FindDirection(const int& i, const int&n, const int& a) {
 void APaceNotesActor::PlayNote(const float& DeltaTime, const int& index) {
 	
 	timert += DeltaTime;
-	UE_LOG(LogTemp, Warning, TEXT("NOTE: %f"),timert);
 	if (timert>2.0f){
 		accum_time += DeltaTime;
 		if (!is_playing) {
