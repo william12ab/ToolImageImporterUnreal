@@ -39,7 +39,6 @@ void UUIWidget::NativeConstruct() {
 		loop_index = 4;
 	}
 	for (int i = 0; i < loop_index; i++) {
-		auto start = high_resolution_clock::now();
 		m_colors.Empty();
 		track_points.Empty();
 		control_points.Empty();
@@ -77,35 +76,19 @@ void UUIWidget::NativeConstruct() {
 				total_track_points.Add(total_point);
 			}
 		}
-		auto stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start);
-		float s=duration.count();
-		UE_LOG(LogTemp, Warning, TEXT("construction loop %f"), s);
 		control_points_multi[i] = control_points;
 	}
 	GetOrderOfControlPoints();
 	if (is_chunking){
-		auto start = high_resolution_clock::now();
 		p_mesh->SetEdges();
-		auto stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start);
-		float s = duration.count();
-		UE_LOG(LogTemp, Warning, TEXT("set edges %f"),s);
 	}
 	if (is_chunking){//at this point youre merging them to create a full big one
-		auto start = high_resolution_clock::now();
 		p_mesh->TestFinal();		//smooths each section uniformly
 		p_mesh->SetEdges();
 		p_mesh->FullSize();			//adds all together
-		auto stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start);
-		float s = duration.count();
-		UE_LOG(LogTemp, Warning, TEXT("full %f"),s);
 
 	}
 	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	auto start = high_resolution_clock::now();
-
 	ResizeMesh();//ading more verts
 	SpawnStartEndFlags();
 	//starting
@@ -122,10 +105,7 @@ void UUIWidget::NativeConstruct() {
 	FVector2D first_paced= FVector2D(total_control_points[1].X * s_ * scaling_down_, total_control_points[1].Y * s_ * scaling_down_);
 	first_paced *= scaling_down_;
 	pacetwo = first_paced;
-	auto stop = high_resolution_clock::now();
-	auto duration = duration_cast<microseconds>(stop - start);
-	float s = duration.count();
-	UE_LOG(LogTemp, Warning, TEXT("resize %f"),s);
+	
 	counter_ = 0.0f;//for resetting postion
 	is_level_spawnned = true;//see .h
 
@@ -384,15 +364,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 			tree_instancea->AddGrassAtEdge(p_mesh->vec_m_verts[loop_index], p_mesh->vec_m_vert_colors[loop_index], p_mesh->GetHeight());
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
-			auto stop = high_resolution_clock::now();
-			auto duration = duration_cast<microseconds>(stop - start_grass);
-			float s = duration.count();
-			UE_LOG(LogTemp, Warning, TEXT("grass %f"), s);
 		}
-		auto stop = high_resolution_clock::now();
-		auto duration = duration_cast<microseconds>(stop - start);
-		float s = duration.count();
-		UE_LOG(LogTemp, Warning, TEXT("foliage %f"), s);
 		////water
 		float water_height = (min + (max * 0.05f));
 		if (water_height >= track_spline->GetMinHeight()) {

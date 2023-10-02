@@ -274,9 +274,6 @@ void APaceNotesActor::FindOrder() {
 		}
 	}
 	pacenotes_array.Add(23);
-	for (int i = 0; i < pacenotes_array.Num(); i++) {
-		UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), pacenotes_array[i]);
-	}
 }
 
 void APaceNotesActor::WhenToPlay(const FVector2D&p1, const FVector2D& p2, const FVector2D& p3) {
@@ -339,7 +336,6 @@ void APaceNotesActor::EmptyArray() {
 
 void APaceNotesActor::PlayNextNote() {
 	if (note_count < pacenotes_array.Num()) {
-		//UE_LOG(LogTemp, Warning, TEXT("NOTE: %d"), note_count);
 		switch (pacenotes_array[note_count])
 		{
 		case 17: {//straight

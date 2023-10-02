@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BasicTree.h"
+#include "Runtime/Core/Public/Async/ParallelFor.h"
 #include "PhysicsEngine/BodySetup.h"
 // Sets default values
 ABasicTree::ABasicTree(){
@@ -65,6 +66,7 @@ bool ABasicTree::CheckTrackTree(int& point_x, int& point_y){
 				for (size_t x = 0; x < 5; x++) {
 					for (size_t y = 0; y < 5; y++) {
 						if ((int)point_x == (int)track_tree_points[i].X + x * pos_ && (int)point_y == (int)track_tree_points[i].Y + y * pos_) {
+							index_tracker = i;
 							return false;
 						}
 					}
@@ -100,17 +102,17 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 	float z_pos = 0.f;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
-
+	auto temp_vector = track_point;
 	NameChoiceTree(mesh_name, tree_select);
 	yaw_rot = FMath::RandRange(-360, 360);
 	for (int i = 0; i < loop_range; i++) {
-		int rand_point = FMath::RandRange(5, track_point.Num() - 1);
-		pos_y = track_point[rand_point].Y;
-		pos_x = track_point[rand_point].X;
+		int rand_point = FMath::RandRange(5, temp_vector.Num() - 1);
+		pos_y = temp_vector[rand_point].Y;
+		pos_x = temp_vector[rand_point].X;
 		z_pos = m_verts[pos_y * 400 + pos_x].Z;
 		bool is_found = false;
 		while (!is_found) {
-			if (CheckBounds(track_point, pos_x, pos_y)) {
+			//if (CheckBounds(track_point, pos_x, pos_y)) {
 				is_found = true;
 				float rand_scale = FMath::RandRange(0.01f, 0.2f);
 				float rand_yaw = FMath::RandRange(0.0f, 180.f);
@@ -118,7 +120,7 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 				   FRotator{0,yaw_rot,0},
 				   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
 				   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
-				AddBasicTree(A, tree_select, mesh_name, track_point, pos_x, pos_y);
+				AddBasicTree(A, tree_select, mesh_name, temp_vector, pos_x, pos_y);
 				h_instanced->SetMobility(EComponentMobility::Movable);
 				h_instanced->bCastDynamicShadow = true;
 				h_instanced->CastShadow = true;
@@ -126,18 +128,28 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 				h_instanced->SetCullDistances(750, 3000);
 				h_instanced->SetMobility(EComponentMobility::Static);
 				track_tree_points.Add(FVector2D(pos_x, pos_y));
-			}
-			else {
-				pos_x += FMath::RandRange(-4, 8);
+				temp_vector.RemoveAt(rand_point);
+			//}
+			//else {
+				/*pos_x += FMath::RandRange(-4, 8);
 				pos_y += FMath::RandRange(-8, 8);
 				if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
-					pos_y = track_point[rand_point].Y;
-					pos_x = track_point[rand_point].X;
+					pos_y = temp_vector[rand_point].Y;
+					pos_x = temp_vector[rand_point].X;
 				}
-				z_pos = m_verts[pos_y * 400 + pos_x].Z;
-			}
+				z_pos = m_verts[pos_y * 400 + pos_x].Z;*/
+			//}
 		}
 	}
+	index_tracker = 0;
+	for (size_t i = 0; i < track_tree_points.Num(); i++){
+		int x = track_tree_points[i].X;
+		int y = track_tree_points[i].Y;
+		if (!CheckBounds(track_point,x,y)){
+			h_instanced->RemoveInstance(i);
+		}
+	}
+	
 }
 
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
@@ -258,8 +270,8 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 }
 
 bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, int&point_y){
-	int pos_ = 1;
 	for (int i = 0; i < track_point.Num(); i++){
+		int pos_ = 1;
 		if ((int)point_x != (int)track_point[i].X && (int)point_y != (int)track_point[i].Y ) {
 			//if not on track point, do nothing and continue to see if it is on a track point.
 		}

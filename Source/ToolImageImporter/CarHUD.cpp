@@ -39,7 +39,6 @@ ACarHUD::ACarHUD(){
 		if (TextureFinder.Succeeded()) {
 			pacenote_images.Add(TextureFinder.Object);
 			pacenote_images[index] = TextureFinder.Object;
-			UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *TexturePath);
 			index++;
 		}
 		else {

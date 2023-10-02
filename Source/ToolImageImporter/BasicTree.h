@@ -48,4 +48,6 @@ private:
 	float division_;
 
 	TArray<FVector2D> track_tree_points;
+
+	int index_tracker;
 };
