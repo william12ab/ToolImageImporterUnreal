@@ -126,9 +126,7 @@ void ACarHUD::ClearNotes() {
 	}
 }
 
-
-void ACarHUD::ShowNote() {
-	//positions see note for order
+void ACarHUD::SwitchStatement(const TArray<int>&array_) {
 	const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.15f);
 	const float y_position = Center.Y - (pacenote_images[0]->GetSurfaceHeight() * 0.5f);
 	const FVector2D position_four((Center.X - (pacenote_images[0]->GetSurfaceWidth() * 0.5)), (y_position));
@@ -137,77 +135,81 @@ void ACarHUD::ShowNote() {
 	const FVector2D position_one((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 3.8)), (y_position));
 	const FVector2D position_zero((Center.X - (pacenote_images[6]->GetSurfaceWidth() * 4.9)), (y_position));
 	const FVector2D position_five((Center.X + (pacenote_images[6]->GetSurfaceWidth() * 0.6)), (y_position));
+	switch (array_.Num()) {
+	case 1: {
+		DisplayNote(0, position_four, pacenote_images[array_[0] - 1]->Resource);
+		is_drawing = true;
+		notes_displayed++;
+		break;
+	}
+	case 2: {
+		DisplayNote(0, position_three, pacenote_images[array_[0] - 1]->Resource);
+		DisplayNote(1, position_four, pacenote_images[array_[1] - 1]->Resource);
+		is_drawing = true;
+		notes_displayed++;
+		break;
+	}
+	case 3: {
+		DisplayNote(0, position_two, pacenote_images[array_[0] - 1]->Resource);
+		DisplayNote(1, position_three, pacenote_images[array_[1] - 1]->Resource);
+		DisplayNote(2, position_four, pacenote_images[array_[2] - 1]->Resource);
+		is_drawing = true;
+		notes_displayed++;
+		break;
+	}
+	case 4: {
+		DisplayNote(0, position_one, pacenote_images[array_[0] - 1]->Resource);
+		DisplayNote(1, position_two, pacenote_images[array_[1] - 1]->Resource);
+		DisplayNote(2, position_three, pacenote_images[array_[2] - 1]->Resource);
+		DisplayNote(3, position_four, pacenote_images[array_[3] - 1]->Resource);
+		is_drawing = true;
+		notes_displayed++;
+		break;
+	}
+	case 5: {
+		DisplayNote(0, position_one, pacenote_images[array_[0] - 1]->Resource);
+		DisplayNote(1, position_two, pacenote_images[array_[1] - 1]->Resource);
+		DisplayNote(2, position_three, pacenote_images[array_[2] - 1]->Resource);
+		DisplayNote(3, position_four, pacenote_images[array_[3] - 1]->Resource);
+		DisplayNote(4, position_five, pacenote_images[array_[4] - 1]->Resource);
+		is_drawing = true;
+		notes_displayed++;
+		break;
+	}
+	case 6: {
+		DisplayNote(0, position_zero, pacenote_images[array_[0] - 1]->Resource);
+		DisplayNote(1, position_one, pacenote_images[array_[1] - 1]->Resource);
+		DisplayNote(2, position_two, pacenote_images[array_[2] - 1]->Resource);
+		DisplayNote(3, position_three, pacenote_images[array_[3] - 1]->Resource);
+		DisplayNote(4, position_four, pacenote_images[array_[4] - 1]->Resource);
+		DisplayNote(5, position_five, pacenote_images[array_[5] - 1]->Resource);
+		is_drawing = true;
+		notes_displayed++;
+		break;
+	}
+	}
+}
+
+void ACarHUD::ShowNote() {
+	//positions see note for order
+
 	if (pace_notes_actor->GetNotesToDisplay().IsValidIndex(0)){
 		if (notes_displayed ==0){
 			notes_displayed++;
 			pace_notes_actor->EmptyArray();
 		}
 		if (pace_notes_actor->GetNotesToDisplay().Num()>6){
-			for (size_t i = 3; i < 6; i++){
+			for (size_t i = 0; i < 6; i++){
 				extra_array.Add(pace_notes_actor->GetNotesToDisplay()[i]);
 			}
-			is_extra = true;
+			SwitchStatement(extra_array);
+			extra_array.Empty();
+			pace_notes_actor->RemoveSelected();
 		}
-		switch (pace_notes_actor->GetNotesToDisplay().Num()) {
-		case 1: {
-			DisplayNote(0, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]-1]->Resource);
-			is_drawing = true;
+		else {
+			SwitchStatement(pace_notes_actor->GetNotesToDisplay());
 			pace_notes_actor->EmptyArray();
-			notes_displayed++;
-			break; 
-		}
-		case 2: {
-			DisplayNote(0, position_three, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]-1]->Resource);
-			DisplayNote(1, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[1]-1]->Resource);
-			is_drawing = true;
-			pace_notes_actor->EmptyArray();
-			notes_displayed++;
-			break; 
-		}
-		case 3: {
-			DisplayNote(0, position_two, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]-1]->Resource);
-			DisplayNote(1, position_three, pacenote_images[pace_notes_actor->GetNotesToDisplay()[1]-1]->Resource);
-			DisplayNote(2, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[2]-1]->Resource);
-			is_drawing = true;
-			pace_notes_actor->EmptyArray();
-			notes_displayed++;
-			break;
-		}
-		case 4: {
-			DisplayNote(0, position_one, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]-1]->Resource);
-			DisplayNote(1, position_two, pacenote_images[pace_notes_actor->GetNotesToDisplay()[1]-1]->Resource);
-			DisplayNote(2, position_three, pacenote_images[pace_notes_actor->GetNotesToDisplay()[2]-1]->Resource);
-			DisplayNote(3, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[3]-1]->Resource);
-			is_drawing = true;
-			pace_notes_actor->EmptyArray();
-			notes_displayed++;
-			break;
-		}
-		case 5: {
-			DisplayNote(0, position_one, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]-1]->Resource);
-			DisplayNote(1, position_two, pacenote_images[pace_notes_actor->GetNotesToDisplay()[1]-1]->Resource);
-			DisplayNote(2, position_three, pacenote_images[pace_notes_actor->GetNotesToDisplay()[2]-1]->Resource);
-			DisplayNote(3, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[3]-1]->Resource);
-			DisplayNote(4, position_five, pacenote_images[pace_notes_actor->GetNotesToDisplay()[4]-1]->Resource);
-			is_drawing = true;
-			pace_notes_actor->EmptyArray();
-			notes_displayed++;
-			break;
-		}
-		case 6: {
-			DisplayNote(0, position_zero, pacenote_images[pace_notes_actor->GetNotesToDisplay()[0]-1]->Resource);
-			DisplayNote(1, position_one, pacenote_images[pace_notes_actor->GetNotesToDisplay()[1]-1]->Resource);
-			DisplayNote(2, position_two, pacenote_images[pace_notes_actor->GetNotesToDisplay()[2]-1]->Resource);
-			DisplayNote(3, position_three, pacenote_images[pace_notes_actor->GetNotesToDisplay()[3]-1]->Resource);
-			DisplayNote(4, position_four, pacenote_images[pace_notes_actor->GetNotesToDisplay()[4]-1]->Resource);
-			DisplayNote(5, position_five, pacenote_images[pace_notes_actor->GetNotesToDisplay()[5]-1]->Resource);
-			is_drawing = true;
-			pace_notes_actor->EmptyArray();
-			notes_displayed++;
-			break;
-		}
-		}
-		
+		}	
 	}
 }
 

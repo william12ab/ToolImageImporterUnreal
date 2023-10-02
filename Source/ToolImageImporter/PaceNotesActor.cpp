@@ -500,3 +500,9 @@ void APaceNotesActor::PlayAddition() {
 		PlayNextNote();
 	}
 }
+
+void APaceNotesActor::RemoveSelected() {
+	for (int i = 0; i < 6; i++){
+		notes_to_display.Remove(i);
+	}
+}

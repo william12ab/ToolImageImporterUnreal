@@ -150,6 +150,8 @@ void UUIWidget::NativeConstruct() {
 	for (size_t i = 0; i < total_control_points.Num(); i++){
 		pacenote_c_p.Add(total_control_points[i]);
 	}
+	vehicle_pawn->GetMesh()->SetPhysicsAngularVelocity(FVector(0, 0, 0));
+	vehicle_pawn->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {
@@ -809,7 +811,7 @@ void UUIWidget::GetOrderOfControlPoints() {
 								control_points_multi.RemoveAt(index_holder);
 							}
 						}
-						else if (control_points_multi.Num() > 1) {
+						else if (control_points_multi.Num() > 1&& (i+1)< control_points_multi.Num()) {
 							auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
 							auto distance2 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i + 1][0]);
 							if (distance < distance2) {

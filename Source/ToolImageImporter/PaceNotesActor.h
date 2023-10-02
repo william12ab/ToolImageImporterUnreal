@@ -70,6 +70,7 @@ public:
 	void SetForEnd();
 
 	void EmptyArray();
+	void RemoveSelected();
 	void RemoveSix();
 	void AddSwitch(const int& note, USoundCue* cue_,const bool &is_addition_);
 	//comps

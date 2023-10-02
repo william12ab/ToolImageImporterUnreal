@@ -26,7 +26,7 @@ public:
 	void ClearNotes();
 	// Begin AHUD interface
 	virtual void DrawHUD() override;
-
+	void SwitchStatement(const TArray<int>& array_);
 	// End AHUD interface
 
 protected:
