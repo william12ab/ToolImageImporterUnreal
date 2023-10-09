@@ -321,8 +321,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		FActorSpawnParameters SpawnInfoTree;
 		FRotator myRotTree(0, 0, 0);
 		FVector myLocTree = FVector(0, 0, 0);
-		auto start = high_resolution_clock::now();
-		for (int i = 0; i < 6; i++) {//tree near track
+		for (int i = 0; i < 96; i++) {//tree near track
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 			tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
@@ -357,10 +356,11 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
-		for (int i = 0; i < 1; i++) {//grass verge
+		for (int i = 0; i < 2; i++) {//grass verge
 			auto start_grass = high_resolution_clock::now();
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
+			tree_instancea->SetItem(i);
 			tree_instancea->AddGrassAtEdge(p_mesh->vec_m_verts[loop_index], p_mesh->vec_m_vert_colors[loop_index], p_mesh->GetHeight());
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);

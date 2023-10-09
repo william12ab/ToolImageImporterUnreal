@@ -89,7 +89,7 @@ void ABasicTree::CheckDistance(UStaticMesh& mesh_) {
 void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_) {
 	float yaw_rot = 0.0f;//gives random yaw
 	FString mesh_name;
-	int loop_range = 250;
+	int loop_range = 16;
 	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
@@ -126,12 +126,10 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 	index_tracker = 0;
 
 	for (int i = h_instanced->GetInstanceCount() - 1; i > 0; i--) {
-		FTransform f;
 		int x = track_tree_points[i].X;
 		int y = track_tree_points[i].Y;
 		if (!CheckBounds(track_point, x, y)) {
 			h_instanced->RemoveInstance(i);
-			h_instanced->GetInstanceTransform(i, f);
 		}
 	}
 	h_instanced->UpdateBounds();
@@ -322,18 +320,26 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 	}
 	h_instanced->UpdateBounds();
 }
-void ABasicTree::AddGrassInstance(const int&x, const int&y, const float&z_pos) {
+void ABasicTree::AddGrassInstance(const int&x, const int&y, const float&z_pos, const int& item) {
 	float rand_rot_yaw = FMath::RandRange(-360, 360);
-	float rand_scale = FMath::RandRange(0.125f, 0.2f);
+	float rand_scale = FMath::RandRange(0.125f, 0.4f);
 	float min_range = FMath::RandRange(0.250f, 0.350f);
 	float max_range = FMath::RandRange(0.050f, 0.10f);
-
+	float x_add = FMath::RandRange(-0.52f, 0.52f);
+	float y_add = FMath::RandRange(-.52f, 0.52f);
+	float total_x = x + x_add;
+	float total_y = y + y_add;
 	FTransform A{
 	FRotator{0,rand_rot_yaw,0},
-	FVector{x * spacing_, y * spacing_, (z_pos) },
+	FVector{(total_x) * spacing_, (total_y) * spacing_, (z_pos) },
 	FVector{rand_scale, rand_scale, rand_scale} };	//Scale
 	TArray<FVector2D>a;
-	AddBasicTree(A, 0, "SM_Grass", a, 0, 0);
+	if (item==0){
+		AddBasicTree(A, 0, "SM_Grass", a, 0, 0);
+	}
+	else {
+		AddBasicTree(A, 0, "SM_Grass", a, 0, 0);
+	}
 	h_instanced->SetCullDistances(750, 3000);
 	h_instanced->SetMobility(EComponentMobility::Static);
 	h_instanced->bCastDynamicShadow = true;
@@ -348,17 +354,17 @@ void ABasicTree::AddGrassAtEdge(const TArray<FVector>& m_verts, const TArray<FLi
 			if (x+1<height_){
 				if (m_colors[y * height_ + x] != m_colors[y * height_ + (x + 1)]) {
 					float z_pos = m_verts[y* height_+ x].Z;
-					AddGrassInstance(x, y, z_pos);
+					AddGrassInstance(x, y, z_pos,item_);
 					z_pos = m_verts[y * height_ + (x + 1)].Z;
-					AddGrassInstance((x+1), y, z_pos);
+					AddGrassInstance((x+1), y, z_pos,item_);
 				}
 			}
 			if (y + 1 < height_) {
 				if (m_colors[y * height_ + x] != m_colors[(y + 1) * height_ + x]) {
 					float z_pos = m_verts[(y+1) * height_ + x].Z;
-					AddGrassInstance(x, (y+1), z_pos);
+					AddGrassInstance(x, (y+1), z_pos,item_);
 					z_pos = m_verts[y * height_ + x].Z;
-					AddGrassInstance(x, y, z_pos);
+					AddGrassInstance(x, y, z_pos, item_);
 				}
 			}
 		}

@@ -31,7 +31,7 @@ public:
 	void AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts);
 	void AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float& max, const float& min);
 	void AddGrassAtEdge(const TArray<FVector>& m_verts, const TArray<FLinearColor>& m_colors, const int& height_);
-	void AddGrassInstance(const int& x, const int& y, const float& z_pos);
+	void AddGrassInstance(const int& x, const int& y, const float& z_pos, const int& item);
 	void NameChoiceTree(FString& mesh_name, int& tree_select);
 	void NameChoicePlant(FString& mesh_name, float& z_alter);
 	void SetSpacing(float s_) { spacing_ = s_; }
@@ -39,6 +39,7 @@ public:
 
 	void CheckDistance( UStaticMesh& mesh_);
 	bool CheckTrackTree(int& point_x, int& point_y);
+	void SetItem(int s) { item_ = s; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,4 +52,5 @@ private:
 	TArray<FVector2D> track_rock_points;
 	int index_tracker;
 	bool is_track_tree;
+	int item_;
 };
