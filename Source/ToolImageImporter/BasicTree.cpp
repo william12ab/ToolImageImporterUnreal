@@ -12,6 +12,7 @@ ABasicTree::ABasicTree(){
 	SetRootComponent(h_instanced);
 	spacing_=20;
 	division_=5.0f;
+	is_track_tree = false;
 }
 // Called when the game starts or when spawned
 void ABasicTree::BeginPlay(){
@@ -78,16 +79,9 @@ bool ABasicTree::CheckTrackTree(int& point_x, int& point_y){
 	return true;
 }
 
-void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos, UStaticMesh& mesh_) {
-	for (int i = 0; i < track_point_arr.Num(); i++){
-		auto dist = FVector2D::Distance(track_point_arr[i], FVector2D(x_pos, y_pos));
-		if (dist<10){
-			mesh_.BodySetup->CollisionTraceFlag = ECollisionTraceFlag::CTF_UseComplexAsSimple;
-			i = track_point_arr.Num() - 1;
-		}
-		else {
-			mesh_.BodySetup->CollisionTraceFlag = ECollisionTraceFlag::CTF_UseSimpleAsComplex;
-		}
+void ABasicTree::CheckDistance(UStaticMesh& mesh_) {
+	if (is_track_tree){
+		mesh_.BodySetup->CollisionTraceFlag = ECollisionTraceFlag::CTF_UseComplexAsSimple;
 	}
 }
 
@@ -95,68 +89,59 @@ void ABasicTree::CheckDistance(const TArray<FVector2D>& track_point_arr, const i
 void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_) {
 	float yaw_rot = 0.0f;//gives random yaw
 	FString mesh_name;
-	int loop_range = FMath::RandRange(250, 750);
+	int loop_range = 250;
 	int tree_select = 0;
-	int pos_y = 0;
-	int pos_x = 0;
-	float z_pos = 0.f;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
 	auto temp_vector = track_point;
 	NameChoiceTree(mesh_name, tree_select);
+	is_track_tree = true;
 	yaw_rot = FMath::RandRange(-360, 360);
 	for (int i = 0; i < loop_range; i++) {
 		int rand_point = FMath::RandRange(5, temp_vector.Num() - 1);
-		pos_y = temp_vector[rand_point].Y;
-		pos_x = temp_vector[rand_point].X;
-		z_pos = m_verts[pos_y * 400 + pos_x].Z;
-		bool is_found = false;
-		while (!is_found) {
-			//if (CheckBounds(track_point, pos_x, pos_y)) {
-				is_found = true;
-				float rand_scale = FMath::RandRange(0.01f, 0.2f);
-				float rand_yaw = FMath::RandRange(0.0f, 180.f);
-				FTransform A{
-				   FRotator{0,yaw_rot,0},
-				   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
-				   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
-				AddBasicTree(A, tree_select, mesh_name, temp_vector, pos_x, pos_y);
-				h_instanced->SetMobility(EComponentMobility::Movable);
-				h_instanced->bCastDynamicShadow = true;
-				h_instanced->CastShadow = true;
-				h_instanced->SetMassOverrideInKg(NAME_None,10000.f);
-				h_instanced->SetCullDistances(750, 3000);
-				h_instanced->SetMobility(EComponentMobility::Static);
-				track_tree_points.Add(FVector2D(pos_x, pos_y));
-				temp_vector.RemoveAt(rand_point);
-			//}
-			//else {
-				/*pos_x += FMath::RandRange(-4, 8);
-				pos_y += FMath::RandRange(-8, 8);
-				if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
-					pos_y = temp_vector[rand_point].Y;
-					pos_x = temp_vector[rand_point].X;
-				}
-				z_pos = m_verts[pos_y * 400 + pos_x].Z;*/
-			//}
+		int pos_y = temp_vector[rand_point].Y;
+		int pos_x = temp_vector[rand_point].X;
+		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
+		pos_x += FMath::RandRange(-4, 8);
+		pos_y += FMath::RandRange(-8, 8);
+		if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
+			pos_y = temp_vector[rand_point].Y;
+			pos_x = temp_vector[rand_point].X;
 		}
-	}
+		z_pos = m_verts[pos_y * 400 + pos_x].Z;
+		FTransform A{
+			   FRotator{0,yaw_rot,0},
+			   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
+			   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
+		AddBasicTree(A, tree_select, mesh_name, temp_vector, pos_x, pos_y);
+		h_instanced->SetMobility(EComponentMobility::Movable);
+		h_instanced->bCastDynamicShadow = true;
+		h_instanced->CastShadow = true;
+		h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
+		h_instanced->SetCullDistances(750, 3000);
+		h_instanced->SetMobility(EComponentMobility::Static);
+		track_tree_points.Add(FVector2D(pos_x, pos_y));
+		temp_vector.RemoveAt(rand_point);
+		}
 	index_tracker = 0;
-	for (size_t i = 0; i < track_tree_points.Num(); i++){
+
+	for (int i = h_instanced->GetInstanceCount() - 1; i > 0; i--) {
+		FTransform f;
 		int x = track_tree_points[i].X;
 		int y = track_tree_points[i].Y;
-		if (!CheckBounds(track_point,x,y)){
+		if (!CheckBounds(track_point, x, y)) {
 			h_instanced->RemoveInstance(i);
+			h_instanced->GetInstanceTransform(i, f);
 		}
 	}
-	
+	h_instanced->UpdateBounds();
 }
 
 //selects a tree type randomly, selects a position randomly, checks if in height limitations, spawns tree if in bounds, otherwise -1 on the index from the loop.
 void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_, const int&min_, const TArray<FVector2D>& track_point, const bool& is_foilage){
 	//default values, holder for name of the mesh, ranges for how many types of that mesh there are. min and max of the current terrain mesh, ttree sleect is for sleecting a tree. z_alter is for fixing the position of foilage.
 	FString mesh_name;
-	int loop_range = FMath::RandRange(250, 1000);
+	int loop_range = 250;
 	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
@@ -165,6 +150,7 @@ void ABasicTree::AddClusterTrees(const TArray<FVector>& m_verts, const int&max_,
 	float min_height_modi = 0.3f;//for the height check, different for trees and bushes
 	float max_height_modi =0.15f; //same above
 	max_height_modi = FMath::RandRange(0.1f,0.2f);
+	is_track_tree = false;
 	if (is_foilage){
 		loop_range =  500;
 		NameChoicePlant(mesh_name,z_alter);
@@ -261,7 +247,7 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 	name_.Append("'");
 	UStaticMesh* meshToUse = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, *name_));
 	if (name_attachment_=="SM_Pine_Tree_"|| name_attachment_ == "SM_Common_Tree_"){
-		CheckDistance(track_point_arr, x_pos, y_pos, *meshToUse);
+		CheckDistance(*meshToUse);
 	}
 	if (meshToUse && h_instanced){
 		h_instanced->SetStaticMesh(meshToUse);
@@ -292,48 +278,49 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 }
 
 void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts){
-	auto d = FVector2D::Distance(track_point[0], track_point.Last());
-	float rand_percent = FMath::RandRange(0.0f, spacing_);
-	float rocks_to_spawn_float = d * (rand_percent/100.0f);
-	int rocks_to_spawn = round(rocks_to_spawn_float);
-	rocks_to_spawn *= 8;
+
+	int rocks_to_spawn = 100;
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
-	for (int i = 0; i < rocks_to_spawn; i++){
-		int rand_point = FMath::RandRange(0, track_point.Num()-1);
+	for (int i = 0; i < rocks_to_spawn; i++) {
+		int rand_point = FMath::RandRange(0, track_point.Num() - 1);
 		int pos_y = track_point[rand_point].Y;
 		int pos_x = track_point[rand_point].X;
-		bool is_found = false;
-		while (!is_found){
-			if (CheckBounds(track_point, pos_x, pos_y)&& CheckTrackTree(pos_x,pos_y)) {
-				is_found = true;
-				float z_pos = m_verts[pos_y * 400 + pos_x].Z;
-				float rand_scale = FMath::RandRange(0.01f, 0.2f);
-				float rand_yaw = FMath::RandRange(0.0f, 180.f);
-				UStaticMesh* meshToUse = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Game/Stylized_PBR_Nature/Rocks/Assets/SM_R_Rock_02.SM_R_Rock_02'")));
-				if (meshToUse && h_instanced) {
-					h_instanced->SetStaticMesh(meshToUse);
-				}
-				FTransform A{
-				FRotator{0,rand_yaw,0},
-				FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
-				FVector{rand_scale, rand_scale, rand_scale} };	//Scale
-				h_instanced->AddInstance(A);
-				h_instanced->SetMobility(EComponentMobility::Movable);
-				h_instanced->SetCullDistances(750, 3000);
-				h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
-				h_instanced->SetMobility(EComponentMobility::Static);
-				h_instanced->bReceivesDecals = false;
-			}
-			else {
-				pos_x += FMath::RandRange(-4, 8);
-				pos_y += FMath::RandRange(-8, 8);
-				if (pos_x<=0 ||pos_x>=400 || pos_y>=400 || pos_y<=0){
-					pos_y = track_point[rand_point].Y;
-					pos_x = track_point[rand_point].X;
-				}
-			}
+		pos_x += FMath::RandRange(-4, 8);
+		pos_y += FMath::RandRange(-8, 8);
+		if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
+			pos_y = track_point[rand_point].Y;
+			pos_x = track_point[rand_point].X;
+		}
+		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
+		float rand_scale = FMath::RandRange(0.01f, 0.2f);
+		float rand_yaw = FMath::RandRange(0.0f, 180.f);
+		UStaticMesh* meshToUse = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Game/Stylized_PBR_Nature/Rocks/Assets/SM_R_Rock_02.SM_R_Rock_02'")));
+		if (meshToUse && h_instanced) {
+			h_instanced->SetStaticMesh(meshToUse);
+		}
+		FTransform A{
+		FRotator{0,rand_yaw,0},
+		FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
+		FVector{rand_scale, rand_scale, rand_scale} };	//Scale
+		h_instanced->AddInstance(A);
+		h_instanced->SetMobility(EComponentMobility::Movable);
+		h_instanced->SetCullDistances(750, 3000);
+		h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
+		h_instanced->SetMobility(EComponentMobility::Static);
+		h_instanced->bReceivesDecals = false;
+		track_rock_points.Add(FVector2D(pos_x, pos_y));
+	}
+
+	for (int i = h_instanced->GetInstanceCount() - 1; i > 0; i--) {
+		FTransform f;
+		int x = track_rock_points[i].X;
+		int y = track_rock_points[i].Y;
+		if (!CheckBounds(track_point, x, y)&& CheckTrackTree(x,y)) {
+			h_instanced->RemoveInstance(i);
+			h_instanced->GetInstanceTransform(i, f);
 		}
 	}
+	h_instanced->UpdateBounds();
 }
 void ABasicTree::AddGrassInstance(const int&x, const int&y, const float&z_pos) {
 	float rand_rot_yaw = FMath::RandRange(-360, 360);
@@ -381,7 +368,7 @@ void ABasicTree::AddGrassAtEdge(const TArray<FVector>& m_verts, const TArray<FLi
 void ABasicTree::AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float&max, const float&min){
 	float max_m = max;
 	float min_m = min;
-	for (int i = 0; i < 1000; i++) {
+	for (int i = 0; i < 250; i++) {
 		int pos_y = FMath::RandRange(10, 380);
 		int pos_x = FMath::RandRange(10, 380);
 		float z_pos = m_verts[pos_y * 400 + pos_x].Z;

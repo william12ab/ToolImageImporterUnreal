@@ -37,7 +37,7 @@ public:
 	void SetSpacing(float s_) { spacing_ = s_; }
 	void SetDivision(float d_) { division_ = d_; }
 
-	void CheckDistance(const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos, UStaticMesh& mesh_);
+	void CheckDistance( UStaticMesh& mesh_);
 	bool CheckTrackTree(int& point_x, int& point_y);
 protected:
 	// Called when the game starts or when spawned
@@ -48,6 +48,7 @@ private:
 	float division_;
 
 	TArray<FVector2D> track_tree_points;
-
+	TArray<FVector2D> track_rock_points;
 	int index_tracker;
+	bool is_track_tree;
 };
