@@ -253,7 +253,7 @@ void ABasicTree::AddBasicTree(const FTransform& transform_, const int& tree_, co
 	h_instanced->AddInstance(transform_);
 }
 
-bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, int&point_y){
+bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, const int&point_x, const int&point_y){
 	for (int i = 0; i < track_point.Num(); i++){
 		int pos_ = 1;
 		if ((int)point_x != (int)track_point[i].X && (int)point_y != (int)track_point[i].Y ) {
@@ -276,7 +276,6 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, int&point_x, 
 }
 
 void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts){
-
 	int rocks_to_spawn = 100;
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
 	for (int i = 0; i < rocks_to_spawn; i++) {

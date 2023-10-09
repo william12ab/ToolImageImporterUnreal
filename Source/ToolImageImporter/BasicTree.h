@@ -26,7 +26,7 @@ public:
 	void AddBasicTree(const FTransform& transform_, const int& tree_, const FString& name_attachment_, const TArray<FVector2D>& track_point_arr, const int& x_pos, const int& y_pos);
 	void AddClusterTrees(const TArray<FVector> &m_verts, const int& max_, const int& min_, const TArray<FVector2D>& track_point, const bool& is_foliage);
 	void AddName(const FString& name_attachment_, const int& tree_, FString& name_);
-	bool CheckBounds(const TArray<FVector2D>& track_point, int& point_x, int&point_y);
+	bool CheckBounds(const TArray<FVector2D>& track_point, const int& point_x, const int&point_y);
 	void AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_);
 	void AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts);
 	void AddGrass(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const float& max, const float& min);
