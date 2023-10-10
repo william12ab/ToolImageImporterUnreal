@@ -63,9 +63,9 @@ bool ABasicTree::CheckTrackTree(int& point_x, int& point_y){
 			//if not on track point, do nothing and continue to see if it is on a track point.
 		}
 		else {
-			for (size_t switcher_ = 0; switcher_ < 2; switcher_++) {
-				for (size_t x = 0; x < 5; x++) {
-					for (size_t y = 0; y < 5; y++) {
+			for (int switcher_ = 0; switcher_ < 2; switcher_++) {
+				for (int x = 0; x < 5; x++) {
+					for (int y = 0; y < 5; y++) {
 						if ((int)point_x == (int)track_tree_points[i].X + x * pos_ && (int)point_y == (int)track_tree_points[i].Y + y * pos_) {
 							index_tracker = i;
 							return false;
@@ -125,12 +125,19 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 		}
 	index_tracker = 0;
 
-	for (int i = h_instanced->GetInstanceCount() - 1; i > 0; i--) {
-		int x = track_tree_points[i].X;
-		int y = track_tree_points[i].Y;
-		if (!CheckBounds(track_point, x, y)) {
-			h_instanced->RemoveInstance(i);
+	for (int j = 0; j < 2; j++) {
+		for (int i = h_instanced->GetInstanceCount() - 1; i > 0; i--) {
+			int x = track_tree_points[i].X;
+			int y = track_tree_points[i].Y;
+			if (!CheckBounds(track_point, x, y)) {
+				h_instanced->RemoveInstance(i);
+				track_tree_points.RemoveAt(i);
+			}
 		}
+	}
+	if (!CheckBounds(track_point, track_tree_points[0].X, track_tree_points[0].Y)) {
+		h_instanced->RemoveInstance(0);
+		track_tree_points.RemoveAt(0);
 	}
 	h_instanced->UpdateBounds();
 }
@@ -260,16 +267,15 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, const int&poi
 			//if not on track point, do nothing and continue to see if it is on a track point.
 		}
 		else {
-			for (size_t switcher_ = 0; switcher_ < 2; switcher_++){
-			for (size_t x = 0; x < 5; x++){
-				for (size_t y = 0; y < 5; y++){
-					if ((int)point_x == (int)track_point[i].X + x*pos_ && (int)point_y == (int)track_point[i].Y + y*pos_) {
+			FVector2D loc_t_point = track_point[i];
+			for (int x = -5; x < 5; x++){
+				for (int y = -5; y < 5; y++){
+					if ((int)point_x == loc_t_point.X + x*pos_ && (int)point_y == loc_t_point.Y + y*pos_) {
 						return false;
 					}
 				}
 			}
-			pos_ *= -1;//if equals point, or right, left, up, down 
-			}
+			
 		}
 	}
 	return true;
@@ -321,7 +327,7 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 }
 void ABasicTree::AddGrassInstance(const int&x, const int&y, const float&z_pos, const int& item) {
 	float rand_rot_yaw = FMath::RandRange(-360, 360);
-	float rand_scale = FMath::RandRange(0.125f, 0.4f);
+	float rand_scale = FMath::RandRange(0.1f, 0.251f);
 	float min_range = FMath::RandRange(0.250f, 0.350f);
 	float max_range = FMath::RandRange(0.050f, 0.10f);
 	float x_add = FMath::RandRange(-0.52f, 0.52f);
