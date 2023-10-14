@@ -45,10 +45,10 @@ void UUIWidget::NativeConstruct() {
 		m_colors = level_loader.ReadFileInfo(h_, w_, i);
 		GeneratePlane(i);
 		if (is_chunking){
-			p_mesh->SetIsChunking(true);
+			original_plane->SetIsChunking(true);
 		}
 		else {
-			p_mesh->SetIsChunking(false);
+			original_plane->SetIsChunking(false);
 		}
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
 		if (track_points.IsValidIndex(0)){
@@ -80,15 +80,15 @@ void UUIWidget::NativeConstruct() {
 	}
 	GetOrderOfControlPoints();
 	if (is_chunking){
-		p_mesh->SetEdges();
+		original_plane->SetEdges();
 	}
 	if (is_chunking){//at this point youre merging them to create a full big one
-		p_mesh->TestFinal();		//smooths each section uniformly
-		p_mesh->SetEdges();
-		p_mesh->FullSize();			//adds all together
+		original_plane->TestFinal();		//smooths each section uniformly
+		original_plane->SetEdges();
+		original_plane->FullSize();			//adds all together
 
 	}
-	p_mesh->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+	original_plane->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	ResizeMesh();//ading more verts
 	SpawnStartEndFlags();
 	//starting
@@ -208,14 +208,15 @@ void UUIWidget::GeneratePlane(const int& loop_index) {
 		FActorSpawnParameters SpawnInfo;
 		FRotator myRot(0, 0, 0);
 		FVector myLoc = FVector(0, 0, 0);
-		p_mesh = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+		//original_plane = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+		original_plane = GetWorld()->SpawnActor<ARuntimeMeshPlane>(myLoc, myRot, SpawnInfo);
 		is_created = true;
 	}
-	p_mesh->CreateMesh(h_, w_, s_, loop_index);
+	original_plane->CreateMesh(h_, w_, s_, loop_index);
 }
 
 void UUIWidget::CreateTrack(const int& loop_index) {
-	p_mesh->ModiVerts(m_colors, m_,loop_index);
+	original_plane->ModiVerts(m_colors, m_,loop_index);
 	CreateFoilage(loop_index);
 }
 
@@ -307,12 +308,12 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 	int max = 0;
 	int min = 100000000;
 	int index = 0;
-	for (int i = 0; i < p_mesh->vec_m_verts[loop_index].Num(); i++) {
-		if (p_mesh->vec_m_verts[loop_index][i].Z > max) {
-			max = p_mesh->vec_m_verts[loop_index][i].Z;
+	for (int i = 0; i < original_plane->vec_m_verts[loop_index].Num(); i++) {
+		if (original_plane->vec_m_verts[loop_index][i].Z > max) {
+			max = original_plane->vec_m_verts[loop_index][i].Z;
 		}
-		if (p_mesh->vec_m_verts[loop_index][i].Z < min) {
-			min = p_mesh->vec_m_verts[loop_index][i].Z;
+		if (original_plane->vec_m_verts[loop_index][i].Z < min) {
+			min = original_plane->vec_m_verts[loop_index][i].Z;
 			index = i;
 		}
 	}
@@ -324,35 +325,35 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		for (int i = 0; i < 96; i++) {//tree near track
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-			tree_instancea->AddTreeNearTrack(track_points, p_mesh->vec_m_verts[loop_index], max, min);
+			tree_instancea->AddTreeNearTrack(track_points, original_plane->vec_m_verts[loop_index], max, min);
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
 		for (int i = 0; i < 6; i++) {//tree in general
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-			tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, false);
+			tree_instancea->AddClusterTrees(original_plane->vec_m_verts[loop_index], max, min, track_points, false);
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
 		for (int i = 0; i < 6; i++) {//ferns bushes
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-			tree_instancea->AddClusterTrees(p_mesh->vec_m_verts[loop_index], max, min, track_points, true);
+			tree_instancea->AddClusterTrees(original_plane->vec_m_verts[loop_index], max, min, track_points, true);
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
 		for (int i = 0; i < 3; i++) {//rocks
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-			tree_instancea->AddRockClusters(track_points, p_mesh->vec_m_verts[loop_index]);
+			tree_instancea->AddRockClusters(track_points, original_plane->vec_m_verts[loop_index]);
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
 		for (int i = 0; i < 6; i++) {//grass
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-			tree_instancea->AddGrass(track_points, p_mesh->vec_m_verts[loop_index], max, min);
+			tree_instancea->AddGrass(track_points, original_plane->vec_m_verts[loop_index], max, min);
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
@@ -361,7 +362,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 			tree_instancea->SetItem(i);
-			tree_instancea->AddGrassAtEdge(p_mesh->vec_m_verts[loop_index], p_mesh->vec_m_vert_colors[loop_index], p_mesh->GetHeight());
+			tree_instancea->AddGrassAtEdge(original_plane->vec_m_verts[loop_index], original_plane->vec_m_vert_colors[loop_index], original_plane->GetHeight());
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
@@ -370,7 +371,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		if (water_height >= track_spline->GetMinHeight()) {
 			water_height = track_spline->GetMinHeight();
 		}
-		myLocTree = FVector(p_mesh->vec_m_verts[loop_index][index].X, p_mesh->vec_m_verts[loop_index][index].Y, water_height + track_spline->GetHeightChange());
+		myLocTree = FVector(original_plane->vec_m_verts[loop_index][index].X, original_plane->vec_m_verts[loop_index][index].Y, water_height + track_spline->GetHeightChange());
 		vec_water_mesh[loop_index] = GetWorld()->SpawnActor<AWaterMesh>(myLocTree, myRotTree, SpawnInfoTree);
 		vec_water_mesh[loop_index]->SetActorScale3D(FVector(30, 30, 30));
 	}
@@ -402,8 +403,8 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 		track_spline->SetControlPoints(temp_arr);//setting array in class to the points
 		track_spline->SetHeightArray(m_colors);//setting array as well
 		track_spline->OnConstruction(t_transform_);//consttruction
-		p_mesh->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts(), loop_index);//changing height of mesh
-		p_mesh->ReplaceC(loop_index);//replacing heightmap to match new mesh, also normals and smoothing
+		original_plane->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts(), loop_index);//changing height of mesh
+		original_plane->ReplaceC(loop_index);//replacing heightmap to match new mesh, also normals and smoothing
 		track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
 		track_spline->SetActorEnableCollision(false);
 		if (point_type) {
@@ -440,20 +441,19 @@ void UUIWidget::ResizeMesh() {
 	FActorSpawnParameters SpawnInfo;
 	FRotator myRot(0, 0, 0);
 	FVector myLoc = FVector(0, 0, 0);
-	new_temp = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
-	track_obj = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
+	new_plane = GetWorld()->SpawnActor<ARuntimeMeshPlane>(myLoc, myRot, SpawnInfo);
+	track_plane = GetWorld()->SpawnActor<ARuntimeMeshPlane>(myLoc, myRot, SpawnInfo);
 
-	p_mesh->Save(temp_vec, temp_color, temp_uvs,0);
-	new_temp->SetIsTemp(true);
+	original_plane->Save(temp_vec, temp_color, temp_uvs,0);
+	new_plane->SetIsTemp(true);
 	if (is_chunking) {
-		new_temp->SetIsChunking(true);
+		new_plane->SetIsChunking(true);
 	}
-	new_temp->Resize(temp_vec, 2, temp_color, 0, temp_uvs);
-	track_obj->CreateCollisionZone(total_track_points, new_temp->vec_m_verts[0], new_temp->GetHeight());
-	track_obj->SetActorScale3D(FVector(5.f, 5.f, 10));
-	new_temp->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
-	track_obj->procedural_mesh_comp->SetMassOverrideInKg(NAME_None, 1000000000.f);
-
+	new_plane->Resize(temp_vec, 2, temp_color, 0, temp_uvs);
+	track_plane->CreateCollisionZone(total_track_points, new_plane->vec_m_verts[0], new_plane->GetHeight());
+	track_plane->SetActorScale3D(FVector(5.f, 5.f, 10));
+	new_plane->SetActorScale3D(FVector(5.f, 5.f, 10));//2.5 for 4 times increase, 5 times for 2. so scaling/increase
+	track_plane->RuntimeMeshComponent->SetMassOverrideInKg(NAME_None, 1000000000.f);
 
 	//getting z before destroyed
 	for (int i = 0; i < total_control_points.Num(); i++) {
@@ -463,10 +463,10 @@ void UUIWidget::ResizeMesh() {
 		if (is_chunking){
 			resolution_ = 1600;
 		}
-		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
-		z_height.Add(z_from_p_mesh);
+		float z_from_original_plane = new_plane->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
+		z_height.Add(z_from_original_plane);
 	}
-	p_mesh->Destroy();
+	original_plane->Destroy();
 
 
 	//water
@@ -651,8 +651,8 @@ void UUIWidget::SpawnStartEndFlags() {
 		if (is_chunking) {
 			resolution_ = 1600;
 		}
-		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
-		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_from_p_mesh));
+		float z_from_original_plane = new_plane->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_ * scaling_down_, total_control_points[i].Y * s_ * scaling_down_, z_from_original_plane));
 	}
 	StartPlaces(0);
 	if (!point_type) {
@@ -694,8 +694,8 @@ void UUIWidget::StartPlaces(const int& loop_index) {
 		if (is_chunking) {
 			resolution_ = 1600;
 		}
-		float z_from_p_mesh = new_temp->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
-		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_from_p_mesh));
+		float z_from_original_plane = new_plane->vec_m_verts[0][(yp) *resolution_ + (xp)].Z;
+		control_points_with_z.Add(FVector(total_control_points[i].X * s_, total_control_points[i].Y * s_, z_from_original_plane));
 	}
 	if (!point_type) {
 		InnerStartPlaces(control_points_with_z, 0);
