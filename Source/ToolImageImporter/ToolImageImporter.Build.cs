@@ -11,10 +11,11 @@ public class ToolImageImporter : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "ProceduralMeshComponent","DesktopPlatform", "PhysXVehicles" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "ProceduralMeshComponent" });
-
+		PublicDependencyModuleNames.AddRange(new string[] { "RuntimeMeshComponent" });
+		
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
