@@ -457,16 +457,16 @@ void ARuntimeMeshPlane::ChangePos(int& pos, const int& max, bool& local_is_chang
 void ARuntimeMeshPlane::ChangeVert(const float& x_pos, const float& y_pos, const float& z_pos, const int& index_, const bool& checker_, const float& x_step, const float& y_step) {
 	bool local_is_changed = false;//bool to catch if point changed
 	int y_po = ((static_cast<int>(y_pos) / spacing_));		//getting point in local coord system
-	ChangePos(y_po, vec_m_verts[index_].Num(), local_is_changed);		//if point is less than or greater than bounds change point.
-
 	int x_po = ((static_cast<int>(x_pos) / spacing_));		//samas as above
+
+	ChangePos(y_po, vec_m_verts[index_].Num(), local_is_changed);		//if point is less than or greater than bounds change point.
 	ChangePos(x_po, vec_m_verts[index_].Num(), local_is_changed);
 
 	vec_m_verts[index_][(y_po)*height_ + (x_po)].Z = z_pos;			//set the vert to the height
 
 	if (local_is_changed) {									//if changed used different mechanic
-		vec_m_vert_colors[index_][(static_cast<int>(y_po)) * height_ + (static_cast<int>(x_po))] = FLinearColor::Black;
-		m_u_vs[(static_cast<int>(y_po)) * height_ + (static_cast<int>(x_po))] = FVector2D(x_step, y_step);
+		vec_m_vert_colors[index_][y_po* height_ + (x_po)] = FLinearColor::Black;
+		m_u_vs[(y_po) * height_ + (x_po)] = FVector2D(x_step, y_step);
 	}
 	else {
 		vec_m_vert_colors[index_][(static_cast<int>(y_pos / spacing_)) * height_ + (static_cast<int>(x_pos / spacing_))] = FLinearColor::Black;
