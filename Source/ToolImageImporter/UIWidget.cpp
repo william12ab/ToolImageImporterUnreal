@@ -86,7 +86,6 @@ void UUIWidget::NativeConstruct() {
 		original_plane->TestFinal();		//smooths each section uniformly
 		original_plane->SetEdges();
 		original_plane->FullSize();			//adds all together
-
 	}
 	original_plane->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 	ResizeMesh();//ading more verts

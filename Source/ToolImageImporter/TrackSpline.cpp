@@ -72,25 +72,19 @@ void ATrackSpline::OnConstruction(const FTransform& Transform) {
 	}
 	if (spline) {
 		const int32 spline_points = spline->GetNumberOfSplinePoints();
-		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)
-		{
+		for (int spline_count = 0; spline_count < (spline_points - 1); spline_count++)	{
 			USplineMeshComponent* spline_mesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
 			UStaticMesh* static_mesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), NULL, TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'")));
-
-			UMaterialInterface* Material = nullptr;
-			Material = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/testmaterial.testmaterial'"));
-
 			// update mesh details
 			spline_mesh->SetStaticMesh(static_mesh);
 			spline_mesh->SetForwardAxis(ESplineMeshAxis::X, true);
-			spline_mesh->SetMaterial(0, Material);
 
 			// initialize the object
 			spline_mesh->RegisterComponentWithWorld(GetWorld());
 
 			spline_mesh->CreationMethod = EComponentCreationMethod::UserConstructionScript;
 			spline_mesh->SetMobility(EComponentMobility::Movable);
-			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+			spline_mesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
 			spline_mesh->AttachToComponent(spline, FAttachmentTransformRules::KeepRelativeTransform);
 
 			// define the positions of the points and tangents
@@ -105,7 +99,7 @@ void ATrackSpline::OnConstruction(const FTransform& Transform) {
 			start_end_points.Add(EndPoint);
 			//holds the start and end point of each spline part.
 
-			// query physics
+	
 			//getting vertices of spline
 			if (spline_mesh->GetStaticMesh()->RenderData->LODResources.Num() > 0) {
 				FPositionVertexBuffer* vertex_buffer = &spline_mesh->GetStaticMesh()->RenderData->LODResources[0].VertexBuffers.PositionVertexBuffer;

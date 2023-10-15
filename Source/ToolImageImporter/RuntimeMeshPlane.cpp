@@ -8,55 +8,30 @@
 #include "Runtime/Core/Public/Async/ParallelFor.h"
 // Sets default values
 
-float LerpR(const float& p1, const float& p2, const float& t){
+float LerpR(const float& p1, const float& p2, const float& t) {
 	auto c = (1.0f - t) * p1 + t * p2;
 	return c;
 }
-FVector LerpVR(const FVector& p1, const FVector& p2, const float& t){
+FVector LerpVR(const FVector& p1, const FVector& p2, const float& t) {
 	auto c = (1.0f - t) * p1 + t * p2;
 	return c;
 }
 
-ARuntimeMeshPlane::ARuntimeMeshPlane(){
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ARuntimeMeshPlane::ARuntimeMeshPlane() {
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = RootComp;
-	RuntimeMeshComponent = NewObject<URuntimeMeshComponent>(this, "TestRMC");
-	RuntimeMeshComponent->SetupAttachment(RootComp);
-	RuntimeMeshComponent->RegisterComponent();
-	StaticProvider = NewObject<URuntimeMeshProviderStatic>(this, TEXT("StaticProvider"));
-	RuntimeMeshComponent->Initialize(StaticProvider);
-	StaticProvider->SetupMaterialSlot(0, TEXT("Material"), nullptr);
+
 	width_ = 4;
 	height_ = 4;
 	spacing_ = 20.0f;
 	count = 0;
 	is_temp = false;
-	auto PhysicalMaterialAsset = ConstructorHelpers::FObjectFinder<UObject>(TEXT("PhysicalMaterial'/Game/GroundPhysMat.GroundPhysMat'"));
-	if (PhysicalMaterialAsset.Object) {
-		RuntimeMeshComponent->BodyInstance.SetPhysMaterialOverride((UPhysicalMaterial*)PhysicalMaterialAsset.Object);
-	}
-	vec_m_verts.Add(m_verts);
-	vec_m_verts.Add(m_verts1);
-	vec_m_verts.Add(m_verts2);
-	vec_m_verts.Add(m_verts3);
-
-	vec_m_norms.Add(m_norms);
-	vec_m_norms.Add(m_norms1);
-	vec_m_norms.Add(m_norms2);
-	vec_m_norms.Add(m_norms3);
-
-	vec_m_vert_colors.Add(m_vert_colors);
-	vec_m_vert_colors.Add(m_vert_colors1);
-	vec_m_vert_colors.Add(m_vert_colors2);
-	vec_m_vert_colors.Add(m_vert_colors3);
-
-	vec_m_tris.Add(m_tris);
-	vec_m_tris.Add(m_tris1);
-	vec_m_tris.Add(m_tris2);
-	vec_m_tris.Add(m_tris3);
-	is_created = false;
+	//auto PhysicalMaterialAsset = ConstructorHelpers::FObjectFinder<UObject>(TEXT("PhysicalMaterial'/Game/GroundPhysMat.GroundPhysMat'"));
+	//if (PhysicalMaterialAsset.Object) {
+	//	RuntimeMeshComponent->BodyInstance.SetPhysMaterialOverride((UPhysicalMaterial*)PhysicalMaterialAsset.Object);
+	//}
 }
 void ARuntimeMeshPlane::PostInitializeComponents() {
 	Super::PostInitializeComponents();
@@ -77,7 +52,8 @@ void ARuntimeMeshPlane::FullSize() {
 		}
 		});
 	CalculateNormals(0);
-	StaticProvider->CreateSectionFromComponents(0, 0, 0, vec_m_verts[0], vec_m_tris[0], vec_m_norms[0], m_u_vs, vec_m_vert_colors[0],m_tangents, ERuntimeMeshUpdateFrequency::Infrequent, false);
+
+	StaticProvider->CreateSectionFromComponents(0, 0, 0, vec_m_verts[0], vec_m_tris[0], vec_m_norms[0], m_u_vs, vec_m_vert_colors[0], m_tangents, ERuntimeMeshUpdateFrequency::Infrequent, false);
 	z_axis.Empty();
 	temp_colors.Empty();
 }
@@ -114,7 +90,7 @@ void ARuntimeMeshPlane::SetEdges() {
 }
 void ARuntimeMeshPlane::CallUpdate(const int index_) {
 	ParallelFor(4, [&](int32 i) {
-		StaticProvider->UpdateSectionFromComponents(0, i, vec_m_verts[i], vec_m_tris[i],vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
+		StaticProvider->UpdateSectionFromComponents(0, i, vec_m_verts[i], vec_m_tris[i], vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
 		//procedural_mesh_comp->UpdateMeshSection_LinearColor(i, vec_m_verts[i], vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
 		});
 }
@@ -521,24 +497,30 @@ void ARuntimeMeshPlane::SetHeightProper(const TArray<FVector>& points_, const TA
 	int right, left;
 	left = 3;
 	right = 2;
-	float inner_count_size = 100.0f;
+	int inner_count_size = 100.0f;
 	for (int i = 0; i < points_.Num(); i += 2) {
 		float dist = DistanceR(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
 		int_dist *= 20;
+
 		ParallelFor(int_dist, [&](int j) {
-			float t = (float)(j / (float)int_dist);
-			auto left_pos = LerpVR(verts_[index_tracker_verts + left], verts_[index_tracker_verts + (left - 2)], t);	//gives pos on left
-			auto right_pos = LerpVR(verts_[index_tracker_verts + right], verts_[index_tracker_verts + (right - 2)], t);	//gives pos on right
+			float t = static_cast<float>(j) / static_cast<float>(int_dist);
+			int left_index = index_tracker_verts + left;
+			int right_index = index_tracker_verts + right;
+
+			auto left_pos = LerpVR(verts_[left_index], verts_[left_index - 2], t);
+			auto right_pos = LerpVR(verts_[right_index], verts_[right_index - 2], t);
 			auto centre_pos = LerpVR(points_[i], points_[i + 1], t);
+
 			ChangeVert(centre_pos.X, centre_pos.Y, left_pos.Z, index_, false, 0, 0);
 			ChangeVert(left_pos.X, left_pos.Y, left_pos.Z, index_, false, 0, 0);
 			ChangeVert(right_pos.X, right_pos.Y, left_pos.Z, index_, false, 0, 0);
-			for (int k = 0; k < (int)inner_count_size; k++) {
-				float t_inner = (float)(k / inner_count_size);
-				auto a = LerpVR(left_pos, right_pos, t_inner);
-				ChangeVert(a.X, a.Y, left_pos.Z, index_, true, t_inner, t);//compare a and left
-			}
+
+			ParallelFor(inner_count_size, [&](int k) {
+				float tInner = static_cast<float>(k) / inner_count_size;
+				auto inner_pos = LerpVR(left_pos, right_pos, tInner);
+				ChangeVert(inner_pos.X, inner_pos.Y, left_pos.Z, index_, true, tInner, t);
+				});
 			});
 		index_tracker_verts += 4;
 	}
@@ -674,13 +656,40 @@ void ARuntimeMeshPlane::CreateCollisionZone(const TArray<FVector2D>& track_point
 }
 
 // Called when the game starts or when spawned
-void ARuntimeMeshPlane::BeginPlay(){
+void ARuntimeMeshPlane::BeginPlay() {
 	Super::BeginPlay();
+	RuntimeMeshComponent = NewObject<URuntimeMeshComponent>(this, "TestRMC");
+	RuntimeMeshComponent->SetupAttachment(RootComp);
+	RuntimeMeshComponent->RegisterComponent();
+	StaticProvider = NewObject<URuntimeMeshProviderStatic>(this, TEXT("StaticProvider"));
+	RuntimeMeshComponent->Initialize(StaticProvider);
+	StaticProvider->SetupMaterialSlot(0, TEXT("Material"), nullptr);
 
+
+	vec_m_verts.Add(m_verts);
+	vec_m_verts.Add(m_verts1);
+	vec_m_verts.Add(m_verts2);
+	vec_m_verts.Add(m_verts3);
+
+	vec_m_norms.Add(m_norms);
+	vec_m_norms.Add(m_norms1);
+	vec_m_norms.Add(m_norms2);
+	vec_m_norms.Add(m_norms3);
+
+	vec_m_vert_colors.Add(m_vert_colors);
+	vec_m_vert_colors.Add(m_vert_colors1);
+	vec_m_vert_colors.Add(m_vert_colors2);
+	vec_m_vert_colors.Add(m_vert_colors3);
+
+	vec_m_tris.Add(m_tris);
+	vec_m_tris.Add(m_tris1);
+	vec_m_tris.Add(m_tris2);
+	vec_m_tris.Add(m_tris3);
+	is_created = false;
 }
 
 // Called every frame
-void ARuntimeMeshPlane::Tick(float DeltaTime){
+void ARuntimeMeshPlane::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 }
