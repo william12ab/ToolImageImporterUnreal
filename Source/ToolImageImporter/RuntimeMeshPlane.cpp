@@ -497,7 +497,7 @@ void ARuntimeMeshPlane::SetHeightProper(const TArray<FVector>& points_, const TA
 	int right, left;
 	left = 3;
 	right = 2;
-	int inner_count_size = 100.0f;
+	int inner_count_size = 25.0f;
 	for (int i = 0; i < points_.Num(); i += 2) {
 		float dist = DistanceR(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
