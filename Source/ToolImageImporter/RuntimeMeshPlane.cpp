@@ -28,10 +28,6 @@ ARuntimeMeshPlane::ARuntimeMeshPlane() {
 	spacing_ = 20.0f;
 	count = 0;
 	is_temp = false;
-	//auto PhysicalMaterialAsset = ConstructorHelpers::FObjectFinder<UObject>(TEXT("PhysicalMaterial'/Game/GroundPhysMat.GroundPhysMat'"));
-	//if (PhysicalMaterialAsset.Object) {
-	//	RuntimeMeshComponent->BodyInstance.SetPhysMaterialOverride((UPhysicalMaterial*)PhysicalMaterialAsset.Object);
-	//}
 }
 void ARuntimeMeshPlane::PostInitializeComponents() {
 	Super::PostInitializeComponents();
@@ -91,7 +87,6 @@ void ARuntimeMeshPlane::SetEdges() {
 void ARuntimeMeshPlane::CallUpdate(const int index_) {
 	ParallelFor(4, [&](int32 i) {
 		StaticProvider->UpdateSectionFromComponents(0, i, vec_m_verts[i], vec_m_tris[i], vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
-		//procedural_mesh_comp->UpdateMeshSection_LinearColor(i, vec_m_verts[i], vec_m_norms[i], m_u_vs, vec_m_vert_colors[i], m_tangents);
 		});
 }
 void ARuntimeMeshPlane::SmoothTerrain(TArray<float>& c_) {
@@ -363,7 +358,6 @@ void ARuntimeMeshPlane::TestFinal() {
 
 	//into correct places
 	ParallelFor(local_grid_size, [&](int32 j) {
-		//for (int32 j = 0; j < local_grid_size; j++) {
 		for (int32 i = 0; i < local_grid_size; i++) {
 			if (i < height_ && j < height_) {
 				vec_m_verts[0][(j * height_) + i].Z = z_axis[(j * local_grid_size) + i];
@@ -401,7 +395,6 @@ void ARuntimeMeshPlane::CreateMesh(int& d_height_, int& d_width_, float& d_spaci
 	GenerateVerts(index_);
 	GenerateTris(index_);
 	//Function that creates mesh section
-	//procedural_mesh_comp->CreateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_tris[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents, false);
 	StaticProvider->CreateSectionFromComponents(0, index_, 0, vec_m_verts[index_], vec_m_tris[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents, ERuntimeMeshUpdateFrequency::Infrequent, false);
 }
 
@@ -427,12 +420,10 @@ void ARuntimeMeshPlane::ModiVerts(TArray<float>& c_, const int& m_, const int& i
 
 	CalculateNormals(index_);
 	RuntimeMeshComponent->bCastDynamicShadow = false;
-	//procedural_mesh_comp->UpdateMeshSection_LinearColor(index_, vec_m_verts[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
 	StaticProvider->UpdateSectionFromComponents(0, index_, vec_m_verts[index_], vec_m_tris[index_], vec_m_norms[index_], m_u_vs, vec_m_vert_colors[index_], m_tangents);
 
 	material_interface = LoadObject<UMaterialInterface>(NULL, TEXT("Material'/Game/Materials/TerrainMaterial.TerrainMaterial'"));
 	material_instance = UMaterialInstanceDynamic::Create(material_interface, this);
-	//procedural_mesh_comp->SetMaterial(index_, material_instance);
 	RuntimeMeshComponent->SetMaterial(index_, material_instance);
 }
 
@@ -651,8 +642,6 @@ void ARuntimeMeshPlane::CreateCollisionZone(const TArray<FVector2D>& track_point
 	RuntimeMeshComponent->SetMaterial(0, material_instance);
 	StaticProvider->CreateSectionFromComponents(0, 0, 0, new_m_verts, new_m_tris, TArray<FVector>(), TArray<FVector2D>(), TArray<FLinearColor>(), TArray<FRuntimeMeshTangent>(), ERuntimeMeshUpdateFrequency::Infrequent, true);
 	RuntimeMeshComponent->SetVisibility(false);
-	//procedural_mesh_comp->CreateMeshSection_LinearColor(0, new_m_verts, new_m_tris, TArray<FVector>(), TArray<FVector2D>(), TArray<FLinearColor>(), TArray<FProcMeshTangent>(), true);
-//	procedural_mesh_comp->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -664,7 +653,10 @@ void ARuntimeMeshPlane::BeginPlay() {
 	StaticProvider = NewObject<URuntimeMeshProviderStatic>(this, TEXT("StaticProvider"));
 	RuntimeMeshComponent->Initialize(StaticProvider);
 	StaticProvider->SetupMaterialSlot(0, TEXT("Material"), nullptr);
+	
 
+	auto phys_ = LoadObject<UObject>(NULL, TEXT("PhysicalMaterial'/Game/GroundPhysMat.GroundPhysMat'"));
+	RuntimeMeshComponent->BodyInstance.SetPhysMaterialOverride((UPhysicalMaterial*)phys_);
 
 	vec_m_verts.Add(m_verts);
 	vec_m_verts.Add(m_verts1);
