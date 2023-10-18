@@ -21,6 +21,7 @@ void UMainMenuUIWidget::OnClickPlay() {
 	file_opener.OpenApplication();
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
+		//level_loader.ReadTrackImage(0);
 		TimerDelay();
 	}
 }
@@ -33,6 +34,10 @@ void UMainMenuUIWidget::OnClickTestArena() {
 void UMainMenuUIWidget::OnClickOptions() {
 	PlaySound(button_sound_base);
 	is_active = true;
+}
+
+void UMainMenuUIWidget::OnClickSelect() {
+	PlaySound(button_sound_base);
 }
 
 void UMainMenuUIWidget::OnClickQuit() {
@@ -52,7 +57,4 @@ void UMainMenuUIWidget::TimerDelay() {
 
 void UMainMenuUIWidget::LevelFunc() {
 	UGameplayStatics::OpenLevel(GetWorld(), level_name);
-	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(1, 1);
-	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->bShowMouseCursor = false;
-	//UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetShowMouseCursor(false);
 }

@@ -4,6 +4,7 @@
 #include "Components/Button.h"
 #include "FileLoader.h"
 #include "SoundHandler.h"
+#include "HeightmapHandler.h"
 #include "MainMenuUIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UMainMenuUIWidget : public UUserWidget
@@ -23,6 +24,8 @@ protected:
 	void LevelFunc();
 	//ui
 	UPROPERTY(meta = (BindWidget))
+		class UImage* select_image;
+	UPROPERTY(meta = (BindWidget))
 		class UImage* play_image;
 	UPROPERTY(meta = (BindWidget))
 		class UImage* test_arena_image;
@@ -30,6 +33,8 @@ protected:
 		class UImage* options_image;
 	UPROPERTY(meta = (BindWidget))
 		class UImage* quit_image;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* select_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* play_button;
 	UPROPERTY(meta = (BindWidget))
@@ -39,6 +44,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* quit_button;
 	//ufunctions
+	UFUNCTION()
+		void OnClickSelect();
 	UFUNCTION()
 		void OnClickPlay();
 	UFUNCTION()
@@ -52,4 +59,5 @@ protected:
 	FileLoader file_opener;
 	FName level_name;
 	bool is_active;
+	HeightmapHandler level_loader;
 };

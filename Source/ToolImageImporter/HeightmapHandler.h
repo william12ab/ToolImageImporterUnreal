@@ -11,6 +11,7 @@ public:
 	bool ReadTrackPoints(TArray<FVector2D>&track_points,TArray<FVector2D> &control_points, const int& index_p);//returns filled arrays and bool of what type track(used in construction)
 	bool ReadMetaFile();
 	void ReadPaceNoteFile(TArray<int>&lengths_, TArray<int>&angles_,TArray<int>&inclines_, TArray<int>&widths_, TArray<int>& directions_, TArray<int>&cp_width_);
+	void ReadTrackImage(const int& index_);
 	FileLoader f_l;
 
 	FVector2D GetStartEndPos(int a);
@@ -22,6 +23,7 @@ protected:
 	FString track_points_name;
 	FString meta_file_name;
 	FString pacenote_file_name;
+	FString track_image_name;
 	bool is_chunking;
 	FVector2D start_pos;
 	FVector2D end_pos;

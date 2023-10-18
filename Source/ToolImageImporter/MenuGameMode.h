@@ -24,5 +24,5 @@ protected:
 		class UMainMenuUIWidget* menu_ui;
 
 	virtual void BeginPlay() override;
-	
+
 };

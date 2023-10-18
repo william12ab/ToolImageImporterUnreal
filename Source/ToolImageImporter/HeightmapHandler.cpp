@@ -1,5 +1,6 @@
 #include "HeightmapHandler.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
+#include <AssetRegistryModule.h>
 
 HeightmapHandler::HeightmapHandler(){
 	auto fil_name = f_l.GetFileName();
@@ -23,8 +24,42 @@ HeightmapHandler::HeightmapHandler(){
 	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
 	fil_name.RemoveAt(n, exe_name.Len());
 	pacenote_file_name = fil_name += "pacenote_info.txt";
+
+	
 }
 HeightmapHandler::~HeightmapHandler(){
+}
+
+void HeightmapHandler::ReadTrackImage(const int& index_) {
+	auto fil_name = f_l.GetFileName();
+	FString exe_name = "SFML_RuleBasedSystem.exe";
+	auto nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	fil_name = f_l.GetFileName();
+	nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	fil_name.RemoveAt(nt, exe_name.Len());
+	track_image_name = fil_name += "track_image.png";
+
+	auto n = track_image_name.Find(FString("track_image.png"));
+	track_image_name.InsertAt(n, FString::FromInt(index_));
+	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(track_image_name);
+	texture_->AddToRoot();
+	texture_->PlatformData->Mips[0].BulkData.LockReadOnly();
+	
+	
+	//cant use this code :(
+	FString name = "track_";
+	FString PackageName = TEXT("/Game/Textures/");
+	PackageName += name;
+	UPackage* Package = CreatePackage(NULL, *PackageName);
+	Package->FullyLoad();
+	Package->MarkPackageDirty();
+	FAssetRegistryModule::AssetCreated(texture_);
+
+	FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+	bool bSaved = UPackage::SavePackage(Package, texture_, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
+	UE_LOG(LogTemp, Warning, TEXT("The boolean value is %s"), (bSaved ? TEXT("true") : TEXT("false")));
+	texture_->PlatformData->Mips[0].BulkData.Unlock();
+	texture_->UpdateResource();
 }
 
 TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_, const int& index_) {
