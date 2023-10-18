@@ -5,6 +5,7 @@
 #include "FileLoader.h"
 #include "SoundHandler.h"
 #include "HeightmapHandler.h"
+#include "Components/CanvasPanel.h"
 #include "MainMenuUIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UMainMenuUIWidget : public UUserWidget
@@ -43,6 +44,24 @@ protected:
 		class UButton* options_button;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* quit_button;
+
+	//default levels ui
+	UPROPERTY(meta = (BindWidget))
+		class UButton* large_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* largec_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* largew_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* regw_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* regc_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* regb_button;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		class UCanvasPanel* default_levels;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* close_button;
 	//ufunctions
 	UFUNCTION()
 		void OnClickSelect();
@@ -54,6 +73,8 @@ protected:
 		void OnClickOptions();
 	UFUNCTION()
 		void OnClickQuit();
+	UFUNCTION()
+		void OnClickCloseButton();
 
 	//accessers
 	FileLoader file_opener;

@@ -10,6 +10,8 @@ void UMainMenuUIWidget::NativeConstruct(){
 	test_arena_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickTestArena);
 	options_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickOptions);
 	quit_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickQuit);
+	select_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickSelect);
+	close_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickCloseButton);
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
@@ -38,6 +40,12 @@ void UMainMenuUIWidget::OnClickOptions() {
 
 void UMainMenuUIWidget::OnClickSelect() {
 	PlaySound(button_sound_base);
+	default_levels->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainMenuUIWidget::OnClickCloseButton() {
+	PlaySound(button_sound_base);
+	default_levels->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMainMenuUIWidget::OnClickQuit() {
@@ -49,10 +57,9 @@ void UMainMenuUIWidget::TimerDelay() {
 	PlaySound(button_sound_base);
 	FName new_name = level_name;
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
-		{
-			LevelFunc();
-		}, 0.3f, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&](){
+		LevelFunc();
+	}, 0.3f, false);
 }
 
 void UMainMenuUIWidget::LevelFunc() {
