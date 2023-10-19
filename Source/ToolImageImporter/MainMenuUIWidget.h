@@ -24,7 +24,7 @@ protected:
 	void TimerDelay();
 	void LevelFunc();
 
-	void LoadLevel(int i);
+	
 	//ui
 	UPROPERTY(meta = (BindWidget))
 		class UImage* select_image;
@@ -87,5 +87,4 @@ protected:
 	bool is_active;
 	HeightmapHandler level_loader;
 
-	TArray<UButton*> buttons_;
 };

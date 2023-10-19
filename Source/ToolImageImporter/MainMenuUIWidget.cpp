@@ -15,24 +15,6 @@ void UMainMenuUIWidget::NativeConstruct(){
 	close_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickCloseButton);
 	//large_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoad);
 
-	buttons_.Add(large_button);
-	buttons_.Add(largec_button);
-	buttons_.Add(largew_button);
-	buttons_.Add(regc_button);
-	buttons_.Add(regb_button);
-	buttons_.Add(regw_button);
-	//for (int32 i = 0; i < buttons_.Num(); ++i)
-	//{
-	//	UButton* Button = buttons_[i];
-
-	//	SButton* ButtonWidget = (SButton*)&(Button->TakeWidget().Get());
-	//	ButtonWidget->SetOnClicked(FOnClicked::CreateLambda([this, i]()
-	//		{
-	//			LoadLevel(i);
-	//			return FReply::Handled();
-	//		}));
-	//}
-
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
@@ -47,11 +29,7 @@ void UMainMenuUIWidget::OnClickPlay() {
 	}
 }
 
-void UMainMenuUIWidget::LoadLevel(int i) {
-	PlaySound(button_sound_base);
 
-	UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *buttons_[i]->GetDisplayLabel());
-}
 void UMainMenuUIWidget::OnClickLoad() {
 	PlaySound(button_sound_base);
 	
