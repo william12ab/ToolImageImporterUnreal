@@ -23,6 +23,8 @@ protected:
 	void NativeConstruct() override;
 	void TimerDelay();
 	void LevelFunc();
+
+	void LoadLevel(int i);
 	//ui
 	UPROPERTY(meta = (BindWidget))
 		class UImage* select_image;
@@ -62,6 +64,8 @@ protected:
 		class UCanvasPanel* default_levels;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* close_button;
+
+	
 	//ufunctions
 	UFUNCTION()
 		void OnClickSelect();
@@ -82,4 +86,6 @@ protected:
 	FName level_name;
 	bool is_active;
 	HeightmapHandler level_loader;
+
+	TArray<UButton*> buttons_;
 };
