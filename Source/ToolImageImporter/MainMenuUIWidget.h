@@ -75,7 +75,8 @@ protected:
 		void OnClickQuit();
 	UFUNCTION()
 		void OnClickCloseButton();
-
+	UFUNCTION()
+		void OnClickLoad();
 	//accessers
 	FileLoader file_opener;
 	FName level_name;

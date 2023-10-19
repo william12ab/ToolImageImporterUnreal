@@ -12,6 +12,8 @@ void UMainMenuUIWidget::NativeConstruct(){
 	quit_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickQuit);
 	select_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickSelect);
 	close_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickCloseButton);
+	large_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoad);
+	
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
@@ -23,9 +25,17 @@ void UMainMenuUIWidget::OnClickPlay() {
 	file_opener.OpenApplication();
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
-		//level_loader.ReadTrackImage(0);
 		TimerDelay();
 	}
+}
+
+void UMainMenuUIWidget::OnClickLoad() {
+	PlaySound(button_sound_base);
+	
+	UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *large_button->GetDisplayLabel());
+	/*f_l.SetFolderName();
+	level_name = "Main";
+	TimerDelay();*/
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {

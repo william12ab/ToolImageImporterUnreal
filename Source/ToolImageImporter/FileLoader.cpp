@@ -10,6 +10,7 @@
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include <Runtime/Engine/Public/ImageUtils.h>
 FString FileLoader::application_name_("");
+FString FileLoader::folder_name("");
 FileLoader::FileLoader(){
 	is_opened_ = false;
 }
