@@ -3,25 +3,43 @@
 #include <AssetRegistryModule.h>
 
 HeightmapHandler::HeightmapHandler(){
-	auto fil_name = f_l.GetFileName();
 	FString exe_name = "SFML_RuleBasedSystem.exe";
-	auto n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	if (!f_l.GetIsLoaded()){
+
+	}
+	else {
+		exe_name = "0track_image.png";
+	}
+	auto fil_name = f_l.GetFileName();
+	auto n = fil_name.Find(FString(exe_name));
 	fil_name.RemoveAt(n, exe_name.Len());
 	track_points_name = fil_name += "track_points.txt";
 	fil_name = f_l.GetFileName();
-	exe_name = "SFML_RuleBasedSystem.exe";
-	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
-	fil_name.RemoveAt(n, exe_name.Len());
-	heightmap_name = fil_name += "final.png";
+	if (f_l.GetIsLoaded()){
+		n = fil_name.Find(FString(exe_name));
+		fil_name.RemoveAt(n, exe_name.Len());
+		auto temp_file_name = fil_name;
+		auto b = temp_file_name.Find(FString(f_l.GetFileExtension()));
+		temp_file_name.RemoveAt(b,f_l.GetFileExtension().Len());
+		temp_file_name.RemoveFromEnd(FString("/"));
+		temp_file_name = temp_file_name + "heightmap/";
+		heightmap_name = temp_file_name += "final.png";
+	}
+	else {
+		n = fil_name.Find(FString(exe_name));
+		fil_name.RemoveAt(n, exe_name.Len());
+		heightmap_name = fil_name += "final.png";
+	}
+	
 
 	fil_name = f_l.GetFileName();
-	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	n = fil_name.Find(FString(exe_name));
 	fil_name.RemoveAt(n, exe_name.Len());
 	meta_file_name = fil_name += "meta.txt";
 	is_chunking = false;
 
 	fil_name = f_l.GetFileName();
-	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	n = fil_name.Find(FString(exe_name));
 	fil_name.RemoveAt(n, exe_name.Len());
 	pacenote_file_name = fil_name += "pacenote_info.txt";
 

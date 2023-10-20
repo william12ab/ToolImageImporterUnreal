@@ -13,7 +13,7 @@ void UMainMenuUIWidget::NativeConstruct(){
 	quit_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickQuit);
 	select_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickSelect);
 	close_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickCloseButton);
-	//large_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoad);
+	large_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoad);
 
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
@@ -25,6 +25,8 @@ void UMainMenuUIWidget::OnClickPlay() {
 	file_opener.OpenApplication();
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
+		file_opener.SetIsLoaded(false);
+		
 		TimerDelay();
 	}
 }
@@ -34,9 +36,12 @@ void UMainMenuUIWidget::OnClickLoad() {
 	PlaySound(button_sound_base);
 	
 	UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *large_button->GetDisplayLabel());
-	/*f_l.SetFolderName();
+	FString name_ ="F:/ToolImageImporter/Content/default_tracks/regb/0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(name_);
+	file_opener.SetExtension("regb");
 	level_name = "Main";
-	TimerDelay();*/
+	TimerDelay();
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {

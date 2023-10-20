@@ -30,88 +30,88 @@ AVehicleController::AVehicleController(){
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
 	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AVehicleController::OnOverlapBegin);
 
-	//UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
-	//Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
-	//Vehicle4W->WheelSetups[0].BoneName = FName("FL");
-	//Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-	//Vehicle4W->WheelSetups[1].WheelClass = UVehicleFrontWheel::StaticClass();
-	//Vehicle4W->WheelSetups[1].BoneName = FName("FR");
-	//Vehicle4W->WheelSetups[1].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-	//Vehicle4W->WheelSetups[2].WheelClass = UVehicleReerWheel::StaticClass();
-	//Vehicle4W->WheelSetups[2].BoneName = FName("RR");
-	//Vehicle4W->WheelSetups[2].bDisableSteering = true;
-	//Vehicle4W->WheelSetups[2].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-	//Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
-	//Vehicle4W->WheelSetups[3].BoneName = FName("RL");
-	//Vehicle4W->WheelSetups[2].bDisableSteering = true;
-	//Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
-	//Vehicle4W->DragCoefficient = 0.33f;
-	//Vehicle4W->Mass = 1200.f;
-	////tire loading
-	//Vehicle4W->MinNormalizedTireLoad = 0.0f;
-	//Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
-	//Vehicle4W->MaxNormalizedTireLoad = 2.0f;
-	//Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
-	////differential setup 
-	//Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
-	//Vehicle4W->DifferentialSetup.FrontRearSplit = 0.58f;
-	//Vehicle4W->bReverseAsBrake = false;
-	////torque
-	//
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
-	//Vehicle4W->EngineSetup.MaxRPM = 8000.f;
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 550);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(500.0f, 580);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 590);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2000.0f, 620);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2500.0f, 650);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3000.0f, 680);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 680);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 670);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 660);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 650);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 640);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 630);
-	//Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(8500.0f, 590);
-	////Streering
-	//Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
-	//Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
-	//Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.90f);
-	//Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 0.85f);
-	//Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(100.0f, 0.7f);
-	//Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.65f);
-	////gearbox
-	//Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
-	//Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
-	//Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
-	//Vehicle4W->TransmissionSetup.FinalRatio = 4.444f;
-	//Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
-	//Vehicle4W->TransmissionSetup.ForwardGears[0].Ratio = 3.083f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[1].Ratio = 2.062f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[2].Ratio = 1.545f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[3].Ratio = 1.151f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 1.111f;
-	//Vehicle4W->TransmissionSetup.ForwardGears[0].DownRatio = 0.5;
-	//Vehicle4W->TransmissionSetup.ForwardGears[1].DownRatio = 0.5;
-	//Vehicle4W->TransmissionSetup.ForwardGears[3].DownRatio = 0.4;
-	//Vehicle4W->TransmissionSetup.ForwardGears[2].DownRatio = 0.5;
-	//Vehicle4W->TransmissionSetup.ForwardGears[4].DownRatio = 0.4;
-	//Vehicle4W->TransmissionSetup.ForwardGears[0].UpRatio= 0.95;
-	//Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = 0.75;
-	//Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = 0.75;
-	//Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.75;
-	//Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
-	////inertia - harder on the y axis, so over jumps the car is less likely to tip.
-	//Vehicle4W->InertiaTensorScale = FVector(1.20f,3.0f,1.20f);
-	////com
-	//UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
-	//if (UpdatedPrimitive){
-	//	UpdatedPrimitive->BodyInstance.COMNudge = FVector(35.f, -3.656f, -22.5f);//further down and along the body 
-	//	//28.4f
-	//	UpdatedPrimitive->BodyInstance.UpdateMassProperties();
-	//}
-	//Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchEngaged = 0.5;
-	//Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchDisengaged = 0.15;
+	UWheeledVehicleMovementComponent4W* Vehicle4W = CastChecked<UWheeledVehicleMovementComponent4W>(GetVehicleMovement());
+	Vehicle4W->WheelSetups[0].WheelClass = UVehicleFrontWheel::StaticClass();
+	Vehicle4W->WheelSetups[0].BoneName = FName("FL");
+	Vehicle4W->WheelSetups[0].AdditionalOffset = FVector(0.f, 0.f, 0.f);
+	Vehicle4W->WheelSetups[1].WheelClass = UVehicleFrontWheel::StaticClass();
+	Vehicle4W->WheelSetups[1].BoneName = FName("FR");
+	Vehicle4W->WheelSetups[1].AdditionalOffset = FVector(0.f, 0.f, 0.f);
+	Vehicle4W->WheelSetups[2].WheelClass = UVehicleReerWheel::StaticClass();
+	Vehicle4W->WheelSetups[2].BoneName = FName("RR");
+	Vehicle4W->WheelSetups[2].bDisableSteering = true;
+	Vehicle4W->WheelSetups[2].AdditionalOffset = FVector(0.f, 0.f, 0.f);
+	Vehicle4W->WheelSetups[3].WheelClass = UVehicleReerWheel::StaticClass();
+	Vehicle4W->WheelSetups[3].BoneName = FName("RL");
+	Vehicle4W->WheelSetups[2].bDisableSteering = true;
+	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
+	Vehicle4W->DragCoefficient = 0.33f;
+	Vehicle4W->Mass = 1200.f;
+	//tire loading
+	Vehicle4W->MinNormalizedTireLoad = 0.0f;
+	Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
+	Vehicle4W->MaxNormalizedTireLoad = 2.0f;
+	Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
+	//differential setup 
+	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
+	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.58f;
+	Vehicle4W->bReverseAsBrake = false;
+	//torque
+	
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
+	Vehicle4W->EngineSetup.MaxRPM = 8000.f;
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(0.0f, 550);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(500.0f, 580);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(1000.0f, 590);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2000.0f, 620);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(2500.0f, 650);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3000.0f, 680);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(3500.0f, 680);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4000.0f, 670);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(4500.0f, 660);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5000.0f, 650);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 640);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 630);
+	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(8500.0f, 590);
+	//Streering
+	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.90f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 0.85f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(100.0f, 0.7f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.65f);
+	//gearbox
+	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
+	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
+	Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
+	Vehicle4W->TransmissionSetup.FinalRatio = 4.444f;
+	Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
+	Vehicle4W->TransmissionSetup.ForwardGears[0].Ratio = 3.083f;
+	Vehicle4W->TransmissionSetup.ForwardGears[1].Ratio = 2.062f;
+	Vehicle4W->TransmissionSetup.ForwardGears[2].Ratio = 1.545f;
+	Vehicle4W->TransmissionSetup.ForwardGears[3].Ratio = 1.151f;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].Ratio = 1.111f;
+	Vehicle4W->TransmissionSetup.ForwardGears[0].DownRatio = 0.5;
+	Vehicle4W->TransmissionSetup.ForwardGears[1].DownRatio = 0.5;
+	Vehicle4W->TransmissionSetup.ForwardGears[3].DownRatio = 0.4;
+	Vehicle4W->TransmissionSetup.ForwardGears[2].DownRatio = 0.5;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].DownRatio = 0.4;
+	Vehicle4W->TransmissionSetup.ForwardGears[0].UpRatio= 0.95;
+	Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
+	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
+	Vehicle4W->InertiaTensorScale = FVector(1.20f,3.0f,1.20f);
+	//com
+	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
+	if (UpdatedPrimitive){
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(35.f, -3.656f, -22.5f);//further down and along the body 
+		//28.4f
+		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
+	}
+	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchEngaged = 0.5;
+	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchDisengaged = 0.15;
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));

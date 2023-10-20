@@ -5,6 +5,7 @@ class TOOLIMAGEIMPORTER_API HeightmapHandler
 {
 public:
 	HeightmapHandler();
+	
 	~HeightmapHandler();
 
 	TArray<float> ReadFileInfo(int &height_, int &width_, const int&index_);//reads file for height map returns array of float of colours
