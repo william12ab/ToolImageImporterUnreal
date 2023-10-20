@@ -2,7 +2,6 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
-#include "Widgets/Input/SButton.h"
 #include "UObject/ConstructorHelpers.h"
 
 void UMainMenuUIWidget::NativeConstruct(){
@@ -37,57 +36,56 @@ void UMainMenuUIWidget::OnClickPlay() {
 void UMainMenuUIWidget::OnClickLoadRegB() {
 	PlaySound(button_sound_base);
 
-	UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *large_button->GetDisplayLabel());
 	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regb/0track_image.png";
 	file_opener.SetIsLoaded(true);
 	file_opener.SetFolderName(name_);
 }
-	void UMainMenuUIWidget::OnClickLoadRegW() {
-		PlaySound(button_sound_base);
-		FString name_ = "F:/ToolImageImporter/Content/default_tracks/regw/0track_image.png";
-		file_opener.SetIsLoaded(true);
-		file_opener.SetFolderName(name_);
-		file_opener.SetExtension("regw");
-		level_name = "Main";
-		TimerDelay();
-	}
-	void UMainMenuUIWidget::OnClickLoadRegC() {
-		PlaySound(button_sound_base);
-		FString name_ = "F:/ToolImageImporter/Content/default_tracks/regc/0track_image.png";
-		file_opener.SetIsLoaded(true);
-		file_opener.SetFolderName(name_);
-		file_opener.SetExtension("regc");
-		level_name = "Main";
-		TimerDelay();
-	}
+void UMainMenuUIWidget::OnClickLoadRegW() {
+	PlaySound(button_sound_base);
+	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regw/0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(name_);
+	file_opener.SetExtension("regw");
+	level_name = "Main";
+	TimerDelay();
+}
+void UMainMenuUIWidget::OnClickLoadRegC() {
+	PlaySound(button_sound_base);
+	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regc/0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(name_);
+	file_opener.SetExtension("regc");
+	level_name = "Main";
+	TimerDelay();
+}
 
-	void UMainMenuUIWidget::OnClickLoadLarge() {
-		PlaySound(button_sound_base);
-		FString name_ = "F:/ToolImageImporter/Content/default_tracks/large/0track_image.png";
-		file_opener.SetIsLoaded(true);
-		file_opener.SetFolderName(name_);
-		file_opener.SetExtension("large");
-		level_name = "Main";
-		TimerDelay();
-	}
-	void UMainMenuUIWidget::OnClickLoadLargeC() {
-		PlaySound(button_sound_base);
-		FString name_ = "F:/ToolImageImporter/Content/default_tracks/largec/0track_image.png";
-		file_opener.SetIsLoaded(true);
-		file_opener.SetFolderName(name_);
-		file_opener.SetExtension("largec");
-		level_name = "Main";
-		TimerDelay();
-	}
-	void UMainMenuUIWidget::OnClickLoadLargeW() {
-		PlaySound(button_sound_base);
-		FString name_ = "F:/ToolImageImporter/Content/default_tracks/largew/0track_image.png";
-		file_opener.SetIsLoaded(true);
-		file_opener.SetFolderName(name_);
-		file_opener.SetExtension("largew");
-		level_name = "Main";
-		TimerDelay();
-	}
+void UMainMenuUIWidget::OnClickLoadLarge() {
+	PlaySound(button_sound_base);
+	FString name_ = "F:/ToolImageImporter/Content/default_tracks/large/0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(name_);
+	file_opener.SetExtension("large");
+	level_name = "Main";
+	TimerDelay();
+}
+void UMainMenuUIWidget::OnClickLoadLargeC() {
+	PlaySound(button_sound_base);
+	FString name_ = "F:/ToolImageImporter/Content/default_tracks/largec/0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(name_);
+	file_opener.SetExtension("largec");
+	level_name = "Main";
+	TimerDelay();
+}
+void UMainMenuUIWidget::OnClickLoadLargeW() {
+	PlaySound(button_sound_base);
+	FString name_ = "F:/ToolImageImporter/Content/default_tracks/largew/0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(name_);
+	file_opener.SetExtension("largew");
+	level_name = "Main";
+	TimerDelay();
+}
 void UMainMenuUIWidget::OnClickTestArena() {
 	level_name = "TestArenaLevel";
 	TimerDelay();
