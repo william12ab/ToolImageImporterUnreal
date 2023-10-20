@@ -11,7 +11,9 @@
 #include <Runtime/Engine/Public/ImageUtils.h>
 FString FileLoader::application_name_("");
 FString FileLoader::folder_name("");
-FileLoader::FileLoader(){
+FString FileLoader::folder_extension("");
+bool FileLoader::is_loaded_;
+FileLoader::FileLoader() {
 	is_opened_ = false;
 }
 

@@ -766,7 +766,7 @@ void UUIWidget::GetOrderOfControlPoints() {
 		}
 	}
 
-	control_points_multi.RemoveAt(index_holder);
+	/*control_points_multi.RemoveAt(index_holder);
 	if (is_chunking) {
 		if (control_points_multi.IsValidIndex(0)) {
 			while (control_points_multi.Num() > 0) {
@@ -811,5 +811,5 @@ void UUIWidget::GetOrderOfControlPoints() {
 				}
 			}
 		}
-	}
+	}*/
 }

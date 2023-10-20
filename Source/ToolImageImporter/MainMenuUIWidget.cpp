@@ -13,8 +13,12 @@ void UMainMenuUIWidget::NativeConstruct(){
 	quit_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickQuit);
 	select_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickSelect);
 	close_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickCloseButton);
-	//large_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoad);
-
+	large_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadLarge);
+	largec_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadLargeC);
+	largew_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadLargeW);
+	regc_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegC);
+	regb_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegB);
+	regw_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegW);
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
@@ -30,15 +34,60 @@ void UMainMenuUIWidget::OnClickPlay() {
 }
 
 
-void UMainMenuUIWidget::OnClickLoad() {
+void UMainMenuUIWidget::OnClickLoadRegB() {
 	PlaySound(button_sound_base);
-	
-	UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *large_button->GetDisplayLabel());
-	/*f_l.SetFolderName();
-	level_name = "Main";
-	TimerDelay();*/
-}
 
+	UE_LOG(LogTemp, Warning, TEXT("The Actor's name is %s"), *large_button->GetDisplayLabel());
+	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regb/0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(name_);
+}
+	void UMainMenuUIWidget::OnClickLoadRegW() {
+		PlaySound(button_sound_base);
+		FString name_ = "F:/ToolImageImporter/Content/default_tracks/regw/0track_image.png";
+		file_opener.SetIsLoaded(true);
+		file_opener.SetFolderName(name_);
+		file_opener.SetExtension("regw");
+		level_name = "Main";
+		TimerDelay();
+	}
+	void UMainMenuUIWidget::OnClickLoadRegC() {
+		PlaySound(button_sound_base);
+		FString name_ = "F:/ToolImageImporter/Content/default_tracks/regc/0track_image.png";
+		file_opener.SetIsLoaded(true);
+		file_opener.SetFolderName(name_);
+		file_opener.SetExtension("regc");
+		level_name = "Main";
+		TimerDelay();
+	}
+
+	void UMainMenuUIWidget::OnClickLoadLarge() {
+		PlaySound(button_sound_base);
+		FString name_ = "F:/ToolImageImporter/Content/default_tracks/large/0track_image.png";
+		file_opener.SetIsLoaded(true);
+		file_opener.SetFolderName(name_);
+		file_opener.SetExtension("large");
+		level_name = "Main";
+		TimerDelay();
+	}
+	void UMainMenuUIWidget::OnClickLoadLargeC() {
+		PlaySound(button_sound_base);
+		FString name_ = "F:/ToolImageImporter/Content/default_tracks/largec/0track_image.png";
+		file_opener.SetIsLoaded(true);
+		file_opener.SetFolderName(name_);
+		file_opener.SetExtension("largec");
+		level_name = "Main";
+		TimerDelay();
+	}
+	void UMainMenuUIWidget::OnClickLoadLargeW() {
+		PlaySound(button_sound_base);
+		FString name_ = "F:/ToolImageImporter/Content/default_tracks/largew/0track_image.png";
+		file_opener.SetIsLoaded(true);
+		file_opener.SetFolderName(name_);
+		file_opener.SetExtension("largew");
+		level_name = "Main";
+		TimerDelay();
+	}
 void UMainMenuUIWidget::OnClickTestArena() {
 	level_name = "TestArenaLevel";
 	TimerDelay();
