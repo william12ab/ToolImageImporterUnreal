@@ -80,7 +80,17 @@ protected:
 	UFUNCTION()
 		void OnClickCloseButton();
 	UFUNCTION()
-		void OnClickLoad();
+		void OnClickLoadLarge();
+	UFUNCTION()
+		void OnClickLoadLargeC();
+	UFUNCTION()
+		void OnClickLoadLargeW();
+	UFUNCTION()
+		void OnClickLoadRegC();
+	UFUNCTION()
+		void OnClickLoadRegW();
+	UFUNCTION()
+		void OnClickLoadRegB();
 	//accessers
 	FileLoader file_opener;
 	FName level_name;

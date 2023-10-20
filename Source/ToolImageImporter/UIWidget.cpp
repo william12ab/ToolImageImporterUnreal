@@ -766,50 +766,50 @@ void UUIWidget::GetOrderOfControlPoints() {
 		}
 	}
 
-	control_points_multi.RemoveAt(index_holder);
-	if (is_chunking) {
-		if (control_points_multi.IsValidIndex(0)) {
-			while (control_points_multi.Num() > 0) {
-				for (size_t i = 0; i < control_points_multi.Num(); i++) {
-					if (control_points_multi[i].IsValidIndex(0)) {
-						if (control_points_multi.Num() == 3) {
-							auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
-							if (distance < 75) {
-								for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
-									total_control_points.Add(control_points_multi[i][j]);
-								}
-								index_holder = i;
-								control_points_multi.RemoveAt(index_holder);
-							}
-						}
-						else if (control_points_multi.Num() > 1&& (i+1)< control_points_multi.Num()) {
-							auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
-							auto distance2 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i + 1][0]);
-							if (distance < distance2) {
-								for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
-									total_control_points.Add(control_points_multi[i][j]);
-								}
-								index_holder = i;
-								control_points_multi.RemoveAt(index_holder);
-							}
-							else {
-								for (size_t j = 0; j < control_points_multi[i + 1].Num(); j++) {
-									total_control_points.Add(control_points_multi[i + 1][j]);
-								}
-								index_holder = i + 1;
-								control_points_multi.RemoveAt(index_holder);
-							}
-						}
-						else if (control_points_multi.Num() == 1) {
-							for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
-								total_control_points.Add(control_points_multi[i][j]);
-							}
-							control_points_multi.RemoveAt(i);
+	//control_points_multi.RemoveAt(index_holder);
+	//if (is_chunking) {
+	//	if (control_points_multi.IsValidIndex(0)) {
+	//		while (control_points_multi.Num() > 0) {
+	//			for (size_t i = 0; i < control_points_multi.Num(); i++) {
+	//				if (control_points_multi[i].IsValidIndex(0)) {
+	//					if (control_points_multi.Num() == 3) {
+	//						auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
+	//						if (distance < 75) {
+	//							for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+	//								total_control_points.Add(control_points_multi[i][j]);
+	//							}
+	//							index_holder = i;
+	//							control_points_multi.RemoveAt(index_holder);
+	//						}
+	//					}
+	//					else if (control_points_multi.Num() > 1&& (i+1)< control_points_multi.Num()) {
+	//						auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
+	//						auto distance2 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i + 1][0]);
+	//						if (distance < distance2) {
+	//							for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+	//								total_control_points.Add(control_points_multi[i][j]);
+	//							}
+	//							index_holder = i;
+	//							control_points_multi.RemoveAt(index_holder);
+	//						}
+	//						else {
+	//							for (size_t j = 0; j < control_points_multi[i + 1].Num(); j++) {
+	//								total_control_points.Add(control_points_multi[i + 1][j]);
+	//							}
+	//							index_holder = i + 1;
+	//							control_points_multi.RemoveAt(index_holder);
+	//						}
+	//					}
+	//					else if (control_points_multi.Num() == 1) {
+	//						for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
+	//							total_control_points.Add(control_points_multi[i][j]);
+	//						}
+	//						control_points_multi.RemoveAt(i);
 
-						}
-					}
-				}
-			}
-		}
-	}
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 }
