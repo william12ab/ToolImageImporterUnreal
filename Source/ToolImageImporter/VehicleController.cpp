@@ -18,6 +18,7 @@
 #include "Sound/SoundCue.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 #include <Runtime/Engine/Public/DrawDebugHelpers.h>
+#include "WheeledVehicleMovementComponent4W.h"
 #include "ToolContextInterfaces.h"
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
@@ -100,6 +101,8 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = 0.75;
 	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = 0.75;
 	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
+	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
 	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.20f,3.0f,1.20f);
