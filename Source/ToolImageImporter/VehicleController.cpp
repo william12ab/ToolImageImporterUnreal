@@ -86,7 +86,11 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
 	Vehicle4W->TransmissionSetup.GearAutoBoxLatency = 1.0f;
 	Vehicle4W->TransmissionSetup.FinalRatio = 4.444f;
+<<<<<<< HEAD
 	/*Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
+=======
+	Vehicle4W->TransmissionSetup.ForwardGears.SetNum(5);
+>>>>>>> parent of 5e84f73 (test)
 	Vehicle4W->TransmissionSetup.ForwardGears[0].Ratio = 3.083f;
 	Vehicle4W->TransmissionSetup.ForwardGears[1].Ratio = 2.062f;
 	Vehicle4W->TransmissionSetup.ForwardGears[2].Ratio = 1.545f;
@@ -101,7 +105,11 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->TransmissionSetup.ForwardGears[1].UpRatio = 0.75;
 	Vehicle4W->TransmissionSetup.ForwardGears[2].UpRatio = 0.75;
 	Vehicle4W->TransmissionSetup.ForwardGears[3].UpRatio = 0.75;
+<<<<<<< HEAD
 	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;*/
+=======
+	Vehicle4W->TransmissionSetup.ForwardGears[4].UpRatio = 0.75;
+>>>>>>> parent of 5e84f73 (test)
 	//inertia - harder on the y axis, so over jumps the car is less likely to tip.
 	Vehicle4W->InertiaTensorScale = FVector(1.20f,3.0f,1.20f);
 	//com
