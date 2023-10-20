@@ -766,7 +766,7 @@ void UUIWidget::GetOrderOfControlPoints() {
 		}
 	}
 
-	/*control_points_multi.RemoveAt(index_holder);
+	control_points_multi.RemoveAt(index_holder);
 	if (is_chunking) {
 		if (control_points_multi.IsValidIndex(0)) {
 			while (control_points_multi.Num() > 0) {
@@ -774,13 +774,24 @@ void UUIWidget::GetOrderOfControlPoints() {
 					if (control_points_multi[i].IsValidIndex(0)) {
 						if (control_points_multi.Num() == 3) {
 							auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
-							if (distance < 75) {
-								for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
-									total_control_points.Add(control_points_multi[i][j]);
-								}
-								index_holder = i;
-								control_points_multi.RemoveAt(index_holder);
+							auto distance2 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i+1][0]);
+							auto distance3 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i+2][0]);
+							auto smallest = FMath::Min3(distance, distance2, distance3);
+							int index_d = 0;
+							if (smallest==distance){
+
 							}
+							else if (smallest == distance2) {
+								index_d = 1;
+							}
+							else if (smallest == distance3) {
+								index_d = 2;
+							}
+							for (size_t j = 0; j < control_points_multi[index_d].Num(); j++) {
+								total_control_points.Add(control_points_multi[index_d][j]);
+							}
+							index_holder = index_d;
+							control_points_multi.RemoveAt(index_holder);
 						}
 						else if (control_points_multi.Num() > 1&& (i+1)< control_points_multi.Num()) {
 							auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
@@ -811,5 +822,5 @@ void UUIWidget::GetOrderOfControlPoints() {
 				}
 			}
 		}
-	}*/
+	}
 }
