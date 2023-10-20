@@ -2,7 +2,7 @@
 #include <Runtime/Engine/Public/ImageUtils.h>
 #include <AssetRegistryModule.h>
 
-HeightmapHandler::HeightmapHandler(){
+HeightmapHandler::HeightmapHandler() {
 	FString exe_name = "SFML_RuleBasedSystem.exe";
 	if (!f_l.GetIsLoaded()) {
 
@@ -15,10 +15,6 @@ HeightmapHandler::HeightmapHandler(){
 	fil_name.RemoveAt(n, exe_name.Len());
 	track_points_name = fil_name += "track_points.txt";
 	fil_name = f_l.GetFileName();
-	exe_name = "SFML_RuleBasedSystem.exe";
-	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
-	fil_name.RemoveAt(n, exe_name.Len());
-	heightmap_name = fil_name += "final.png";
 	if (f_l.GetIsLoaded()) {
 		n = fil_name.Find(FString(exe_name));
 		fil_name.RemoveAt(n, exe_name.Len());
@@ -37,20 +33,19 @@ HeightmapHandler::HeightmapHandler(){
 
 
 	fil_name = f_l.GetFileName();
-	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
 	n = fil_name.Find(FString(exe_name));
 	fil_name.RemoveAt(n, exe_name.Len());
 	meta_file_name = fil_name += "meta.txt";
 	is_chunking = false;
 
 	fil_name = f_l.GetFileName();
-	n = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
 	n = fil_name.Find(FString(exe_name));
 	fil_name.RemoveAt(n, exe_name.Len());
 	pacenote_file_name = fil_name += "pacenote_info.txt";
-	
+
+
 }
-HeightmapHandler::~HeightmapHandler(){
+HeightmapHandler::~HeightmapHandler() {
 }
 
 void HeightmapHandler::ReadTrackImage(const int& index_) {
@@ -67,8 +62,8 @@ void HeightmapHandler::ReadTrackImage(const int& index_) {
 	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(track_image_name);
 	texture_->AddToRoot();
 	texture_->PlatformData->Mips[0].BulkData.LockReadOnly();
-	
-	
+
+
 	//cant use this code :(
 	FString name = "track_";
 	FString PackageName = TEXT("/Game/Textures/");
@@ -87,8 +82,8 @@ void HeightmapHandler::ReadTrackImage(const int& index_) {
 
 TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_, const int& index_) {
 	auto n = heightmap_name.Find(FString("final.png"));
-	if (index_>0){
-		heightmap_name.RemoveAt(n-1);
+	if (index_ > 0) {
+		heightmap_name.RemoveAt(n - 1);
 		n = heightmap_name.Find(FString("final.png"));
 	}
 	heightmap_name.InsertAt(n, FString::FromInt(index_));
@@ -121,7 +116,7 @@ bool HeightmapHandler::ReadMetaFile() {
 		else {
 		}//no
 	}
-	if (array_[0].Contains(FString("true"))){
+	if (array_[0].Contains(FString("true"))) {
 		is_chunking = true;
 	}
 	else {
@@ -134,7 +129,7 @@ bool HeightmapHandler::ReadMetaFile() {
 	return is_chunking;
 }
 
-void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angles_, TArray<int>& inclines_, TArray<int>& widths_,TArray<int>&directions_,TArray<int>& cp_width_) {
+void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angles_, TArray<int>& inclines_, TArray<int>& widths_, TArray<int>& directions_, TArray<int>& cp_width_) {
 	IPlatformFile& file_manager = FPlatformFileManager::Get().GetPlatformFile();
 	TArray<FString> array_;
 	if (file_manager.FileExists(*pacenote_file_name)) {
@@ -144,9 +139,9 @@ void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angl
 		}//no
 	}
 	int chooser = 0;
-	for (size_t i = 1; i < array_.Num(); i++){//skip first element because it is indication
+	for (size_t i = 1; i < array_.Num(); i++) {//skip first element because it is indication
 		bool is_chosen = false;
-		if (array_[i].Contains(FString("d"))){
+		if (array_[i].Contains(FString("d"))) {
 			chooser = 4;
 			is_chosen = true;
 		}
@@ -154,11 +149,11 @@ void HeightmapHandler::ReadPaceNoteFile(TArray<int>& lengths_, TArray<int>& angl
 			chooser = 1;
 			is_chosen = true;
 		}
-		else if (array_[i].Contains(FString("i"))){
+		else if (array_[i].Contains(FString("i"))) {
 			chooser = 2;
 			is_chosen = true;
 		}
-		else if (array_[i].Contains(FString("w"))){
+		else if (array_[i].Contains(FString("w"))) {
 			chooser = 3;
 			is_chosen = true;
 		}
@@ -250,7 +245,7 @@ bool HeightmapHandler::ReadTrackPoints(TArray<FVector2D>& track_points, TArray<F
 
 FVector2D HeightmapHandler::GetStartEndPos(int a) {
 	FVector2D return_val;
-	if (a==0){
+	if (a == 0) {
 		return_val = start_pos;
 	}
 	else {

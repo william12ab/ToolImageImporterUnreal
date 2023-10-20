@@ -2,9 +2,10 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "Widgets/Input/SButton.h"
 #include "UObject/ConstructorHelpers.h"
 
-void UMainMenuUIWidget::NativeConstruct(){
+void UMainMenuUIWidget::NativeConstruct() {
 	Super::NativeConstruct();
 	play_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickPlay);
 	test_arena_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickTestArena);
@@ -18,6 +19,7 @@ void UMainMenuUIWidget::NativeConstruct(){
 	regc_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegC);
 	regb_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegB);
 	regw_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegW);
+
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
@@ -28,6 +30,8 @@ void UMainMenuUIWidget::OnClickPlay() {
 	file_opener.OpenApplication();
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
+		file_opener.SetIsLoaded(false);
+
 		TimerDelay();
 	}
 }
@@ -35,10 +39,12 @@ void UMainMenuUIWidget::OnClickPlay() {
 
 void UMainMenuUIWidget::OnClickLoadRegB() {
 	PlaySound(button_sound_base);
-
 	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regb/0track_image.png";
 	file_opener.SetIsLoaded(true);
 	file_opener.SetFolderName(name_);
+	file_opener.SetExtension("regb");
+	level_name = "Main";
+	TimerDelay();
 }
 void UMainMenuUIWidget::OnClickLoadRegW() {
 	PlaySound(button_sound_base);
@@ -115,9 +121,9 @@ void UMainMenuUIWidget::TimerDelay() {
 	PlaySound(button_sound_base);
 	FName new_name = level_name;
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&](){
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]() {
 		LevelFunc();
-	}, 0.3f, false);
+		}, 0.3f, false);
 }
 
 void UMainMenuUIWidget::LevelFunc() {

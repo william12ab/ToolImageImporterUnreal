@@ -18,13 +18,13 @@ protected:
 
 	UPROPERTY(Category = MainMenuWidg, EditAnywhere, BlueprintReadWrite)
 		USoundBase* button_sound_base;
-	
+
 	//functions
 	void NativeConstruct() override;
 	void TimerDelay();
 	void LevelFunc();
 
-	
+
 	//ui
 	UPROPERTY(meta = (BindWidget))
 		class UImage* select_image;
@@ -65,7 +65,7 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* close_button;
 
-	
+
 	//ufunctions
 	UFUNCTION()
 		void OnClickSelect();
@@ -95,6 +95,6 @@ protected:
 	FileLoader file_opener;
 	FName level_name;
 	bool is_active;
-	HeightmapHandler level_loader;
+	//HeightmapHandler level_loader;
 
 };

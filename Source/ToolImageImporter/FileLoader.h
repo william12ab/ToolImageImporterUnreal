@@ -7,8 +7,7 @@ public:
 
 	void OpenApplication();
 
-	void SetFolderName(FString a) { folder_name = a; };
-
+	void SetFolderName(FString a) { application_name_ = a; };
 	void SetIsLoaded(bool b) { is_loaded_ = b; }
 	void SetExtension(FString a) { folder_extension = a; }
 	FString& GetFileName() { return application_name_; }

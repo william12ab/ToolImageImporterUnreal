@@ -17,7 +17,7 @@ FileLoader::FileLoader() {
 	is_opened_ = false;
 }
 
-FileLoader::~FileLoader(){
+FileLoader::~FileLoader() {
 }
 
 bool ReadFileInfoApp(const FString& dialog_name_, FString& file_name) {
@@ -34,7 +34,7 @@ bool ReadFileInfoApp(const FString& dialog_name_, FString& file_name) {
 	}
 	else {
 		return false;
-	}	
+	}
 }
 void FileLoader::OpenApplication() {
 	FString dialog_name = "Open Application";
@@ -45,7 +45,7 @@ void FileLoader::OpenApplication() {
 		const TCHAR* name_char_ = *application_name_;
 		FProcHandle Proc = FPlatformProcess::CreateProc(name_char_, nullptr, true, false, false, nullptr, 0, *FPaths::GetPath(application_name_), nullptr);
 		FPlatformProcess::WaitForProc(Proc);
-		if (Proc.IsValid()){
+		if (Proc.IsValid()) {
 			FPlatformProcess::CloseProc(Proc);
 		}
 	}
