@@ -95,6 +95,6 @@ protected:
 	FileLoader file_opener;
 	FName level_name;
 	bool is_active;
-	//HeightmapHandler level_loader;
+	HeightmapHandler level_loader;
 
 };

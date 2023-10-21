@@ -31,8 +31,8 @@ void UMainMenuUIWidget::OnClickPlay() {
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
 		file_opener.SetIsLoaded(false);
-
 		TimerDelay();
+		level_loader.ReadTrackImage(0, GetWorld());
 	}
 }
 
@@ -95,6 +95,7 @@ void UMainMenuUIWidget::OnClickLoadLargeW() {
 void UMainMenuUIWidget::OnClickTestArena() {
 	level_name = "TestArenaLevel";
 	TimerDelay();
+
 }
 
 void UMainMenuUIWidget::OnClickOptions() {
