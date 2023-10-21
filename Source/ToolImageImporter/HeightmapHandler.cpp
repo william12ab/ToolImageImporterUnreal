@@ -58,6 +58,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
 	fil_name.RemoveAt(nt, exe_name.Len());
 	track_image_name = fil_name += "track_image.png";
+	//getting the folder location
 
 	auto n = track_image_name.Find(FString("track_image.png"));
 	track_image_name.InsertAt(n, FString::FromInt(index_));
