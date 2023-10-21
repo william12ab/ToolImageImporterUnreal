@@ -62,6 +62,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	auto n = track_image_name.Find(FString("track_image.png"));
 	track_image_name.InsertAt(n, FString::FromInt(index_));
 	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(track_image_name);
+
 	//above imports
 	TArray<FColor> temp_arr;
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
@@ -75,6 +76,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	}
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
+
 	//above saves
 	FString PackageName = TEXT("/Game/default_tracks/");
 	FString TextureName = "text";
@@ -127,14 +129,8 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	NewTexture->Source.Init(height_, height_, 1, 1, ETextureSourceFormat::TSF_BGRA8, Pixels);
 	NewTexture->UpdateResource();
 	Package->MarkPackageDirty();
-	//FAssetRegistryModule::AssetCreated(NewTexture);
-
 	FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
 	bool bSaved = UPackage::SavePackage(Package, NewTexture, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
-	if (bSaved){
-		UE_LOG(LogTemp, Warning, TEXT("Hello"));
-
-	}
 }
 
 TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_, const int& index_) {
