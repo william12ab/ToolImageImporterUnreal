@@ -50,7 +50,8 @@ HeightmapHandler::HeightmapHandler() {
 HeightmapHandler::~HeightmapHandler() {
 }
 
-void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
+
+void HeightmapHandler::GetTrackImageName(const int& index_) {
 	auto fil_name = f_l.GetFileName();
 	FString exe_name = "SFML_RuleBasedSystem.exe";
 	auto nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
@@ -62,9 +63,24 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 
 	auto n = track_image_name.Find(FString("track_image.png"));
 	track_image_name.InsertAt(n, FString::FromInt(index_));
-	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(track_image_name);
+}
 
-	//above imports
+UTexture2D* HeightmapHandler::LoadImage(const int& index_) {
+
+	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(track_image_name);
+	return texture_;
+}
+bool HeightmapHandler::ReadMetaTracK( const int& index_) {
+	meta_file_name = track_image_name;
+	FString track_name = FString::FromInt(index_) + FString("track_image.png");
+	auto index_t = meta_file_name.Find(track_name);
+	meta_file_name.RemoveAt(index_t, track_name.Len());
+	meta_file_name = meta_file_name + "meta.txt";
+	auto s = ReadMetaFile();
+	return s;
+}
+
+TArray<FColor> HeightmapHandler::ReturnColor(UTexture2D* texture_) {
 	TArray<FColor> temp_arr;
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
 	heightmap_h_ = texture_->PlatformData->Mips[0].SizeY;
@@ -77,61 +93,81 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	}
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
+	return temp_arr;
+}
 
-	//above saves
+uint8* HeightmapHandler::CreatePixels(const int& height, TArray<FColor>& color_array) {
+	uint8* Pixels = new uint8[height * height * 4];
+	for (int32 y = 0; y < height; y++) {
+		for (int32 x = 0; x < height; x++) {
+			int32 curPixelIndex = ((y * height) + x);
+			if (x < 400 && y < 400) {
+				Pixels[4 * curPixelIndex] = color_array[y * 400 + x].B;
+				Pixels[4 * curPixelIndex + 1] = color_array[y * 400 + x].G;
+				Pixels[4 * curPixelIndex + 2] = color_array[y * 400 + x].R;
+				Pixels[4 * curPixelIndex + 3] = color_array[y * 400 + x].A;
+			}
+			else {
+				Pixels[4 * curPixelIndex] = 0;
+				Pixels[4 * curPixelIndex + 1] = 0;
+				Pixels[4 * curPixelIndex + 2] = 0;
+				Pixels[4 * curPixelIndex + 3] = 255;
+			}
+		}
+	}
+	return Pixels;
+}
+
+UTexture2D* HeightmapHandler::CreateNewTexture(const int& height_, const FString& name_, UPackage* package_) {
+	UTexture2D* NewTexture = NewObject<UTexture2D>(package_, *name_, RF_Public | RF_Standalone | RF_MarkAsRootSet);
+	NewTexture->AddToRoot();				// This line prevents garbage collection of the texture
+	NewTexture->PlatformData = new FTexturePlatformData();	// Then we initialize the PlatformData
+
+	NewTexture->PlatformData->SizeX = height_;
+	NewTexture->PlatformData->SizeY = height_;
+	NewTexture->PlatformData->SetNumSlices(1);
+	NewTexture->PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
+}
+
+void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
+	int height_ = 512;
+	GetTrackImageName(index_);//gets the name w/ extension
+	bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
+	auto texture_=LoadImage(index_);//loads texture
+
+
+	auto color_array = ReturnColor(texture_);//returns color array
+	
+
+	//creates the package
 	FString PackageName = TEXT("/Game/default_tracks/");
 	FString TextureName = "text";
 	PackageName += TextureName;
 	UPackage* Package = CreatePackage(NULL, *PackageName);
 	Package->FullyLoad();
 
-	UTexture2D* NewTexture = NewObject<UTexture2D>(Package, *TextureName, RF_Public | RF_Standalone | RF_MarkAsRootSet);
-	NewTexture->AddToRoot();				// This line prevents garbage collection of the texture
-	NewTexture->PlatformData = new FTexturePlatformData();	// Then we initialize the PlatformData
-	int height_ = 512;
-	NewTexture->PlatformData->SizeX = height_;
-	NewTexture->PlatformData->SizeY = height_;
-	NewTexture->PlatformData->SetNumSlices(1);
-	NewTexture->PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
+	//creates new texture
+	UTexture2D* new_texture = CreateNewTexture(height_, TextureName, Package);
 
-	uint8* Pixels = new uint8[height_ * height_ * 4];
-	uint8 b=1;
-	uint8 g=1;
-	uint8 r=1;
-	uint8 a=1;
-	for (int32 y = 0; y < height_; y++){
-		for (int32 x = 0; x < height_; x++){
-			int32 curPixelIndex = ((y * height_) + x);
-			if (x<400&&y<400){
-				Pixels[4 * curPixelIndex] = temp_arr[y * 400 + x].B;
-				Pixels[4 * curPixelIndex + 1] = temp_arr[y * 400 + x].G;
-				Pixels[4 * curPixelIndex + 2] = temp_arr[y * 400 + x].R;
-				Pixels[4 * curPixelIndex + 3] = temp_arr[y * 400 + x].A;
-			}
-			else {
-				Pixels[4 * curPixelIndex] = 0;
-				Pixels[4 * curPixelIndex + 1] =0;
-				Pixels[4 * curPixelIndex + 2] = 0;
-				Pixels[4 * curPixelIndex + 3] = 255;
-			}
-			
-		}
-	}
+	//creates pixe;s
+	auto pixels_ = CreatePixels(height_, color_array);
 
-	FTexture2DMipMap* Mip = new(NewTexture->PlatformData->Mips) FTexture2DMipMap();
+	FTexture2DMipMap* Mip = new(new_texture->PlatformData->Mips) FTexture2DMipMap();
 	Mip->SizeX = height_;
 	Mip->SizeY = height_;
 
-	// Lock the texture so it can be modified
+	//saving the final product
 	Mip->BulkData.Lock(LOCK_READ_WRITE);
 	uint8* TextureData = (uint8*)Mip->BulkData.Realloc(height_ * height_ * 4);
-	FMemory::Memcpy(TextureData, Pixels, sizeof(uint8) * height_ * height_ * 4);
+	FMemory::Memcpy(TextureData, pixels_, sizeof(uint8) * height_ * height_ * 4);
 	Mip->BulkData.Unlock();
-	NewTexture->Source.Init(height_, height_, 1, 1, ETextureSourceFormat::TSF_BGRA8, Pixels);
-	NewTexture->UpdateResource();
+	new_texture->Source.Init(height_, height_, 1, 1, ETextureSourceFormat::TSF_BGRA8, pixels_);
+	new_texture->UpdateResource();
 	Package->MarkPackageDirty();
 	FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-	bool bSaved = UPackage::SavePackage(Package, NewTexture, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
+	bool bSaved = UPackage::SavePackage(Package, new_texture, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
+
+	delete[] pixels_;
 }
 
 TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_, const int& index_) {

@@ -33,6 +33,8 @@ void UMainMenuUIWidget::OnClickPlay() {
 		file_opener.SetIsLoaded(false);
 		TimerDelay();
 		level_loader.ReadTrackImage(0, GetWorld());
+		
+
 	}
 }
 

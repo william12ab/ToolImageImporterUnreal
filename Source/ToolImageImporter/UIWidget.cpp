@@ -131,6 +131,8 @@ void UUIWidget::NativeConstruct() {
 	}
 	vehicle_pawn->GetMesh()->SetPhysicsAngularVelocity(FVector(0, 0, 0));
 	vehicle_pawn->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
+
+	UE_LOG(LogTemp, Warning, TEXT("ui constructor"));
 }
 
 void UUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime) {

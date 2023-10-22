@@ -12,8 +12,15 @@ public:
 	bool ReadMetaFile();
 	void ReadPaceNoteFile(TArray<int>&lengths_, TArray<int>&angles_,TArray<int>&inclines_, TArray<int>&widths_, TArray<int>& directions_, TArray<int>&cp_width_);
 	void ReadTrackImage(const int& index_,UObject*world_);
-	FileLoader f_l;
+	
+	UTexture2D* LoadImage(const int& index_);
+	TArray<FColor> ReturnColor(UTexture2D* texture_ );
+	bool ReadMetaTracK(const int&index_);
+	uint8* CreatePixels(const int& height, TArray<FColor>&color_array);
+	void GetTrackImageName(const int&index_);
+	UTexture2D* CreateNewTexture(const int& height_, const FString&name_, UPackage* package_);
 
+	FileLoader f_l;
 	FVector2D GetStartEndPos(int a);
 
 protected:
