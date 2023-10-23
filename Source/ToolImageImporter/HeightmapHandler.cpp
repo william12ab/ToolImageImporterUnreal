@@ -152,7 +152,8 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	}
 
 	for (int i = 0; i < local_index; i++){
-		UTexture2D* texture_ = LoadImage(index_);//loads texture
+		GetTrackImageName(i);
+		UTexture2D* texture_ = LoadImage(i);//loads texture
 		int x_addition=0;
 		int y_addition = 0;
 		if (is_chunking_loc){
