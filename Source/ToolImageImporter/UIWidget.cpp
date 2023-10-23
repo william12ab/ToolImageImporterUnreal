@@ -750,10 +750,18 @@ void UUIWidget::CheckForControlPointChange() {
 }
 
 void UUIWidget::GetOrderOfControlPoints() {
+
 	auto local_start = level_loader.GetStartEndPos(0);
 	auto local_end = level_loader.GetStartEndPos(1);
 	for (size_t i = 0; i < control_points_multi.Num(); i++) {
 		FixControlPoints(i, control_points_multi[i]);
+	}
+	for (size_t i = 0; i < control_points_multi.Num(); i++){
+		if (control_points_multi[i].IsValidIndex(0)) {
+		}//do nothing
+		else {
+			control_points_multi.RemoveAt(i);
+		}
 	}
 	int index_holder=0;
 	for (size_t i = 0; i < control_points_multi.Num(); i++){
@@ -818,7 +826,12 @@ void UUIWidget::GetOrderOfControlPoints() {
 								total_control_points.Add(control_points_multi[i][j]);
 							}
 							control_points_multi.RemoveAt(i);
-
+							//this should be a hopeful fix for if exists elsewhere
+							auto local_index = total_control_points.Find(local_end);
+							if (local_end !=total_control_points.Last()){
+								total_control_points.RemoveAt(local_index);
+								total_control_points.Add(local_end);
+							}
 						}
 					}
 				}
