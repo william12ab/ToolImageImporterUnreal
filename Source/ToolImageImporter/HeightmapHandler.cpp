@@ -80,14 +80,14 @@ bool HeightmapHandler::ReadMetaTracK( const int& index_) {
 	return s;
 }
 
-void HeightmapHandler::ReturnColor(UTexture2D* texture_, TArray<FColor>& color_array, const int& x_add, const int& y_add) {
+void HeightmapHandler::ReturnColor(UTexture2D* texture_, TArray<FColor>& color_array, const int& x_add, const int& y_add, const int& grid_size) {
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
 	heightmap_h_ = texture_->PlatformData->Mips[0].SizeY;
 	heightmap_w_ = texture_->PlatformData->Mips[0].SizeX;
 	for (int32 y_ = 0; y_ < heightmap_h_; y_++) {
 		for (int32 x_ = 0; x_ < heightmap_w_; x_++) {
 			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
-			color_array[(y_+y_add) * texture_->GetSizeX() + (x_+ x_add)]=pixel_color;
+			color_array[(y_+y_add) *grid_size + (x_+ x_add)]=pixel_color;
 		}
 	}
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
@@ -138,15 +138,17 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	int height_ = 512;
 	int local_index = 1;
 	TArray<FColor>color_array;
+	int grid_size = 400;
 	GetTrackImageName(index_);//gets the name w/ extension
 	bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
 	if (is_chunking_loc){
+		grid_size = 800;
 		local_index = 4;
-		color_array.SetNum(800 * 800);
+		color_array.SetNum(grid_size * grid_size);
 		height_ = 1024;
 	}
 	else {
-		color_array.SetNum(400 * 400);
+		color_array.SetNum(grid_size * grid_size);
 	}
 
 	for (int i = 0; i < local_index; i++){
@@ -174,7 +176,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 			}
 			}
 		}
-		ReturnColor(texture_, color_array,x_addition,y_addition);//returns color array
+		ReturnColor(texture_, color_array,x_addition,y_addition, grid_size);//returns color array
 	}
 
 	//creates the package
