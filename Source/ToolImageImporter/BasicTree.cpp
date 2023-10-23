@@ -98,30 +98,36 @@ void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TA
 	is_track_tree = true;
 	yaw_rot = FMath::RandRange(-360, 360);
 	for (int i = 0; i < loop_range; i++) {
-		int rand_point = FMath::RandRange(5, temp_vector.Num() - 1);
-		int pos_y = temp_vector[rand_point].Y;
-		int pos_x = temp_vector[rand_point].X;
-		float z_pos = m_verts[pos_y * 400 + pos_x].Z;
-		pos_x += FMath::RandRange(-4, 8);
-		pos_y += FMath::RandRange(-8, 8);
-		if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
-			pos_y = temp_vector[rand_point].Y;
-			pos_x = temp_vector[rand_point].X;
+		if (temp_vector.IsValidIndex(0)) {
+			int start_index = 5;
+			if (temp_vector.Num() <= start_index) {
+				start_index = 0;
+			}
+			int rand_point = FMath::RandRange(start_index, temp_vector.Num() - 1);
+			int pos_y = temp_vector[rand_point].Y;
+			int pos_x = temp_vector[rand_point].X;
+			float z_pos = m_verts[pos_y * 400 + pos_x].Z;
+			pos_x += FMath::RandRange(-4, 8);
+			pos_y += FMath::RandRange(-8, 8);
+			if (pos_x <= 0 || pos_x >= 400 || pos_y >= 400 || pos_y <= 0) {
+				pos_y = temp_vector[rand_point].Y;
+				pos_x = temp_vector[rand_point].X;
+			}
+			z_pos = m_verts[pos_y * 400 + pos_x].Z;
+			FTransform A{
+				   FRotator{0,yaw_rot,0},
+				   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
+				   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
+			AddBasicTree(A, tree_select, mesh_name, temp_vector, pos_x, pos_y);
+			h_instanced->SetMobility(EComponentMobility::Movable);
+			h_instanced->bCastDynamicShadow = true;
+			h_instanced->CastShadow = true;
+			h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
+			h_instanced->SetCullDistances(750, 3000);
+			h_instanced->SetMobility(EComponentMobility::Static);
+			track_tree_points.Add(FVector2D(pos_x, pos_y));
+			temp_vector.RemoveAt(rand_point);
 		}
-		z_pos = m_verts[pos_y * 400 + pos_x].Z;
-		FTransform A{
-			   FRotator{0,yaw_rot,0},
-			   FVector{pos_x * spacing_, pos_y * spacing_, (z_pos) },
-			   FVector{0.250f, 0.250f, 0.250f} };	//Scale		
-		AddBasicTree(A, tree_select, mesh_name, temp_vector, pos_x, pos_y);
-		h_instanced->SetMobility(EComponentMobility::Movable);
-		h_instanced->bCastDynamicShadow = true;
-		h_instanced->CastShadow = true;
-		h_instanced->SetMassOverrideInKg(NAME_None, 10000.f);
-		h_instanced->SetCullDistances(750, 3000);
-		h_instanced->SetMobility(EComponentMobility::Static);
-		track_tree_points.Add(FVector2D(pos_x, pos_y));
-		temp_vector.RemoveAt(rand_point);
 		}
 	index_tracker = 0;
 

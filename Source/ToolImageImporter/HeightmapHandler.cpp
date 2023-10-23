@@ -137,7 +137,6 @@ UTexture2D* HeightmapHandler::CreateNewTexture(const int& height_, const FString
 void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	int height_ = 512;
 	int local_index = 1;
-	UTexture2D* texture_ = nullptr;
 	TArray<FColor>color_array;
 	GetTrackImageName(index_);//gets the name w/ extension
 	bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
@@ -151,7 +150,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	}
 
 	for (int i = 0; i < local_index; i++){
-		texture_ = LoadImage(index_);//loads texture
+		UTexture2D* texture_ = LoadImage(index_);//loads texture
 		int x_addition=0;
 		int y_addition = 0;
 		if (is_chunking_loc){
@@ -176,10 +175,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 			}
 		}
 		ReturnColor(texture_, color_array,x_addition,y_addition);//returns color array
-		texture_ = nullptr;
 	}
-
-	
 
 	//creates the package
 	FString PackageName = TEXT("/Game/default_tracks/");
