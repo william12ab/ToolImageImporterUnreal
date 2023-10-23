@@ -80,32 +80,34 @@ bool HeightmapHandler::ReadMetaTracK( const int& index_) {
 	return s;
 }
 
-TArray<FColor> HeightmapHandler::ReturnColor(UTexture2D* texture_) {
-	TArray<FColor> temp_arr;
+void HeightmapHandler::ReturnColor(UTexture2D* texture_, TArray<FColor>& color_array, const int& x_add, const int& y_add) {
 	const FColor* formated_image_data = static_cast<const FColor*>(texture_->PlatformData->Mips[0].BulkData.LockReadOnly());
 	heightmap_h_ = texture_->PlatformData->Mips[0].SizeY;
 	heightmap_w_ = texture_->PlatformData->Mips[0].SizeX;
 	for (int32 y_ = 0; y_ < heightmap_h_; y_++) {
 		for (int32 x_ = 0; x_ < heightmap_w_; x_++) {
 			FColor pixel_color = formated_image_data[y_ * texture_->GetSizeX() + x_]; // Do the job with the pixel
-			temp_arr.Add(pixel_color);
+			color_array[(y_+y_add) * texture_->GetSizeX() + (x_+ x_add)]=pixel_color;
 		}
 	}
 	texture_->PlatformData->Mips[0].BulkData.Unlock();
 	texture_->UpdateResource();
-	return temp_arr;
 }
 
-uint8* HeightmapHandler::CreatePixels(const int& height, TArray<FColor>& color_array) {
+uint8* HeightmapHandler::CreatePixels(const int& height, TArray<FColor>& color_array, const bool& loc_chunk) {
+	int grid_size = 400;
+	if (loc_chunk){
+		grid_size = 800;
+	}
 	uint8* Pixels = new uint8[height * height * 4];
 	for (int32 y = 0; y < height; y++) {
 		for (int32 x = 0; x < height; x++) {
 			int32 curPixelIndex = ((y * height) + x);
-			if (x < 400 && y < 400) {
-				Pixels[4 * curPixelIndex] = color_array[y * 400 + x].B;
-				Pixels[4 * curPixelIndex + 1] = color_array[y * 400 + x].G;
-				Pixels[4 * curPixelIndex + 2] = color_array[y * 400 + x].R;
-				Pixels[4 * curPixelIndex + 3] = color_array[y * 400 + x].A;
+			if (x < grid_size && y < grid_size) {
+				Pixels[4 * curPixelIndex] = color_array[y * grid_size + x].B;
+				Pixels[4 * curPixelIndex + 1] = color_array[y * grid_size + x].G;
+				Pixels[4 * curPixelIndex + 2] = color_array[y * grid_size + x].R;
+				Pixels[4 * curPixelIndex + 3] = color_array[y * grid_size + x].A;
 			}
 			else {
 				Pixels[4 * curPixelIndex] = 0;
@@ -127,16 +129,56 @@ UTexture2D* HeightmapHandler::CreateNewTexture(const int& height_, const FString
 	NewTexture->PlatformData->SizeY = height_;
 	NewTexture->PlatformData->SetNumSlices(1);
 	NewTexture->PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
+	return NewTexture;
 }
+
+
 
 void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	int height_ = 512;
+	int local_index = 1;
+	UTexture2D* texture_ = nullptr;
+	TArray<FColor>color_array;
 	GetTrackImageName(index_);//gets the name w/ extension
 	bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
-	auto texture_=LoadImage(index_);//loads texture
+	if (is_chunking_loc){
+		local_index = 4;
+		color_array.SetNum(800 * 800);
+		height_ = 1024;
+	}
+	else {
+		color_array.SetNum(400 * 400);
+	}
 
+	for (int i = 0; i < local_index; i++){
+		texture_ = LoadImage(index_);//loads texture
+		int x_addition=0;
+		int y_addition = 0;
+		if (is_chunking_loc){
+			switch (i)
+			{
+			case 0: {
+				break;
+			}
+			case 1: {
+				x_addition = 400;
+				break;
+			}
+			case 2:{
+				y_addition = 400;
+				break;
+			}
+			case 3: {
+				x_addition = 400;
+				y_addition = 400;
+				break;
+			}
+			}
+		}
+		ReturnColor(texture_, color_array,x_addition,y_addition);//returns color array
+		texture_ = nullptr;
+	}
 
-	auto color_array = ReturnColor(texture_);//returns color array
 	
 
 	//creates the package
@@ -150,7 +192,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	UTexture2D* new_texture = CreateNewTexture(height_, TextureName, Package);
 
 	//creates pixe;s
-	auto pixels_ = CreatePixels(height_, color_array);
+	auto pixels_ = CreatePixels(height_, color_array, is_chunking_loc);
 
 	FTexture2DMipMap* Mip = new(new_texture->PlatformData->Mips) FTexture2DMipMap();
 	Mip->SizeX = height_;
