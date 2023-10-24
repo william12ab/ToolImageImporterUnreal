@@ -70,7 +70,9 @@ void UMainMenuUIWidget::OnClickSelectLevel(const int& index) {
 	file_opener.SetFolderName(name_);
 	file_opener.SetExtension(button_name);
 	level_name = "Main";
-	SetLoading("Game/textures/large");
+	FString loading_s = "/Game/Textures/default_tracks/";
+	loading_s = loading_s + button_name;
+	SetLoading(loading_s);
 	TimerDelay();
 }
 
