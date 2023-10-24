@@ -51,22 +51,27 @@ HeightmapHandler::~HeightmapHandler() {
 }
 
 
-void HeightmapHandler::GetTrackImageName(const int& index_) {
-	auto fil_name = f_l.GetFileName();
-	FString exe_name = "SFML_RuleBasedSystem.exe";
-	auto nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
-	fil_name = f_l.GetFileName();
-	nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
-	fil_name.RemoveAt(nt, exe_name.Len());
-	track_image_name = fil_name += "track_image.png";
-	//getting the folder location
+void HeightmapHandler::GetTrackImageName(const int& index_, const bool& from_selected) {
+	if (!from_selected){
+		auto fil_name = f_l.GetFileName();
+		FString exe_name = "SFML_RuleBasedSystem.exe";
+		auto nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+		fil_name = f_l.GetFileName();
+		nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+		fil_name.RemoveAt(nt, exe_name.Len());
+		track_image_name = fil_name += "track_image.png";
+		//getting the folder location
 
-	auto n = track_image_name.Find(FString("track_image.png"));
-	track_image_name.InsertAt(n, FString::FromInt(index_));
+		auto n = track_image_name.Find(FString("track_image.png"));
+		track_image_name.InsertAt(n, FString::FromInt(index_));
+	}
+	else {
+		auto fil_name = f_l.GetFileName();
+		track_image_name = fil_name;
+	}
 }
 
 UTexture2D* HeightmapHandler::LoadImage(const int& index_) {
-
 	UTexture2D* texture_ = FImageUtils::ImportFileAsTexture2D(track_image_name);
 	return texture_;
 }
@@ -132,83 +137,91 @@ UTexture2D* HeightmapHandler::CreateNewTexture(const int& height_, const FString
 	return NewTexture;
 }
 
+UTexture2D* HeightmapHandler::FromSelect(const FString& name_) {
+	//	load it
+	UTexture2D* tmpTex = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
+}
 
-
-void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
-	int height_ = 512;
-	int local_index = 1;
-	TArray<FColor>color_array;
-	int grid_size = 400;
-	GetTrackImageName(index_);//gets the name w/ extension
-	bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
-	if (is_chunking_loc){
-		grid_size = 800;
-		local_index = 4;
-		color_array.SetNum(grid_size * grid_size);
-		height_ = 1024;
+void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_, const bool& from_selected) {
+	if (!from_selected){
+		FString f_name_ = "";
+		FromSelect(f_name_);
 	}
 	else {
-		color_array.SetNum(grid_size * grid_size);
-	}
-
-	for (int i = 0; i < local_index; i++){
-		GetTrackImageName(i);
-		UTexture2D* texture_ = LoadImage(i);//loads texture
-		int x_addition=0;
-		int y_addition = 0;
-		if (is_chunking_loc){
-			switch (i)
-			{
-			case 0: {
-				break;
-			}
-			case 1: {
-				x_addition = 400;
-				break;
-			}
-			case 2:{
-				y_addition = 400;
-				break;
-			}
-			case 3: {
-				x_addition = 400;
-				y_addition = 400;
-				break;
-			}
-			}
+		int height_ = 512;
+		int local_index = 1;
+		TArray<FColor>color_array;
+		int grid_size = 400;
+		GetTrackImageName(index_, from_selected);//gets the name w/ extension
+		bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
+		if (is_chunking_loc) {
+			grid_size = 800;
+			local_index = 4;
+			color_array.SetNum(grid_size * grid_size);
+			height_ = 1024;
 		}
-		ReturnColor(texture_, color_array,x_addition,y_addition, grid_size);//returns color array
+		else {
+			color_array.SetNum(grid_size * grid_size);
+		}
+
+		for (int i = 0; i < local_index; i++) {
+			GetTrackImageName(i, from_selected);
+			UTexture2D* texture_ = LoadImage(i);//loads texture
+			int x_addition = 0;
+			int y_addition = 0;
+			if (is_chunking_loc) {
+				switch (i)
+				{
+				case 0: {
+					break;
+				}
+				case 1: {
+					x_addition = 400;
+					break;
+				}
+				case 2: {
+					y_addition = 400;
+					break;
+				}
+				case 3: {
+					x_addition = 400;
+					y_addition = 400;
+					break;
+				}
+				}
+			}
+			ReturnColor(texture_, color_array, x_addition, y_addition, grid_size);//returns color array
+		}
+
+		//creates the package
+		FString PackageName = TEXT("/Game/default_tracks/");
+		FString TextureName = "text";
+		PackageName += TextureName;
+		UPackage* Package = CreatePackage(NULL, *PackageName);
+		Package->FullyLoad();
+
+		//creates new texture
+		UTexture2D* new_texture = CreateNewTexture(height_, TextureName, Package);
+
+		//creates pixe;s
+		auto pixels_ = CreatePixels(height_, color_array, is_chunking_loc);
+
+		FTexture2DMipMap* Mip = new(new_texture->PlatformData->Mips) FTexture2DMipMap();
+		Mip->SizeX = height_;
+		Mip->SizeY = height_;
+
+		//saving the final product
+		Mip->BulkData.Lock(LOCK_READ_WRITE);
+		uint8* TextureData = (uint8*)Mip->BulkData.Realloc(height_ * height_ * 4);
+		FMemory::Memcpy(TextureData, pixels_, sizeof(uint8) * height_ * height_ * 4);
+		Mip->BulkData.Unlock();
+		new_texture->Source.Init(height_, height_, 1, 1, ETextureSourceFormat::TSF_BGRA8, pixels_);
+		new_texture->UpdateResource();
+		Package->MarkPackageDirty();
+		FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+		bool bSaved = UPackage::SavePackage(Package, new_texture, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
+		delete[] pixels_;
 	}
-
-	//creates the package
-	FString PackageName = TEXT("/Game/default_tracks/");
-	FString TextureName = "text";
-	PackageName += TextureName;
-	UPackage* Package = CreatePackage(NULL, *PackageName);
-	Package->FullyLoad();
-
-	//creates new texture
-	UTexture2D* new_texture = CreateNewTexture(height_, TextureName, Package);
-
-	//creates pixe;s
-	auto pixels_ = CreatePixels(height_, color_array, is_chunking_loc);
-
-	FTexture2DMipMap* Mip = new(new_texture->PlatformData->Mips) FTexture2DMipMap();
-	Mip->SizeX = height_;
-	Mip->SizeY = height_;
-
-	//saving the final product
-	Mip->BulkData.Lock(LOCK_READ_WRITE);
-	uint8* TextureData = (uint8*)Mip->BulkData.Realloc(height_ * height_ * 4);
-	FMemory::Memcpy(TextureData, pixels_, sizeof(uint8) * height_ * height_ * 4);
-	Mip->BulkData.Unlock();
-	new_texture->Source.Init(height_, height_, 1, 1, ETextureSourceFormat::TSF_BGRA8, pixels_);
-	new_texture->UpdateResource();
-	Package->MarkPackageDirty();
-	FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-	bool bSaved = UPackage::SavePackage(Package, new_texture, EObjectFlags::RF_Public | EObjectFlags::RF_Standalone, *PackageFileName, GError, nullptr, true, true, SAVE_NoError);
-
-	delete[] pixels_;
 }
 
 TArray<float> HeightmapHandler::ReadFileInfo(int& height_, int& width_, const int& index_) {

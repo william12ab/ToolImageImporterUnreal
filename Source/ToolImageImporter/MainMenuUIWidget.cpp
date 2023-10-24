@@ -32,9 +32,7 @@ void UMainMenuUIWidget::OnClickPlay() {
 		level_name = "Main";
 		file_opener.SetIsLoaded(false);
 		TimerDelay();
-		level_loader.ReadTrackImage(0, GetWorld());
-		
-
+		level_loader.ReadTrackImage(0, GetWorld(),false);
 	}
 }
 
@@ -47,6 +45,7 @@ void UMainMenuUIWidget::OnClickLoadRegB() {
 	file_opener.SetExtension("regb");
 	level_name = "Main";
 	TimerDelay();
+	level_loader.ReadTrackImage(0, GetWorld(),true);
 }
 void UMainMenuUIWidget::OnClickLoadRegW() {
 	PlaySound(button_sound_base);
