@@ -45,10 +45,12 @@ void UMainMenuUIWidget::OnClickPlay() {
 		
 		
 		level_loader.ReadTrackImage(0, GetWorld());
-		test_image->SetVisibility(ESlateVisibility::Visible);
+		//
+		loading_panel->SetVisibility(ESlateVisibility::Visible);
 		FString name_ = "/Game/default_tracks/text";
 		UTexture2D* temp_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
-		test_image->SetBrushFromTexture(temp_texture, true);
+		track_image->SetBrushFromTexture(temp_texture, true);
+		//
 		TimerDelay();
 	}
 }

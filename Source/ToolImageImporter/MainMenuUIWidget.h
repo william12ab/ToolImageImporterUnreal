@@ -47,9 +47,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* quit_button;
 
-	UPROPERTY(meta = (BindWidget))
-		class UImage* test_image;
-
 	//default levels ui
 	UPROPERTY(meta = (BindWidget))
 		class UButton* large_button;
@@ -67,6 +64,15 @@ protected:
 		class UCanvasPanel* default_levels;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* close_button;
+
+	//loading panels UI
+	UPROPERTY(meta = (BindWidget))
+		class UImage* track_image;
+	UPROPERTY(meta = (BindWidget))
+		class UCanvasPanel* loading_panel;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* length_text;
+	
 
 
 	//ufunctions
