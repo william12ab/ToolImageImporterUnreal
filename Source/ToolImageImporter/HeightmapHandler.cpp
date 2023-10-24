@@ -205,7 +205,8 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	uint8* TextureData = (uint8*)Mip->BulkData.Realloc(height_ * height_ * 4);
 	FMemory::Memcpy(TextureData, pixels_, sizeof(uint8) * height_ * height_ * 4);
 	Mip->BulkData.Unlock();
-	new_texture->Source.Init(height_, height_, 1, 1, ETextureSourceFormat::TSF_BGRA8, pixels_);
+	new_texture->Source.Init(height_, height_, 1, 0, ETextureSourceFormat::TSF_BGRA8, pixels_);
+	
 	new_texture->UpdateResource();
 	Package->MarkPackageDirty();
 	FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());

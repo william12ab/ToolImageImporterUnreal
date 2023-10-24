@@ -40,19 +40,20 @@ void UMainMenuUIWidget::OnClickPlay() {
 	file_opener.OpenApplication();
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
-		file_opener.SetIsLoaded(false);
-		
-		
-		
+		file_opener.SetIsLoaded(false);	
 		level_loader.ReadTrackImage(0, GetWorld());
 		//
-		loading_panel->SetVisibility(ESlateVisibility::Visible);
-		FString name_ = "/Game/default_tracks/text";
-		UTexture2D* temp_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
-		track_image->SetBrushFromTexture(temp_texture, true);
+		SetLoading("/Game/default_tracks/text");
 		//
 		TimerDelay();
 	}
+}
+
+void UMainMenuUIWidget::SetLoading(const FString& name_) {
+	loading_panel->SetVisibility(ESlateVisibility::Visible);
+	name_;
+	UTexture2D* temp_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
+	track_image->SetBrushFromTexture(temp_texture, true);
 }
 
 void UMainMenuUIWidget::OnClickSelectLevel(const int& index) {
@@ -69,8 +70,8 @@ void UMainMenuUIWidget::OnClickSelectLevel(const int& index) {
 	file_opener.SetFolderName(name_);
 	file_opener.SetExtension(button_name);
 	level_name = "Main";
+	SetLoading("Game/textures/large");
 	TimerDelay();
-	//level_loader.ReadTrackImage(0, GetWorld(), true);
 }
 
 void UMainMenuUIWidget::OnClickTestArena() {

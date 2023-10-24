@@ -23,7 +23,7 @@ protected:
 	void NativeConstruct() override;
 	void TimerDelay();
 	void LevelFunc();
-
+	void SetLoading(const FString& name_);
 
 	//ui
 	UPROPERTY(meta = (BindWidget))
