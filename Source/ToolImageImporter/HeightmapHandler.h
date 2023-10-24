@@ -17,7 +17,7 @@ public:
 	void ReturnColor(UTexture2D* texture_, TArray<FColor>& color_array, const int&x_add,const int&y_add,const int&grid_size);
 	bool ReadMetaTracK(const int&index_);
 	uint8* CreatePixels(const int& height, TArray<FColor>&color_array,const bool&loc_chunk);
-	void GetTrackImageName(const int&index_,const bool& from_selected);
+	void GetTrackImageName(const int&index_);
 	UTexture2D* CreateNewTexture(const int& height_, const FString&name_, UPackage* package_);
 
 	UTexture2D* FromSelect(const FString& name_);

@@ -51,24 +51,18 @@ HeightmapHandler::~HeightmapHandler() {
 }
 
 
-void HeightmapHandler::GetTrackImageName(const int& index_, const bool& from_selected) {
-	if (!from_selected){
-		auto fil_name = f_l.GetFileName();
-		FString exe_name = "SFML_RuleBasedSystem.exe";
-		auto nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
-		fil_name = f_l.GetFileName();
-		nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
-		fil_name.RemoveAt(nt, exe_name.Len());
-		track_image_name = fil_name += "track_image.png";
-		//getting the folder location
+void HeightmapHandler::GetTrackImageName(const int& index_) {
+	auto fil_name = f_l.GetFileName();
+	FString exe_name = "SFML_RuleBasedSystem.exe";
+	auto nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	fil_name = f_l.GetFileName();
+	nt = fil_name.Find(FString("SFML_RuleBasedSystem.exe"));
+	fil_name.RemoveAt(nt, exe_name.Len());
+	track_image_name = fil_name += "track_image.png";
+	//getting the folder location
 
-		auto n = track_image_name.Find(FString("track_image.png"));
-		track_image_name.InsertAt(n, FString::FromInt(index_));
-	}
-	else {
-		auto fil_name = f_l.GetFileName();
-		track_image_name = fil_name;
-	}
+	auto n = track_image_name.Find(FString("track_image.png"));
+	track_image_name.InsertAt(n, FString::FromInt(index_));
 }
 
 UTexture2D* HeightmapHandler::LoadImage(const int& index_) {
@@ -148,7 +142,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	int local_index = 1;
 	TArray<FColor>color_array;
 	int grid_size = 400;
-	GetTrackImageName(index_, from_selected);//gets the name w/ extension
+	GetTrackImageName(index_);//gets the name w/ extension
 	bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
 	if (is_chunking_loc) {
 		grid_size = 800;
@@ -161,7 +155,7 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	}
 
 	for (int i = 0; i < local_index; i++) {
-		GetTrackImageName(i, from_selected);
+		GetTrackImageName(i);
 		UTexture2D* texture_ = LoadImage(i);//loads texture
 		int x_addition = 0;
 		int y_addition = 0;
