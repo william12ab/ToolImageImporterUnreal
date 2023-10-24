@@ -47,6 +47,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* quit_button;
 
+	UPROPERTY(meta = (BindWidget))
+		class UImage* test_image;
+
 	//default levels ui
 	UPROPERTY(meta = (BindWidget))
 		class UButton* large_button;

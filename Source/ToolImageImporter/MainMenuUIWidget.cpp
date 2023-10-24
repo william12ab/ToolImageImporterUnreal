@@ -2,6 +2,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Kismet/KismetMathLibrary.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "Components/Image.h"
 #include "Widgets/Input/SButton.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -40,8 +41,15 @@ void UMainMenuUIWidget::OnClickPlay() {
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
 		file_opener.SetIsLoaded(false);
+		
+		
+		
+		level_loader.ReadTrackImage(0, GetWorld());
+		test_image->SetVisibility(ESlateVisibility::Visible);
+		FString name_ = "/Game/default_tracks/text";
+		UTexture2D* temp_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
+		test_image->SetBrushFromTexture(temp_texture, true);
 		TimerDelay();
-		level_loader.ReadTrackImage(0, GetWorld(),false);
 	}
 }
 
