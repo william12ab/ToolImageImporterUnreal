@@ -45,7 +45,8 @@ HeightmapHandler::HeightmapHandler() {
 	fil_name.RemoveAt(n, exe_name.Len());
 	pacenote_file_name = fil_name += "pacenote_info.txt";
 
-
+	total_length = 0;
+	number_of_turns = 0;
 }
 HeightmapHandler::~HeightmapHandler() {
 }

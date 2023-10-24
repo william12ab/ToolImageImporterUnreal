@@ -54,6 +54,10 @@ void UMainMenuUIWidget::SetLoading(const FString& name_) {
 	name_;
 	UTexture2D* temp_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
 	track_image->SetBrushFromTexture(temp_texture, true);
+	if (level_loader.GetLength()>0){
+		FString length_string = "Length: " + FString::FromInt(level_loader.GetLength());
+		length_text->SetText(FText::FromString(length_string));
+	}
 }
 
 void UMainMenuUIWidget::OnClickSelectLevel(const int& index) {
