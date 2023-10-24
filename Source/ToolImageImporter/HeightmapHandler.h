@@ -11,7 +11,7 @@ public:
 	bool ReadTrackPoints(TArray<FVector2D>&track_points,TArray<FVector2D> &control_points, const int& index_p);//returns filled arrays and bool of what type track(used in construction)
 	bool ReadMetaFile();
 	void ReadPaceNoteFile(TArray<int>&lengths_, TArray<int>&angles_,TArray<int>&inclines_, TArray<int>&widths_, TArray<int>& directions_, TArray<int>&cp_width_);
-	void ReadTrackImage(const int& index_,UObject*world_, const bool&from_selected);
+	void ReadTrackImage(const int& index_,UObject*world_);
 	
 	UTexture2D* LoadImage(const int& index_);
 	void ReturnColor(UTexture2D* texture_, TArray<FColor>& color_array, const int&x_add,const int&y_add,const int&grid_size);
