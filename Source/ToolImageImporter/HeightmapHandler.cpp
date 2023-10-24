@@ -140,6 +140,7 @@ UTexture2D* HeightmapHandler::CreateNewTexture(const int& height_, const FString
 UTexture2D* HeightmapHandler::FromSelect(const FString& name_) {
 	//	load it
 	UTexture2D* tmpTex = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
+	return tmpTex;
 }
 
 void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_, const bool& from_selected) {

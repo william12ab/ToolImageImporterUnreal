@@ -13,12 +13,21 @@ void UMainMenuUIWidget::NativeConstruct() {
 	quit_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickQuit);
 	select_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickSelect);
 	close_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickCloseButton);
-	large_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadLarge);
-	largec_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadLargeC);
-	largew_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadLargeW);
-	regc_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegC);
-	regb_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegB);
-	regw_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadRegW);
+
+	buttons_.Add(large_button);
+	buttons_.Add(largec_button);
+	buttons_.Add(largew_button);
+	buttons_.Add(regw_button);
+	buttons_.Add(regc_button);
+	buttons_.Add(regb_button);
+	for (int32 i = 0; i < buttons_.Num(); ++i){
+		UButton* Button = buttons_[i];
+		SButton* ButtonWidget = (SButton*)&(Button->TakeWidget().Get());
+		ButtonWidget->SetOnClicked(FOnClicked::CreateLambda([this, i](){
+				OnClickSelectLevel(i);
+				return FReply::Handled();
+			}));
+	}
 
 	FVector2D size_;
 	GEngine->GameViewport->GetViewportSize(size_);
@@ -36,63 +45,24 @@ void UMainMenuUIWidget::OnClickPlay() {
 	}
 }
 
-
-void UMainMenuUIWidget::OnClickLoadRegB() {
+void UMainMenuUIWidget::OnClickSelectLevel(const int& index) {
+	FString button_name = buttons_[index]->GetName();
+	
+	auto index_=button_name.Find("_");
+	button_name.RemoveAt(index_,7);
+	
 	PlaySound(button_sound_base);
-	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regb/0track_image.png";
+	FString base_folder = "F:/ToolImageImporter/Content/default_tracks/";
+	FString track_name = "/0track_image.png";
+	FString name_ = base_folder + button_name + track_name;
 	file_opener.SetIsLoaded(true);
 	file_opener.SetFolderName(name_);
-	file_opener.SetExtension("regb");
+	file_opener.SetExtension(button_name);
 	level_name = "Main";
 	TimerDelay();
-	level_loader.ReadTrackImage(0, GetWorld(),true);
-}
-void UMainMenuUIWidget::OnClickLoadRegW() {
-	PlaySound(button_sound_base);
-	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regw/0track_image.png";
-	file_opener.SetIsLoaded(true);
-	file_opener.SetFolderName(name_);
-	file_opener.SetExtension("regw");
-	level_name = "Main";
-	TimerDelay();
-}
-void UMainMenuUIWidget::OnClickLoadRegC() {
-	PlaySound(button_sound_base);
-	FString name_ = "F:/ToolImageImporter/Content/default_tracks/regc/0track_image.png";
-	file_opener.SetIsLoaded(true);
-	file_opener.SetFolderName(name_);
-	file_opener.SetExtension("regc");
-	level_name = "Main";
-	TimerDelay();
+	//level_loader.ReadTrackImage(0, GetWorld(), true);
 }
 
-void UMainMenuUIWidget::OnClickLoadLarge() {
-	PlaySound(button_sound_base);
-	FString name_ = "F:/ToolImageImporter/Content/default_tracks/large/0track_image.png";
-	file_opener.SetIsLoaded(true);
-	file_opener.SetFolderName(name_);
-	file_opener.SetExtension("large");
-	level_name = "Main";
-	TimerDelay();
-}
-void UMainMenuUIWidget::OnClickLoadLargeC() {
-	PlaySound(button_sound_base);
-	FString name_ = "F:/ToolImageImporter/Content/default_tracks/largec/0track_image.png";
-	file_opener.SetIsLoaded(true);
-	file_opener.SetFolderName(name_);
-	file_opener.SetExtension("largec");
-	level_name = "Main";
-	TimerDelay();
-}
-void UMainMenuUIWidget::OnClickLoadLargeW() {
-	PlaySound(button_sound_base);
-	FString name_ = "F:/ToolImageImporter/Content/default_tracks/largew/0track_image.png";
-	file_opener.SetIsLoaded(true);
-	file_opener.SetFolderName(name_);
-	file_opener.SetExtension("largew");
-	level_name = "Main";
-	TimerDelay();
-}
 void UMainMenuUIWidget::OnClickTestArena() {
 	level_name = "TestArenaLevel";
 	TimerDelay();

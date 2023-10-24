@@ -80,21 +80,13 @@ protected:
 	UFUNCTION()
 		void OnClickCloseButton();
 	UFUNCTION()
-		void OnClickLoadLarge();
-	UFUNCTION()
-		void OnClickLoadLargeC();
-	UFUNCTION()
-		void OnClickLoadLargeW();
-	UFUNCTION()
-		void OnClickLoadRegC();
-	UFUNCTION()
-		void OnClickLoadRegW();
-	UFUNCTION()
-		void OnClickLoadRegB();
+		void OnClickSelectLevel(const int& index);
 	//accessers
 	FileLoader file_opener;
 	FName level_name;
 	bool is_active;
 	HeightmapHandler level_loader;
 
+
+	TArray<UButton*> buttons_;
 };
