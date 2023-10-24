@@ -79,7 +79,6 @@ void UMainMenuUIWidget::OnClickSelectLevel(const int& index) {
 void UMainMenuUIWidget::OnClickTestArena() {
 	level_name = "TestArenaLevel";
 	TimerDelay();
-
 }
 
 void UMainMenuUIWidget::OnClickOptions() {

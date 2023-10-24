@@ -260,6 +260,8 @@ bool HeightmapHandler::ReadMetaFile() {
 	start_pos = (FVector2D(FCString::Atoi(*array_[1]), FCString::Atoi(*array_[1].RightChop(index_))));
 	index_ = array_[2].Find(" ");
 	end_pos = (FVector2D(FCString::Atoi(*array_[2]), FCString::Atoi(*array_[2].RightChop(index_))));
+	total_length = FCString::Atoi(*array_[3]);
+	number_of_turns = FCString::Atoi(*array_[4]);
 	return is_chunking;
 }
 

@@ -24,6 +24,8 @@ public:
 
 	FileLoader f_l;
 	FVector2D GetStartEndPos(int a);
+	const int GetLength() { return total_length; }
+	const int GetTurns() { return number_of_turns; }
 
 protected:
 	int heightmap_h_;//height,width
@@ -36,4 +38,6 @@ protected:
 	bool is_chunking;
 	FVector2D start_pos;
 	FVector2D end_pos;
+	int total_length;
+	int number_of_turns;
 };
