@@ -7,7 +7,6 @@
 HeightmapHandler::HeightmapHandler() {
 	FString exe_name = "SFML_RuleBasedSystem.exe";
 	if (!f_l.GetIsLoaded()) {
-
 	}
 	else {
 		exe_name = "0track_image.png";
@@ -32,8 +31,6 @@ HeightmapHandler::HeightmapHandler() {
 		fil_name.RemoveAt(n, exe_name.Len());
 		heightmap_name = fil_name += "final.png";
 	}
-
-
 	fil_name = f_l.GetFileName();
 	n = fil_name.Find(FString(exe_name));
 	fil_name.RemoveAt(n, exe_name.Len());
@@ -265,6 +262,7 @@ bool HeightmapHandler::ReadMetaFile() {
 		total_length = FCString::Atoi(*array_[3]);
 		number_of_turns = FCString::Atoi(*array_[4]);
 	}
+	f_l.SetIsChunked(is_chunking);
 	return is_chunking;
 }
 

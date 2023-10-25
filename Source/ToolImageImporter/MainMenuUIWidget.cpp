@@ -41,6 +41,7 @@ void UMainMenuUIWidget::OnClickPlay() {
 	if (file_opener.GetIsOpened()) {
 		level_name = "Main";
 		file_opener.SetIsLoaded(false);	
+
 		level_loader.ReadTrackImage(0, GetWorld());
 		//
 		SetLoading("/Game/default_tracks/text");

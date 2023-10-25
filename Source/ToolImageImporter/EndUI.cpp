@@ -27,5 +27,6 @@ void UEndUI::SetTimer() {
 
 
 void UEndUI::SaveLevel() {
+	f.SetTimeToSave(vehicle_pawn->GetFinalText().ToString());
 	f.CreateNewFolder();
 }

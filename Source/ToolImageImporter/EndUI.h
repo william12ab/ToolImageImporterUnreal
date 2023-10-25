@@ -16,11 +16,6 @@ public:
 protected:
 	//functions
 	void NativeConstruct() override;
-	
-
-
-
-
 	UFUNCTION()
 		void RestartFunction();
 	UFUNCTION()

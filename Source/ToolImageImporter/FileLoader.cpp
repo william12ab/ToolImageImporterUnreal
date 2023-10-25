@@ -13,9 +13,12 @@ FString FileLoader::application_name_("");
 FString FileLoader::folder_name("");
 FString FileLoader::folder_extension("");
 bool FileLoader::is_loaded_;
+bool FileLoader::is_chunked_;
 FileLoader::FileLoader() {
 	is_opened_ = false;
 	count = 0;
+	time_to_save = "";
+
 }
 
 FileLoader::~FileLoader() {
@@ -61,11 +64,44 @@ void FileLoader::CreateNewFolder() {
 	SetCount();
 	path_.Append("saved_tracks/");
 	path_.Append(FString::FromInt(count)+"/");
-	count++;
 	if (!platformFile.DirectoryExists(*path_)) {
 		if (platformFile.CreateDirectory(*path_)) {
-			CreateMetaFile();
+			SaveFiles(path_);
 		}
+	}
+}
+
+void FileLoader::SaveFiles(const FString& path_way) {
+	CopyAndSave(path_way, "meta.txt");
+	CopyAndSave(path_way, "pacenote_info.txt");
+	int index = 1;
+	if (is_chunked_) {
+		index = 4;
+	}
+	for (size_t i = 0; i < index; i++) {
+		FString track_name = "track_points.txt";
+		track_name = FString::FromInt(i) + track_name;
+		CopyAndSave(path_way, track_name);
+		track_name = "track_image.png";
+		track_name = FString::FromInt(i) + track_name;
+		CopyAndSave(path_way, track_name);
+	}
+	FString time_file = path_way + "time.txt";
+	FFileHelper::SaveStringToFile(time_to_save, *time_file);
+	count++;
+	CreateMetaFile();
+}
+
+void FileLoader::CopyAndSave(const FString& path_, const FString& file_to_save) {
+	IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
+	FString exe_loc = application_name_;
+	FString exe_name = "SFML_RuleBasedSystem.exe";
+	auto n = exe_loc.Find(FString(exe_name));
+	exe_loc.RemoveAt(n, exe_name.Len());
+	FString loc_path = path_ + file_to_save;
+	exe_loc += file_to_save;
+	if (FileManager.CopyFile(*loc_path, *exe_loc, EPlatformFileRead::None, EPlatformFileWrite::None)){
+		UE_LOG(LogTemp, Warning, TEXT("FilePaths: File Copied!"));
 	}
 }
 
@@ -81,7 +117,6 @@ void FileLoader::CreateMetaFile() {
 	}
 	else {
 		FFileHelper::SaveStringToFile(FString::FromInt(count), *path_, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
-		
 	}	
 }
 
