@@ -57,6 +57,8 @@ void UMainMenuUIWidget::SetLoading(const FString& name_) {
 	if (level_loader.GetLength()>0){
 		FString length_string = "Length: " + FString::FromInt(level_loader.GetLength());
 		length_text->SetText(FText::FromString(length_string));
+		FString turn_string = "Turns: " + FString::FromInt(level_loader.GetTurns());
+		turn_text->SetText(FText::FromString(turn_string));
 	}
 }
 

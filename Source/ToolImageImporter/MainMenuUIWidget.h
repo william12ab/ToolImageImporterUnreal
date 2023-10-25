@@ -72,7 +72,8 @@ protected:
 		class UCanvasPanel* loading_panel;
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* length_text;
-	
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* turn_text;
 
 
 	//ufunctions
