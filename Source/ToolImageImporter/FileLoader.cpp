@@ -15,6 +15,7 @@ FString FileLoader::folder_extension("");
 bool FileLoader::is_loaded_;
 FileLoader::FileLoader() {
 	is_opened_ = false;
+	count = 0;
 }
 
 FileLoader::~FileLoader() {
@@ -50,4 +51,47 @@ void FileLoader::OpenApplication() {
 		}
 	}
 	FString* address = &application_name_;
+}
+
+void FileLoader::CreateNewFolder() {
+	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+	FString path_ = FPaths::ProjectContentDir();
+	// Directory Exists?
+	
+	SetCount();
+	path_.Append("saved_tracks/");
+	path_.Append(FString::FromInt(count)+"/");
+	count++;
+	if (!platformFile.DirectoryExists(*path_)) {
+		if (platformFile.CreateDirectory(*path_)) {
+			CreateMetaFile();
+		}
+	}
+}
+
+
+void FileLoader::CreateMetaFile() {
+	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+	FString path_ = FPaths::ProjectContentDir();
+	path_.Append("saved_tracks/");
+	path_.Append("meta_.txt");
+	if (platformFile.FileExists(*path_)){
+		//
+		FFileHelper::SaveStringToFile(FString::FromInt(count), *path_);
+	}
+	else {
+		FFileHelper::SaveStringToFile(FString::FromInt(count), *path_, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
+	}	
+}
+
+void FileLoader::SetCount() {
+	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+	FString path_ = FPaths::ProjectContentDir();
+	path_.Append("saved_tracks/");
+	path_.Append("meta_.txt");
+	if (platformFile.FileExists(*path_)) {
+		FString temp;
+		FFileHelper::LoadFileToString(temp, *path_, FFileHelper::EHashOptions::None);
+		count = FCString::Atoi(*temp);
+	}
 }

@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Components/CanvasPanel.h"
+#include "FileLoader.h"
 #include "EndUI.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UEndUI : public UUserWidget
@@ -17,15 +18,22 @@ protected:
 	void NativeConstruct() override;
 	
 
+
+
+
 	UFUNCTION()
 		void RestartFunction();
 	UFUNCTION()
 		void GoToMenuFunction();
+	UFUNCTION()
+		void SaveLevel();
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* restart_button;
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UButton* menu_button;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+		class UButton* save_button;
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* stage_time_text;
 	UPROPERTY(meta = (BindWidget))
@@ -35,4 +43,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 		class UCanvasPanel* panel;
 	AVehicleController* vehicle_pawn;//ref for time etc
+
+	FileLoader f;
 };
