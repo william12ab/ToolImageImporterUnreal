@@ -81,6 +81,7 @@ void FileLoader::CreateMetaFile() {
 	}
 	else {
 		FFileHelper::SaveStringToFile(FString::FromInt(count), *path_, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
+		
 	}	
 }
 
