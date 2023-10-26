@@ -15,6 +15,10 @@ void UMainMenuUIWidget::NativeConstruct() {
 	select_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickSelect);
 	close_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickCloseButton);
 
+	save_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadSaved);
+	back_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnCloseSavedPanel);
+	next_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickNextButton);
+
 	buttons_.Add(large_button);
 	buttons_.Add(largec_button);
 	buttons_.Add(largew_button);
@@ -127,6 +131,7 @@ void UMainMenuUIWidget::LevelFunc() {
 void UMainMenuUIWidget::OnClickLoadSaved() {
 	PlaySound(button_sound_base);
 	save_panel->SetVisibility(ESlateVisibility::Visible);
+	LoadSavedData();
 }
 
 void UMainMenuUIWidget::OnClickNextButton() {
@@ -147,6 +152,8 @@ void UMainMenuUIWidget::LoadSavedData() {
 	FString path_ = FPaths::ProjectContentDir();
 	path_.Append("saved_tracks/");
 	path_.Append(FString::FromInt(local_count) + "/");
+	FString temp_path = path_ + "0track_image.png";
+	level_loader.SetTrackImageName(temp_path);
 	auto load_is_chunking = level_loader.ReadMetaTracK(0);
 	if (load_is_chunking){
 		index_ = 4;
@@ -155,14 +162,20 @@ void UMainMenuUIWidget::LoadSavedData() {
 		FString image_name = path_ + FString::FromInt(i)+"track_image.png";
 		level_loader.SetTrackImageName(image_name);
 		auto texture_ = level_loader.LoadImage(0);
-		save_image->SetBrushFromTexture(texture_, true);
+		track_image_saved->SetBrushFromTexture(texture_, true);
 	}
 	int loc_num_turns = 0;
 	int loc_legnth = 0;
 	FString time_ = "";
 	
 	save_handler.ExtractData(loc_num_turns, loc_legnth, time_, path_);
-	length_text->SetText(FText::FromString(FString::FromInt(loc_legnth)));
-	turn_text->SetText(FText::FromString(FString::FromInt(loc_num_turns)));
+	length_text_save->SetText(FText::FromString(FString::FromInt(loc_legnth)));
+	turn_text_save->SetText(FText::FromString(FString::FromInt(loc_num_turns)));
 	best_time_text->SetText(FText::FromString(*time_));
+}
+
+void UMainMenuUIWidget::OnClickNextButton() {
+	FString path_ = FPaths::ProjectContentDir();
+	path_.Append("saved_tracks/"+local_count+"/");
+	save_handler.CheckForExist(local_count, path_);
 }

@@ -18,12 +18,18 @@ void SaveHandler::LoadArrayFile(FString name_) {
 
 void SaveHandler::ExtractData(int& num_turns, int& length, FString& time_, const FString& name_) {
 	auto meta_name = name_ + "meta.txt";
-	auto ar= LoadTextFile(name_);
+	auto ar= LoadTextFile(meta_name);
 	if (ar.IsValidIndex(3)) {
 		length = FCString::Atoi(*ar[3]);
 		num_turns = FCString::Atoi(*ar[4]);
 	}
 	meta_name = name_ + "time.txt";
-	ar = LoadTextFile(name_);
+	ar = LoadTextFile(meta_name);
 	time_ = ar[0];
+}
+
+void SaveHandler::CheckForExist(int& local_count, const FString&path_) {
+	if (platformFile.DirectoryExists(*path_)) {
+		local_count++;
+	}
 }

@@ -59,7 +59,7 @@ void FileLoader::OpenApplication() {
 void FileLoader::CreateNewFolder() {
 	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
 	FString path_ = FPaths::ProjectContentDir();
-	// Directory Exists?
+
 	
 	SetCount();
 	path_.Append("saved_tracks/");
