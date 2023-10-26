@@ -34,6 +34,8 @@ void UMainMenuUIWidget::NativeConstruct() {
 	GEngine->GameViewport->GetViewportSize(size_);
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetMouseLocation(size_.X / 2, size_.Y / 2);
 	is_active = false;
+
+	local_count = 0;
 }
 
 void UMainMenuUIWidget::OnClickPlay() {
@@ -119,4 +121,50 @@ void UMainMenuUIWidget::TimerDelay() {
 
 void UMainMenuUIWidget::LevelFunc() {
 	UGameplayStatics::OpenLevel(GetWorld(), level_name);
+}
+
+
+void UMainMenuUIWidget::OnClickLoadSaved() {
+	PlaySound(button_sound_base);
+	save_panel->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMainMenuUIWidget::OnClickNextButton() {
+	PlaySound(button_sound_base);
+}
+
+void UMainMenuUIWidget::OnClickPlaySaved() {
+
+}
+
+void UMainMenuUIWidget::OnCloseSavedPanel() {
+	PlaySound(button_sound_base);
+	save_panel->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UMainMenuUIWidget::LoadSavedData() {
+
+	int index_ = 1;
+
+	FString path_ = FPaths::ProjectContentDir();
+	path_.Append("saved_tracks/");
+	path_.Append(FString::FromInt(local_count) + "/");
+	auto load_is_chunking = level_loader.ReadMetaTracK(0);
+	if (load_is_chunking){
+		index_ = 4;
+	}
+
+	for (int i = 0; i < index_; i++){
+
+		FString image_name = path_ + FString::FromInt(i)+"track_image.png";
+
+		level_loader.SetTrackImageName(image_name);
+		auto texture_ = level_loader.LoadImage(0);
+		save_image->SetBrushFromTexture(texture_, true);
+	}
+	
+
+		/*length_text
+		turn_text
+		best_time_text*/
 }

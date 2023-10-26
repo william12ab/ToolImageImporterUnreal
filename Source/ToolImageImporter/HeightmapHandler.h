@@ -13,6 +13,9 @@ public:
 	void ReadPaceNoteFile(TArray<int>&lengths_, TArray<int>&angles_,TArray<int>&inclines_, TArray<int>&widths_, TArray<int>& directions_, TArray<int>&cp_width_);
 	void ReadTrackImage(const int& index_,UObject*world_);
 	
+
+
+	void SetTrackImageName(FString n) { track_image_name = s; }
 	UTexture2D* LoadImage(const int& index_);
 	void ReturnColor(UTexture2D* texture_, TArray<FColor>& color_array, const int&x_add,const int&y_add,const int&grid_size);
 	bool ReadMetaTracK(const int&index_);

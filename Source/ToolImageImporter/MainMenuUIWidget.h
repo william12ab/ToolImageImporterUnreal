@@ -24,6 +24,7 @@ protected:
 	void TimerDelay();
 	void LevelFunc();
 	void SetLoading(const FString& name_);
+	void LoadSavedData();
 
 	//ui
 	UPROPERTY(meta = (BindWidget))
@@ -76,7 +77,36 @@ protected:
 		class UTextBlock* turn_text;
 
 
+	//saving UI
+	UPROPERTY(meta = (BindWidget))
+		class UButton* save_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* play_saved_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* next_button;
+	UPROPERTY(meta = (BindWidget))
+		class UButton* back_button;
+	UPROPERTY(meta = (BindWidget))
+		class UCanvasPanel* save_panel;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* save_image;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* length_text;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* turn_text;
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* best_time_text;
+
+
 	//ufunctions
+	UFUNCTION()
+		void OnClickLoadSaved();
+	UFUNCTION()
+		void OnClickNextButton();
+	UFUNCTION()
+		void OnClickPlaySaved();
+	UFUNCTION()
+		void OnCloseSavedPanel();
 	UFUNCTION()
 		void OnClickSelect();
 	UFUNCTION()
@@ -99,4 +129,6 @@ protected:
 
 
 	TArray<UButton*> buttons_;
+
+	int local_count;
 };

@@ -16,6 +16,8 @@ public:
 	FString& GetFileExtension() { return folder_extension; }
 	bool GetIsOpened() { return is_opened_; }
 	bool GetIsLoaded() { return is_loaded_; }
+	int GetCount() { return count; }
+
 
 	void CreateNewFolder();
 	void CreateMetaFile();
