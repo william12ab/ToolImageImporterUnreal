@@ -27,6 +27,9 @@ void SaveHandler::CheckForExist(int& local_count, const FString&path_) {
 	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
 
 	if (platformFile.DirectoryExists(*path_)) {
-		local_count++;
+		
+	}
+	else {
+		local_count = 0;
 	}
 }

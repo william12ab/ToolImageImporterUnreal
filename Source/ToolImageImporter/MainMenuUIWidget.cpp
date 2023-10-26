@@ -187,6 +187,7 @@ void UMainMenuUIWidget::LoadSavedData() {
 void UMainMenuUIWidget::OnClickNextButton() {
 	PlaySound(button_sound_base);
 	FString path_ = FPaths::ProjectContentDir();
-	path_ = path_ + "saved_tracks/" + FString::FromInt(local_count) + "/";
+	path_ = path_ + "saved_tracks/" + FString::FromInt(local_count+1) + "/";
+	local_count += 1;
 	save_handler.CheckForExist(local_count, path_);
 }
