@@ -146,9 +146,8 @@ void UMainMenuUIWidget::OnClickPlaySaved() {
 	file_opener.SetFolderName(temp_path);
 	file_opener.SetExtension(FString::FromInt(local_count));
 	level_name = "Main";
-	FString loading_s = "/Game/Textures/saved_tracks/";
-	loading_s = loading_s + FString::FromInt(local_count);
-	SetLoading(loading_s);
+	SetLoading(path_);
+	save_panel->SetVisibility(ESlateVisibility::Hidden);
 	TimerDelay();
 }
 

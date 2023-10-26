@@ -85,6 +85,9 @@ void FileLoader::SaveFiles(const FString& path_way) {
 		track_name = "track_image.png";
 		track_name = FString::FromInt(i) + track_name;
 		CopyAndSave(path_way, track_name);
+		track_name = "final.png";
+		track_name = FString::FromInt(i) + track_name;
+		CopyAndSave(path_way, track_name);
 	}
 	FString time_file = path_way + "time.txt";
 	FFileHelper::SaveStringToFile(time_to_save, *time_file);
