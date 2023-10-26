@@ -11,11 +11,6 @@ TArray<FString> SaveHandler::LoadTextFile(const FString& name_) {
 	return array_;
 }
 
-void SaveHandler::LoadArrayFile(FString name_) {
-	TArray<int32> result_;
-	///FFileHelper::LoadFileToArray(result_, *name_);
-}
-
 void SaveHandler::ExtractData(int& num_turns, int& length, FString& time_, const FString& name_) {
 	auto meta_name = name_ + "meta.txt";
 	auto ar= LoadTextFile(meta_name);
@@ -29,6 +24,8 @@ void SaveHandler::ExtractData(int& num_turns, int& length, FString& time_, const
 }
 
 void SaveHandler::CheckForExist(int& local_count, const FString&path_) {
+	IPlatformFile& platformFile = FPlatformFileManager::Get().GetPlatformFile();
+
 	if (platformFile.DirectoryExists(*path_)) {
 		local_count++;
 	}
