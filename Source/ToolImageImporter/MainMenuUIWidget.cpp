@@ -143,9 +143,7 @@ void UMainMenuUIWidget::OnCloseSavedPanel() {
 }
 
 void UMainMenuUIWidget::LoadSavedData() {
-
 	int index_ = 1;
-
 	FString path_ = FPaths::ProjectContentDir();
 	path_.Append("saved_tracks/");
 	path_.Append(FString::FromInt(local_count) + "/");
@@ -153,18 +151,18 @@ void UMainMenuUIWidget::LoadSavedData() {
 	if (load_is_chunking){
 		index_ = 4;
 	}
-
 	for (int i = 0; i < index_; i++){
-
 		FString image_name = path_ + FString::FromInt(i)+"track_image.png";
-
 		level_loader.SetTrackImageName(image_name);
 		auto texture_ = level_loader.LoadImage(0);
 		save_image->SetBrushFromTexture(texture_, true);
 	}
+	int loc_num_turns = 0;
+	int loc_legnth = 0;
+	FString time_ = "";
 	
-
-		/*length_text
-		turn_text
-		best_time_text*/
+	save_handler.ExtractData(loc_num_turns, loc_legnth, time_, path_);
+	length_text->SetText(FText::FromString(FString::FromInt(loc_legnth)));
+	turn_text->SetText(FText::FromString(FString::FromInt(loc_num_turns)));
+	best_time_text->SetText(FText::FromString(*time_));
 }

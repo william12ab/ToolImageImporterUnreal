@@ -6,6 +6,7 @@
 #include "SoundHandler.h"
 #include "HeightmapHandler.h"
 #include "Components/CanvasPanel.h"
+#include "SaveHandler.h"
 #include "MainMenuUIWidget.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API UMainMenuUIWidget : public UUserWidget
@@ -91,11 +92,13 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		class UImage* save_image;
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* length_text;
+		class UTextBlock* length_text_save;
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* turn_text;
+		class UTextBlock* turn_text_save;
 	UPROPERTY(meta = (BindWidget))
 		class UTextBlock* best_time_text;
+	UPROPERTY(meta = (BindWidget))
+		class UImage* track_image_saved;
 
 
 	//ufunctions
@@ -126,7 +129,7 @@ protected:
 	FName level_name;
 	bool is_active;
 	HeightmapHandler level_loader;
-
+	SaveHandler save_handler;
 
 	TArray<UButton*> buttons_;
 
