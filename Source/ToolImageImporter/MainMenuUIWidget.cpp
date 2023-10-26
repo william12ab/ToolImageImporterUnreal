@@ -18,6 +18,8 @@ void UMainMenuUIWidget::NativeConstruct() {
 	save_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickLoadSaved);
 	back_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnCloseSavedPanel);
 	next_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickNextButton);
+	play_saved_button->OnClicked.AddUniqueDynamic(this, &UMainMenuUIWidget::OnClickPlaySaved);
+
 
 	buttons_.Add(large_button);
 	buttons_.Add(largec_button);
@@ -135,7 +137,19 @@ void UMainMenuUIWidget::OnClickLoadSaved() {
 }
 
 void UMainMenuUIWidget::OnClickPlaySaved() {
-
+	PlaySound(button_sound_base);
+	FString path_ = FPaths::ProjectContentDir();
+	path_.Append("saved_tracks/");
+	path_.Append(FString::FromInt(local_count) + "/");
+	FString temp_path = path_ + "0track_image.png";
+	file_opener.SetIsLoaded(true);
+	file_opener.SetFolderName(temp_path);
+	file_opener.SetExtension(FString::FromInt(local_count));
+	level_name = "Main";
+	FString loading_s = "/Game/Textures/saved_tracks/";
+	loading_s = loading_s + FString::FromInt(local_count);
+	SetLoading(loading_s);
+	TimerDelay();
 }
 
 void UMainMenuUIWidget::OnCloseSavedPanel() {
