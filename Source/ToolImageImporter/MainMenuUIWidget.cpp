@@ -82,6 +82,7 @@ void UMainMenuUIWidget::OnClickSelectLevel(const int& index) {
 	FString track_name = "/0track_image.png";
 	FString name_ = base_folder + button_name + track_name;
 	file_opener.SetIsLoaded(true);
+	file_opener.SetIsSaved(false);
 	file_opener.SetFolderName(name_);
 	file_opener.SetExtension(button_name);
 	level_name = "Main";
@@ -143,6 +144,7 @@ void UMainMenuUIWidget::OnClickPlaySaved() {
 	path_.Append(FString::FromInt(local_count) + "/");
 	FString temp_path = path_ + "0track_image.png";
 	file_opener.SetIsLoaded(true);
+	file_opener.SetIsSaved(true);
 	file_opener.SetFolderName(temp_path);
 	file_opener.SetExtension(FString::FromInt(local_count));
 	level_name = "Main";

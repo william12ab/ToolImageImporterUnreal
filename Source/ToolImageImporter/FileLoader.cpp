@@ -14,6 +14,7 @@ FString FileLoader::folder_name("");
 FString FileLoader::folder_extension("");
 bool FileLoader::is_loaded_;
 bool FileLoader::is_chunked_;
+bool FileLoader::is_saved_;
 FileLoader::FileLoader() {
 	is_opened_ = false;
 	count = 0;

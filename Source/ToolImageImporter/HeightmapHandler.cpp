@@ -16,7 +16,7 @@ HeightmapHandler::HeightmapHandler() {
 	fil_name.RemoveAt(n, exe_name.Len());
 	track_points_name = fil_name += "track_points.txt";
 	fil_name = f_l.GetFileName();
-	if (f_l.GetIsLoaded()) {
+	if (f_l.GetIsLoaded()&&!f_l.GetIsSaved()) {
 		n = fil_name.Find(FString(exe_name));
 		fil_name.RemoveAt(n, exe_name.Len());
 		auto temp_file_name = fil_name;
