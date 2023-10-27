@@ -360,7 +360,7 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
-		for (int i = 0; i < 3; i++) {//rocks
+		for (int i = 0; i < 24; i++) {//rocks
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 			tree_instancea->AddRockClusters(track_points, original_plane->vec_m_verts[loop_index]);

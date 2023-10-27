@@ -288,7 +288,7 @@ bool ABasicTree::CheckBounds(const TArray<FVector2D>& track_point, const int&poi
 }
 
 void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts){
-	int rocks_to_spawn = 100;
+	int rocks_to_spawn = 13;
 	//above calculates the number of rocks to spawn. by finding distance of track, geting a number between 0 and 20, turning that to a percentage and rounding to int.
 	for (int i = 0; i < rocks_to_spawn; i++) {
 		int rand_point = FMath::RandRange(0, track_point.Num() - 1);
