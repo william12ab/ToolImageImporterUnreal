@@ -323,10 +323,26 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		FActorSpawnParameters SpawnInfoTree;
 		FRotator myRotTree(0, 0, 0);
 		FVector myLocTree = FVector(0, 0, 0);
-		for (int i = 0; i < 96; i++) {//tree near track
+		TArray<FVector2D>temp_array_half;
+		TArray<FVector2D>temp_array_two;
+		int split_size = track_points.Num() / 2;
+		temp_array_half.SetNum(split_size);
+		temp_array_two.SetNum(split_size);
+		for (int i = 0; i < split_size; i++) {
+			temp_array_half[i] = track_points[i];
+			temp_array_two[i] = track_points[i + split_size];
+		}
+
+		for (int i = 0; i < 94; i++) {//tree near track
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
-			tree_instancea->AddTreeNearTrack(track_points, original_plane->vec_m_verts[loop_index], max, min);
+			if (i<=47){
+				tree_instancea->AddTreeNearTrack(temp_array_half, original_plane->vec_m_verts[loop_index], max, min);
+			}
+			else {
+				tree_instancea->AddTreeNearTrack(temp_array_two, original_plane->vec_m_verts[loop_index], max, min);
+			}
+			
 			tree_instancea->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
 			CheckForChunking(loop_index, tree_instancea);
 		}
@@ -359,7 +375,6 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 			CheckForChunking(loop_index, tree_instancea);
 		}
 		for (int i = 0; i < 2; i++) {//grass verge
-			auto start_grass = high_resolution_clock::now();
 			ABasicTree* tree_instancea;
 			tree_instancea = GetWorld()->SpawnActor<ABasicTree>(myLocTree, myRotTree, SpawnInfoTree);
 			tree_instancea->SetItem(i);

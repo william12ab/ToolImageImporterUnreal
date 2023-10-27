@@ -492,7 +492,7 @@ void ARuntimeMeshPlane::SetHeightProper(const TArray<FVector>& points_, const TA
 	for (int i = 0; i < points_.Num(); i += 2) {
 		float dist = DistanceR(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
-		int_dist *= 20;
+		//int_dist *= 20;
 
 		ParallelFor(int_dist, [&](int j) {
 			float t = static_cast<float>(j) / static_cast<float>(int_dist);

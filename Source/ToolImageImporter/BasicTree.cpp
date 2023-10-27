@@ -89,7 +89,7 @@ void ABasicTree::CheckDistance(UStaticMesh& mesh_) {
 void ABasicTree::AddTreeNearTrack(const TArray<FVector2D>& track_point, const TArray<FVector>& m_verts, const int& max_, const int& min_) {
 	float yaw_rot = 0.0f;//gives random yaw
 	FString mesh_name;
-	int loop_range = 16;
+	int loop_range = 4;
 	int tree_select = 0;
 	float max_m = max_;
 	float min_m = min_;//min and max terrain mesh points
@@ -320,13 +320,15 @@ void ABasicTree::AddRockClusters(const TArray<FVector2D>& track_point, const TAr
 		track_rock_points.Add(FVector2D(pos_x, pos_y));
 	}
 
-	for (int i = h_instanced->GetInstanceCount() - 1; i > 0; i--) {
-		FTransform f;
-		int x = track_rock_points[i].X;
-		int y = track_rock_points[i].Y;
-		if (!CheckBounds(track_point, x, y)&& CheckTrackTree(x,y)) {
-			h_instanced->RemoveInstance(i);
-			h_instanced->GetInstanceTransform(i, f);
+	for (int j = 0; j < 2; j++) {
+		for (int i = h_instanced->GetInstanceCount() - 1; i > 0; i--) {
+			FTransform f;
+			int x = track_rock_points[i].X;
+			int y = track_rock_points[i].Y;
+			if (!CheckBounds(track_point, x, y) && CheckTrackTree(x, y)) {
+				h_instanced->RemoveInstance(i);
+				h_instanced->GetInstanceTransform(i, f);
+			}
 		}
 	}
 	h_instanced->UpdateBounds();
