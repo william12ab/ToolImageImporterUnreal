@@ -131,6 +131,7 @@ protected:
 	HeightmapHandler level_loader;
 	SaveHandler save_handler;
 
+	FString loading_text_name;
 	TArray<UButton*> buttons_;
 
 	int local_count;

@@ -135,12 +135,14 @@ UTexture2D* HeightmapHandler::FromSelect(const FString& name_) {
 	return tmpTex;
 }
 
-void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
+void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_, const bool& is_saved) {
 	int height_ = 512;
 	int local_index = 1;
 	TArray<FColor>color_array;
 	int grid_size = 400;
-	GetTrackImageName(index_);//gets the name w/ extension
+	if (!is_saved){
+		GetTrackImageName(index_);//gets the name w/ extension
+	}
 	bool is_chunking_loc = ReadMetaTracK(index_);//checks if chunking
 	if (is_chunking_loc) {
 		grid_size = 800;
@@ -151,9 +153,11 @@ void HeightmapHandler::ReadTrackImage(const int& index_, UObject* world_) {
 	else {
 		color_array.SetNum(grid_size * grid_size);
 	}
-
 	for (int i = 0; i < local_index; i++) {
-		GetTrackImageName(i);
+		if (!is_saved){
+			GetTrackImageName(i);
+		}
+		
 		UTexture2D* texture_ = LoadImage(i);//loads texture
 		int x_addition = 0;
 		int y_addition = 0;

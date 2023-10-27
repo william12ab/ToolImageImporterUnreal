@@ -515,7 +515,6 @@ void UUIWidget::CountdownImageFunction(const float& dt) {
 				images_[index_image]->SetVisibility(ESlateVisibility::Visible);
 				index_image++;
 			}
-			
 		}
 	}
 	if (vehicle_pawn->GetBoolBeginLap()) {

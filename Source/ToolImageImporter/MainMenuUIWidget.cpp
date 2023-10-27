@@ -42,6 +42,7 @@ void UMainMenuUIWidget::NativeConstruct() {
 	is_active = false;
 
 	local_count = 0;
+	loading_text_name = "/Game/default_tracks/text";
 }
 
 void UMainMenuUIWidget::OnClickPlay() {
@@ -50,9 +51,9 @@ void UMainMenuUIWidget::OnClickPlay() {
 		level_name = "Main";
 		file_opener.SetIsLoaded(false);	
 
-		level_loader.ReadTrackImage(0, GetWorld());
+		level_loader.ReadTrackImage(0, GetWorld(),false);
 		//
-		SetLoading("/Game/default_tracks/text");
+		SetLoading(loading_text_name);
 		//
 		TimerDelay();
 	}
@@ -60,7 +61,6 @@ void UMainMenuUIWidget::OnClickPlay() {
 
 void UMainMenuUIWidget::SetLoading(const FString& name_) {
 	loading_panel->SetVisibility(ESlateVisibility::Visible);
-	name_;
 	UTexture2D* temp_texture = Cast<UTexture2D>(StaticLoadObject(UTexture2D::StaticClass(), NULL, *name_));
 	track_image->SetBrushFromTexture(temp_texture, true);
 	if (level_loader.GetLength()>0){
@@ -148,7 +148,10 @@ void UMainMenuUIWidget::OnClickPlaySaved() {
 	file_opener.SetFolderName(temp_path);
 	file_opener.SetExtension(FString::FromInt(local_count));
 	level_name = "Main";
-	SetLoading(path_);
+	level_loader.ReadTrackImage(0, GetWorld(), true);
+
+	SetLoading(loading_text_name);
+
 	save_panel->SetVisibility(ESlateVisibility::Hidden);
 	TimerDelay();
 }
