@@ -51,6 +51,7 @@ void UUIWidget::NativeConstruct() {
 			original_plane->SetIsChunking(false);
 		}
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
+		
 		if (track_points.IsValidIndex(0)){
 			CreateTrack(i);
 			FixScales(i);
@@ -822,7 +823,15 @@ void UUIWidget::GetOrderOfControlPoints() {
 						}
 						else if (control_points_multi.Num() > 1&& (i+1)< control_points_multi.Num()) {
 							auto distance = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i][0]);
-							auto distance2 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i + 1][0]);
+							float distance2;
+							if (control_points_multi[i+1].IsValidIndex(0)){
+								distance2 = FVector2D::Distance(total_control_points[total_control_points.Num() - 1], control_points_multi[i + 1][0]);
+							}
+							else {
+								distance2 = 1000000000000;
+								control_points_multi.RemoveAt(i + 1);
+							}
+							
 							if (distance < distance2) {
 								for (size_t j = 0; j < control_points_multi[i].Num(); j++) {
 									total_control_points.Add(control_points_multi[i][j]);
