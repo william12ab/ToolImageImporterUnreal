@@ -53,6 +53,7 @@ protected:
 	void FixMultipleSpline(TArray<FVector2D>& temp_arr, TArray<FVector2D>& second_spline_array, bool& is_new_spline_needed);//used for checking and splitting if a new spline is needed
 	void FixPoints(TArray<FVector2D>& array_);//multiplying by spacing of mesh
 	void DividingPoinfts(TArray<FVector2D>& array_);//division of spacing
+	void SplineCreation(ATrackSpline* spline_obj, const TArray<FVector2D>& points_array, const int& loop_index, const FTransform&tranform_);
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;

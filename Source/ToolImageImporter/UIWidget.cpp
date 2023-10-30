@@ -428,6 +428,19 @@ void UUIWidget::DividingPoinfts(TArray<FVector2D>& array_) {
 	}
 }
 
+void UUIWidget::SplineCreation(ATrackSpline* spline_obj,const TArray<FVector2D>& points_array, const int& loop_index, const FTransform& tranform_) {
+
+	spline_obj->SetSpacing(s_);
+	spline_obj->SetDivision(m_);//setters
+	spline_obj->SetControlPoints(points_array);//setting array in class to the points
+	spline_obj->SetHeightArray(m_colors);//setting array as well
+	spline_obj->OnConstruction(tranform_);//consttruction
+	original_plane->SetHeightProper(spline_obj->GetSEPoints(), spline_obj->GetVerts(), loop_index);//changing height of mesh
+	original_plane->ReplaceC(loop_index);//replacing heightmap to match new mesh, also normals and smoothing
+	spline_obj->SetActorLocation(FVector(spline_obj->GetActorLocation().X, spline_obj->GetActorLocation().Y, spline_obj->GetActorLocation().Z));
+	spline_obj->SetActorEnableCollision(false);
+}
+
 void UUIWidget::CreateSpline(const int&loop_index) {
 	TArray<FVector2D> temp_arr;
 	TArray<FVector2D> second_spline_array;
@@ -447,7 +460,6 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 			FixPoints(second_spline_array);
 		}
 		
-
 		FActorSpawnParameters SpawnInfoTree;
 		FRotator myRotTree(0, 0, 0);
 		FVector myLocTree = FVector(0, 0, 0);
@@ -456,26 +468,16 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 						FVector{0, 0, 0},
 						FVector{1, 1, 1} };
 		track_spline = GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);//above to here just spawning actor
-		track_spline->SetSpacing(s_);
-		track_spline->SetDivision(m_);//setters
-		track_spline->SetControlPoints(temp_arr);//setting array in class to the points
-		track_spline->SetHeightArray(m_colors);//setting array as well
-		track_spline->OnConstruction(t_transform_);//consttruction
-		original_plane->SetHeightProper(track_spline->GetSEPoints(), track_spline->GetVerts(), loop_index);//changing height of mesh
-		original_plane->ReplaceC(loop_index);//replacing heightmap to match new mesh, also normals and smoothing
-		track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
-		track_spline->SetActorEnableCollision(false);
-		if (point_type) {
-			DividingPoinfts(temp_arr);
-			track_points = temp_arr;
-
+		SplineCreation(track_spline, temp_arr, loop_index,t_transform_);
+		if (is_new_spline_needed){
+			ATrackSpline* second_spline= GetWorld()->SpawnActor<ATrackSpline>(myLocTree, myRotTree, SpawnInfoTree);//above to here just spawning actor
+			SplineCreation(second_spline, second_spline_array, loop_index, t_transform_);
 		}
-		else {
-			for (size_t i = 0; i < temp_arr.Num(); i++) {
-				temp_arr[i].X /= s_;
-				temp_arr[i].Y /= s_;
-			}
-			track_points = temp_arr;
+
+		DividingPoinfts(temp_arr);
+		track_points = temp_arr;
+		if (is_new_spline_needed){
+			DividingPoinfts(second_spline_array);
 		}
 	}
 }
