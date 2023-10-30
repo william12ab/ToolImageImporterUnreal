@@ -49,6 +49,10 @@ protected:
 	void CheckForChunking(const int&index_, ABasicTree* instance_);
 	void FixControlPoints(const int&index_, TArray<FVector2D>&points_to_fix);
 	void GetOrderOfControlPoints();
+
+	void FixMultipleSpline(TArray<FVector2D>& temp_arr, TArray<FVector2D>& second_spline_array, bool& is_new_spline_needed);//used for checking and splitting if a new spline is needed
+	void FixPoints(TArray<FVector2D>& array_);//multiplying by spacing of mesh
+	void DividingPoinfts(TArray<FVector2D>& array_);//division of spacing
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;

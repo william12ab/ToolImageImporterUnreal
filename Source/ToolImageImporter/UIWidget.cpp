@@ -393,8 +393,44 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		vec_water_mesh[loop_index]->SetActorScale3D(FVector(30, 30, 30));
 	}
 }
+
+void UUIWidget::FixMultipleSpline(TArray<FVector2D> &temp_arr, TArray<FVector2D>&second_spline_array, bool & is_new_spline_needed) {
+	int split_index = 0;
+	for (size_t i = 0; i < temp_arr.Num() - 1; i++) {
+		auto dist = FVector2D::Distance(temp_arr[i], temp_arr[i + 1]);
+		if (dist > 10) {
+			is_new_spline_needed = true;
+			split_index = i + 1;
+			i = temp_arr.Num() - 1;
+		}
+	}
+
+	if (is_new_spline_needed) {
+		auto num_ = temp_arr.Num();
+		for (size_t i = split_index; i < num_; i++) {
+			second_spline_array.Add(temp_arr[i]);
+		}
+		temp_arr.RemoveAt(split_index, second_spline_array.Num());
+	}
+
+}
+
+void UUIWidget::FixPoints(TArray<FVector2D>& array_) {
+	for (auto& point : array_) {
+		point.X *= s_;
+		point.Y *= s_;
+	}
+}
+void UUIWidget::DividingPoinfts(TArray<FVector2D>& array_) {
+	for (auto& point : array_) {
+		point.X /= s_;
+		point.Y /= s_;
+	}
+}
+
 void UUIWidget::CreateSpline(const int&loop_index) {
 	TArray<FVector2D> temp_arr;
+	TArray<FVector2D> second_spline_array;
 	if (track_points.IsValidIndex(0)) {
 		if (point_type) {
 			temp_arr = track_points;
@@ -404,26 +440,11 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 		}
 
 		bool is_new_spline_needed = false;
-		int split_index = 0;
-		for (size_t i = 0; i < temp_arr.Num()-1; i++){
-			auto dist = FVector2D::Distance(temp_arr[i], temp_arr[i + 1]);
-			if (dist>10){
-				is_new_spline_needed = true;
-				split_index = i + 1;
-				i = temp_arr.Num() - 1;
-			}
-		}
-		TArray<FVector2D> second_spline_array;
-		if (is_new_spline_needed){
-			auto num_ = temp_arr.Num();
-			for (size_t i = split_index; i < num_; i++){
-				second_spline_array.Add(temp_arr[i]);
-			}
-			temp_arr.RemoveAt(split_index, second_spline_array.Num() );
-		}
-		for (size_t i = 0; i < temp_arr.Num(); i++) {
-			(temp_arr[i].X) *= s_;
-			(temp_arr[i].Y) *= s_;
+		FixMultipleSpline(temp_arr, second_spline_array, is_new_spline_needed);
+
+		FixPoints(temp_arr);
+		if (second_spline_array.IsValidIndex(0)){
+			FixPoints(second_spline_array);
 		}
 		
 
@@ -445,10 +466,7 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 		track_spline->SetActorLocation(FVector(track_spline->GetActorLocation().X, track_spline->GetActorLocation().Y, track_spline->GetActorLocation().Z));
 		track_spline->SetActorEnableCollision(false);
 		if (point_type) {
-			for (size_t i = 0; i < temp_arr.Num(); i++) {
-				temp_arr[i].X /= s_;
-				temp_arr[i].Y /= s_;
-			}
+			DividingPoinfts(temp_arr);
 			track_points = temp_arr;
 
 		}
