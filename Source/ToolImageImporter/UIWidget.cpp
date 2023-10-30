@@ -403,10 +403,30 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 			temp_arr = track_points;
 		}
 
+		bool is_new_spline_needed = false;
+		int split_index = 0;
+		for (size_t i = 0; i < temp_arr.Num()-1; i++){
+			auto dist = FVector2D::Distance(temp_arr[i], temp_arr[i + 1]);
+			if (dist>10){
+				is_new_spline_needed = true;
+				split_index = i + 1;
+				i = temp_arr.Num() - 1;
+			}
+		}
+		TArray<FVector2D> second_spline_array;
+		if (is_new_spline_needed){
+			auto num_ = temp_arr.Num();
+			for (size_t i = split_index; i < num_; i++){
+				second_spline_array.Add(temp_arr[i]);
+			}
+			temp_arr.RemoveAt(split_index, second_spline_array.Num() );
+		}
 		for (size_t i = 0; i < temp_arr.Num(); i++) {
 			(temp_arr[i].X) *= s_;
 			(temp_arr[i].Y) *= s_;
 		}
+		
+
 		FActorSpawnParameters SpawnInfoTree;
 		FRotator myRotTree(0, 0, 0);
 		FVector myLocTree = FVector(0, 0, 0);
