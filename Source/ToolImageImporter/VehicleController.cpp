@@ -23,10 +23,11 @@
 
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 AVehicleController::AVehicleController(){
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/test/Subaru_Impreza_22B_STi_wheel_test.Subaru_Impreza_22B_STi_wheel_test'"));
 	
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CarMesh(TEXT("SkeletalMesh'/Game/Car/with_toe/Subaru_with_toe.Subaru_with_toe'"));
+	// CarMesh(TEXT("SkeletalMesh'/Game/Car/test/Subaru_Impreza_22B_STi_wheel_test.Subaru_Impreza_22B_STi_wheel_test'"));
 	GetMesh()->SetSkeletalMesh(CarMesh.Object);
-	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/test/NewAnimBlueprint"));
+	static ConstructorHelpers::FClassFinder<UObject> AnimBPClass(TEXT("/Game/Car/with_toe/NewAnimBP"));
 	GetMesh()->SetAnimInstanceClass(AnimBPClass.Class);
 	GetMesh()->OnComponentBeginOverlap.AddDynamic(this, &AVehicleController::OnOverlapBegin);
 
@@ -501,7 +502,7 @@ void AVehicleController::GetWheelAngle() {
 	}
 
 	//gets location of wheel
-	FName wheel_bone = "Wheel_Bone";
+	FName wheel_bone = "bone_wheel";
 	auto s = GetMesh()->GetBoneQuaternion(wheel_bone, EBoneSpaces::ComponentSpace);
 	auto p=s.Rotator();
 	FVector BoneLocation = GetMesh()->GetBoneLocation(wheel_bone, EBoneSpaces::ComponentSpace);
