@@ -609,7 +609,7 @@ void ARuntimeMeshPlane::CreateCollisionZone(const TArray<FVector2D>& track_point
 			for (int32 x = -12; x <= 12; x++) {
 				int track_x = (track_points[index].X) * scale_multi - x;
 				int track_y = (track_points[index].Y) * scale_multi - y;
-				if (track_x <= (grid_size - 1) && track_x >= 0 && track_y <= (grid_size - 1) && track_y >= 0) {
+				if (track_x < (grid_size - 1) && track_x >= 0 && track_y < (grid_size - 1) && track_y >= 0) {
 					new_m_verts.Add(verts_[track_y * grid_size + track_x]);//tl
 					new_m_verts.Add(verts_[track_y * grid_size + (track_x + 1)]);//tr
 					new_m_verts.Add(verts_[(track_y + 1) * grid_size + track_x]);//bl

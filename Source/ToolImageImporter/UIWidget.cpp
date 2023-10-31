@@ -223,31 +223,63 @@ void UUIWidget::CreateTrack(const int& loop_index) {
 	CreateFoilage(loop_index);
 }
 void UUIWidget::ModifyingPoints(TArray<FVector2D>& points_array) {
+	bool is_modied = false;
 	for (size_t i = 0; i < points_array.Num(); i++){
-		if (points_array[i].Y == 399 ) {
-			points_array.Insert(FVector2D(points_array[i].X -2 , 399) , i);
-			points_array.Insert(FVector2D(points_array[i].X +3 , 399), i +2);
-			points_array.Insert(FVector2D(points_array[i].X + 5, 399), i + 3);
-			i += 3;
+		is_modied = false;
+		if (!is_modied) {
+			if (points_array[i].Y == 399) {
+				points_array.Insert(FVector2D(points_array[i].X + 3, 399), i + 1);
+				points_array.Insert(FVector2D(points_array[i].X + 5, 399), i + 2);
+				points_array.Insert(FVector2D(points_array[i].X - 5, 399), i);
+				points_array.Insert(FVector2D(points_array[i].X + 2, 399), i + 1);
+				i += 5;
+				is_modied = true;
+			}
 		}
-		if (points_array[i].X == 399){
-			points_array.Insert(FVector2D(399, points_array[i].Y - 2), i);
-			points_array.Insert(FVector2D(399, points_array[i].Y + 3), i + 2);
-			points_array.Insert(FVector2D(399, points_array[i].Y + 5), i + 3);
+		if (!is_modied) {
+			if (points_array[i].X == 399) {
+				points_array.Insert(FVector2D(399, points_array[i].Y + 3), i + 1);
+				points_array.Insert(FVector2D(399, points_array[i].Y + 5), i + 2);
+				points_array.Insert(FVector2D(399, points_array[i].Y - 5), i);
+				points_array.Insert(FVector2D(399, points_array[i].Y + 2), i + 1);
+				i += 5;
+				is_modied = true;
+			}
+		}
+		if (!is_modied) {
+			if (points_array[i].Y == 0) {
+				points_array.Insert(FVector2D(points_array[i].X + 3,0), i + 1);
+				points_array.Insert(FVector2D(points_array[i].X + 5, 0), i + 2);
+				points_array.Insert(FVector2D(points_array[i].X - 5, 0), i);
+				points_array.Insert(FVector2D(points_array[i].X + 2, 0), i + 1);
+				i += 5;
+				is_modied = true;
+			}
+		}
+		if (!is_modied) {
+			if (points_array[i].X == 0) {
+				points_array.Insert(FVector2D(0, points_array[i].Y + 3), i + 1);
+				points_array.Insert(FVector2D(0, points_array[i].Y + 5), i + 2);
+				points_array.Insert(FVector2D(0, points_array[i].Y - 5), i);
+				points_array.Insert(FVector2D(0, points_array[i].Y + 2), i + 1);
+				i += 5;
+				is_modied = true;
+			}
+		}
+	}
 
-			i += 3;
+	for (size_t i = 0; i < points_array.Num(); i++){
+		if (points_array[i].Y>399) {
+			points_array[i].Y = 399;
 		}
-		if (points_array[i].Y == 0) {
-			points_array.Insert(FVector2D(points_array[i].X - 2, 0), i);
-			points_array.Insert(FVector2D(points_array[i].X + 3, 0), i + 2);
-			points_array.Insert(FVector2D(points_array[i].X + 5, 0), i + 3);
-			i += 3;
+		if (points_array[i].Y < 0) {
+			points_array[i].Y = 0;
 		}
-		if (points_array[i].X == 0) {
-			points_array.Insert(FVector2D(0, points_array[i].Y - 2), i);
-			points_array.Insert(FVector2D(0, points_array[i].Y + 3), i + 2);
-			points_array.Insert(FVector2D(0, points_array[i].Y + 5), i + 3);
-			i += 3;
+		if (points_array[i].X > 399) {
+			points_array[i].X = 399;
+		}
+		if (points_array[i].X < 0) {
+			points_array[i].X = 0;
 		}
 	}
 }
