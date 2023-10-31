@@ -406,7 +406,6 @@ void ARuntimeMeshPlane::ModiVerts(TArray<float>& c_, const int& m_, const int& i
 		SmoothTerrain(c_);
 		SmoothTerrain(c_);
 	}
-	//FCriticalSection Mutex;
 	ParallelFor(width_, [&](int32 y) {
 		for (int32 x = 0; x < width_; x++) {
 			if (height_ == 400) {
@@ -492,7 +491,6 @@ void ARuntimeMeshPlane::SetHeightProper(const TArray<FVector>& points_, const TA
 	for (int i = 0; i < points_.Num(); i += 2) {
 		float dist = DistanceR(points_[i], points_[i + 1]);
 		int int_dist = round(dist);
-		//int_dist *= 20;
 
 		ParallelFor(int_dist, [&](int j) {
 			float t = static_cast<float>(j) / static_cast<float>(int_dist);
@@ -520,7 +518,6 @@ void ARuntimeMeshPlane::SetHeightProper(const TArray<FVector>& points_, const TA
 void ARuntimeMeshPlane::NearestNeighbourSample(const int& grid_size, const int& new_size, const TArray<FVector>& m_verts_, TArray<FVector>& temp_vec, const int& scale,
 	const TArray<FLinearColor>& temp_colour, TArray<FLinearColor>& new_c, TArray<FVector2D>& new_uvs, const TArray<FVector2D>& old_uvs) {
 	ParallelFor(grid_size, [&](int i) {
-		//for (int i = 0; i < (grid_size); i++) {
 		for (int j = 0; j < (grid_size); j++) {
 			int x_dash = j * new_size / grid_size;
 			int y_dash = i * new_size / grid_size;
@@ -588,7 +585,6 @@ void ARuntimeMeshPlane::Resize(const TArray<FVector>& m_verts_, const int& scale
 		for (int32 x = 0; x < width_; x++) {
 			vec_m_verts[0][y * height_ + x].Z = new_z[y * height_ + x].Z;
 			vec_m_vert_colors[0][y * height_ + x] = new_c[y * height_ + x];
-			//	m_u_vs[y * height_ + x] = new_uvs[y * height_ + x];
 			temp_c[y * height_ + x] = new_z[y * height_ + x].Z;
 		}
 	}
@@ -613,7 +609,7 @@ void ARuntimeMeshPlane::CreateCollisionZone(const TArray<FVector2D>& track_point
 			for (int32 x = -12; x <= 12; x++) {
 				int track_x = (track_points[index].X) * scale_multi - x;
 				int track_y = (track_points[index].Y) * scale_multi - y;
-				if (track_x < (grid_size - 1) && track_x >= 0 && track_y < (grid_size - 1) && track_y >= 0) {
+				if (track_x <= (grid_size - 1) && track_x >= 0 && track_y <= (grid_size - 1) && track_y >= 0) {
 					new_m_verts.Add(verts_[track_y * grid_size + track_x]);//tl
 					new_m_verts.Add(verts_[track_y * grid_size + (track_x + 1)]);//tr
 					new_m_verts.Add(verts_[(track_y + 1) * grid_size + track_x]);//bl

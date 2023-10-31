@@ -66,6 +66,9 @@ void ATrackSpline::OnConstruction(const FTransform& Transform) {
 			}
 			spline->AddSplineLocalPoint(FVector(control_points[i].X, control_points[i].Y, ((float)((height_z[y * 400 + x] * spacing_) / division_)) + amount_added_to_z));
 		}
+		else {
+			int weasdawe = 123;
+		}
 	}
 	for (size_t i = 0; i < spline->GetNumberOfSplinePoints(); i++) {
 		spline->SetSplinePointType(i, ESplinePointType::CurveCustomTangent, true);

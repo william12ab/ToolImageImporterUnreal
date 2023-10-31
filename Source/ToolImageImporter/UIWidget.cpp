@@ -53,7 +53,7 @@ void UUIWidget::NativeConstruct() {
 			original_plane->SetIsChunking(false);
 		}
 		point_type = level_loader.ReadTrackPoints(track_points, control_points, i);
-		
+		ModifyingPoints(track_points);
 		if (track_points.IsValidIndex(0)){
 			CreateTrack(i);
 			FixScales(i);
@@ -212,7 +212,6 @@ void UUIWidget::GeneratePlane(const int& loop_index) {
 		FActorSpawnParameters SpawnInfo;
 		FRotator myRot(0, 0, 0);
 		FVector myLoc = FVector(0, 0, 0);
-		//original_plane = GetWorld()->SpawnActor<AMyProceduralMesh>(myLoc, myRot, SpawnInfo);
 		original_plane = GetWorld()->SpawnActor<ARuntimeMeshPlane>(myLoc, myRot, SpawnInfo);
 		is_created = true;
 	}
@@ -220,10 +219,38 @@ void UUIWidget::GeneratePlane(const int& loop_index) {
 }
 
 void UUIWidget::CreateTrack(const int& loop_index) {
-	original_plane->ModiVerts(m_colors, m_,loop_index);
+	original_plane->ModiVerts(m_colors, m_,loop_index);//changes mesh to verts of heightmaps
 	CreateFoilage(loop_index);
 }
+void UUIWidget::ModifyingPoints(TArray<FVector2D>& points_array) {
+	for (size_t i = 0; i < points_array.Num(); i++){
+		if (points_array[i].Y == 399 ) {
+			points_array.Insert(FVector2D(points_array[i].X -2 , 399) , i);
+			points_array.Insert(FVector2D(points_array[i].X +3 , 399), i +2);
+			points_array.Insert(FVector2D(points_array[i].X + 5, 399), i + 3);
+			i += 3;
+		}
+		if (points_array[i].X == 399){
+			points_array.Insert(FVector2D(399, points_array[i].Y - 2), i);
+			points_array.Insert(FVector2D(399, points_array[i].Y + 3), i + 2);
+			points_array.Insert(FVector2D(399, points_array[i].Y + 5), i + 3);
 
+			i += 3;
+		}
+		if (points_array[i].Y == 0) {
+			points_array.Insert(FVector2D(points_array[i].X - 2, 0), i);
+			points_array.Insert(FVector2D(points_array[i].X + 3, 0), i + 2);
+			points_array.Insert(FVector2D(points_array[i].X + 5, 0), i + 3);
+			i += 3;
+		}
+		if (points_array[i].X == 0) {
+			points_array.Insert(FVector2D(0, points_array[i].Y - 2), i);
+			points_array.Insert(FVector2D(0, points_array[i].Y + 3), i + 2);
+			points_array.Insert(FVector2D(0, points_array[i].Y + 5), i + 3);
+			i += 3;
+		}
+	}
+}
 
 void UUIWidget::FixControlPoints(const int& index_, TArray<FVector2D>& points_to_fix) {
 	switch (index_)
@@ -252,35 +279,6 @@ void UUIWidget::FixControlPoints(const int& index_, TArray<FVector2D>& points_to
 	}
 	}
 }
-void UUIWidget::LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p) {
-	auto safet_p = track_spline->GetSafetyPoints();
-	for (int t = 0; t < 100; t++) {
-		float t_val = t / 100.f;
-		if (index_saftey_p == 1) {
-			temp_arr.Add(track_spline->LerpV2D(track_points[index_t_p], (safet_p[index_saftey_p] / s_), t_val));
-		}
-		else {
-			temp_arr.Add(track_spline->LerpV2D((safet_p[index_saftey_p] / s_), track_points[index_t_p], t_val));
-		}
-	}
-	track_points.Insert(temp_arr, index_t_p);
-}
-
-void UUIWidget::FillInGaps() {
-	if (track_spline->GetIsOutsideBounds()) {
-		TArray<FVector2D> temp_vec_first_pos;
-		LerpCalculation(temp_vec_first_pos, 0, 0);//between start and start respectively
-		temp_vec_first_pos.Empty();
-		LerpCalculation(temp_vec_first_pos, 1, track_points.Num() - 1);//end and end respectively
-	}
-	else {
-		TArray<FVector2D> temp_vec_first_pos;
-		LerpCalculation(temp_vec_first_pos, 0, 0);//between start and start respectively
-		temp_vec_first_pos.Empty();
-		LerpCalculation(temp_vec_first_pos, 1, track_points.Num() - 1);//end and end respectively
-	}
-}
-
 void UUIWidget::CheckForChunking(const int& index_, ABasicTree* instance_) {
 	if (is_chunking){
 		if (index_==0){

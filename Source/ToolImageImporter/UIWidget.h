@@ -28,8 +28,6 @@ protected:
 	void CreateFoilage(const int&loop_index);//creates foilage
 	void CreateSpline(const int&loop_index);//spine
 	void FixScales(const int&loop_index);//does scale of everything
-	void FillInGaps();//creates end and start,																								UNUSED
-	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function			UNUSED
 	void StartTextFunction();//ui func
 	void HandBreakTextFunction();//ui func
 	void CountdownImageFunction(const float& dt);//displays the traffic light starting images
@@ -54,6 +52,8 @@ protected:
 	void FixPoints(TArray<FVector2D>& array_);//multiplying by spacing of mesh
 	void DividingPoinfts(TArray<FVector2D>& array_);//division of spacing
 	void SplineCreation(ATrackSpline* spline_obj, const TArray<FVector2D>& points_array, const int& loop_index, const FTransform&tranform_);
+
+	void ModifyingPoints(TArray<FVector2D>& points_array);
 	//ui 
 	UPROPERTY(meta = (BindWidget))
 		class UImage* start_image;
