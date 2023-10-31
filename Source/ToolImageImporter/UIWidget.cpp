@@ -19,7 +19,8 @@ void UUIWidget::NativeConstruct() {
 	test_button->OnClicked.AddUniqueDynamic(this, &UUIWidget::ResizeMesh);
 	vehicle_pawn = Cast<AVehicleController>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));//casting to pawn
 	pace_notes_actor = Cast<APaceNotesActor>(UGameplayStatics::GetActorOfClass(GetWorld(), APaceNotesActor::StaticClass()));
-	
+	split_index_recorder = 0;
+	is_new_spline_needed = false;
 	is_decal_spawn = false;
 	point_type = false;
 	is_chunking = level_loader.ReadMetaFile();
@@ -39,6 +40,7 @@ void UUIWidget::NativeConstruct() {
 		loop_index = 4;
 	}
 	for (int i = 0; i < loop_index; i++) {
+		is_new_spline_needed = false;
 		m_colors.Empty();
 		track_points.Empty();
 		control_points.Empty();
@@ -326,13 +328,24 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 		FVector myLocTree = FVector(0, 0, 0);
 		TArray<FVector2D>temp_array_half;
 		TArray<FVector2D>temp_array_two;
-		int split_size = track_points.Num() / 2;
-		temp_array_half.SetNum(split_size);
-		temp_array_two.SetNum(split_size);
-		for (int i = 0; i < split_size; i++) {
-			temp_array_half[i] = track_points[i];
-			temp_array_two[i] = track_points[i + split_size];
+		if (!is_new_spline_needed){
+			int split_size = track_points.Num() / 2;
+			temp_array_half.SetNum(split_size);
+			temp_array_two.SetNum(split_size);
+			for (int i = 0; i < split_size; i++) {
+				temp_array_half[i] = track_points[i];
+				temp_array_two[i] = track_points[i + split_size];
+			}
 		}
+		else {
+			for (size_t i = 0; i < split_index_recorder; i++){
+				temp_array_half.Add(track_points[i]);
+			}
+			for (size_t i = split_index_recorder; i < track_points.Num(); i++){
+				temp_array_two.Add(track_points[i]);
+			}
+		}
+		
 
 		for (int i = 0; i < 94; i++) {//tree near track
 			ABasicTree* tree_instancea;
@@ -394,18 +407,19 @@ void UUIWidget::CreateFoilage(const int& loop_index) {
 	}
 }
 
-void UUIWidget::FixMultipleSpline(TArray<FVector2D> &temp_arr, TArray<FVector2D>&second_spline_array, bool & is_new_spline_needed) {
+void UUIWidget::FixMultipleSpline(TArray<FVector2D> &temp_arr, TArray<FVector2D>&second_spline_array, bool & is_new_spline_needed_p) {
 	int split_index = 0;
 	for (size_t i = 0; i < temp_arr.Num() - 1; i++) {
 		auto dist = FVector2D::Distance(temp_arr[i], temp_arr[i + 1]);
 		if (dist > 10) {
-			is_new_spline_needed = true;
+			is_new_spline_needed_p = true;
 			split_index = i + 1;
 			i = temp_arr.Num() - 1;
+			split_index_recorder = split_index;
 		}
 	}
 
-	if (is_new_spline_needed) {
+	if (is_new_spline_needed_p) {
 		auto num_ = temp_arr.Num();
 		for (size_t i = split_index; i < num_; i++) {
 			second_spline_array.Add(temp_arr[i]);
@@ -452,7 +466,6 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 			temp_arr = track_points;
 		}
 
-		bool is_new_spline_needed = false;
 		FixMultipleSpline(temp_arr, second_spline_array, is_new_spline_needed);
 
 		FixPoints(temp_arr);
@@ -475,7 +488,6 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 		}
 
 		DividingPoinfts(temp_arr);
-		track_points = temp_arr;
 		if (is_new_spline_needed){
 			DividingPoinfts(second_spline_array);
 		}
@@ -485,10 +497,15 @@ void UUIWidget::CreateSpline(const int&loop_index) {
 void UUIWidget::FixScales(const int& loop_index) {
 	//setting scales of terrain, spline, water.
 	track_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
-	vec_water_mesh[loop_index]->SetActorScale3D(FVector( scaling_down_, scaling_down_, scaling_down_));
 	
+	vec_water_mesh[loop_index]->SetActorScale3D(FVector( scaling_down_, scaling_down_, scaling_down_));
 	//removes spline and starts the level, bool used for triggering start ui 
 	track_spline->Destroy();
+	if (is_new_spline_needed) {
+		auto second_spline= Cast<ATrackSpline>(UGameplayStatics::GetActorOfClass(GetWorld(), ATrackSpline::StaticClass()));
+		second_spline->SetActorScale3D(FVector(scaling_down_, scaling_down_, scaling_down_));
+		second_spline->Destroy();
+	}
 	is_level_spawnned = true;
 }
 

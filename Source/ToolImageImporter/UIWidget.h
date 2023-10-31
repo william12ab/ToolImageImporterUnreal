@@ -28,8 +28,8 @@ protected:
 	void CreateFoilage(const int&loop_index);//creates foilage
 	void CreateSpline(const int&loop_index);//spine
 	void FixScales(const int&loop_index);//does scale of everything
-	void FillInGaps();//creates end and start
-	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function
+	void FillInGaps();//creates end and start,																								UNUSED
+	void LerpCalculation(TArray<FVector2D>& temp_arr, const int& index_saftey_p, const int& index_t_p);//used with above function			UNUSED
 	void StartTextFunction();//ui func
 	void HandBreakTextFunction();//ui func
 	void CountdownImageFunction(const float& dt);//displays the traffic light starting images
@@ -50,7 +50,7 @@ protected:
 	void FixControlPoints(const int&index_, TArray<FVector2D>&points_to_fix);
 	void GetOrderOfControlPoints();
 
-	void FixMultipleSpline(TArray<FVector2D>& temp_arr, TArray<FVector2D>& second_spline_array, bool& is_new_spline_needed);//used for checking and splitting if a new spline is needed
+	void FixMultipleSpline(TArray<FVector2D>& temp_arr, TArray<FVector2D>& second_spline_array, bool& is_new_spline_needed_p);//used for checking and splitting if a new spline is needed
 	void FixPoints(TArray<FVector2D>& array_);//multiplying by spacing of mesh
 	void DividingPoinfts(TArray<FVector2D>& array_);//division of spacing
 	void SplineCreation(ATrackSpline* spline_obj, const TArray<FVector2D>& points_array, const int& loop_index, const FTransform&tranform_);
@@ -138,6 +138,8 @@ protected:
 	bool is_created;
 	bool is_decal_spawn;
 	bool is_spinner_enabled;//respawn ui element
+	bool is_new_spline_needed;
+
 	TArray<float> z_height;//height of control points
 	FVector2D pacetwo;//position of next box
 	TArray<FVector2D> pacenote_c_p;//actor
@@ -149,5 +151,5 @@ protected:
 
 	TArray<TArray<FVector2D>> control_points_multi;
 
-	
+	int32 split_index_recorder;
 };
