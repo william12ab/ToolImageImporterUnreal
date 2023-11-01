@@ -47,7 +47,7 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->WheelSetups[2].bDisableSteering = true;
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 0.f, 0.f);
 	Vehicle4W->DragCoefficient = 0.33f;
-	Vehicle4W->Mass = 1200.f;
+	Vehicle4W->Mass = 1598.690;
 	//tire loading
 	Vehicle4W->MinNormalizedTireLoad = 0.0f;
 	Vehicle4W->MinNormalizedTireLoadFiltered = 0.2f;
@@ -107,8 +107,8 @@ AVehicleController::AVehicleController(){
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(35.f, -3.656f, -22.5f);//further down and along the body 
-		//28.4f
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(75.f, -3.656f, -58.5f);//further down and along the body 
+		//28.4f//(35.f, -3.656f, -22.5f)
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}
 	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchEngaged = 0.5;
@@ -253,7 +253,7 @@ void AVehicleController::Tick(float DeltaTime) {
 		GetVehicleMovementComponent()->SetTargetGear(1,true);
 	}
 
-	//SpeedTest(DeltaTime);
+	SpeedTest(DeltaTime);
 	ChangeBrakeSystem();
 	//sound
 	if (sound_ref_veh !=nullptr){
@@ -434,6 +434,8 @@ void AVehicleController::ChangeBrakeSystem() {
 	}
 }
 void AVehicleController::MoveRight(float AxisValue){
+	UE_LOG(LogTemp, Warning, TEXT("axisvalue: %f"),AxisValue);
+
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
 }
 void AVehicleController::LookUp(float AxisValue){
@@ -657,7 +659,7 @@ void AVehicleController::StartFunction(const float& dt) {
 }
 
 void AVehicleController::SpeedTest(const float& dt) {
-	if (current_KPH> 0.1f && current_KPH < 60.f) {
+	if (current_KPH> 0.1f && current_KPH < 100.0f) {
 		speed_timer += dt;
 	}
 	else {

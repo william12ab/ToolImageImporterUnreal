@@ -86,24 +86,26 @@ void ACarHUD::DrawHUD(){
 			FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
 			Canvas->DrawItem(units_r_text_item);
 
-			ShowNote();
-			for (int i = 0; i < 6; i++) {
-				if (is_drawing){
-					Canvas->DrawItem(pacenote_items[i]);
-					if (!is_timer_started){
-						start = std::chrono::high_resolution_clock::now();
-						is_timer_started = true;
-					}
-					auto end = std::chrono::high_resolution_clock::now();
-					std::chrono::duration<double> elapsed = end - start;
+			if (pace_notes_actor != nullptr) {
+				ShowNote();
+				for (int i = 0; i < 6; i++) {
+					if (is_drawing) {
+						Canvas->DrawItem(pacenote_items[i]);
+						if (!is_timer_started) {
+							start = std::chrono::high_resolution_clock::now();
+							is_timer_started = true;
+						}
+						auto end = std::chrono::high_resolution_clock::now();
+						std::chrono::duration<double> elapsed = end - start;
 
-					if (elapsed.count()>2.0f){
-						is_drawing = false;
-						is_timer_started = false;
-						ClearNotes();
-						if (is_extra){
-							pace_notes_actor->SetExtraNotes(extra_array);
-							is_extra = false;
+						if (elapsed.count() > 2.0f) {
+							is_drawing = false;
+							is_timer_started = false;
+							ClearNotes();
+							if (is_extra) {
+								pace_notes_actor->SetExtraNotes(extra_array);
+								is_extra = false;
+							}
 						}
 					}
 				}
