@@ -55,9 +55,11 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->MaxNormalizedTireLoadFiltered = 2.0f;
 	//differential setup 
 	Vehicle4W->DifferentialSetup.DifferentialType = EVehicleDifferential4W::LimitedSlip_4W;
-	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.58f;
+
+	Vehicle4W->DifferentialSetup.FrontRearSplit = 0.60f;
 	Vehicle4W->bReverseAsBrake = false;
 	//torque
+	
 	
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->Reset();
 	Vehicle4W->EngineSetup.MaxRPM = 8000.f;
@@ -74,13 +76,15 @@ AVehicleController::AVehicleController(){
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(5500.0f, 640);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(6000.0f, 630);
 	Vehicle4W->EngineSetup.TorqueCurve.GetRichCurve()->AddKey(8500.0f, 590);
+	
+
 	//Streering
 	Vehicle4W->SteeringCurve.GetRichCurve()->Reset();
 	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(0.0f, 1.0f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.90f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 0.85f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(100.0f, 0.7f);
-	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.65f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(40.0f, 0.950f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(90.0f, 0.95f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(100.0f, 0.93f);
+	Vehicle4W->SteeringCurve.GetRichCurve()->AddKey(120.0f, 0.885f);
 	//gearbox
 	Vehicle4W->TransmissionSetup.bUseGearAutoBox = true;
 	Vehicle4W->TransmissionSetup.GearSwitchTime = 0.15f;
@@ -107,12 +111,16 @@ AVehicleController::AVehicleController(){
 	//com
 	UpdatedPrimitive = Cast<UPrimitiveComponent>(Vehicle4W->UpdatedComponent);
 	if (UpdatedPrimitive){
-		UpdatedPrimitive->BodyInstance.COMNudge = FVector(75.f, -3.656f, -58.5f);//further down and along the body 
+		UpdatedPrimitive->BodyInstance.COMNudge = FVector(35.f, -3.656f, -58.5f);//further down and along the body 
 		//28.4f//(35.f, -3.656f, -22.5f)
+		//75.f, -3.656f, -58.5f)
 		UpdatedPrimitive->BodyInstance.UpdateMassProperties();
 	}
-	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchEngaged = 0.5;
+	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchEngaged =0.5;
 	Vehicle4W->EngineSetup.DampingRateZeroThrottleClutchDisengaged = 0.15;
+
+	Vehicle4W->ChassisHeight = 22.f;
+	Vehicle4W->ChassisWidth = 150.f;
 
 	//reverse cam
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -248,6 +256,8 @@ void AVehicleController::Tick(float DeltaTime) {
 	current_KPH = FMath::Abs(GetVehicleMovement()->GetForwardSpeed()) * 0.036f;
 	is_in_reverse_gear = current_gear < 0;
 	//
+
+	
 
 	if (current_RPM>600&&current_KPH<3){
 		GetVehicleMovementComponent()->SetTargetGear(1,true);
@@ -434,8 +444,6 @@ void AVehicleController::ChangeBrakeSystem() {
 	}
 }
 void AVehicleController::MoveRight(float AxisValue){
-	UE_LOG(LogTemp, Warning, TEXT("axisvalue: %f"),AxisValue);
-
 	GetVehicleMovementComponent()->SetSteeringInput(AxisValue);
 }
 void AVehicleController::LookUp(float AxisValue){

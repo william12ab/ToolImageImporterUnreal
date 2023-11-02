@@ -5,12 +5,12 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 UVehicleFrontWheel::UVehicleFrontWheel(){
 	ShapeRadius = 39.f;//39.f;
-	ShapeWidth = 15.5f;//15.50f;
+	ShapeWidth = 16.5f;//15.50f;
 	bAffectedByHandbrake = false;
-	SteerAngle = 70.f;
+	SteerAngle = 45.f;
 	LongStiffValue = 4000.0f;//fast	er acc, higher top speed, default =1000
-	LatStiffMaxLoad = 15.f;//smaller harder turning, default = 2
-	LatStiffValue = 1000.f;//lower more sliding, default =17
+	LatStiffMaxLoad = 2.f;//smaller harder turning, default = 2
+	LatStiffValue = 17.f;//lower more sliding, default =17
 	SuspensionMaxDrop = 15;//higher for maxdrop and raise, wheels can go above and below natural resting point much more, default =10
 	SuspensionMaxRaise = 15;
 	SuspensionDampingRatio = .98f;//default = 1.0, car body moves about less
@@ -21,7 +21,8 @@ UVehicleFrontWheel::UVehicleFrontWheel(){
 	if (TireConfigObj.Succeeded()) {
 		TireConfig = TireConfigObj.Object;
 	}
-	Mass = 9.f;
-	
+	Mass = 35.f;
+	DampingRate = .15;
+	bAutoAdjustCollisionSize = true;
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

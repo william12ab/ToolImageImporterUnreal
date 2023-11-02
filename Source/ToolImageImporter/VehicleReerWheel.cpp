@@ -7,13 +7,13 @@
 PRAGMA_DISABLE_DEPRECATION_WARNINGS
 UVehicleReerWheel::UVehicleReerWheel(){
 	ShapeRadius = 39.f;//39.f;
-	ShapeWidth = 15.5f;//15.50f;
+	ShapeWidth = 16.5f;//15.50f;
 	bAffectedByHandbrake = true;
 	SteerAngle = 0.f;
-	LongStiffValue=4000.0f;
+	LongStiffValue= 4000.0f;
 	SuspensionMaxDrop = 15;
 	SuspensionMaxRaise = 15;
-	LatStiffMaxLoad = 15.f;
+	LatStiffMaxLoad = 2.f;
 	LatStiffValue = 200.f;
 	SuspensionDampingRatio = .98f;
 	SuspensionNaturalFrequency = 10.f;
@@ -24,7 +24,9 @@ UVehicleReerWheel::UVehicleReerWheel(){
 		TireConfig = TireConfigObj.Object;
 	}
 	
-	Mass = 9.f;
+	Mass = 35.f;
+	DampingRate = .15;
+	bAutoAdjustCollisionSize = true;
 }
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
