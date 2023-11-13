@@ -228,12 +228,16 @@ AVehicleController::AVehicleController(){
 	sphere_right->SetStaticMesh(SphereMeshAsset.Object);
 	sphere_right->AttachTo(GetMesh());
 	sphere_right->SetWorldScale3D(FVector(0.05f, 0.05f, 0.05f));
-	GetMesh()->bReceivesDecals = false;
+	GetMesh()->bReceivesDecals = true;
+
+
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
 	Camera->Activate();
 	InternalCamera->Deactivate();
+
+	SetDecals();
 	//sound set in mainsounds beginplay
 }
 
@@ -263,7 +267,7 @@ void AVehicleController::Tick(float DeltaTime) {
 		GetVehicleMovementComponent()->SetTargetGear(1,true);
 	}
 
-	SpeedTest(DeltaTime);
+	//SpeedTest(DeltaTime);
 	ChangeBrakeSystem();
 	//sound
 	if (sound_ref_veh !=nullptr){
@@ -688,5 +692,98 @@ void AVehicleController::CheckForStart() {
 	}
 }
 
+void AVehicleController::CreateDecal(FVector l, FVector s, FRotator r, FString st, ALiveryActor* actor_) {
+	FName name_sock = "Root";
+	actor_->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), name_sock);
+	actor_->Init(l, s, r, st);
+}
+
+void AVehicleController::SetDecals() {
+	//loc,scale,rot,name
+	FVector loc_, scale_;
+	FRotator rot_;
+	FString name_;
+	FActorSpawnParameters SpawnInfo;
+	FRotator myRot(0, 0, 0);
+	FVector myLoc = FVector(0, 0, 0);
+	ALiveryActor* left_logo;
+	ALiveryActor* right_logo;
+	ALiveryActor* back_logo;
+	ALiveryActor* front_logo;
+	ALiveryActor* roof_logo;
+	ALiveryActor* left_num;
+	ALiveryActor* right_num;
+	ALiveryActor* roof_num;
+	ALiveryActor* right_pirelli;
+	ALiveryActor* left_pirelli;
+	ALiveryActor* left_sti;
+	ALiveryActor* right_sti;
+	left_logo = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	right_logo = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	back_logo = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	front_logo = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	roof_logo = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	left_num = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	right_num = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	roof_num = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	right_pirelli = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	left_pirelli = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	left_sti = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+	right_sti = GetWorld()->SpawnActor<ALiveryActor>(myLoc, myRot, SpawnInfo);
+
+	loc_ = FVector(-13.7f, 97.4f, -27.8f);
+	rot_ = FRotator(0, -90.f, 90.f);//pitch,yaw, roll
+	scale_ = FVector(0.0575f, 0.1f, 0.2075f);
+	name_ = "badgemat.badgemat";
+	CreateDecal(loc_, scale_, rot_, name_,left_logo);
+	loc_ = FVector(-23.97f, -102.4f, -25.8f);
+	rot_ = FRotator(0, 90.f, 90.f);//pitch,yaw, roll
+	CreateDecal(loc_, scale_, rot_, name_, right_logo);
+	loc_ = FVector(-243.69f, -2.24f, -8.2f);
+	rot_ = FRotator(0, 0.f, 90.f);//pitch,yaw, roll
+	scale_ = FVector(0.1f, 0.05f, 0.15f);
+	name_ = "logomat.logomat";
+	CreateDecal(loc_, scale_, rot_, name_, back_logo);
+	loc_ = FVector(236.30f, -2.4f, -8.3f);
+	rot_ = FRotator(-90, -90.f, 0.f);//pitch,yaw, roll
+	CreateDecal(loc_, scale_, rot_, name_, front_logo);
+	loc_ = FVector(13.930f, 2.4f, 71.3f);
+	rot_ = FRotator(-90, 0, -90.f);//pitch,yaw, roll
+	scale_ = FVector(0.1f, 0.0625f, 0.25f);
+	name_ = "logodark.logodark";
+	CreateDecal(loc_, scale_, rot_, name_, roof_logo);
+
+	loc_ = FVector(66, 97.4f, -28.3f);
+	rot_ = FRotator(0, -90, 90.f);//pitch,yaw, roll
+	scale_ = FVector(0.1, 0.1f, 0.1);
+	name_ = "number_decal.number_decal";
+	CreateDecal(loc_, scale_, rot_, name_, left_num);
+	loc_ = FVector(56, -102.4f, -26.3f);
+	rot_ = FRotator(0, 90, 90.f);//pitch,yaw, roll
+	CreateDecal(loc_, scale_, rot_, name_, right_num);
+	loc_ = FVector(-43, -1.8f, 82.4f);
+	rot_ = FRotator(-90,0, 90.f);//pitch,yaw, roll
+	CreateDecal(loc_, scale_, rot_, name_, roof_num);
+
+
+	loc_ = FVector(-254, -62.28f, -28.4f);
+	rot_ = FRotator(0, 0, 90.f);//pitch,yaw, roll
+	scale_ = FVector(0.1, 0.015625f, 0.0625f);
+	name_ = "pirellilogo.pirellilogo";
+	CreateDecal(loc_, scale_, rot_, name_, left_pirelli);
+	loc_ = FVector(-254, 47.28f, -28.4f);
+	rot_ = FRotator(0, 0, 90.f);//pitch,yaw, roll
+	CreateDecal(loc_, scale_, rot_, name_, right_pirelli);
+
+	loc_ = FVector(245, -62.28f, -54.27f);
+	rot_ = FRotator(0, 180, 90.f);//pitch,yaw, roll
+	scale_ = FVector(0.1, 0.01f, 0.035f);
+	name_ = "stilogo.stilogo";
+	CreateDecal(loc_, scale_, rot_, name_, left_sti);
+	loc_ = FVector(255, 62.28f, -54.27f);
+	rot_ = FRotator(0, 180, 90.f);//pitch,yaw, roll
+	CreateDecal(loc_, scale_, rot_, name_, right_sti);
+
+}
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

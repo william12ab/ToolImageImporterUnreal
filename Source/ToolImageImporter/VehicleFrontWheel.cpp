@@ -11,10 +11,10 @@ UVehicleFrontWheel::UVehicleFrontWheel(){
 	LongStiffValue = 4000.0f;//fast	er acc, higher top speed, default =1000
 	LatStiffMaxLoad = 2.f;//smaller harder turning, default = 2
 	LatStiffValue = 17.f;//lower more sliding, default =17
-	SuspensionMaxDrop = 15;//higher for maxdrop and raise, wheels can go above and below natural resting point much more, default =10
-	SuspensionMaxRaise = 15;
-	SuspensionDampingRatio = .98f;//default = 1.0, car body moves about less
-	SuspensionNaturalFrequency = 10.0f;//default 7, higher less movement 
+	SuspensionMaxDrop = 19;//higher for maxdrop and raise, wheels can go above and below natural resting point much more, default =10
+	SuspensionMaxRaise = 19;
+	SuspensionDampingRatio = 0.7f;//default = 1.0, car body moves about less
+	SuspensionNaturalFrequency = 7;//default 7, higher less movement 
 	MaxBrakeTorque = 4000.f;
 	MaxHandBrakeTorque = 6000.f;
 	static ConstructorHelpers::FObjectFinder<UTireConfig> TireConfigObj(TEXT("TireConfig'/Game/DA_tire_config.DA_tire_config'"));

@@ -2,6 +2,7 @@
 #include "WheeledVehicle.h"
 #include "MainSounds.h"
 #include "MyVehicleAnimInstance.h"
+#include "LiveryActor.h"
 #include "VehicleController.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API AVehicleController : public AWheeledVehicle
@@ -44,6 +45,9 @@ public:
 	void ChangeBrakeSystem();
 	void CheckForStart();
 	void GetWheelAngle();
+
+	void SetDecals();
+	void CreateDecal(FVector l, FVector s, FRotator r, FString st, ALiveryActor* actor_);
 
 	//action maps
 	void Handbrake();
@@ -196,5 +200,7 @@ protected:
 	FVector pace3;
 	int cp_counter;
 	TArray<FString> box_names;
+
+
 };
 
