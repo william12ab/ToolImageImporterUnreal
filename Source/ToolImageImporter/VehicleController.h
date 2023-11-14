@@ -3,6 +3,7 @@
 #include "MainSounds.h"
 #include "MyVehicleAnimInstance.h"
 #include "LiveryActor.h"
+#include "HeaedLight.h"
 #include "VehicleController.generated.h"
 UCLASS()
 class TOOLIMAGEIMPORTER_API AVehicleController : public AWheeledVehicle
@@ -19,6 +20,7 @@ public:
 		UStaticMeshComponent* sphere_left;
 	UPROPERTY()
 		UStaticMeshComponent* sphere_right;
+
 	//hud
 	UPROPERTY(Category = Display, VisibleDefaultsOnly, BlueprintReadOnly)
 		FText SpeedDisplayString;
@@ -151,6 +153,12 @@ protected:
 		UParticleSystemComponent* ParticleSystemRightWheel;
 	UPROPERTY(VisibleAnywhere)
 		UParticleSystemComponent* ParticleSystemLeftWheel;
+
+	//lights
+	UPROPERTY(VisibleAnywhere)
+		AHeaedLight* left_light;
+	UPROPERTY(VisibleAnywhere)
+		AHeaedLight* right_light;
 
 	TArray<UParticleSystemComponent*> particle_arr;
 

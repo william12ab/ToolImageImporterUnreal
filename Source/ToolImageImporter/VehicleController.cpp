@@ -233,8 +233,7 @@ AVehicleController::AVehicleController(){
 	GetMesh()->bReceivesDecals = true;
 
 
-
-	
+	//lights
 	material_red_light_off = LoadObject<UMaterialInterface>(NULL, TEXT("MaterialInstanceConstant'/Game/AutomotiveMaterials/Materials/Exterior/Lights/MI_Off_Red.MI_Off_Red'"));
 	material_red_light_on = LoadObject<UMaterialInterface>(NULL, TEXT("MaterialInstanceConstant'/Game/AutomotiveMaterials/Materials/Exterior/Lights/MI_Lamp_Red.MI_Lamp_Red'"));
 	material_white_light_off = LoadObject<UMaterialInterface>(NULL, TEXT("MaterialInstanceConstant'/Game/AutomotiveMaterials/Materials/Exterior/Lights/MI_Blue_off.MI_Blue_off'"));
@@ -531,9 +530,13 @@ void AVehicleController::AngleCap(float& angle_) {
 void AVehicleController::TurnOnLights() {
 	if (is_lights_on){
 		is_lights_on = false;
+		left_light->TurnOn(false);
+		right_light->TurnOn(false);
 	}
 	else {
 		is_lights_on = true;
+		left_light->TurnOn(true);
+		right_light->TurnOn(true);
 	}
 	
 }
@@ -818,6 +821,16 @@ void AVehicleController::SetDecals() {
 	rot_ = FRotator(0, 180, 90.f);//pitch,yaw, roll
 	CreateDecal(loc_, scale_, rot_, name_, right_sti);
 
+
+
+
+	left_light = GetWorld()->SpawnActor<AHeaedLight>(myLoc, myRot, SpawnInfo);
+	right_light = GetWorld()->SpawnActor<AHeaedLight>(myLoc, myRot, SpawnInfo);
+	FName name_sock = "Root";
+	left_light->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), name_sock);
+	right_light->AttachToComponent(RootComponent, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), name_sock);
+	left_light->SetActorRelativeLocation(FVector(237.f,-63.f,-21.4f));
+	right_light->SetActorRelativeLocation(FVector(237.5f,56.6f,-21.4f));
 }
 
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
