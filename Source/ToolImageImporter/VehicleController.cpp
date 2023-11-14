@@ -205,6 +205,8 @@ AVehicleController::AVehicleController(){
 	speed_timer = 0.0f;
 	is_unorthadox_start = false;
 	is_countdown_set = false;
+	is_breaking = false;
+	is_lights_on = false;
 	gear_marker = 1;
 
 	sound_ref_veh = Cast<AMainSounds>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainSounds::StaticClass()));
@@ -231,6 +233,13 @@ AVehicleController::AVehicleController(){
 	GetMesh()->bReceivesDecals = true;
 
 
+
+	
+	material_red_light_off = LoadObject<UMaterialInterface>(NULL, TEXT("MaterialInstanceConstant'/Game/AutomotiveMaterials/Materials/Exterior/Lights/MI_Off_Red.MI_Off_Red'"));
+	material_red_light_on = LoadObject<UMaterialInterface>(NULL, TEXT("MaterialInstanceConstant'/Game/AutomotiveMaterials/Materials/Exterior/Lights/MI_Lamp_Red.MI_Lamp_Red'"));
+	material_white_light_off = LoadObject<UMaterialInterface>(NULL, TEXT("MaterialInstanceConstant'/Game/AutomotiveMaterials/Materials/Exterior/Lights/MI_Blue_off.MI_Blue_off'"));
+	material_white_light_on = LoadObject<UMaterialInterface>(NULL, TEXT("MaterialInstanceConstant'/Game/AutomotiveMaterials/Materials/Exterior/Lights/MI_Lamp_Blue.MI_Lamp_Blue'"));
+
 }
 void AVehicleController::BeginPlay() {
 	Super::BeginPlay();
@@ -244,7 +253,6 @@ void AVehicleController::BeginPlay() {
 void AVehicleController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 	//current values
-
 	GetWheelAngle();
 	if (GetVehicleMovement()->GetCurrentGear()>gear_marker) {
 		//play pop sound
@@ -339,6 +347,22 @@ void AVehicleController::Tick(float DeltaTime) {
 	}
 	UpdateDriver(DeltaTime);
 	pace3 = GetActorLocation();
+	
+	if (is_lights_on){
+		GetMesh()->SetMaterial(6, material_white_light_on);
+		is_breaking = true;
+	}
+	else {
+		GetMesh()->SetMaterial(6, material_white_light_off);
+	}
+	if (is_breaking){
+		GetMesh()->SetMaterial(5, material_red_light_on);
+	}
+	else {
+		GetMesh()->SetMaterial(5, material_red_light_off);
+	}
+	is_breaking = false;
+
 }
 
 void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent){
@@ -359,7 +383,7 @@ void AVehicleController::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis("LookUp", this, &AVehicleController::LookUp);
 	PlayerInputComponent->BindAxis("LookLeft", this, &AVehicleController::LookLeft);
 	PlayerInputComponent->BindAxis("LookRight", this, &AVehicleController::LookRight);
-	
+	PlayerInputComponent->BindAction("Lights", IE_Pressed, this, &AVehicleController::TurnOnLights);
 }
 void AVehicleController::CameraReverseViewRelease() {
 	if (InternalCamera->IsActive()){
@@ -433,6 +457,9 @@ void AVehicleController::Brake(float AxisValue) {
 		else {
 			GetVehicleMovementComponent()->SetBrakeInput(AxisValue);
 		}
+		if (AxisValue>0.1f){
+			is_breaking = true;
+		}
 	}
 }
 void AVehicleController::ChangeBrakeSystem() {
@@ -501,6 +528,15 @@ void AVehicleController::AngleCap(float& angle_) {
 		angle_ = max_camera_rot;
 	}
 }
+void AVehicleController::TurnOnLights() {
+	if (is_lights_on){
+		is_lights_on = false;
+	}
+	else {
+		is_lights_on = true;
+	}
+	
+}
 void AVehicleController::GetWheelAngle() {
 	auto a1=GetVehicleMovementComponent()->Wheels[0]->GetSteerAngle();
 	auto a2=GetVehicleMovementComponent()->Wheels[1]->GetSteerAngle();
@@ -567,8 +603,6 @@ void AVehicleController::GetWheelAngle() {
 }
 
 void AVehicleController::UpdateDriver(const float& dt) {
-
-	
 }
 
 void AVehicleController::RotatarFinder(const float& d_one, const float& d_two, float& angle_, const float& d_t, const float& rot_speed){

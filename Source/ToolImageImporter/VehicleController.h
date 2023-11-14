@@ -62,6 +62,7 @@ public:
 	void CameraReverseViewRelease();
 	void GearUp();
 	void GearDown();
+	void TurnOnLights();
 	//axis maps
 	void MoveForward(float AxisValue);
 	void Brake(float AxisValue);
@@ -110,6 +111,14 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+
+	UMaterialInterface* material_red_light_on;
+	UMaterialInterface* material_red_light_off;
+	UMaterialInterface* material_white_light_on;
+	UMaterialInterface* material_white_light_off;
+
+	
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		float steering_angle;
@@ -181,6 +190,9 @@ protected:
 	float current_RPM;
 	float current_KPH;
 	bool is_unorthadox_start;//used when user drives off before start
+	bool is_lights_on;
+	bool is_breaking;
+
 
 	//testing 
 	UPrimitiveComponent* UpdatedPrimitive;
