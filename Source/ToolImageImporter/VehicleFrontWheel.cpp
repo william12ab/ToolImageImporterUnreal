@@ -15,8 +15,8 @@ UVehicleFrontWheel::UVehicleFrontWheel(){
 	SuspensionMaxRaise = 19;
 	SuspensionDampingRatio = 0.7f;//default = 1.0, car body moves about less
 	SuspensionNaturalFrequency = 7;//default 7, higher less movement 
-	MaxBrakeTorque = 4000.f;
-	MaxHandBrakeTorque = 6000.f;
+	MaxBrakeTorque = 2000.f;
+	MaxHandBrakeTorque = 4000.f;
 	static ConstructorHelpers::FObjectFinder<UTireConfig> TireConfigObj(TEXT("TireConfig'/Game/DA_tire_config.DA_tire_config'"));
 	if (TireConfigObj.Succeeded()) {
 		TireConfig = TireConfigObj.Object;

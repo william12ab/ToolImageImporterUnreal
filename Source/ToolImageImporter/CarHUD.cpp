@@ -85,22 +85,12 @@ void ACarHUD::DrawHUD(){
 		if (Vehicle->GetIsRenderSpedo()) {
 			// Gear
 			FCanvasTextItem GearTextItem(FVector2D(size_.X * .90f, size_.Y * .85f), Vehicle->GearDisplayString, HUDFont, Vehicle->is_in_reverse_gear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
-			Canvas->DrawItem(GearTextItem);
-			// Speed
-			FCanvasTextItem SpeedTextItem(FVector2D(size_.X * .90f, size_.Y * .88f), Vehicle->SpeedDisplayString, HUDFont, FLinearColor(white_));
-			Canvas->DrawItem(SpeedTextItem);
-			FCanvasTextItem units_v_text_item(FVector2D(size_.X * .93f, size_.Y * .88f), v_unit, HUDFont, FLinearColor(red_));
-			Canvas->DrawItem(units_v_text_item);
-			//rpm
-			FCanvasTextItem RPMTextItem(FVector2D(size_.X * .90f, size_.Y * .91f), Vehicle->RPMDisplayString, HUDFont, FLinearColor(white_));
-			Canvas->DrawItem(RPMTextItem);
-			FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
-			Canvas->DrawItem(units_r_text_item);
 
-			FCanvasTileItem speedo_tile(FVector2D(700.f,900.f), speedometor_img->Resource,FVector2D(128.f,128.f), FLinearColor::White);
-			FCanvasTileItem tacho_tile(FVector2D(572.f, 900.f), tachometor_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
-			FCanvasTileItem dial_tile_two(FVector2D(572.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
-			FCanvasTileItem dial_tile(FVector2D(700.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			
+			FCanvasTileItem speedo_tile(FVector2D(1700.f,900.f), speedometor_img->Resource,FVector2D(128.f,128.f), FLinearColor::White);
+			FCanvasTileItem tacho_tile(FVector2D(1572.f, 900.f), tachometor_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			FCanvasTileItem dial_tile_two(FVector2D(1572.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			FCanvasTileItem dial_tile(FVector2D(1700.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
 			dial_tile.BlendMode = SE_BLEND_Translucent;
 			dial_tile.Rotation = FRotator(0, speed_dial_rot,0);
 			dial_tile.PivotPoint = FVector2D(0.5f,0.5f);
@@ -112,7 +102,7 @@ void ACarHUD::DrawHUD(){
 			Canvas->DrawItem(dial_tile);
 			Canvas->DrawItem(tacho_tile);
 			Canvas->DrawItem(dial_tile_two);
-
+			Canvas->DrawItem(GearTextItem);
 			if (pace_notes_actor != nullptr) {
 				ShowNote();
 				for (int i = 0; i < 6; i++) {
