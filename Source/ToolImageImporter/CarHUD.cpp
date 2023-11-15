@@ -2,7 +2,6 @@
 
 
 #include "CarHUD.h"
-#include "VehicleController.h"
 #include "WheeledVehicle.h"
 #include "RenderResource.h"
 #include "Shader.h"
@@ -69,6 +68,9 @@ ACarHUD::ACarHUD() {
 	is_drawing = false;
 	is_extra = false;
 	notes_displayed = 0;
+
+	speed_dial_rot = -135.f;
+	tacho_dial_rot = -135.f;
 }
 void ACarHUD::DrawHUD(){
 	Super::DrawHUD();
@@ -78,6 +80,8 @@ void ACarHUD::DrawHUD(){
 	// Get our vehicle so we can check if we are in car. If we are we don't want onscreen HUD
 	AVehicleController* Vehicle = Cast<AVehicleController>(GetOwningPawn());
 	if ((Vehicle != nullptr) ){
+		ChangeSpeedo(Vehicle);
+		ChangeTacho(Vehicle);
 		if (Vehicle->GetIsRenderSpedo()) {
 			// Gear
 			FCanvasTextItem GearTextItem(FVector2D(size_.X * .90f, size_.Y * .85f), Vehicle->GearDisplayString, HUDFont, Vehicle->is_in_reverse_gear == false ? Vehicle->GearDisplayColor : Vehicle->GearDisplayReverseColor);
@@ -93,15 +97,15 @@ void ACarHUD::DrawHUD(){
 			FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
 			Canvas->DrawItem(units_r_text_item);
 
-			FCanvasTileItem speedo_tile(FVector2D(1700.f,900.f), speedometor_img->Resource,FVector2D(128.f,128.f), FLinearColor::White);
-			FCanvasTileItem tacho_tile(FVector2D(1572.f, 900.f), tachometor_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
-			FCanvasTileItem dial_tile_two(FVector2D(1572.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
-			FCanvasTileItem dial_tile(FVector2D(1700.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			FCanvasTileItem speedo_tile(FVector2D(700.f,900.f), speedometor_img->Resource,FVector2D(128.f,128.f), FLinearColor::White);
+			FCanvasTileItem tacho_tile(FVector2D(572.f, 900.f), tachometor_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			FCanvasTileItem dial_tile_two(FVector2D(572.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			FCanvasTileItem dial_tile(FVector2D(700.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
 			dial_tile.BlendMode = SE_BLEND_Translucent;
-			dial_tile.Rotation = FRotator(0, -135.f,0);
+			dial_tile.Rotation = FRotator(0, speed_dial_rot,0);
 			dial_tile.PivotPoint = FVector2D(0.5f,0.5f);
 			dial_tile_two.BlendMode = SE_BLEND_Translucent;
-			dial_tile_two.Rotation = FRotator(0, -112.f, 0);
+			dial_tile_two.Rotation = FRotator(0, tacho_dial_rot, 0);
 			dial_tile_two.PivotPoint = FVector2D(0.5f, 0.5f);
 
 			Canvas->DrawItem(speedo_tile);
@@ -245,6 +249,16 @@ void ACarHUD::DrawPauseMenu(const FVector2D& scale_vec) {
 	
 	TileItem.Size = FVector2D(Canvas->SizeX, Canvas->SizeY);
 	Canvas->DrawItem(TileItem);
+}
+
+void ACarHUD::ChangeSpeedo(AVehicleController* Vehicle_) {
+	int32 KPH_int = FMath::FloorToInt(Vehicle_->GetCurrentKPH());
+	speed_dial_rot = -135.f + (KPH_int * 1.5f);
+}
+
+void ACarHUD::ChangeTacho(AVehicleController* Vehicle_) {
+	int32 RPM_int = FMath::FloorToInt(Vehicle_->GetCurrentRPM());
+	tacho_dial_rot = -135.f + (RPM_int * .23f);
 }
 
 

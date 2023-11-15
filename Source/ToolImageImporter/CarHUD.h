@@ -6,6 +6,7 @@
 #include <Runtime/Engine/Public/CanvasItem.h>
 #include <iostream>
 #include <chrono>
+#include "VehicleController.h"
 #include "CarHUD.generated.h"
 
 UCLASS()
@@ -23,6 +24,8 @@ public:
 	void ShowNote();
 	void DisplayNote(const int& index, const FVector2D& position_, FTexture* texture);
 	void ClearNotes();
+	void ChangeSpeedo(AVehicleController* Vehicle_);
+	void ChangeTacho(AVehicleController* Vehicle_);
 	// Begin AHUD interface
 	virtual void DrawHUD() override;
 	void SwitchStatement(const TArray<int>& array_);
@@ -48,4 +51,7 @@ protected:
 	class UTexture2D* speedometor_img;
 	class UTexture2D* tachometor_img;
 	class UTexture2D* dial_img;
+
+	float speed_dial_rot;
+	float tacho_dial_rot;
 };

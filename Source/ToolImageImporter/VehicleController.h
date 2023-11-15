@@ -103,6 +103,9 @@ public:
 	FVector GetPaceOne() { return pace1; }
 	FVector GetPaceThree() { return pace3; }
 	int GetCPCounter() { return cp_counter; }
+	float GetCurrentKPH() { return current_KPH; }
+	float GetCurrentRPM() { return current_RPM; }
+
 	//pause
 	void OnPause();
 	void UnPause();
