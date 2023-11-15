@@ -15,19 +15,27 @@
 
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
-ACarHUD::ACarHUD(){
+ACarHUD::ACarHUD() {
 	static ConstructorHelpers::FObjectFinder<UFont> Font(TEXT("/Game/ui_font"));
 	HUDFont = Font.Object;
-	
+
 	static ConstructorHelpers::FObjectFinder<UTexture2D> puase_back_obj(TEXT("Texture2D'/Game/Textures/pausedbg.pausedbg'"));
 	pause_background_tex = puase_back_obj.Object;
+
+	static ConstructorHelpers::FObjectFinder<UTexture2D> dial_obj(TEXT("Texture2D'/Game/Textures/Dial/SpeedometerPointer.SpeedometerPointer'"));
+	dial_img = dial_obj.Object;
+	static ConstructorHelpers::FObjectFinder<UTexture2D> speedo_obj(TEXT("Texture2D'/Game/Textures/Dial/SpeedometerBG.SpeedometerBG'"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> tacho_obj(TEXT("Texture2D'/Game/Textures/Dial/TachometerBG.TachometerBG'"));
+	tachometor_img = tacho_obj.Object;
+	speedometor_img = speedo_obj.Object;
+
 
 	const FString BaseTexturePath = TEXT("Texture2D'/Game/Textures/pacenote_images/");
 	const FString TextureSuffix = TEXT("."); // Adjust the size accordingly
 
 	TArray<FString> TexturePaths;
 	for (int TextureIndex = 1; TextureIndex <= 24; ++TextureIndex) {
-		FString CurrentTexturePath = BaseTexturePath + FString::Printf(TEXT("%d"), TextureIndex) + TextureSuffix+ FString::Printf(TEXT("%d"), TextureIndex);
+		FString CurrentTexturePath = BaseTexturePath + FString::Printf(TEXT("%d"), TextureIndex) + TextureSuffix + FString::Printf(TEXT("%d"), TextureIndex);
 		FString end_ = "'";
 		CurrentTexturePath += end_;
 		TexturePaths.Add(CurrentTexturePath);
@@ -52,7 +60,7 @@ ACarHUD::ACarHUD(){
 	v_unit = FText::FromString("KPH");
 	pace_notes_actor = Cast<APaceNotesActor>(UGameplayStatics::GetActorOfClass(GetWorld(), APaceNotesActor::StaticClass()));
 
-	for (int i = 0; i < 6; i++){
+	for (int i = 0; i < 6; i++) {
 		const FVector2D position_(0, 0);
 		FCanvasTileItem temp(position_, pacenote_images[0]->Resource, FLinearColor::Transparent);
 		pacenote_items.Add(temp);
@@ -62,7 +70,6 @@ ACarHUD::ACarHUD(){
 	is_extra = false;
 	notes_displayed = 0;
 }
-
 void ACarHUD::DrawHUD(){
 	Super::DrawHUD();
 
@@ -85,6 +92,22 @@ void ACarHUD::DrawHUD(){
 			Canvas->DrawItem(RPMTextItem);
 			FCanvasTextItem units_r_text_item(FVector2D(size_.X * .95f, size_.Y * .91f), r_unit, HUDFont, FLinearColor(red_));
 			Canvas->DrawItem(units_r_text_item);
+
+			FCanvasTileItem speedo_tile(FVector2D(1700.f,900.f), speedometor_img->Resource,FVector2D(128.f,128.f), FLinearColor::White);
+			FCanvasTileItem tacho_tile(FVector2D(1572.f, 900.f), tachometor_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			FCanvasTileItem dial_tile_two(FVector2D(1572.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			FCanvasTileItem dial_tile(FVector2D(1700.f, 900.f), dial_img->Resource, FVector2D(128.f, 128.f), FLinearColor::White);
+			dial_tile.BlendMode = SE_BLEND_Translucent;
+			dial_tile.Rotation = FRotator(0, -135.f,0);
+			dial_tile.PivotPoint = FVector2D(0.5f,0.5f);
+			dial_tile_two.BlendMode = SE_BLEND_Translucent;
+			dial_tile_two.Rotation = FRotator(0, -112.f, 0);
+			dial_tile_two.PivotPoint = FVector2D(0.5f, 0.5f);
+
+			Canvas->DrawItem(speedo_tile);
+			Canvas->DrawItem(dial_tile);
+			Canvas->DrawItem(tacho_tile);
+			Canvas->DrawItem(dial_tile_two);
 
 			if (pace_notes_actor != nullptr) {
 				ShowNote();

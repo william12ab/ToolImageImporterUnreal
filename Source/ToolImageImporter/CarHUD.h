@@ -19,7 +19,6 @@ public:
 	UPROPERTY()
 		UFont* HUDFont;
 
-
 	void DrawPauseMenu(const FVector2D& scale_vec);
 	void ShowNote();
 	void DisplayNote(const int& index, const FVector2D& position_, FTexture* texture);
@@ -44,4 +43,9 @@ protected:
 	bool is_timer_started;
 	std::chrono::steady_clock::time_point start;
 	int notes_displayed;
+
+
+	class UTexture2D* speedometor_img;
+	class UTexture2D* tachometor_img;
+	class UTexture2D* dial_img;
 };
