@@ -253,12 +253,12 @@ void ACarHUD::DrawPauseMenu(const FVector2D& scale_vec) {
 
 void ACarHUD::ChangeSpeedo(AVehicleController* Vehicle_) {
 	int32 KPH_int = FMath::FloorToInt(Vehicle_->GetCurrentKPH());
-	speed_dial_rot = -135.f + (KPH_int * 1.5f);
+	speed_dial_rot = -135.f + (KPH_int * 1.15f);
 }
 
 void ACarHUD::ChangeTacho(AVehicleController* Vehicle_) {
 	int32 RPM_int = FMath::FloorToInt(Vehicle_->GetCurrentRPM());
-	tacho_dial_rot = -135.f + (RPM_int * .23f);
+	tacho_dial_rot = -135.f + (RPM_int * .023f);
 }
 
 
